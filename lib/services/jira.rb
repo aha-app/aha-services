@@ -1,7 +1,8 @@
 class Service::Jira < Service
   
   def receive_create_feature
-    res = http_post "/a/rest/api/a/issue", "body"
+    http.headers['Content-Type'] = 'application/json'
+    res = http_post "https://foo.com/a/rest/api/a/issue", "body"
   end
   
 end

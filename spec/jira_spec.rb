@@ -8,8 +8,8 @@ describe "Service::Jira" do
 
   it "can receive new features" do
     @stubs.post "/a/rest/api/a/issue" do |env|
-      assert_equal 'application/json', env[:request_headers]['Content-Type']
-      assert_equal 'foo.com', env[:url].host
+      env[:request_headers]['Content-Type'].should == 'application/json'
+      env[:url].host.should == 'foo.com'
       [200, {}, '']
     end
 
