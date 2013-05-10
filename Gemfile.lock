@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    aha-services (1.0.0.bfcf4cd)
+    aha-services (1.0.0.a3f3071)
       faraday
 
 GEM
