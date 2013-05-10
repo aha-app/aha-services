@@ -1,6 +1,13 @@
 class Service
   include Networking
   include Errors
+  include Schema
+  extend Schema::ClassMethods
+  
+  # Public: Gets the configuration data for this Service instance.
+  #
+  # Returns a Hash.
+  attr_reader :data
   
   # Public: Gets the unique payload data for this Service instance.
   #

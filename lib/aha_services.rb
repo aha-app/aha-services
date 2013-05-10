@@ -1,5 +1,6 @@
 require 'aha_services/version'
 require 'aha_services/networking'
+require 'aha_services/schema'
 require 'aha_services/errors'
 require 'aha_services/service'
 
