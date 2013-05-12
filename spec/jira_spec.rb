@@ -1,21 +1,25 @@
 require 'spec_helper'
 
 describe "Service::Jira" do
-  before do
-    #@stubs = Faraday::Adapter::Test::Stubs.new
-  end
-
   it "can receive new features" do
+    # Call to Jira
     stub_request(:post, "http://u:p@foo.com/a/rest/api/a/issue").
       #with(:body => hash_including({:fields => {:summary => "Strange name"}})#,
         #:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'Content-Type'=>'application/json', 'User-Agent'=>'Faraday v0.8.7'}
       #  ).
-      to_return(:status => 201, :body => "{\"id\":\"10009\",\"key\":\"DEMO-10\",\"self\":\"https://watersco.atlassian.net/rest/api/2/issue/10009\"}", :headers => {})
-
-    svc = service(Service::Jira, 
+      to_return(:status => 201, :body => "{\"id\":\"10009\",\"key\":\"DEMO-10\",\"self\":\"https://myhost.atlassian.net/rest/api/2/issue/10009\"}", :headers => {})
+    
+    # Call back into Aha!
+    stub_request(:post, "https://a.aha.io/api/v1/features/OPS-11/connection/jira/fields").
+      with(:body => "{\"name\":\"id\",\"value\":\"10009\"}").
+      to_return(:status => 201, :body => "", :headers => {})
+    stub_request(:post, "https://a.aha.io/api/v1/features/OPS-11/connection/jira/fields").
+      with(:body => "{\"name\":\"key\",\"value\":\"DEMO-10\"}").
+      to_return(:status => 201, :body => "", :headers => {})
+      
+    Service::Jira.new(:create_feature,
       {'server_url' => 'http://foo.com/a', 'username' => 'u', 'password' => 'p', 'api_version' => 'a'},
-      json_fixture('feature_event.json'))
-    svc.receive_create_feature
+      json_fixture('feature_event.json')).receive
   end
   
 end

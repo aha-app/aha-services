@@ -2,7 +2,13 @@ class Service
   include Networking
   include Errors
   include Schema
+  include Api
   extend Schema::ClassMethods
+  
+  # Public: Aha! API client for calling back into Aha!.
+  #
+  # Returns an AhaApi::Client.
+  attr_reader :api
   
   # Public: Gets the configuration data for this Service instance.
   #
@@ -35,6 +41,7 @@ class Service
     @event_method = ["receive_#{event}", "receive_event"].detect do |method|
       respond_to?(method)
     end
+    @api = allocate_api_client
   end
   
   def self.default_http_options
