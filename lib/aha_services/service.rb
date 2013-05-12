@@ -18,7 +18,9 @@ class Service
   #
   # Returns a Symbol.
   attr_reader :event
-
+  
+  attr_reader :event_method
+  
   # Sets the Faraday::Connection for this Service instance.
   #
   # http - New Faraday::Connection instance.
@@ -43,5 +45,22 @@ class Service
     }
   end
   
+  def respond_to_event?
+    !@event_method.nil?
+  end
+  
+  def receive(timeout = nil)
+    return unless respond_to_event?
+    timeout_sec = (timeout || 20).to_i
+    Timeout.timeout(timeout_sec, TimeoutError) do
+      send(event_method)
+    end
 
+    self
+  rescue Service::ConfigurationError, Errno::EHOSTUNREACH, Errno::ECONNRESET, SocketError, Net::ProtocolError => err
+    if !err.is_a?(Service::Error)
+      err = ConfigurationError.new(err)
+    end
+    raise err
+  end
 end

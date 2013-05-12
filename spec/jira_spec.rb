@@ -18,4 +18,9 @@ describe "Service::Jira" do
       new_feature_payload)
     svc.receive_create_feature
   end
+  
+  it "can create actual issue" do
+    svc = Service::Jira.new(:create_feature, {'server_url' => 'https://watersco.atlassian.net/', 'username' => 'u', 'password' => 'p', 'api_version' => '2'},{})
+    svc.receive
+  end
 end

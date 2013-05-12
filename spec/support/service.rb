@@ -5,7 +5,7 @@ def service(klass, event_or_data, data, payload=nil)
   else
     payload = data
     data    = event_or_data
-    event   = :push
+    event   = :create_feature
   end
 
   service = klass.new(event, data, payload)

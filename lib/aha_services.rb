@@ -1,3 +1,10 @@
+require 'active_support'
+ActiveSupport::JSON
+
+# stdlib
+require 'net/http'
+require 'net/https'
+
 require 'aha_services/version'
 require 'aha_services/networking'
 require 'aha_services/schema'
