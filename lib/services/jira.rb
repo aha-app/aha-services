@@ -9,14 +9,29 @@ class Service::Jira < Service
   def create_jira_issue(name, description, project_key)
     issue = {
       fields: {
-        project: {key: project_key},
+        project: {key: 'DEMO'},
         summary: name,
         description: description,
-        issueType: {id: 1}
+        issuetype: {id: 1}
       }
     }
     http.headers['Content-Type'] = 'application/json'
-    res = http_post '%s/rest/api/%s/issue' % [data['server_url'], data['api_version']], issue.to_json
+    http.basic_auth data['username'], data['password']
+    response = http_post '%s/rest/api/%s/issue' % [data['server_url'], data['api_version']], issue.to_json
+    if response.status == 201
+      new_issue = parse(response.body)
+      
+      issue_id = new_issue["id"]
+      issue_key = new_issue["key"]
+      puts "Created issue #{issue_id} / #{issue_key}"
+#      {\"id\":\"10007\",\"key\":\"DEMO-8\",\"self\":\"https://watersco.atlassian.net/rest/api/2/issue/10007\"}
+    end
+  end
+
+  def parse(body)
+    unless body.nil? or body.length < 2
+      JSON.parse(body)
+    end
   end
   
 end
