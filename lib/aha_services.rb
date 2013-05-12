@@ -1,9 +1,10 @@
 require 'active_support'
 ActiveSupport::JSON
 
-# stdlib
 require 'net/http'
 require 'net/https'
+
+require 'faraday'
 
 require 'aha_services/version'
 require 'aha_services/networking'

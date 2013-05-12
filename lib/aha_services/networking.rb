@@ -19,6 +19,7 @@ module Networking
         #b.use HttpReporter, self
         b.request :url_encoded
         b.adapter *(options[:adapter] || :net_http)
+        b.use(HttpReporter, self)
       end
     end
   end
@@ -111,4 +112,31 @@ module Networking
     raise_config_error "Invalid SSL cert"
   end
   
+  def reportable_http_env(env, time)
+    {
+      :request => {
+        :url => env[:url].to_s,
+        :headers => env[:request_headers]
+      }, :response => {
+        :status => env[:status],
+        :headers => env[:response_headers],
+        :body => env[:body].to_s,
+        :duration => "%.02fs" % [Time.now - time]
+      },
+      :adapter => env[:adapter]
+    }
+  end
+  
+  class HttpReporter < ::Faraday::Response::Middleware
+    def initialize(app, service = nil)
+      super(app)
+      @service = service
+      @time = Time.now
+    end
+
+    def on_complete(env)
+      #@service.receive_http(@service.reportable_http_env(env, @time))
+      pp @service.reportable_http_env(env, @time)
+    end
+  end
 end
