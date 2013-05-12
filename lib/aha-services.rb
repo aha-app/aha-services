@@ -6,6 +6,7 @@ require 'net/https'
 require 'pp'
 
 require 'faraday'
+require 'hashie'
 
 require 'aha-services/version'
 require 'aha-services/networking'

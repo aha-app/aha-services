@@ -28,10 +28,10 @@ class Service
   # Returns a Faraday::Connection.
   attr_writer :http
   
-  def initialize(event = :push, data = {}, payload = nil)
+  def initialize(event, data = {}, payload = nil)
     @event = event.to_sym
     @data = data || {}
-    @payload = payload #|| sample_payload
+    @payload = Hashie::Mash.new(payload)
     @event_method = ["receive_#{event}", "receive_event"].detect do |method|
       respond_to?(method)
     end

@@ -3,15 +3,15 @@ class Service::Jira < Service
   password :password
   
   def receive_create_feature
-    create_jira_issue("Sample issue name", "Sample issue description", "DEMO")
+    create_jira_issue(payload.feature, "DEMO")
   end
   
-  def create_jira_issue(name, description, project_key)
+  def create_jira_issue(feature, project_key)
     issue = {
       fields: {
-        project: {key: 'DEMO'},
-        #summary: name,
-        description: description,
+        project: {key: project_key},
+        summary: feature.name,
+        description: feature.description,
         issuetype: {id: 1}
       }
     }
@@ -24,6 +24,10 @@ class Service::Jira < Service
       issue_id = new_issue["id"]
       issue_key = new_issue["key"]
       puts "Created issue #{issue_id} / #{issue_key}"
+      
+      api.create_connection_field(feature.reference_num, :jira, :id, new_issue["id"])
+      api.create_connection_field(feature.reference_num, :jira, :key, new_issue["key"])
+      
     elsif response.status == 400
       errors = parse(response.body)
       error_string = errors["errorMessages"].join(", ") + 

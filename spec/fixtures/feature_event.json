@@ -1,0 +1,18 @@
+{
+  "event": "create_feature",
+  "feature": {
+    "name":"Strange name",
+    "reference_num":"OPS-11",
+    "position":2,
+    "kind":0,
+    "status":5,
+    "score":12,
+    "created_at":"2013-03-16T02:44:21Z",
+    "updated_at":"2013-05-05T16:33:17Z",
+    "id":"5855766406455672524",
+    "release_id":"5837864849623530136",
+    "created_by_user":{
+      "first_name":"Chris","last_name":"Waters","email":"watersco@gmail.com","id":"5833845494674537685"
+    }
+  }
+}

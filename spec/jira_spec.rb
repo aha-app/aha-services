@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'faraday'
 
 describe "Service::Jira" do
   before do
@@ -15,7 +14,7 @@ describe "Service::Jira" do
 
     svc = service(Service::Jira, 
       {'server_url' => 'http://foo.com/a', 'username' => 'u', 'password' => 'p', 'api_version' => 'a'},
-      new_feature_payload)
+      json_fixture('feature_event.json'))
     svc.receive_create_feature
   end
   
