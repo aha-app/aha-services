@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    aha-services (1.0.0.b23c081)
+    aha-services (1.0.0)
       activesupport
       faraday
 

@@ -10,7 +10,7 @@ class Service::Jira < Service
     issue = {
       fields: {
         project: {key: 'DEMO'},
-        summary: name,
+        #summary: name,
         description: description,
         issuetype: {id: 1}
       }
@@ -24,12 +24,19 @@ class Service::Jira < Service
       issue_id = new_issue["id"]
       issue_key = new_issue["key"]
       puts "Created issue #{issue_id} / #{issue_key}"
-#      {\"id\":\"10007\",\"key\":\"DEMO-8\",\"self\":\"https://watersco.atlassian.net/rest/api/2/issue/10007\"}
+    elsif response.status == 400
+      errors = parse(response.body)
+      error_string = errors["errorMessages"].join(", ") + 
+        errors["errors"].map {|k, v| "#{k}: #{v}" }.join(", ")
+      
+      puts "Error: #{error_string}"
     end
   end
 
   def parse(body)
-    unless body.nil? or body.length < 2
+    if body.nil? or body.length < 2
+      {}
+    else
       JSON.parse(body)
     end
   end

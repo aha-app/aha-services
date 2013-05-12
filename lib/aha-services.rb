@@ -7,10 +7,10 @@ require 'pp'
 
 require 'faraday'
 
-require 'aha_services/version'
-require 'aha_services/networking'
-require 'aha_services/schema'
-require 'aha_services/errors'
-require 'aha_services/service'
+require 'aha-services/version'
+require 'aha-services/networking'
+require 'aha-services/schema'
+require 'aha-services/errors'
+require 'aha-services/service'
 
 Dir["#{File.dirname(__FILE__)}/services/**/*.rb"].each {|file| require file }

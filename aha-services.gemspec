@@ -1,12 +1,10 @@
 lib = File.expand_path('../lib/', __FILE__)
 $:.unshift lib unless $:.include?(lib)
+require 'aha-services'
  
-sha = `git rev-parse HEAD 2>/dev/null || echo unknown`
-sha.chomp!
-
 Gem::Specification.new do |s|
   s.name        = "aha-services"
-  s.version     = "1.0.0.#{sha[0,7]}"
+  s.version     = AhaServices::VERSION
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Chris Waters"]
   s.email       = ["chris@aha.io"]
