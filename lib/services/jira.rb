@@ -34,6 +34,8 @@ class Service::Jira < Service
         errors["errors"].map {|k, v| "#{k}: #{v}" }.join(", ")
       
       puts "Error: #{error_string}"
+    else
+      puts "Error: unexpected status: #{response.status}"
     end
   end
 

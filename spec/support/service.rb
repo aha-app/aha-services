@@ -9,6 +9,6 @@ def service(klass, event_or_data, data, payload=nil)
   end
 
   service = klass.new(event, data, payload)
-  service.http :adapter => [:test, @stubs]
+  #service.http :adapter => [:test, @stubs]
   service
 end
