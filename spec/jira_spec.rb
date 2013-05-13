@@ -10,11 +10,11 @@ describe "Service::Jira" do
       to_return(:status => 201, :body => "{\"id\":\"10009\",\"key\":\"DEMO-10\",\"self\":\"https://myhost.atlassian.net/rest/api/2/issue/10009\"}", :headers => {})
     
     # Call back into Aha!
-    stub_request(:post, "https://a.aha.io/api/v1/features/OPS-11/connection/jira/fields").
-      with(:body => "{\"name\":\"id\",\"value\":\"10009\"}").
+    stub_request(:post, "https://a.aha.io/api/v1/features/OPS-11/connections/jira/fields").
+      with(:body => {:connection_field => {:name => "id", :value => "10009"}}).
       to_return(:status => 201, :body => "", :headers => {})
-    stub_request(:post, "https://a.aha.io/api/v1/features/OPS-11/connection/jira/fields").
-      with(:body => "{\"name\":\"key\",\"value\":\"DEMO-10\"}").
+    stub_request(:post, "https://a.aha.io/api/v1/features/OPS-11/connections/jira/fields").
+      with(:body => {:connection_field => {:name => "key", :value => "DEMO-10"}}).
       to_return(:status => 201, :body => "", :headers => {})
       
     Service::Jira.new(:create_feature,
