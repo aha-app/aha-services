@@ -3,6 +3,7 @@ PATH
   specs:
     aha-services (1.0.0)
       activesupport
+      aha-api
       faraday
       hashie
 

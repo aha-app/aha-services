@@ -1,4 +1,4 @@
-class Service::Jira < Service
+class AhaServices::Jira < AhaService
   string   :server_url, :api_version, :username
   password :password
   
@@ -30,14 +30,14 @@ class Service::Jira < Service
       api.create_connection_field(feature.reference_num, :jira, :key, issue_key)
       
     elsif response.status == 401
-      raise Service::RemoteError, "Authentication failed"
+      raise AhaService::RemoteError, "Authentication failed"
     elsif response.status == 400
       errors = parse(response.body)
       error_string = errors["errorMessages"].join(", ") + 
         errors["errors"].map {|k, v| "#{k}: #{v}" }.join(", ")
-      raise Service::RemoteError, "Data not accepted: #{error_string}"
+      raise AhaService::RemoteError, "Data not accepted: #{error_string}"
     else
-      raise Service::RemoteError, "Unhandled error: STATUS=#{response.status} BODY=#{response.body}"
+      raise AhaService::RemoteError, "Unhandled error: STATUS=#{response.status} BODY=#{response.body}"
     end
   end
 

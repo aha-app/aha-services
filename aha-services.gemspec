@@ -19,6 +19,8 @@ Gem::Specification.new do |s|
   s.add_dependency "hashie"
   s.add_dependency "faraday"
   s.add_dependency "activesupport"
+  
+  s.add_dependency "aha-api"
  
   s.files        = Dir.glob("{lib}/**/*") + %w(LICENSE README.md)
   s.require_path = 'lib'

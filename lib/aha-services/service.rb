@@ -1,4 +1,4 @@
-class Service
+class AhaService
   include Networking
   include Errors
   include Schema
@@ -65,8 +65,8 @@ class Service
     end
 
     self
-  rescue Service::ConfigurationError, Errno::EHOSTUNREACH, Errno::ECONNRESET, SocketError, Net::ProtocolError => err
-    if !err.is_a?(Service::Error)
+  rescue AhaService::ConfigurationError, Errno::EHOSTUNREACH, Errno::ECONNRESET, SocketError, Net::ProtocolError => err
+    if !err.is_a?(AhaService::Error)
       err = ConfigurationError.new(err)
     end
     raise err
