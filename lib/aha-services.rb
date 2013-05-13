@@ -4,6 +4,7 @@ ActiveSupport::JSON
 require 'net/http'
 require 'net/https'
 require 'pp'
+require 'logger'
 
 require 'faraday'
 require 'hashie'

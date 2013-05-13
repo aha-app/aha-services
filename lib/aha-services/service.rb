@@ -27,12 +27,12 @@ class Service
   
   attr_reader :event_method
   
-  # Sets the Faraday::Connection for this Service instance.
+  # Public: Gets the configuration data for this Service instance.
   #
-  # http - New Faraday::Connection instance.
-  #
-  # Returns a Faraday::Connection.
-  attr_writer :http
+  # Returns a Hash.
+  attr_reader :data
+  
+  attr_reader :logger
   
   def initialize(event, data = {}, payload = nil)
     @event = event.to_sym
@@ -41,7 +41,8 @@ class Service
     @event_method = ["receive_#{event}", "receive_event"].detect do |method|
       respond_to?(method)
     end
-    @api = allocate_api_client
+    @api = data['api_client'] || allocate_api_client
+    @logger = data['logger'] || allocate_logger
   end
   
   def self.default_http_options
@@ -69,5 +70,11 @@ class Service
       err = ConfigurationError.new(err)
     end
     raise err
+  end
+  
+  def allocate_logger
+    @logger = Logger.new(STDOUT)
+    @logger.level = Logger::DEBUG
+    @logger
   end
 end

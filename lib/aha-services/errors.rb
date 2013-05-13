@@ -22,4 +22,10 @@ module Errors
   # fail with this exception may be automatically disabled.
   class ConfigurationError < Error
   end
+  
+  # Raised when a service hook fails due to an issue communicating with the 
+  # remote system.
+  class RemoteError < Error
+  end
+  
 end

@@ -22,4 +22,24 @@ describe "Service::Jira" do
       json_fixture('feature_event.json')).receive
   end
   
+  it "raises error when Jira fails" do
+    stub_request(:post, "http://u:p@foo.com/a/rest/api/a/issue").
+      to_return(:status => 400, :body => "{\"errorMessages\":[],\"errors\":{\"description\":\"Operation value must be a string\"}}", :headers => {})
+    expect {
+      Service::Jira.new(:create_feature,
+        {'server_url' => 'http://foo.com/a', 'username' => 'u', 'password' => 'p', 'api_version' => 'a'},
+        json_fixture('feature_event.json')).receive
+    }.to raise_error(Service::RemoteError)
+  end
+  
+  it "raises authentication error" do
+    stub_request(:post, "http://u:p@foo.com/a/rest/api/a/issue").
+      to_return(:status => 401, :body => "", :headers => {})
+    expect {
+      Service::Jira.new(:create_feature,
+        {'server_url' => 'http://foo.com/a', 'username' => 'u', 'password' => 'p', 'api_version' => 'a'},
+        json_fixture('feature_event.json')).receive
+    }.to raise_error(Service::RemoteError)
+  end
+  
 end
