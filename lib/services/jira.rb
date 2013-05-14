@@ -2,6 +2,7 @@ class AhaServices::Jira < AhaService
   string :server_url
   string :api_version
   string :username
+  boolean :foobar
   password :password
   
   def receive_create_feature
@@ -9,7 +10,7 @@ class AhaServices::Jira < AhaService
   end
   
   def create_jira_issue(feature, project_key)
-    api_version = data['api_version'] || "2"
+    api_version = data.api_version || "2"
     issue = {
       fields: {
         project: {key: project_key},
@@ -19,8 +20,8 @@ class AhaServices::Jira < AhaService
       }
     }
     http.headers['Content-Type'] = 'application/json'
-    http.basic_auth data['username'], data['password']
-    response = http_post '%s/rest/api/%s/issue' % [data['server_url'], api_version], issue.to_json
+    http.basic_auth data.username, data.password
+    response = http_post '%s/rest/api/%s/issue' % [data.server_url, api_version], issue.to_json
     if response.status == 201
       new_issue = parse(response.body)
       

@@ -38,13 +38,13 @@ class AhaService
   
   def initialize(event, data = {}, payload = nil)
     @event = event.to_sym
-    @data = data || {}
+    @data = Hashie::Mash.new(data || {})
     @payload = Hashie::Mash.new(payload)
     @event_method = ["receive_#{event}", "receive_event"].detect do |method|
       respond_to?(method)
     end
-    @api = data['api_client'] || allocate_api_client
-    @logger = data['logger'] || allocate_logger
+    @api = @data.api_client || allocate_api_client
+    @logger = @data.logger || allocate_logger
   end
   
   def self.default_http_options
