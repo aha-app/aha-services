@@ -63,13 +63,57 @@ class AhaService
     Timeout.timeout(timeout_sec, TimeoutError) do
       send(event_method)
     end
-
     self
   rescue AhaService::ConfigurationError, Errno::EHOSTUNREACH, Errno::ECONNRESET, SocketError, Net::ProtocolError => err
     if !err.is_a?(AhaService::Error)
       err = ConfigurationError.new(err)
     end
     raise err
+  end
+  
+  class << self
+    # Gets the official title of this Service.  This is used in any
+    # user-facing documentation regarding the Service.
+    #
+    # Returns a String.
+    def title(value = nil)
+      if value
+        @title = value
+      else
+        @title ||= begin
+          hook = name.dup
+          hook.sub! /.*:/, ''
+          hook
+        end
+      end
+    end
+
+    # Sets the official title of this Service.
+    #
+    # title - The String title.
+    #
+    # Returns nothing.
+    attr_writer :title
+
+    # Gets the name that identifies this Service type.  This is a
+    # short string that is used to uniquely identify the service internally.
+    #
+    # Returns a String.
+    def service_name(value = nil)
+      if value
+        @service_name = value
+      else
+        @service_name ||= begin
+          hook = name.dup
+          hook.downcase!
+          hook.sub! /.*:/, ''
+          hook
+        end
+      end
+    end
+    
+    attr_writer :service_name
+  
   end
   
   def allocate_logger
