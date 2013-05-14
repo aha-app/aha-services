@@ -1,5 +1,7 @@
 class AhaServices::Jira < AhaService
-  string   :server_url, :api_version, :username
+  string :server_url
+  string :api_version
+  string :username
   password :password
   
   def receive_create_feature

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Service::Jira" do
+describe AhaServices::Jira do
   it "can receive new features" do
     # Call to Jira
     stub_request(:post, "http://u:p@foo.com/a/rest/api/a/issue").
