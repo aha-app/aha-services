@@ -113,18 +113,19 @@ module Networking
   end
   
   def reportable_http_env(env, time)
-    {
-      :request => {
-        :url => env[:url].to_s,
-        :headers => env[:request_headers]
-      }, :response => {
-        :status => env[:status],
-        :headers => env[:response_headers],
-        :body => env[:body].to_s,
-        :duration => "%.02fs" % [Time.now - time]
-      },
-      :adapter => env[:adapter]
-    }
+    "#{env[:method].to_s.upcase} #{env[:url]} -- #{env[:status]} #{env[:body]}"
+    #{
+    #  :request => {
+    #    :url => env[:url].to_s,
+    #    :headers => env[:request_headers]
+    #  }, :response => {
+    #    :status => env[:status],
+    #    :headers => env[:response_headers],
+    #    :body => env[:body].to_s,
+    #    :duration => "%.02fs" % [Time.now - time]
+    #  },
+    #  :adapter => env[:adapter]
+    #}
   end
   
   class HttpReporter < ::Faraday::Response::Middleware
