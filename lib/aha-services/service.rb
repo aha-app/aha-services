@@ -61,12 +61,14 @@ class AhaService
   
   def receive(timeout = nil)
     return unless respond_to_event?
+    logger.info("Sending '#{@event}' using #{self.class.title}")
     timeout_sec = (timeout || 20).to_i
     Timeout.timeout(timeout_sec, TimeoutError) do
       send(event_method)
     end
     self
-  rescue AhaService::ConfigurationError, Errno::EHOSTUNREACH, Errno::ECONNRESET, SocketError, Net::ProtocolError => err
+  rescue AhaService::ConfigurationError, Errno::EHOSTUNREACH, Errno::ECONNRESET, 
+    SocketError, Net::ProtocolError, Faraday::Error::ConnectionFailed => err
     if !err.is_a?(AhaService::Error)
       err = ConfigurationError.new(err)
     end
