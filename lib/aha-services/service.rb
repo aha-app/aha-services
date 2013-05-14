@@ -3,7 +3,9 @@ class AhaService
   include Errors
   include Schema
   include Api
+  include Documentation
   extend Schema::ClassMethods
+  extend Documentation::ClassMethods
   
   # Public: Aha! API client for calling back into Aha!.
   #

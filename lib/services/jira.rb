@@ -26,8 +26,8 @@ class AhaServices::Jira < AhaService
       issue_key = new_issue["key"]
       logger.info("Created issue #{issue_id} / #{issue_key}")
       
-      api.create_connection_field(feature.reference_num, :jira, :id, issue_id)
-      api.create_connection_field(feature.reference_num, :jira, :key, issue_key)
+      api.create_integration_field(feature.reference_num, :jira, :id, issue_id)
+      api.create_integration_field(feature.reference_num, :jira, :key, issue_key)
       
     elsif response.status == 401
       raise AhaService::RemoteError, "Authentication failed"
