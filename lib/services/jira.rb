@@ -3,12 +3,29 @@ class AhaServices::Jira < AhaService
   string :username
   password :password
   
+  def receive_installed
+    projects = []
+    
+    prepare_request
+    response = http_get '%s/rest/api/2/issue/createmeta' % [data.server_url]
+    process_response(response, 200) do |meta|      
+      meta['projects'].each do |project|
+        issue_types = []
+        project['issuetypes'].each do |issue_type|
+          issue_types << {:id => issue_type['id'], :name => issue_type['name']}
+        end
+        projects << {:id => project['id'], :key => project['key'], :name => project['name'], :issue_types => issue_types}
+      end
+    end
+    
+    logger.debug(projects.inspect)
+  end
+  
   def receive_create_feature
     create_jira_issue(payload.feature, "DEMO")
   end
   
   def create_jira_issue(feature, project_key)
-    api_version = data.api_version || "2"
     issue = {
       fields: {
         project: {key: project_key},
@@ -17,28 +34,15 @@ class AhaServices::Jira < AhaService
         issuetype: {id: 1}
       }
     }
-    http.headers['Content-Type'] = 'application/json'
-    http.basic_auth data.username, data.password
-    response = http_post '%s/rest/api/2/issue' % [data.server_url], issue.to_json
-    if response.status == 201
-      new_issue = parse(response.body)
-      
+    prepare_request
+    response = http_post '%s/rest/api/2/issue' % [data.server_url], issue.to_json 
+    process_response(response, 201) do |new_issue|      
       issue_id = new_issue["id"]
       issue_key = new_issue["key"]
       logger.info("Created issue #{issue_id} / #{issue_key}")
       
       api.create_integration_field(feature.reference_num, :jira, :id, issue_id)
       api.create_integration_field(feature.reference_num, :jira, :key, issue_key)
-      
-    elsif response.status == 401
-      raise AhaService::RemoteError, "Authentication failed"
-    elsif response.status == 400
-      errors = parse(response.body)
-      error_string = errors["errorMessages"].join(", ") + 
-        errors["errors"].map {|k, v| "#{k}: #{v}" }.join(", ")
-      raise AhaService::RemoteError, "Data not accepted: #{error_string}"
-    else
-      raise AhaService::RemoteError, "Unhandled error: STATUS=#{response.status} BODY=#{response.body}"
     end
   end
 
@@ -47,6 +51,26 @@ class AhaServices::Jira < AhaService
       {}
     else
       JSON.parse(body)
+    end
+  end
+  
+  def prepare_request
+    http.headers['Content-Type'] = 'application/json'
+    http.basic_auth data.username, data.password
+  end
+  
+  def process_response(response, *success_codes, &block)
+    if success_codes.include?(response.status)
+      yield parse(response.body)
+    elsif response.status == 401 || response.status == 403
+      raise AhaService::RemoteError, "Authentication failed: #{response.status}"
+    elsif response.status == 400
+      errors = parse(response.body)
+      error_string = errors["errorMessages"].join(", ") + 
+        errors["errors"].map {|k, v| "#{k}: #{v}" }.join(", ")
+      raise AhaService::RemoteError, "Data not accepted: #{error_string}"
+    else
+      raise AhaService::RemoteError, "Unhandled error: STATUS=#{response.status} BODY=#{response.body}"
     end
   end
   

@@ -32,6 +32,44 @@ module Networking
     @ca_file ||= File.expand_path('../../config/cacert.pem', __FILE__)
   end
   
+  # Public: Makes an HTTP GET call.
+  #
+  # url     - Optional String URL to request.
+  # params  - Optional Hash of GET parameters to set.
+  # headers - Optional Hash of HTTP headers to set.
+  #
+  # Examples
+  #
+  #   http_get("http://github.com")
+  #   # => <Faraday::Response>
+  #
+  #   # GET http://github.com?page=1
+  #   http_get("http://github.com", :page => 1)
+  #   # => <Faraday::Response>
+  #
+  #   http_get("http://github.com", {:page => 1},
+  #     'Accept': 'application/json')
+  #   # => <Faraday::Response>
+  #
+  #   # Yield the Faraday::Response for more control.
+  #   http_get "http://github.com" do |req|
+  #     req.basic_auth("username", "password")
+  #     req.params[:page] = 1
+  #     req.headers['Accept'] = 'application/json'
+  #   end
+  #   # => <Faraday::Response>
+  #
+  # Yields a Faraday::Request instance.
+  # Returns a Faraday::Response instance.
+  def http_get(url = nil, params = nil, headers = nil)
+    http.get do |req|
+      req.url(url)                if url
+      req.params.update(params)   if params
+      req.headers.update(headers) if headers
+      yield req if block_given?
+    end
+  end
+  
   # Public: Makes an HTTP POST call.
   #
   # url     - Optional String URL to request.
