@@ -12,14 +12,9 @@ class AhaService
   # Returns an AhaApi::Client.
   attr_reader :api
   
-  # Public: Gets the configuration data for this Service instance.
-  #
-  # Returns a Hash.
-  attr_reader :data
-  
   # Public: Gets the unique payload data for this Service instance.
   #
-  # Returns a Hash.
+  # Returns a Hashie Mash.
   attr_reader :payload
 
   # Public: Gets the identifier for the Service's event.
@@ -31,14 +26,23 @@ class AhaService
   
   # Public: Gets the configuration data for this Service instance.
   #
-  # Returns a Hash.
+  # Returns a Hashie Mash.
   attr_reader :data
   
+  # Public: Gets the logger instance.
+  #
+  # Returns a Logger.
   attr_reader :logger
+  
+  # Public: The meta configuration for the Service instance.
+  #
+  # Returns a Hashie Mash.
+  attr_reader :meta_data
   
   def initialize(event, data = {}, payload = nil)
     @event = event.to_sym
     @data = Hashie::Mash.new(data || {})
+    @meta_data = Hashie::Mash.new({})
     @payload = Hashie::Mash.new(payload)
     @event_method = ["receive_#{event}", "receive_event"].detect do |method|
       respond_to?(method)

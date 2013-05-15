@@ -18,7 +18,7 @@ class AhaServices::Jira < AhaService
       end
     end
     
-    logger.debug(projects.inspect)
+    @meta_data.projects = projects
   end
   
   def receive_create_feature
