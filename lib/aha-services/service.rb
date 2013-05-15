@@ -39,10 +39,10 @@ class AhaService
   # Returns a Hashie Mash.
   attr_reader :meta_data
   
-  def initialize(event, data = {}, payload = nil)
+  def initialize(event, data = {}, payload = nil, meta_data = {})
     @event = event.to_sym
     @data = Hashie::Mash.new(data || {})
-    @meta_data = Hashie::Mash.new({})
+    @meta_data = Hashie::Mash.new(meta_data || {})
     @payload = Hashie::Mash.new(payload)
     @event_method = ["receive_#{event}", "receive_event"].detect do |method|
       respond_to?(method)
