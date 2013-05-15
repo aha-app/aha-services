@@ -33,5 +33,9 @@ module Schema
         white_listed << attr.to_sym
       end
     end
+    
+    def field_by_name(name)
+      @schema.detect {|f| f[1].to_sym == name.to_sym }
+    end
   end
 end
