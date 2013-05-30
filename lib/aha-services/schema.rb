@@ -15,6 +15,10 @@ module Schema
     def boolean(name, options = {})
       add_to_schema :boolean, name, options
     end
+    
+    def callback_url(options = {})
+      add_to_schema :callback_url, "callback_url", options
+    end
   
     def add_to_schema(type, name, options)
       schema << [type, name.to_sym, options]
