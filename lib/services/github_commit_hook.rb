@@ -10,13 +10,19 @@ class AhaServices::GithubCommitHook < AhaService
     payload.commits.each do |commit|
       commit.message
       
-      ref_list = []
       commit.message.scan(/([A-Z]+-[0-9]+(?:-[0-9]+)?)/) do |m|
-        ref_list.concat(m)
+        m.each do |ref|
+          comment_on_record(ref, commit)
+        end
       end
-      
-      puts "Refs: #{ref_list.inspect}"
     end
+  end
+  
+protected
+
+  def comment_on_record(ref_num, commit)
+    record_type = ref_num =~ /-R-/ ? "requirements" : "features"
+    api.create_comment(record_type, ref_num, "commit")
   end
   
 end
