@@ -29,7 +29,7 @@ protected
 EOF
 
     begin
-      api.create_comment(record_type, ref_num, message)
+      api.create_comment(record_type, ref_num, commit.committer.email, message)
     rescue AhaApi::NotFound
       # Ignore errors for unknown references - it might not have really
       # been a reference.

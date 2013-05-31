@@ -26,7 +26,27 @@ class AhaServices::Jira < AhaService
   def receive_create_feature
     create_jira_issue(payload.feature, "DEMO")
   end
+
+  def receive_webhook
+    if payload.webhookEvent == "jira:issue_updated" && payload.comment
+      add_comment(payload.issue.id, payload.comment)
+    else
+      # Unhandled webhook
+    end
+  end
   
+protected
+
+  def add_comment(issue_id, comment)
+    # Find the feature or requirement the issue maps to.
+    integration_field = api.search_integration_fields(:jira, :id, issue_id)
+    logger.info("INTEGRATION_FIELD: #{integration_field.inspect}")
+    if integration_field
+      api.create_comment_with_url(integration_field.object.url, 
+        comment.author.emailAddress, comment.body)
+    end
+  end
+
   def create_jira_issue(feature, project_key)
     issue = {
       fields: {
@@ -45,7 +65,7 @@ class AhaServices::Jira < AhaService
       
       api.create_integration_field(feature.reference_num, :jira, :id, issue_id)
       api.create_integration_field(feature.reference_num, :jira, :key, issue_key)
-      api.create_integration_field(feature.reference_num, :jira, :url, new_issue["self"])
+      api.create_integration_field(feature.reference_num, :jira, :url, "#{data.server_url}/browse/#{issue_key}")
     end
   end
 
