@@ -6,6 +6,7 @@ PATH
       aha-api
       faraday
       hashie
+      html2confluence
 
 PATH
   remote: ~/Documents/projects/aha/aha-api
@@ -16,6 +17,11 @@ PATH
       faraday_middleware
       hashie
       multi_json
+
+PATH
+  remote: ~/Documents/projects/github/html2confluence
+  specs:
+    html2confluence (1.0.0)
 
 GEM
   remote: http://rubygems.org/
@@ -52,5 +58,6 @@ PLATFORMS
 DEPENDENCIES
   aha-api!
   aha-services!
+  html2confluence!
   rspec
   webmock

@@ -20,6 +20,9 @@ Gem::Specification.new do |s|
   s.add_dependency "faraday"
   s.add_dependency "activesupport"
   
+  # For Jira integration.
+  s.add_dependency "html2confluence"
+  
   s.add_dependency "aha-api"
  
   s.files        = Dir.glob("{lib}/**/*") + %w(LICENSE README.md)

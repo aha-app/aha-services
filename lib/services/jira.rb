@@ -3,6 +3,8 @@ class AhaServices::Jira < AhaService
   string :username
   password :password
   
+  callback_url
+  
   def receive_installed
     projects = []
     
@@ -30,7 +32,7 @@ class AhaServices::Jira < AhaService
       fields: {
         project: {key: project_key},
         summary: feature.name,
-        description: feature.description.body,
+        description: convert_html(feature.description.body),
         issuetype: {id: 1}
       }
     }
@@ -43,6 +45,7 @@ class AhaServices::Jira < AhaService
       
       api.create_integration_field(feature.reference_num, :jira, :id, issue_id)
       api.create_integration_field(feature.reference_num, :jira, :key, issue_key)
+      api.create_integration_field(feature.reference_num, :jira, :url, new_issue["self"])
     end
   end
 
@@ -72,6 +75,13 @@ class AhaServices::Jira < AhaService
     else
       raise AhaService::RemoteError, "Unhandled error: STATUS=#{response.status} BODY=#{response.body}"
     end
+  end
+  
+  # Convert HTML from Aha! into Confluence-style wiki markup.
+  def convert_html(html)
+    parser = HTMLToConfluenceParser.new
+    parser.feed(html)
+    parser.to_wiki_markup
   end
   
 end
