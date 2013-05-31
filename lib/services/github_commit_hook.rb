@@ -1,4 +1,6 @@
 class AhaServices::GithubCommitHook < AhaService
+  title "Github Commit Hook"
+  
   callback_url
 
   # Create a comment for each commit where the message contains a feature

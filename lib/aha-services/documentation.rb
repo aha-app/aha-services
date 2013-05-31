@@ -6,6 +6,8 @@ module Documentation
     #
     def doc
       File.new(doc_path + '/' + doc_filename).read
+    rescue Errno::ENOENT
+      "No documentation"
     end
 
     def doc_path
