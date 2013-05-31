@@ -24,7 +24,7 @@ protected
     
     message = <<EOF
 <p>#{commit.committer.name} (#{commit.committer.email}) committed to <a href="#{payload.repository.url}">#{payload.repository.name}</a>:</p>
-<pre>#{commit.message}</pre>
+<blockquote><pre>#{commit.message}</pre></blockquote>
 <p>Commit: <a href="#{commit.url}">#{commit.url}</a></p>
 EOF
 

@@ -34,7 +34,7 @@
     },
     "distinct": true,
     "id": "1481a2de7b2a7d02428ad93446ab166be7793fbb",
-    "message": "Rename madame-bovary.txt to words/madame-bovary.txt. More work on AA-12 and BB-13-1",
+    "message": "Rename madame-bovary.txt to words/madame-bovary.txt.\nMore work on BIG-2 and BIG-2-1",
     "modified": [],
     "removed": ["madame-bovary.txt"],
     "timestamp": "2013-03-12T08:14:29-07:00",

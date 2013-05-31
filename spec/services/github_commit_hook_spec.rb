@@ -6,10 +6,10 @@ describe AhaServices::GithubCommitHook do
     stub_request(:post, "https://a.aha.io/api/v1/features/SCRATCH-34/comments").
       with(:body => {:comment => {:body => /committed/}}).
       to_return(:status => 201, :body => "", :headers => {})
-    stub_request(:post, "https://a.aha.io/api/v1/features/AA-12/comments").
+    stub_request(:post, "https://a.aha.io/api/v1/features/BIG-2/comments").
       with(:body => {:comment => {:body => /committed/}}).
       to_return(:status => 201, :body => "", :headers => {})
-    stub_request(:post, "https://a.aha.io/api/v1/requirements/BB-13-1/comments").
+    stub_request(:post, "https://a.aha.io/api/v1/requirements/BIG-2-1/comments").
       with(:body => {:comment => {:body => /committed/}}).
       to_return(:status => 201, :body => "", :headers => {})
       
