@@ -19,7 +19,7 @@ describe AhaServices::GithubCommitHook do
   
   it "silently ignores invalid references" do
     # Call into Aha!
-    stub_request(:post, //).
+    stub_request(:post, /.*/).
       to_return(:status => 404, :body => "", :headers => {})
       
     AhaServices::GithubCommitHook.new(:webhook,
