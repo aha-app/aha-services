@@ -2,6 +2,13 @@ class AhaServices::Jira < AhaService
   string :server_url
   string :username
   password :password
+  select :project, collection: ->(meta_data, data) { meta_data.projects.collect{|p| [p.name, p['key']] } }
+  select :feature_issue_type, collection: ->(meta_data, data) { 
+    meta_data.projects.detect {|p| p['key'] == data.project}.issue_types.collect{|p| [p.name, p.id] } 
+  }
+  select :requirement_issue_type, collection: ->(meta_data, data) { 
+    meta_data.projects.detect {|p| p['key'] == data.project}.issue_types.collect{|p| [p.name, p.id] } 
+  }
   
   callback_url
   
@@ -40,8 +47,8 @@ protected
   def add_comment(issue_id, comment)
     # Find the feature or requirement the issue maps to.
     integration_field = api.search_integration_fields(:jira, :id, issue_id)
-    logger.info("INTEGRATION_FIELD: #{integration_field.inspect}")
     if integration_field
+      # TODO: translate body from textile to HTML.
       api.create_comment_with_url(integration_field.object.url, 
         comment.author.emailAddress, comment.body)
     end

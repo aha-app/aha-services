@@ -16,6 +16,10 @@ module Schema
       add_to_schema :boolean, name, options
     end
     
+    def select(name, options = {})
+      add_to_schema :select, name, options
+    end
+    
     def callback_url(options = {})
       add_to_schema :callback_url, "callback_url", options
     end

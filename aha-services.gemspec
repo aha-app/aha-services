@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
  
   s.add_development_dependency "rspec"
   s.add_development_dependency "webmock"
-  s.add_dependency "hashie"
+  s.add_dependency "hashie", "~> 2.0.0"
   s.add_dependency "faraday"
   s.add_dependency "activesupport"
   
