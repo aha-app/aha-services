@@ -6,7 +6,9 @@ class AhaServices::GithubCommitHook < AhaService
   # Create a comment for each commit where the message contains a feature
   # or requirement ID.
   def receive_webhook
-    payload.commits.each do |commit|
+    commit_payload = Hashie::Mash.new(JSON.parse(payload.payload))
+    
+    commit_payload.commits.each do |commit|
       commit.message
       
       commit.message.scan(/([A-Z]+-[0-9]+(?:-[0-9]+)?)/) do |m|
