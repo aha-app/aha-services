@@ -14,7 +14,7 @@ describe AhaServices::GithubCommitHook do
       to_return(:status => 201, :body => "", :headers => {})
       
     AhaServices::GithubCommitHook.new(:webhook,
-      {},json_fixture('github_commit_hook_webhook.json')).receive
+      {},{"payload" => fixture('github_commit_hook_webhook.json').read}).receive
   end
   
   it "silently ignores invalid references" do
@@ -23,7 +23,7 @@ describe AhaServices::GithubCommitHook do
       to_return(:status => 404, :body => "", :headers => {})
       
     AhaServices::GithubCommitHook.new(:webhook,
-      {},json_fixture('github_commit_hook_webhook.json')).receive
+      {},{"payload" => fixture('github_commit_hook_webhook.json').read}).receive
   end
   
 end

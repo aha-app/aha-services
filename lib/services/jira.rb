@@ -1,3 +1,5 @@
+require 'html2confluence'
+
 class AhaServices::Jira < AhaService
   string :server_url
   string :username
