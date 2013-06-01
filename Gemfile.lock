@@ -1,3 +1,9 @@
+GIT
+  remote: https://github.com/k1w1/html2confluence.git
+  revision: 3547124b74b2a9f2dd3699eda35970680050ec4c
+  specs:
+    html2confluence (1.0.0)
+
 PATH
   remote: .
   specs:
@@ -17,11 +23,6 @@ PATH
       faraday_middleware
       hashie
       multi_json
-
-PATH
-  remote: ~/Documents/projects/github/html2confluence
-  specs:
-    html2confluence (1.0.0)
 
 GEM
   remote: http://rubygems.org/
