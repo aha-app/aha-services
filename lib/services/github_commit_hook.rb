@@ -25,6 +25,7 @@ protected
     record_type = ref_num =~ /-[0-9]+-/ ? "requirements" : "features"
     
     logger.debug("COMMIT: #{commit.inspect}")
+    logger.debug("URL: #{commit.url}")
     
     message = <<EOF
 <p>#{commit.committer.name} (#{commit.committer.email}) committed to <a href="#{payload.repository.url}">#{payload.repository.name}</a>:</p>
