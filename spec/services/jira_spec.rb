@@ -9,16 +9,26 @@ describe AhaServices::Jira do
       #  ).
       to_return(:status => 201, :body => "{\"id\":\"10009\",\"key\":\"DEMO-10\",\"self\":\"https://myhost.atlassian.net/rest/api/2/issue/10009\"}", :headers => {})
     
-    # Call back into Aha!
+    # Call back into Aha! for feature
     stub_request(:post, "https://a.aha.io/api/v1/features/OPS-11/integrations/jira/fields").
       with(:body => {:integration_field => {:name => "id", :value => "10009"}}).
       to_return(:status => 201, :body => "", :headers => {})
     stub_request(:post, "https://a.aha.io/api/v1/features/OPS-11/integrations/jira/fields").
       with(:body => {:integration_field => {:name => "key", :value => "DEMO-10"}}).
       to_return(:status => 201, :body => "", :headers => {})
-      stub_request(:post, "https://a.aha.io/api/v1/features/OPS-11/integrations/jira/fields").
-        with(:body => {:integration_field => {:name => "url", :value => "http://foo.com/a/browse/DEMO-10"}}).
-        to_return(:status => 201, :body => "", :headers => {})
+    stub_request(:post, "https://a.aha.io/api/v1/features/OPS-11/integrations/jira/fields").
+      with(:body => {:integration_field => {:name => "url", :value => "http://foo.com/a/browse/DEMO-10"}}).
+      to_return(:status => 201, :body => "", :headers => {})
+    # Call back into Aha! for requirement
+    stub_request(:post, "https://a.aha.io/api/v1/features/OPS-11-1/integrations/jira/fields").
+      with(:body => {:integration_field => {:name => "id", :value => "10009"}}).
+      to_return(:status => 201, :body => "", :headers => {})
+    stub_request(:post, "https://a.aha.io/api/v1/features/OPS-11-1/integrations/jira/fields").
+      with(:body => {:integration_field => {:name => "key", :value => "DEMO-10"}}).
+      to_return(:status => 201, :body => "", :headers => {})
+    stub_request(:post, "https://a.aha.io/api/v1/features/OPS-11-1/integrations/jira/fields").
+      with(:body => {:integration_field => {:name => "url", :value => "http://foo.com/a/browse/DEMO-10"}}).
+      to_return(:status => 201, :body => "", :headers => {})
       
     AhaServices::Jira.new(:create_feature,
       {'server_url' => 'http://foo.com/a', 'username' => 'u', 'password' => 'p'},

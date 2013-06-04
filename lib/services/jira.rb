@@ -56,18 +56,24 @@ class AhaServices::Jira < AhaService
   end
   
   def receive_create_feature
-    create_jira_issue(payload.feature, data.project)
+    feature_id = create_jira_issue(data.feature_issue_type, payload.feature, data.project)
+    payload.feature.requirements.each do |requirement|
+      create_jira_issue(data.requirement_issue_type, requirement, data.project, feature_id)
+    end
   end
 
 protected
 
-  def create_jira_issue(feature, project_key)
+  def create_jira_issue(issue_type, resource, project_key, parent = nil)
+    issue_id = nil
+    
     issue = {
       fields: {
         project: {key: project_key},
-        summary: feature.name,
-        description: append_link(convert_html(feature.description.body), feature),
-        issuetype: {id: data.feature_issue_type}
+        parent: parent,
+        summary: resource.name || "Aha requirement #{resource.reference_num}",
+        description: append_link(convert_html(resource.description.body), resource),
+        issuetype: {id: issue_type}
       }
     }
     prepare_request
@@ -77,10 +83,12 @@ protected
       issue_key = new_issue["key"]
       logger.info("Created issue #{issue_id} / #{issue_key}")
       
-      api.create_integration_field(feature.reference_num, :jira, :id, issue_id)
-      api.create_integration_field(feature.reference_num, :jira, :key, issue_key)
-      api.create_integration_field(feature.reference_num, :jira, :url, "#{data.server_url}/browse/#{issue_key}")
+      api.create_integration_field(resource.reference_num, :jira, :id, issue_id)
+      api.create_integration_field(resource.reference_num, :jira, :key, issue_key)
+      api.create_integration_field(resource.reference_num, :jira, :url, "#{data.server_url}/browse/#{issue_key}")
     end
+    
+    issue_id
   end
 
   def parse(body)
@@ -118,8 +126,8 @@ protected
     parser.to_wiki_markup
   end
   
-  def append_link(body, feature)
-    "#{body}\n\nCreated from Aha! [#{feature.reference_num}|#{feature.url}]."
+  def append_link(body, resource)
+    "#{body}\n\nCreated from Aha! [#{resource.reference_num}|#{resource.url}]."
   end
   
 end
