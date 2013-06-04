@@ -59,25 +59,7 @@ class AhaServices::Jira < AhaService
     create_jira_issue(payload.feature, data.project)
   end
 
-  def receive_webhook
-    if payload.webhookEvent == "jira:issue_updated" && payload.comment
-      add_comment(payload.issue.id, payload.comment)
-    else
-      # Unhandled webhook
-    end
-  end
-  
 protected
-
-  def add_comment(issue_id, comment)
-    # Find the feature or requirement the issue maps to.
-    integration_field = api.search_integration_fields(:jira, :id, issue_id)
-    if integration_field
-      # TODO: translate body from textile to HTML.
-      api.create_comment_with_url(integration_field.object.resource, 
-        comment.author.emailAddress, comment.body)
-    end
-  end
 
   def create_jira_issue(feature, project_key)
     issue = {
