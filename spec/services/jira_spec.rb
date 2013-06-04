@@ -49,17 +49,17 @@ describe AhaServices::Jira do
     
     it "handles installed event" do
       stub_request(:get, "http://u:p@foo.com/a/rest/api/2/issue/createmeta").
-        #with(:body => hash_including({:fields => {:summary => "Strange name"}})#,
-          #:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'Content-Type'=>'application/json', 'User-Agent'=>'Faraday v0.8.7'}
-        #  ).
-        to_return(:status => 200, :body => "{\"expand\":\"projects\",\"projects\":[{\"self\":\"http://www.example.com/jira/rest/api/2/project/EX\",\"id\":\"10000\",\"key\":\"EX\",\"name\":\"ExampleProject\",\"avatarUrls\":{\"16x16\":\"http://www.example.com/jira/secure/projectavatar?size=small&pid=10000&avatarId=10011\",\"48x48\":\"http://www.example.com/jira/secure/projectavatar?pid=10000&avatarId=10011\"},\"issuetypes\":[{\"self\":\"http://www.example.com/jira/rest/api/2/issueType/1\",\"id\":\"1\",\"description\":\"Anerrorinthecode\",\"iconUrl\":\"http://www.example.com/jira/images/icons/issuetypes/bug.png\",\"name\":\"Bug\",\"subtask\":false,\"fields\":{\"issuetype\":{\"required\":true,\"name\":\"IssueType\",\"operations\":[\"set\"]}}}]}]}" , :headers => {})
+        to_return(:status => 200, :body => raw_fixture('jira_createmeta.json'), :headers => {})
+      stub_request(:get, "http://u:p@foo.com/a/rest/api/2/project/APPJ/statuses").
+        to_return(:status => 200, :body => raw_fixture('jira_project_statuses.json'), :headers => {})
       
       service = AhaServices::Jira.new(:installed,
         {'server_url' => 'http://foo.com/a', 'username' => 'u', 'password' => 'p', 'api_version' => 'a'},
         nil)
       service.receive
-      service.meta_data.projects[0]["key"].should == "EX"
+      service.meta_data.projects[0]["key"].should == "APPJ"
       service.meta_data.projects[0].issue_types[0].name.should == "Bug"     
+      service.meta_data.projects[0].issue_types[0].statuses[0].name.should == "Open"     
     end
     
   end

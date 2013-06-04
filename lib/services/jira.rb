@@ -7,10 +7,10 @@ class AhaServices::Jira < AhaService
   select :project, collection: ->(meta_data, data) { meta_data.projects.collect{|p| [p.name, p['key']] } }
   select :feature_issue_type, collection: ->(meta_data, data) { 
     meta_data.projects.detect {|p| p['key'] == data.project}.issue_types.collect{|p| [p.name, p.id] } 
-  }
+  }, description: "Issue type to use for features which contain requirements."
   select :requirement_issue_type, collection: ->(meta_data, data) { 
     meta_data.projects.detect {|p| p['key'] == data.project}.issue_types.collect{|p| [p.name, p.id] } 
-  }
+  }, description: "Issue type to use for requirements, or features with no requirements."
   
   callback_url
   
@@ -22,9 +22,23 @@ class AhaServices::Jira < AhaService
     process_response(response, 200) do |meta|      
       meta['projects'].each do |project|
         issue_types = []
-        project['issuetypes'].each do |issue_type|
-          issue_types << {:id => issue_type['id'], :name => issue_type['name']}
+        #project['issuetypes'].each do |issue_type|
+        #  issue_types << {:id => issue_type['id'], :name => issue_type['name'], :subtask => issue_type['subtask']}
+        #end
+        
+        # Get the statuses.
+        status_response = http_get '%s/rest/api/2/project/%s/statuses' % [data.server_url, project['key']]
+        process_response(status_response, 200) do |status_meta|      
+          status_meta.each do |issue_type|
+            statuses = []
+            issue_type['statuses'].each do |status|
+              statuses << {:id => status['id'], :name => status['name']}
+            end
+            
+            issue_types << {:id => issue_type['id'], :name => issue_type['name'], :subtask => issue_type['subtask'], :statuses => statuses}
+          end
         end
+        
         projects << {:id => project['id'], :key => project['key'], :name => project['name'], :issue_types => issue_types}
       end
     end
@@ -33,7 +47,7 @@ class AhaServices::Jira < AhaService
   end
   
   def receive_create_feature
-    create_jira_issue(payload.feature, "DEMO")
+    create_jira_issue(payload.feature, data.project)
   end
 
   def receive_webhook
@@ -51,7 +65,7 @@ protected
     integration_field = api.search_integration_fields(:jira, :id, issue_id)
     if integration_field
       # TODO: translate body from textile to HTML.
-      api.create_comment_with_url(integration_field.object.url, 
+      api.create_comment_with_url(integration_field.object.resource, 
         comment.author.emailAddress, comment.body)
     end
   end
@@ -61,8 +75,8 @@ protected
       fields: {
         project: {key: project_key},
         summary: feature.name,
-        description: convert_html(feature.description.body),
-        issuetype: {id: 1}
+        description: append_link(convert_html(feature.description.body), feature),
+        issuetype: {id: data.feature_issue_type}
       }
     }
     prepare_request
@@ -111,6 +125,10 @@ protected
     parser = HTMLToConfluenceParser.new
     parser.feed(html)
     parser.to_wiki_markup
+  end
+  
+  def append_link(body, feature)
+    "#{body}\n\nCreated from Aha! [#{feature.reference_num}|#{feature.url}]."
   end
   
 end
