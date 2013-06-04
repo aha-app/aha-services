@@ -31,9 +31,6 @@ class AhaServices::Jira < AhaService
     process_response(response, 200) do |meta|      
       meta['projects'].each do |project|
         issue_types = []
-        #project['issuetypes'].each do |issue_type|
-        #  issue_types << {:id => issue_type['id'], :name => issue_type['name'], :subtask => issue_type['subtask']}
-        #end
         
         # Get the statuses.
         status_response = http_get '%s/rest/api/2/project/%s/statuses' % [data.server_url, project['key']]
@@ -58,6 +55,7 @@ class AhaServices::Jira < AhaService
   def receive_create_feature
     feature_id = create_jira_issue(data.feature_issue_type, payload.feature, data.project)
     payload.feature.requirements.each do |requirement|
+      # TODO: don't create requirements that have been dropped.
       create_jira_issue(data.requirement_issue_type, requirement, data.project, feature_id)
     end
   end
@@ -70,12 +68,13 @@ protected
     issue = {
       fields: {
         project: {key: project_key},
-        parent: parent,
         summary: resource.name || "Aha requirement #{resource.reference_num}",
         description: append_link(convert_html(resource.description.body), resource),
         issuetype: {id: issue_type}
       }
     }
+    issue[:fields][:parent] = {id: parent} if parent
+    
     prepare_request
     response = http_post '%s/rest/api/2/issue' % [data.server_url], issue.to_json 
     process_response(response, 201) do |new_issue|      

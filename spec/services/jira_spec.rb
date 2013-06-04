@@ -20,16 +20,16 @@ describe AhaServices::Jira do
       with(:body => {:integration_field => {:name => "url", :value => "http://foo.com/a/browse/DEMO-10"}}).
       to_return(:status => 201, :body => "", :headers => {})
     # Call back into Aha! for requirement
-    stub_request(:post, "https://a.aha.io/api/v1/features/OPS-11-1/integrations/jira/fields").
+    stub_request(:post, "https://a.aha.io/api/v1/requirements/OPS-11-1/integrations/jira/fields").
       with(:body => {:integration_field => {:name => "id", :value => "10009"}}).
       to_return(:status => 201, :body => "", :headers => {})
-    stub_request(:post, "https://a.aha.io/api/v1/features/OPS-11-1/integrations/jira/fields").
+    stub_request(:post, "https://a.aha.io/api/v1/requirements/OPS-11-1/integrations/jira/fields").
       with(:body => {:integration_field => {:name => "key", :value => "DEMO-10"}}).
       to_return(:status => 201, :body => "", :headers => {})
-    stub_request(:post, "https://a.aha.io/api/v1/features/OPS-11-1/integrations/jira/fields").
+    stub_request(:post, "https://a.aha.io/api/v1/requirements/OPS-11-1/integrations/jira/fields").
       with(:body => {:integration_field => {:name => "url", :value => "http://foo.com/a/browse/DEMO-10"}}).
       to_return(:status => 201, :body => "", :headers => {})
-      
+    
     AhaServices::Jira.new(:create_feature,
       {'server_url' => 'http://foo.com/a', 'username' => 'u', 'password' => 'p'},
       json_fixture('feature_event.json')).receive
