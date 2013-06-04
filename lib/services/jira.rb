@@ -1,18 +1,27 @@
 require 'html2confluence'
 
 class AhaServices::Jira < AhaService
-  string :server_url
+  string :server_url, description: "URL for the Jira server, without the trailing slash, e.g. https://bigaha.atlassian.net"
   string :username
   password :password
   select :project, collection: ->(meta_data, data) { meta_data.projects.collect{|p| [p.name, p['key']] } }
-  select :feature_issue_type, collection: ->(meta_data, data) { 
-    meta_data.projects.detect {|p| p['key'] == data.project}.issue_types.collect{|p| [p.name, p.id] } 
-  }, description: "Issue type to use for features which contain requirements."
+  select :feature_issue_type, 
+    collection: ->(meta_data, data) { 
+      meta_data.projects.detect {|p| p['key'] == data.project}.issue_types.collect{|p| [p.name, p.id] } 
+    }, description: "Issue type to use for features."
+  select :feature_complete_status, 
+    collection: ->(meta_data, data) { 
+      meta_data.projects.detect {|p| p['key'] == data.project}.issue_types.detect {|t| t['id'] == data.feature_issue_type}.statuses.collect{|p| [p.name, p.id] } 
+    }, description: "Jira status that indicates a feature is ready to ship."
   select :requirement_issue_type, collection: ->(meta_data, data) { 
     meta_data.projects.detect {|p| p['key'] == data.project}.issue_types.collect{|p| [p.name, p.id] } 
-  }, description: "Issue type to use for requirements, or features with no requirements."
+  }, description: "Issue type to use for requirements."
+  select :requirement_complete_status, 
+    collection: ->(meta_data, data) { 
+      meta_data.projects.detect {|p| p['key'] == data.project}.issue_types.detect {|t| t['id'] == data.requirement_issue_type}.statuses.collect{|p| [p.name, p.id] } 
+    }, description: "Jira status that indicates a requirement is ready to ship."
   
-  callback_url
+  callback_url description: "URL to add to the webhooks section of Jira."
   
   def receive_installed
     projects = []
