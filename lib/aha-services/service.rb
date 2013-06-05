@@ -59,6 +59,14 @@ class AhaService
     }
   end
   
+  # Returns the list of events the service responds to.
+  def self.responds_to_events
+    self.instance_methods.collect do |method|
+      method =~ /receive_(.+)/
+      $1
+    end.compact.collect {|e| e.to_sym }
+  end
+  
   def respond_to_event?
     !@event_method.nil?
   end
