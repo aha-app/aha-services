@@ -22,11 +22,11 @@ protected
   def comment_on_record(commit_payload, ref_num, commit)
     record_type = ref_num =~ /-[0-9]+-/ ? "requirements" : "features"
     
-    message = <<EOF
-<p>#{commit.committer.name} (#{commit.committer.email}) committed to <a href="#{commit_payload.repository.url}">#{commit_payload.repository.name}</a>:</p>
-<blockquote><pre>#{commit.message}</pre></blockquote>
-<p>Commit: <a href="#{commit.url}">#{commit.url}</a></p>
-EOF
+    message = <<-EOF
+      <p>#{commit.committer.name} (#{commit.committer.email}) committed to <a href="#{commit_payload.repository.url}">#{commit_payload.repository.name}</a>:</p>
+      <blockquote><pre>#{commit.message}</pre></blockquote>
+      <p>Commit: <a href="#{commit.url}">#{commit.url}</a></p>
+    EOF
 
     begin
       api.create_comment(record_type, ref_num, commit.committer.email, message)

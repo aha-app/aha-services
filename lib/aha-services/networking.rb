@@ -17,11 +17,17 @@ module Networking
 
       Faraday.new(options) do |b|
         #b.use HttpReporter, self
-        b.request :url_encoded
+        logger.info("USING OPTION: #{options[:encoding] || :url_encoded}")
+        b.request options[:encoding] || :url_encoded
         b.adapter *(options[:adapter] || :net_http)
         b.use(HttpReporter, self)
       end
     end
+  end
+  
+  # Reset the HTTP connection so it can be recreated with new options.
+  def http_reset
+    @http = nil
   end
   
   # Gets the path to the SSL Certificate Authority certs.  These were taken

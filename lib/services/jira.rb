@@ -1,4 +1,5 @@
 require 'html2confluence'
+require 'open-uri'
 
 class AhaServices::Jira < AhaService
   string :server_url, description: "URL for the Jira server, without the trailing slash, e.g. https://bigaha.atlassian.net"
@@ -64,11 +65,12 @@ protected
 
   def create_jira_issue(issue_type, resource, project_key, parent = nil)
     issue_id = nil
+    issue_key = nil
     
     issue = {
       fields: {
         project: {key: project_key},
-        summary: resource.name || "Aha requirement #{resource.reference_num}",
+        summary: resource.name || "Requirement #{resource.reference_num}",
         description: append_link(convert_html(resource.description.body), resource),
         issuetype: {id: issue_type}
       }
@@ -87,9 +89,35 @@ protected
       api.create_integration_field(resource.reference_num, :jira, :url, "#{data.server_url}/browse/#{issue_key}")
     end
     
+    # Add attachments.
+    resource.description.attachments.each do |attachment|
+      upload_attachment(attachment, issue_id)
+    end
+    
     issue_id
   end
 
+  def upload_attachment(attachment, issue_id)
+    open(attachment.download_url) do |downloaded_file|
+      # Reset Faraday and switch to multipart to do the file upload.
+      http_reset 
+      http(:encoding => :multipart)
+      http.headers['X-Atlassian-Token'] = 'nocheck'
+      http.basic_auth data.username, data.password
+      
+      file = Faraday::UploadIO.new(downloaded_file, attachment.content_type, attachment.file_name)
+      response = http_post '%s/rest/api/2/issue/%s/attachments' % [data.server_url, issue_id], {:file => file} 
+      process_response(response, 200) do
+        # Success.
+      end
+    end
+        
+  rescue AhaService::RemoteError => e
+    logger.error("Failed to upload attachment to #{issue_key}: #{e.message}")
+  ensure
+    http_reset 
+  end
+  
   def parse(body)
     if body.nil? or body.length < 2
       {}
@@ -100,6 +128,7 @@ protected
   
   def prepare_request
     http.headers['Content-Type'] = 'application/json'
+    http.headers['X-Atlassian-Token'] = 'nocheck'
     http.basic_auth data.username, data.password
   end
   
@@ -126,7 +155,7 @@ protected
   end
   
   def append_link(body, resource)
-    "#{body}\n\nCreated from Aha! [#{resource.reference_num}|#{resource.url}]."
+    "#{body}\n\nCreated from [#{resource.reference_num}|#{resource.url}] in Aha!."
   end
   
 end
