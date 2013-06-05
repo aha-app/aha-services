@@ -135,7 +135,6 @@ protected
   
   def prepare_request
     http.headers['Content-Type'] = 'application/json'
-    http.headers['X-Atlassian-Token'] = 'nocheck'
     http.basic_auth data.username, data.password
   end
   
@@ -143,7 +142,7 @@ protected
     if success_codes.include?(response.status)
       yield parse(response.body)
     elsif response.status == 401 || response.status == 403
-      raise AhaService::RemoteError, "Authentication failed: #{response.status}"
+      raise AhaService::RemoteError, "Authentication failed: #{response.status} #{response.headers['X-Authentication-Denied-Reason']}"
     elsif response.status == 400
       errors = parse(response.body)
       error_string = errors["errorMessages"].join(", ") + 
