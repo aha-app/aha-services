@@ -10,21 +10,17 @@ class AhaServices::Jira < AhaService
     collection: ->(meta_data, data) { 
       meta_data.projects.detect {|p| p['key'] == data.project}.issue_types.collect{|p| [p.name, p.id] } 
     }, description: "Issue type to use for features."
-  select :feature_complete_status, 
-    collection: ->(meta_data, data) { 
-      meta_data.projects.detect {|p| p['key'] == data.project}.issue_types.detect {|t| t['id'] == data.feature_issue_type}.statuses.collect{|p| [p.name, p.id] } 
-    }, description: "Jira status that indicates a feature is ready to ship."
+  internal :feature_status_mapping
   select :requirement_issue_type, collection: ->(meta_data, data) { 
     meta_data.projects.detect {|p| p['key'] == data.project}.issue_types.collect{|p| [p.name, p.id] } 
   }, description: "Issue type to use for requirements."
-  select :requirement_complete_status, 
-    collection: ->(meta_data, data) { 
-      meta_data.projects.detect {|p| p['key'] == data.project}.issue_types.detect {|t| t['id'] == data.requirement_issue_type}.statuses.collect{|p| [p.name, p.id] } 
-    }, description: "Jira status that indicates a requirement is ready to ship."
+  internal :requirement_status_mapping
+  internal :resolution_mapping
   
   callback_url description: "URL to add to the webhooks section of Jira."
   
   def receive_installed
+    logger.info("DATA: #{data.inspect}")
     
     prepare_request
     response = http_get '%s/rest/api/2/issue/createmeta' % [data.server_url]
@@ -42,11 +38,13 @@ class AhaServices::Jira < AhaService
               statuses << {:id => status['id'], :name => status['name']}
             end
             
-            issue_types << {:id => issue_type['id'], :name => issue_type['name'], :subtask => issue_type['subtask'], :statuses => statuses}
+            issue_types << {:id => issue_type['id'], :name => issue_type['name'], 
+              :subtask => issue_type['subtask'], :statuses => statuses}
           end
         end
         
-        projects << {:id => project['id'], :key => project['key'], :name => project['name'], :issue_types => issue_types}
+        projects << {:id => project['id'], :key => project['key'], 
+          :name => project['name'], :issue_types => issue_types}
       end
     end
     @meta_data.projects = projects

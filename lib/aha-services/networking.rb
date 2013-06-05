@@ -17,7 +17,6 @@ module Networking
 
       Faraday.new(options) do |b|
         #b.use HttpReporter, self
-        logger.info("USING OPTION: #{options[:encoding] || :url_encoded}")
         b.request options[:encoding] || :url_encoded
         b.adapter *(options[:adapter] || :net_http)
         b.use(HttpReporter, self)
@@ -68,6 +67,8 @@ module Networking
   # Yields a Faraday::Request instance.
   # Returns a Faraday::Response instance.
   def http_get(url = nil, params = nil, headers = nil)
+    logger.info("FROM URL: #{url.inspect}")
+    
     http.get do |req|
       req.url(url)                if url
       req.params.update(params)   if params

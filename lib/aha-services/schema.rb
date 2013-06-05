@@ -23,7 +23,11 @@ module Schema
     def callback_url(options = {})
       add_to_schema :callback_url, "callback_url", options
     end
-  
+    
+    def internal(name, options = {})
+      add_to_schema :internal, name, options
+    end
+    
     def add_to_schema(type, name, options)
       schema << [type, name.to_sym, options]
     end
