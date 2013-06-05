@@ -1,18 +1,27 @@
 require 'html2confluence'
 
 class AhaServices::Jira < AhaService
-  string :server_url
+  string :server_url, description: "URL for the Jira server, without the trailing slash, e.g. https://bigaha.atlassian.net"
   string :username
   password :password
   select :project, collection: ->(meta_data, data) { meta_data.projects.collect{|p| [p.name, p['key']] } }
-  select :feature_issue_type, collection: ->(meta_data, data) { 
-    meta_data.projects.detect {|p| p['key'] == data.project}.issue_types.collect{|p| [p.name, p.id] } 
-  }
+  select :feature_issue_type, 
+    collection: ->(meta_data, data) { 
+      meta_data.projects.detect {|p| p['key'] == data.project}.issue_types.collect{|p| [p.name, p.id] } 
+    }, description: "Issue type to use for features."
+  select :feature_complete_status, 
+    collection: ->(meta_data, data) { 
+      meta_data.projects.detect {|p| p['key'] == data.project}.issue_types.detect {|t| t['id'] == data.feature_issue_type}.statuses.collect{|p| [p.name, p.id] } 
+    }, description: "Jira status that indicates a feature is ready to ship."
   select :requirement_issue_type, collection: ->(meta_data, data) { 
     meta_data.projects.detect {|p| p['key'] == data.project}.issue_types.collect{|p| [p.name, p.id] } 
-  }
+  }, description: "Issue type to use for requirements."
+  select :requirement_complete_status, 
+    collection: ->(meta_data, data) { 
+      meta_data.projects.detect {|p| p['key'] == data.project}.issue_types.detect {|t| t['id'] == data.requirement_issue_type}.statuses.collect{|p| [p.name, p.id] } 
+    }, description: "Jira status that indicates a requirement is ready to ship."
   
-  callback_url
+  callback_url description: "URL to add to the webhooks section of Jira."
   
   def receive_installed
     projects = []
@@ -22,9 +31,20 @@ class AhaServices::Jira < AhaService
     process_response(response, 200) do |meta|      
       meta['projects'].each do |project|
         issue_types = []
-        project['issuetypes'].each do |issue_type|
-          issue_types << {:id => issue_type['id'], :name => issue_type['name']}
+        
+        # Get the statuses.
+        status_response = http_get '%s/rest/api/2/project/%s/statuses' % [data.server_url, project['key']]
+        process_response(status_response, 200) do |status_meta|      
+          status_meta.each do |issue_type|
+            statuses = []
+            issue_type['statuses'].each do |status|
+              statuses << {:id => status['id'], :name => status['name']}
+            end
+            
+            issue_types << {:id => issue_type['id'], :name => issue_type['name'], :subtask => issue_type['subtask'], :statuses => statuses}
+          end
         end
+        
         projects << {:id => project['id'], :key => project['key'], :name => project['name'], :issue_types => issue_types}
       end
     end
@@ -33,38 +53,28 @@ class AhaServices::Jira < AhaService
   end
   
   def receive_create_feature
-    create_jira_issue(payload.feature, "DEMO")
-  end
-
-  def receive_webhook
-    if payload.webhookEvent == "jira:issue_updated" && payload.comment
-      add_comment(payload.issue.id, payload.comment)
-    else
-      # Unhandled webhook
+    feature_id = create_jira_issue(data.feature_issue_type, payload.feature, data.project)
+    payload.feature.requirements.each do |requirement|
+      # TODO: don't create requirements that have been dropped.
+      create_jira_issue(data.requirement_issue_type, requirement, data.project, feature_id)
     end
   end
-  
+
 protected
 
-  def add_comment(issue_id, comment)
-    # Find the feature or requirement the issue maps to.
-    integration_field = api.search_integration_fields(:jira, :id, issue_id)
-    if integration_field
-      # TODO: translate body from textile to HTML.
-      api.create_comment_with_url(integration_field.object.url, 
-        comment.author.emailAddress, comment.body)
-    end
-  end
-
-  def create_jira_issue(feature, project_key)
+  def create_jira_issue(issue_type, resource, project_key, parent = nil)
+    issue_id = nil
+    
     issue = {
       fields: {
         project: {key: project_key},
-        summary: feature.name,
-        description: convert_html(feature.description.body),
-        issuetype: {id: 1}
+        summary: resource.name || "Aha requirement #{resource.reference_num}",
+        description: append_link(convert_html(resource.description.body), resource),
+        issuetype: {id: issue_type}
       }
     }
+    issue[:fields][:parent] = {id: parent} if parent
+    
     prepare_request
     response = http_post '%s/rest/api/2/issue' % [data.server_url], issue.to_json 
     process_response(response, 201) do |new_issue|      
@@ -72,10 +82,12 @@ protected
       issue_key = new_issue["key"]
       logger.info("Created issue #{issue_id} / #{issue_key}")
       
-      api.create_integration_field(feature.reference_num, :jira, :id, issue_id)
-      api.create_integration_field(feature.reference_num, :jira, :key, issue_key)
-      api.create_integration_field(feature.reference_num, :jira, :url, "#{data.server_url}/browse/#{issue_key}")
+      api.create_integration_field(resource.reference_num, :jira, :id, issue_id)
+      api.create_integration_field(resource.reference_num, :jira, :key, issue_key)
+      api.create_integration_field(resource.reference_num, :jira, :url, "#{data.server_url}/browse/#{issue_key}")
     end
+    
+    issue_id
   end
 
   def parse(body)
@@ -111,6 +123,10 @@ protected
     parser = HTMLToConfluenceParser.new
     parser.feed(html)
     parser.to_wiki_markup
+  end
+  
+  def append_link(body, resource)
+    "#{body}\n\nCreated from Aha! [#{resource.reference_num}|#{resource.url}]."
   end
   
 end
