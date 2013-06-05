@@ -25,10 +25,10 @@ class AhaServices::Jira < AhaService
   callback_url description: "URL to add to the webhooks section of Jira."
   
   def receive_installed
-    projects = []
     
     prepare_request
     response = http_get '%s/rest/api/2/issue/createmeta' % [data.server_url]
+    projects = []
     process_response(response, 200) do |meta|      
       meta['projects'].each do |project|
         issue_types = []
@@ -49,8 +49,17 @@ class AhaServices::Jira < AhaService
         projects << {:id => project['id'], :key => project['key'], :name => project['name'], :issue_types => issue_types}
       end
     end
-    
     @meta_data.projects = projects
+    
+    response = http_get '%s/rest/api/2/resolution' % [data.server_url]
+    resolutions = []
+    process_response(response, 200) do |meta|      
+      meta.each do |resolution|
+        resolutions << {:id => resolution['id'], :name => resolution['name']}
+      end
+    end
+    @meta_data.resolutions = resolutions
+    
   end
   
   def receive_create_feature

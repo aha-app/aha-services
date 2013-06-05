@@ -72,6 +72,8 @@ describe AhaServices::Jira do
         to_return(:status => 200, :body => raw_fixture('jira_createmeta.json'), :headers => {})
       stub_request(:get, "http://u:p@foo.com/a/rest/api/2/project/APPJ/statuses").
         to_return(:status => 200, :body => raw_fixture('jira_project_statuses.json'), :headers => {})
+      stub_request(:get, "http://u:p@foo.com/a/rest/api/2/resolution").
+        to_return(:status => 200, :body => raw_fixture('jira_resolutions.json'), :headers => {})
       
       service = AhaServices::Jira.new(:installed,
         {'server_url' => 'http://foo.com/a', 'username' => 'u', 'password' => 'p', 'api_version' => 'a'},

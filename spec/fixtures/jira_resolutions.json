@@ -1,0 +1,32 @@
+[
+  {
+    "self": "https:\/\/bigaha.atlassian.net\/rest\/api\/2\/resolution\/1",
+    "id": "1",
+    "description": "A fix for this issue is checked into the tree and tested.",
+    "name": "Fixed"
+  },
+  {
+    "self": "https:\/\/bigaha.atlassian.net\/rest\/api\/2\/resolution\/2",
+    "id": "2",
+    "description": "The problem described is an issue which will never be fixed.",
+    "name": "Won't Fix"
+  },
+  {
+    "self": "https:\/\/bigaha.atlassian.net\/rest\/api\/2\/resolution\/3",
+    "id": "3",
+    "description": "The problem is a duplicate of an existing issue.",
+    "name": "Duplicate"
+  },
+  {
+    "self": "https:\/\/bigaha.atlassian.net\/rest\/api\/2\/resolution\/4",
+    "id": "4",
+    "description": "The problem is not completely described.",
+    "name": "Incomplete"
+  },
+  {
+    "self": "https:\/\/bigaha.atlassian.net\/rest\/api\/2\/resolution\/5",
+    "id": "5",
+    "description": "All attempts at reproducing this issue failed, or not enough information was available to reproduce the issue. Reading the code produces no clues as to why this behavior would occur. If more information appears later, please reopen the issue.",
+    "name": "Cannot Reproduce"
+  }
+]
