@@ -1,4 +1,15 @@
 GIT
+  remote: https://383f0d3f6e966653045bbbe228f0d2c3eaa693c2:x-oauth-basic@github.com/aha-app/aha-api
+  revision: 654b1d7898eb8b9785a3af95c557cf30034993be
+  specs:
+    aha-api (1.0.1)
+      activesupport
+      faraday
+      faraday_middleware
+      hashie
+      multi_json
+
+GIT
   remote: https://github.com/k1w1/html2confluence.git
   revision: 3547124b74b2a9f2dd3699eda35970680050ec4c
   specs:
@@ -7,22 +18,12 @@ GIT
 PATH
   remote: .
   specs:
-    aha-services (1.0.2)
+    aha-services (1.0.4)
       activesupport
       aha-api
       faraday
       hashie (~> 2.0.0)
       html2confluence
-
-PATH
-  remote: ~/Documents/projects/aha/aha-api
-  specs:
-    aha-api (1.0.0)
-      activesupport
-      faraday
-      faraday_middleware
-      hashie
-      multi_json
 
 GEM
   remote: http://rubygems.org/
@@ -39,7 +40,7 @@ GEM
       faraday (>= 0.7.4, < 0.9)
     hashie (2.0.5)
     i18n (0.6.1)
-    multi_json (1.7.3)
+    multi_json (1.7.6)
     multipart-post (1.2.0)
     rspec (2.13.0)
       rspec-core (~> 2.13.0)
