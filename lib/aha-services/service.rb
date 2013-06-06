@@ -102,7 +102,7 @@ class AhaService
         @title ||= begin
           hook = name.dup
           hook.sub! /.*:/, ''
-          hook
+          hook.underscore.humanize
         end
       end
     end
@@ -124,9 +124,8 @@ class AhaService
       else
         @service_name ||= begin
           hook = name.dup
-          hook.downcase!
           hook.sub! /.*:/, ''
-          hook
+          hook.underscore
         end
       end
     end
