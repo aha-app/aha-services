@@ -13,7 +13,7 @@ class AhaServices::Jira < AhaService
   internal :feature_status_mapping
   select :requirement_issue_type, collection: ->(meta_data, data) { 
     meta_data.projects.detect {|p| p['key'] == data.project}.issue_types.collect{|p| [p.name, p.id] } 
-  }, description: "Issue type to use for requirements."
+  }, description: "Issue type to use for requirements - this should be a sub-type of the feature issue type."
   internal :requirement_status_mapping
   internal :resolution_mapping
   
@@ -161,7 +161,7 @@ protected
   end
   
   def append_link(body, resource)
-    "#{body}\n\nCreated from [#{resource.reference_num}|#{resource.url}] in Aha!."
+    "#{body}\n\nCreated from [#{resource.reference_num}|#{resource.url}] in Aha!"
   end
   
 end
