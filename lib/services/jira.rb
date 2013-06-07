@@ -8,20 +8,16 @@ class AhaServices::Jira < AhaService
   select :project, collection: ->(meta_data, data) { meta_data.projects.collect{|p| [p.name, p['key']] } }
   select :feature_issue_type, 
     collection: ->(meta_data, data) { 
-      meta_data.projects.detect {|p| p['key'] == data.project}.issue_types.collect{|p| [p.name, p.id] } 
-    }, description: "Issue type to use for features."
+      meta_data.projects.detect {|p| p['key'] == data.project}.issue_types.find_all{|i| !i['subtype']}.collect{|p| [p.name, p.id] } 
+    }, description: "Issue type that will be used for Jira issues."
   internal :feature_status_mapping
-  select :requirement_issue_type, collection: ->(meta_data, data) { 
-    meta_data.projects.detect {|p| p['key'] == data.project}.issue_types.collect{|p| [p.name, p.id] } 
-  }, description: "Issue type to use for requirements - this should be a sub-type of the feature issue type."
   internal :requirement_status_mapping
   internal :resolution_mapping
   
   callback_url description: "URL to add to the webhooks section of Jira."
   
   def receive_installed
-    logger.info("DATA: #{data.inspect}")
-    
+
     prepare_request
     response = http_get '%s/rest/api/2/issue/createmeta' % [data.server_url]
     projects = []
@@ -61,29 +57,28 @@ class AhaServices::Jira < AhaService
   end
   
   def receive_create_feature
-    feature_id = create_jira_issue(data.feature_issue_type, payload.feature, data.project)
+    feature_id = create_jira_issue(payload.feature, data.project)
     payload.feature.requirements.each do |requirement|
       # TODO: don't create requirements that have been dropped.
-      create_jira_issue(data.requirement_issue_type, requirement, data.project, feature_id)
+      create_jira_issue(requirement, data.project, feature_id)
     end
   end
 
 protected
 
-  def create_jira_issue(issue_type, resource, project_key, parent = nil)
+  def create_jira_issue(resource, project_key, parent = nil)
     issue_id = nil
     issue_key = nil
     
     issue = {
       fields: {
         project: {key: project_key},
-        summary: resource.name || "Requirement #{resource.reference_num}",
+        summary: resource.name || description_to_title(resource.description.body),
         description: append_link(convert_html(resource.description.body), resource),
-        issuetype: {id: issue_type}
+        issuetype: {id: data.feature_issue_type}
       }
     }
-    issue[:fields][:parent] = {id: parent} if parent
-    
+          
     prepare_request
     response = http_post '%s/rest/api/2/issue' % [data.server_url], issue.to_json 
     process_response(response, 201) do |new_issue|      
@@ -99,6 +94,24 @@ protected
     # Add attachments.
     resource.description.attachments.each do |attachment|
       upload_attachment(attachment, issue_id)
+    end
+    
+    # Create links.
+    if parent
+      link = {
+        type: {
+          name: "Relates"
+        },
+        outwardIssue: {
+          id: issue_id
+        },
+        inwardIssue: {
+          id: parent
+        }
+      }
+      response = http_post '%s/rest/api/2/issueLink' % [data.server_url], link.to_json 
+      process_response(response, 201) do |new_link|
+      end
     end
     
     issue_id
@@ -158,6 +171,15 @@ protected
     parser = HTMLToConfluenceParser.new
     parser.feed(html)
     parser.to_wiki_markup
+  end
+  
+  def description_to_title(body)
+    # Truncate at end of paragraph or sentence
+    body.gsub!(/\. .*/, "")
+    body.gsub!(/<\/p>.*/, "")
+    body.gsub!(/<\/?[^>]*>/, "")
+    trailer = "..." if body.length > 80
+    "#{body[0..80]}#{trailer}"
   end
   
   def append_link(body, resource)
