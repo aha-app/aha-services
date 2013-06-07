@@ -9,9 +9,12 @@ From Aha! to Jira
 * One Aha! product is associated with one Jira project.
 * Individual features can be sent to Jira using the _Send to Jira_ item in the _Actions_ menu on the features page.
 * All features in a release (that have not already been implemented or sent to Jira previously) can be sent to Jira using the _Send to Jira_ item in the _Actions_ menu on the release page.
-* When a feature is copied to Jira one issue will be created for the feature. If the feature has requirements then each requirement will also be sent as a sub-issue of the feature issue.
+* When a feature is copied to Jira one issue will be created for the feature. If 
+  the feature has requirements then each requirement will also be sent as a 
+  linked issue of the feature issue.
 * Only the description of a feature or requirement is sent. No tasks or comments are included. 
 * Attachments of a feature or requirement are also sent.
+* When a feature is sent to Jira, its status in Aha! is automatically changed to Ready to develop.
 * Any additional changes made to an Aha! feature or requirement once it has been sent to Jira will not be added to the Jira issue.
 
 From Jira to Aha!
