@@ -11,7 +11,6 @@ class AhaServices::Jira < AhaService
       meta_data.projects.detect {|p| p['key'] == data.project}.issue_types.find_all{|i| !i['subtype']}.collect{|p| [p.name, p.id] } 
     }, description: "Issue type that will be used for Jira issues."
   internal :feature_status_mapping
-  internal :requirement_status_mapping
   internal :resolution_mapping
   
   callback_url description: "URL to add to the webhooks section of Jira."
