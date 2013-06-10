@@ -25,6 +25,8 @@ From Jira to Aha!
 	
 ## Configuration
 
+You need to be a Product Owner in Aha! and an Administrator in Jira to set up this integration.
+
 Please carefully follow these instructions to ensure that the integration is properly configured.
 
 1.	Configure the Server URL, Username and Password below.
