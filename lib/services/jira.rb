@@ -94,6 +94,9 @@ protected
     resource.description.attachments.each do |attachment|
       upload_attachment(attachment, issue_id)
     end
+    resource.attachments.each do |attachment|
+      upload_attachment(attachment, issue_id)
+    end
     
     # Create links.
     if parent
