@@ -8,6 +8,10 @@ describe AhaServices::Jira do
     # Add attachments.
     stub_request(:post, "http://u:p@foo.com/a/rest/api/2/issue/10009/attachments").
       to_return(:status => 200)
+    # Link to requirement.
+    stub_request(:post, "http://foo.com/a/rest/api/2/issueLink").
+      with(:body => {"{\"type\":{\"name\":\"Relates\"},\"outwardIssue\":{\"id\":\"10009\"},\"inwardIssue\":{\"id\":\"10009\"}}"=>true}).
+      to_return(:status => 201)
     
     # Call back into Aha! for feature
     stub_request(:post, "https://a.aha.io/api/v1/features/PROD-2/integrations/jira/fields").
@@ -69,11 +73,30 @@ describe AhaServices::Jira do
     
     it "handles installed event" do
       stub_request(:get, "http://u:p@foo.com/a/rest/api/2/issue/createmeta").
-        to_return(:status => 200, :body => raw_fixture('jira_createmeta.json'), :headers => {})
+        to_return(:status => 200, :body => raw_fixture('jira/jira_createmeta.json'), :headers => {})
       stub_request(:get, "http://u:p@foo.com/a/rest/api/2/project/APPJ/statuses").
-        to_return(:status => 200, :body => raw_fixture('jira_project_statuses.json'), :headers => {})
+        to_return(:status => 200, :body => raw_fixture('jira/jira_project_statuses.json'), :headers => {})
       stub_request(:get, "http://u:p@foo.com/a/rest/api/2/resolution").
-        to_return(:status => 200, :body => raw_fixture('jira_resolutions.json'), :headers => {})
+        to_return(:status => 200, :body => raw_fixture('jira/jira_resolutions.json'), :headers => {})
+      
+      service = AhaServices::Jira.new(:installed,
+        {'server_url' => 'http://foo.com/a', 'username' => 'u', 'password' => 'p', 'api_version' => 'a'},
+        nil)
+      service.receive
+      service.meta_data.projects[0]["key"].should == "APPJ"
+      service.meta_data.projects[0].issue_types[0].name.should == "Bug"     
+      service.meta_data.projects[0].issue_types[0].statuses[0].name.should == "Open"     
+    end
+    
+    it "handles installed event for Jira 5.0" do
+      stub_request(:get, "http://u:p@foo.com/a/rest/api/2/issue/createmeta").
+        to_return(:status => 200, :body => raw_fixture('jira/jira_createmeta.json'), :headers => {})
+      stub_request(:get, "http://u:p@foo.com/a/rest/api/2/project/APPJ/statuses").
+        to_return(:status => 404, :headers => {})
+      stub_request(:get, "http://u:p@foo.com/a/rest/api/2/status").
+        to_return(:status => 200, :body => raw_fixture('jira/jira_status.json'), :headers => {})
+      stub_request(:get, "http://u:p@foo.com/a/rest/api/2/resolution").
+        to_return(:status => 200, :body => raw_fixture('jira/jira_resolutions.json'), :headers => {})
       
       service = AhaServices::Jira.new(:installed,
         {'server_url' => 'http://foo.com/a', 'username' => 'u', 'password' => 'p', 'api_version' => 'a'},

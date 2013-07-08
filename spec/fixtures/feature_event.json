@@ -30,6 +30,7 @@
         }
       ]
     },
+    "attachments": [],
     "url": "http://watersco.aha.io/features/PROD-2",
     "resource": "http://watersco.aha.io/api/v1/features/PROD-2",
     "release": {
@@ -51,6 +52,7 @@
         "id": "5886072825272941795",
         "url": "http://watersco.aha.io/requirements/PROD-2-1",
         "resource": "http://watersco.aha.io/api/v1/requirements/PROD-2-1",
+        "attachments": [],
         "description": {
           "body": "<p>First requirement<br></p>",
           "id": "5886072825267650900",

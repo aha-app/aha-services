@@ -26,15 +26,31 @@ class AhaServices::Jira < AhaService
         
         # Get the statuses.
         status_response = http_get '%s/rest/api/2/project/%s/statuses' % [data.server_url, project['key']]
-        process_response(status_response, 200) do |status_meta|      
-          status_meta.each do |issue_type|
+        if status_response.status == 404
+          # In Jira 5.0 the status is not associated with each issue type.
+          status_response = http_get '%s/rest/api/2/status' % [data.server_url]
+          process_response(status_response, 200) do |status_meta|      
             statuses = []
-            issue_type['statuses'].each do |status|
+            status_meta.each do |status|
               statuses << {:id => status['id'], :name => status['name']}
             end
+
+            project['issuetypes'].each do |issue_type|
+              issue_types << {:id => issue_type['id'], :name => issue_type['name'], 
+                :subtask => issue_type['subtask'], :statuses => statuses}
+            end
+          end
+        else
+          process_response(status_response, 200) do |status_meta|      
+            status_meta.each do |issue_type|
+              statuses = []
+              issue_type['statuses'].each do |status|
+                statuses << {:id => status['id'], :name => status['name']}
+              end
             
-            issue_types << {:id => issue_type['id'], :name => issue_type['name'], 
-              :subtask => issue_type['subtask'], :statuses => statuses}
+              issue_types << {:id => issue_type['id'], :name => issue_type['name'], 
+                :subtask => issue_type['subtask'], :statuses => statuses}
+            end
           end
         end
         

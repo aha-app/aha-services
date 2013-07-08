@@ -1,3 +1,5 @@
+require 'active_support/core_ext/string'
+
 class AhaService
   include Networking
   include Errors
