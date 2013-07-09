@@ -88,7 +88,7 @@ protected
     issue = {
       fields: {
         project: {key: project_key},
-        summary: resource.name || description_to_title(resource.description.body),
+        summary: resource.name || description_to_title(resource.description.body.dup),
         description: append_link(convert_html(resource.description.body), resource),
         issuetype: {id: data.feature_issue_type}
       }
