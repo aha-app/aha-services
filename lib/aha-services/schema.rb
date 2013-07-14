@@ -23,6 +23,10 @@ module Schema
     def callback_url(options = {})
       add_to_schema :callback_url, "callback_url", options
     end
+
+    def install_button(options = {})
+      add_to_schema :install_button, "install_button", options
+    end
     
     def internal(name, options = {})
       add_to_schema :internal, name, options

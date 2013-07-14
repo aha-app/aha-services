@@ -5,6 +5,7 @@ class AhaServices::Jira < AhaService
   string :server_url, description: "URL for the Jira server, without the trailing slash, e.g. https://bigaha.atlassian.net"
   string :username
   password :password
+  install_button
   select :project, collection: ->(meta_data, data) { meta_data.projects.collect{|p| [p.name, p['key']] } }
   select :feature_issue_type, 
     collection: ->(meta_data, data) { 
