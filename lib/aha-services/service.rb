@@ -55,7 +55,7 @@ class AhaService
   
   def self.default_http_options
     @@default_http_options ||= {
-      :request => {:timeout => 10, :open_timeout => 5},
+      :request => {:timeout => 120, :open_timeout => 5},
       :ssl => {:verify_depth => 5},
       :headers => {}
     }
@@ -79,7 +79,7 @@ class AhaService
       return
     end
     logger.info("Sending :#{@event} using #{self.class.title}")
-    timeout_sec = (timeout || 120).to_i
+    timeout_sec = (timeout || 130).to_i
     Timeout.timeout(timeout_sec, TimeoutError) do
       send(event_method)
     end
