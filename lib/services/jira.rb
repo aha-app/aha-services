@@ -17,7 +17,6 @@ class AhaServices::Jira < AhaService
   callback_url description: "URL to add to the webhooks section of Jira."
   
   def receive_installed
-
     prepare_request
     response = http_get '%s/rest/api/2/issue/createmeta' % [data.server_url]
     projects = []
@@ -79,6 +78,23 @@ class AhaServices::Jira < AhaService
       create_jira_issue(requirement, data.project, feature_id)
     end
   end
+  
+  def receive_update_feature
+    feature_id = get_jira_id(payload.feature.integration_fields)
+    update_jira_issue(feature_id, payload.feature)
+    
+    # Create or update each requirement.
+    payload.feature.requirements.each do |requirement|
+      requirement_id = get_jira_id(requirement.integration_fields)
+      if requirement_id
+        # Update requirement.
+        update_jira_issue(requirement_id, requirement)
+      else
+        # Create new requirement.
+        create_jira_issue(requirement, data.project, feature_id)
+      end
+    end
+  end
 
 protected
 
@@ -134,6 +150,36 @@ protected
     end
     
     issue_id
+  end
+  
+  def update_jira_issue(issue_id, resource)
+    issue = {
+      fields: {
+        description: append_link(convert_html(resource.description.body), resource),
+      }
+    }
+          
+    prepare_request
+    response = http_put '%s/rest/api/2/issue/%s' % [data.server_url, issue_id], issue.to_json 
+    process_response(response, 204) do |new_issue|      
+      logger.info("Updated issue #{issue_id}")
+    end
+    
+    # TODO: upload attachments.
+  end
+  
+  #
+  # Get the Jira key from an array of integration fields.
+  #
+  def get_jira_id(integration_fields)
+    field = integration_fields.detect do |f|
+      f.service_name == "jira" and f.name == "id"
+    end
+    if field
+      field.value
+    else
+      nil
+    end
   end
 
   def upload_attachment(attachment, issue_id)
@@ -202,7 +248,7 @@ protected
   end
   
   def append_link(body, resource)
-    "#{body}\n\nCreated from [#{resource.reference_num}|#{resource.url}] in Aha!"
+    "#{body}\n\nCreated from Aha! [#{resource.reference_num}|#{resource.url}]"
   end
   
 end
