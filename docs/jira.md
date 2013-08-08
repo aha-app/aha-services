@@ -15,7 +15,7 @@ From Aha! to Jira
 * Only the description of a feature or requirement is sent. No tasks or comments are included. 
 * Attachments of a feature or requirement are also sent.
 * When a feature is sent to Jira, its status in Aha! is automatically changed to Ready to develop.
-* After a feature is sent to Jira, changes to the name, description, or new attachments, can be sent to Jira using the _Update Jira_ item in the _Actions_ menu on the features page or by sending all features in a release to Jira again. New requirements will also be created in Jira, however issues that were created for an existing requirement are not deleted from Jira if the requirement is deleted from Aha!. If an attachment is deleted in Aha! the corresponding attachment in Jira is not deleted. 
+* After a feature is first to Jira, changes to the name, description, requirements or attachments, can also be sent to Jira using the _Update Jira_ item in the _Actions_ menu on the features page or by sending all features in a release to Jira again. New requirements will also be created in Jira, however issues that were created for an existing requirement are not deleted from Jira if the requirement is deleted from Aha!. If an attachment is deleted in Aha! the corresponding attachment in Jira is not deleted. 
 
 From Jira to Aha!
 
