@@ -18,7 +18,7 @@ GIT
 PATH
   remote: .
   specs:
-    aha-services (1.0.9)
+    aha-services (1.0.12)
       activesupport
       aha-api
       faraday

@@ -158,6 +158,7 @@ protected
         description: append_link(convert_html(resource.description.body), resource),
       }
     }
+    issue[:fields][:summary] = resource.name if resource.name
           
     prepare_request
     response = http_put '%s/rest/api/2/issue/%s' % [data.server_url, issue_id], issue.to_json 

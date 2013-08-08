@@ -46,7 +46,17 @@ describe AhaServices::Jira do
         
     AhaServices::Jira.new(:create_feature,
       {'server_url' => 'http://foo.com/a', 'username' => 'u', 'password' => 'p'},
-      json_fixture('feature_event.json')).receive
+      json_fixture('create_feature_event.json')).receive
+  end
+  
+  it "can upate existing features" do
+    # Call to Jira
+    stub_request(:put, "http://u:p@foo.com/a/rest/api/2/issue/10009").
+      to_return(:status => 204, :body => "{\"fields\":{\"description\":\"\\n\\nCreated from Aha! [PROD-2|http://watersco.aha.io/features/PROD-2]\",\"summary\":\"Feature with attachments\"}}", :headers => {})
+    
+    AhaServices::Jira.new(:update_feature,
+      {'server_url' => 'http://foo.com/a', 'username' => 'u', 'password' => 'p'},
+      json_fixture('update_feature_event.json')).receive
   end
   
   it "raises error when Jira fails" do
@@ -55,7 +65,7 @@ describe AhaServices::Jira do
     expect {
       AhaServices::Jira.new(:create_feature,
         {'server_url' => 'http://foo.com/a', 'username' => 'u', 'password' => 'p'},
-        json_fixture('feature_event.json')).receive
+        json_fixture('create_feature_event.json')).receive
     }.to raise_error(AhaService::RemoteError)
   end
   
@@ -65,7 +75,7 @@ describe AhaServices::Jira do
     expect {
       AhaServices::Jira.new(:create_feature,
         {'server_url' => 'http://foo.com/a', 'username' => 'u', 'password' => 'p'},
-        json_fixture('feature_event.json')).receive
+        json_fixture('create_feature_event.json')).receive
     }.to raise_error(AhaService::RemoteError)
   end
   
