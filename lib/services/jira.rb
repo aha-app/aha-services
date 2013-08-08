@@ -162,11 +162,33 @@ protected
           
     prepare_request
     response = http_put '%s/rest/api/2/issue/%s' % [data.server_url, issue_id], issue.to_json 
-    process_response(response, 204) do |new_issue|      
+    process_response(response, 204) do |updated_issue|      
       logger.info("Updated issue #{issue_id}")
     end
     
-    # TODO: upload attachments.
+    update_attachments(issue_id, resource)
+  end
+
+  def update_attachments(issue_id, resource)
+    # New list of attachments.
+    attachments = resource.attachments.dup | resource.description.attachments.dup
+    
+    # Get the current attachments.
+    status_response = http_get '%s/rest/api/2/issue/%s?fields=attachment' % [data.server_url, issue_id]
+    process_response(status_response, 200) do |issue|      
+      issue["fields"]["attachment"].each do |attachment|
+        
+        # Remove any attachments that match.
+        attachments.reject! do |a|
+          a.file_name == attachment["filename"] and a.file_size.to_i == attachment["size"].to_i
+        end
+      end
+    end
+    
+    # Create any attachments that didn't already exist.
+    attachments.each do |attachment|
+      upload_attachment(attachment, issue_id)
+    end
   end
   
   #
