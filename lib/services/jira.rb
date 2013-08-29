@@ -72,26 +72,36 @@ class AhaServices::Jira < AhaService
   end
   
   def receive_create_feature
-    feature_id = create_jira_issue(payload.feature, data.project)
+    version_id = get_jira_id(payload.feature.release.integration_fields)
+    unless version_id
+      logger.error("Version not created for release #{payload.feature.release.id}")
+    end
+    
+    feature_id = create_jira_issue(payload.feature, data.project, version_id)
     payload.feature.requirements.each do |requirement|
       # TODO: don't create requirements that have been dropped.
-      create_jira_issue(requirement, data.project, feature_id)
+      create_jira_issue(requirement, data.project, version_id, feature_id)
     end
   end
   
   def receive_update_feature
+    version_id = get_jira_id(payload.feature.release.integration_fields)
+    unless version_id
+      logger.error("Version not created for release #{payload.feature.release.id}")
+    end
+    
     feature_id = get_jira_id(payload.feature.integration_fields)
-    update_jira_issue(feature_id, payload.feature)
+    update_jira_issue(feature_id, payload.feature, version_id)
     
     # Create or update each requirement.
     payload.feature.requirements.each do |requirement|
       requirement_id = get_jira_id(requirement.integration_fields)
       if requirement_id
         # Update requirement.
-        update_jira_issue(requirement_id, requirement)
+        update_jira_issue(requirement_id, requirement, version_id)
       else
         # Create new requirement.
-        create_jira_issue(requirement, data.project, feature_id)
+        create_jira_issue(requirement, data.project, version_id, feature_id)
       end
     end
   end
@@ -141,7 +151,7 @@ protected
     end
   end
   
-  def create_jira_issue(resource, project_key, parent = nil)
+  def create_jira_issue(resource, project_key, version_id, parent = nil)
     issue_id = nil
     issue_key = nil
     
@@ -150,13 +160,16 @@ protected
         project: {key: project_key},
         summary: resource.name || description_to_title(resource.description.body.dup),
         description: append_link(convert_html(resource.description.body), resource),
-        issuetype: {id: data.feature_issue_type}
+        issuetype: {id: data.feature_issue_type},
       }
     }
+    if version_id
+      issue[:fields][:fixVersions] = [{id: version_id}]
+    end
           
     prepare_request
     response = http_post '%s/rest/api/2/issue' % [data.server_url], issue.to_json 
-    process_response(response, 201) do |new_issue|      
+    process_response(response, 201) do |new_issue|
       issue_id = new_issue["id"]
       issue_key = new_issue["key"]
       logger.info("Created issue #{issue_id} / #{issue_key}")
@@ -195,13 +208,17 @@ protected
     issue_id
   end
   
-  def update_jira_issue(issue_id, resource)
+  def update_jira_issue(issue_id, resource, version_id)
     issue = {
       fields: {
         description: append_link(convert_html(resource.description.body), resource),
       }
     }
     issue[:fields][:summary] = resource.name if resource.name
+    if version_id
+      issue[:update] ||= {}
+      issue[:update][:fixVersions] = [{set: [{id: version_id}]}]
+    end
           
     prepare_request
     response = http_put '%s/rest/api/2/issue/%s' % [data.server_url, issue_id], issue.to_json 
@@ -238,6 +255,7 @@ protected
   # Get the Jira key from an array of integration fields.
   #
   def get_jira_id(integration_fields)
+    return nil if integration_fields.nil?
     field = integration_fields.detect do |f|
       f.service_name == "jira" and f.name == "id"
     end
