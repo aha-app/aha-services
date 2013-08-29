@@ -96,8 +96,51 @@ class AhaServices::Jira < AhaService
     end
   end
 
+  def receive_create_release
+    version_id = create_jira_version(payload.release, data.project)
+  end
+  
+  def receive_update_release
+    version_id = get_jira_id(payload.release.integration_fields)
+    update_jira_version(version_id, payload.release)
+  end
+  
 protected
-
+  
+  def create_jira_version(release, project_key)
+    version = {
+      project: project_key,
+      name: release.name,
+      description: "Created from Aha! #{release.url}",
+      releaseDate: release.release_date.iso8601,
+      released: release.released
+    }
+          
+    prepare_request
+    response = http_post '%s/rest/api/2/version' % [data.server_url], version.to_json 
+    process_response(response, 201) do |new_version|
+      logger.info("Created version #{new_version.inspect}")
+      version_id = new_version["id"]
+      
+      api.create_integration_field(release.reference_num, :jira, :id, version_id)
+    end
+  end
+  
+  def update_jira_version(version_id, release)
+    version = {
+      id: version_id,
+      name: release.name,
+      releaseDate: release.release_date.iso8601,
+      released: release.released
+    }
+          
+    prepare_request
+    response = http_put '%s/rest/api/2/version/%s' % [data.server_url, version_id], version.to_json 
+    process_response(response, 200) do |updated_version|      
+      logger.info("Updated version #{version_id}")
+    end
+  end
+  
   def create_jira_issue(resource, project_key, parent = nil)
     issue_id = nil
     issue_key = nil
