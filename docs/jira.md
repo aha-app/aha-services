@@ -22,7 +22,15 @@ From Jira to Aha!
 * Any comments that are added to the Jira issue will also be automatically added to the Aha! item that the issue was created from.
 * Changes to the status of a Jira issue will be reflected in the Aha! item the issue was created from.
 * Other text changes to the Jira issue will also cause a comment to be added to the Aha! item reflecting the change.
-	
+
+The integration will also create a version in Aha! when you send a release from Aha!
+
+* Send a release to Jira by using the _Send to Jira_ item in the _Actions_ menu on the release page.
+* When a release is first sent to Jira a corresponding version record will be created in Jira. The name and date on the version will be based on the release.
+* Each time the release is sent to Jira again the name and release date will be updated to match the release in Aha!. Changes to the version in Jira will not be reflected back in Aha!.
+* Each feature in the release which has a corresponding issue in Jira will have its version field set to the version that was created. When features are moved between releases in Aha! the version field in Jira will be updated to match.
+* If a version already exists in Jira with the same name as the Aha! release, then a new version will not be created and there will be no link between the Aha! release and the Jira version.
+
 ## Configuration
 
 You need to be a Product Owner in Aha! and an Administrator in Jira to set up this integration.
