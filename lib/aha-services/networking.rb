@@ -67,13 +67,13 @@ module Networking
   # Yields a Faraday::Request instance.
   # Returns a Faraday::Response instance.
   def http_get(url = nil, params = nil, headers = nil)
-    logger.info("FROM URL: #{url.inspect}")
-    
-    http.get do |req|
-      req.url(url)                if url
-      req.params.update(params)   if params
-      req.headers.update(headers) if headers
-      yield req if block_given?
+    check_ssl do
+      http.get do |req|
+        req.url(url)                if url
+        req.params.update(params)   if params
+        req.headers.update(headers) if headers
+        yield req if block_given?
+      end
     end
   end
   
@@ -159,7 +159,7 @@ module Networking
   def check_ssl
     yield
   rescue OpenSSL::SSL::SSLError => e
-    raise_config_error "Invalid SSL cert"
+    raise_config_error "Invalid SSL certificate"
   end
   
   def reportable_http_env(env, time)
