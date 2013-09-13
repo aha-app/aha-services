@@ -51,7 +51,7 @@ Please carefully follow these instructions to ensure that the integration is pro
 There are a number of common problems to watch out for and steps to take if you have a problem. To help you troubleshoot an error, we provide the detailed integration logs below. 
 
 1. Look in the logs below.
-2. Creating issues may fail if you have required fields in your Jira project (make these fields optional).
+2. Creating issues may fail if you have required fields in your Jira project that are in addition to the default fields. You must make these fields optional in Jira.
 3. Your Jira system must have an issue link named Relates and issue linking must be turned on. This is included and is on by default.
 4. If your changes in Jira are not being reflected in Aha! check the Installation instructions for _Webhooks_. 
 5. Contact us at support@aha.io
