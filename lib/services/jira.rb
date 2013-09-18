@@ -327,6 +327,7 @@ protected
     body.gsub!(/\. .*/, "")
     body.gsub!(/<\/p>.*/, "")
     body.gsub!(/<\/?[^>]*>/, "")
+    body.gsub!(/[\t\n\r]/, " ") # Remove newlines.
     trailer = "..." if body.length > 80
     "#{body[0..80]}#{trailer}"
   end
