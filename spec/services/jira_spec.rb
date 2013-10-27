@@ -51,9 +51,30 @@ describe AhaServices::Jira do
   
   it "can upate existing features" do
     # Call to Jira
+    stub_request(:get, "http://u:p@foo.com/a/rest/api/2/issue/10009?fields=attachment").
+      to_return(:status => 200, :body => raw_fixture('jira/jira_attachments.json'), :headers => {})
     stub_request(:put, "http://u:p@foo.com/a/rest/api/2/issue/10009").
       to_return(:status => 204, :body => "{\"fields\":{\"description\":\"\\n\\nCreated from Aha! [PROD-2|http://watersco.aha.io/features/PROD-2]\",\"summary\":\"Feature with attachments\"}}", :headers => {})
-    
+      
+    # Get attachments.
+    stub_request(:get, "https://attachments.s3.amazonaws.com/attachments/6cce987f6283d15c080e53bba15b1072a7ab5b07/original.png?1370457053").
+      to_return(:status => 200, :body => "aaaaaa", :headers => {})
+    stub_request(:get, "https://attachments.s3.amazonaws.com/attachments/d1cb788065a70dad7ba481c973e19dcd379eb202/original.png?1370457055").
+      to_return(:status => 200, :body => "bbbbbb", :headers => {})
+    stub_request(:get, "https://attachments.s3.amazonaws.com/attachments/80641a3d3141ce853ea8642bb6324534fafef5b3/original.png?1370458143").
+      to_return(:status => 200, :body => "cccccc", :headers => {})
+    stub_request(:get, "https://attachments.s3.amazonaws.com/attachments/6fad2068e2aa0e031643d289367263d3721c8683/original.png?1370458145").
+      to_return(:status => 200, :body => "dddddd", :headers => {})
+      
+    # Upload new attachments.
+    stub_request(:post, "http://u:p@foo.com/a/rest/api/2/issue/10009/attachments").
+      with(:body => "-------------RubyMultipartPost\r\nContent-Disposition: form-data; name=\"file\"; filename=\"Belgium.png\"\r\nContent-Length: 6\r\nContent-Type: image/png\r\nContent-Transfer-Encoding: binary\r\n\r\nbbbbbb\r\n-------------RubyMultipartPost--\r\n\r\n").
+      to_return(:status => 200, :body => "", :headers => {})
+    stub_request(:post, "http://u:p@foo.com/a/rest/api/2/issue/10009/attachments").
+      with(:body => "-------------RubyMultipartPost\r\nContent-Disposition: form-data; name=\"file\"; filename=\"France.png\"\r\nContent-Length: 6\r\nContent-Type: image/png\r\nContent-Transfer-Encoding: binary\r\n\r\ndddddd\r\n-------------RubyMultipartPost--\r\n\r\n").
+      to_return(:status => 200, :body => "", :headers => {})
+  
+  
     AhaServices::Jira.new(:update_feature,
       {'server_url' => 'http://foo.com/a', 'username' => 'u', 'password' => 'p'},
       json_fixture('update_feature_event.json')).receive
