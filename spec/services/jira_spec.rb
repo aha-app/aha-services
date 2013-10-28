@@ -100,6 +100,19 @@ describe AhaServices::Jira do
     }.to raise_error(AhaService::RemoteError)
   end
   
+  context "releases" do
+    it "can be updated" do
+      stub_request(:put, "http://u:p@foo.com/a/rest/api/2/version/").
+        with(:body => "{\"id\":null,\"name\":\"Production Web Hosting\",\"releaseDate\":\"2013-01-28\",\"released\":false}").
+        to_return(:status => 200, :body => "", :headers => {})
+      
+      AhaServices::Jira.new(:update_release,
+        {'server_url' => 'http://foo.com/a', 'username' => 'u', 'password' => 'p'},
+        json_fixture('update_release_event.json')).receive
+    end
+    
+  end
+  
   context "can be installed" do
     
     it "handles installed event" do

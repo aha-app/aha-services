@@ -122,7 +122,7 @@ protected
       project: project_key,
       name: release.name,
       description: "Created from Aha! #{release.url}",
-      releaseDate: release.release_date.iso8601,
+      releaseDate: release.release_date,
       released: release.released
     }
           
@@ -140,7 +140,7 @@ protected
     version = {
       id: version_id,
       name: release.name,
-      releaseDate: release.release_date.iso8601,
+      releaseDate: release.release_date,
       released: release.released
     }
           
