@@ -20,8 +20,26 @@ class AhaServices::JiraConnect < AhaServices::Jira
   end
   
   def faraday_builder(builder)
-    puts "ADDING BUILDER<br/>"
+    builder.request :add_jira_user, data.user_id
     builder.request :oauth, consumer_key: data.consumer_key, 
       consumer_secret: data.consumer_secret, signature_method: "RSA-SHA1"
   end
+  
 end
+
+class AddJiraUser < Faraday::Middleware
+  
+  def initialize(app, user_id)
+    @app = app
+    @user_id = user_id
+  end
+
+  def call(env)
+    uri = env[:url] 
+    uri.query = [uri.query, "user_id=#{@user_id}"].compact.join('&') 
+
+    @app.call(env)
+  end
+end
+
+Faraday.register_middleware :request, :add_jira_user => lambda { AddJiraUser }

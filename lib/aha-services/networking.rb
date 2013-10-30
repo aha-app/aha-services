@@ -16,8 +16,8 @@ module Networking
       options[:ssl][:ca_file] ||= ca_file
 
       Faraday.new(options) do |b|
-        faraday_builder(b)
         b.request options[:encoding] || :url_encoded
+        faraday_builder(b)
         b.adapter *(options[:adapter] || :net_http)
         b.use(HttpReporter, self)
       end
