@@ -16,8 +16,12 @@ class AhaServices::JiraConnect < AhaServices::Jira
   
   def prepare_request
     http.headers['Content-Type'] = 'application/json'
-    #http.basic_auth data.username, data.password
-    # TODO: add oauth
+    # No auth here - we are doing it with middleware.
   end
   
+  def faraday_builder(builder)
+    puts "ADDING BUILDER<br/>"
+    builder.request :oauth, consumer_key: data.consumer_key, 
+      consumer_secret: data.consumer_secret, signature_method: "RSA-SHA1"
+  end
 end

@@ -18,6 +18,8 @@ Gem::Specification.new do |s|
   s.add_development_dependency "webmock"
   s.add_dependency "hashie", "~> 2.0.0"
   s.add_dependency "faraday"
+  s.add_dependency "faraday_middleware"
+  s.add_dependency "simple_oauth"
   s.add_dependency "activesupport"
   
   # For Jira integration.

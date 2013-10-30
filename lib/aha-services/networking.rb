@@ -16,12 +16,16 @@ module Networking
       options[:ssl][:ca_file] ||= ca_file
 
       Faraday.new(options) do |b|
-        #b.use HttpReporter, self
+        faraday_builder(b)
         b.request options[:encoding] || :url_encoded
         b.adapter *(options[:adapter] || :net_http)
         b.use(HttpReporter, self)
       end
     end
+  end
+  
+  # Override this to install additional middleware.
+  def faraday_builder(builder)
   end
   
   # Reset the HTTP connection so it can be recreated with new options.

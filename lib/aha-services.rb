@@ -7,6 +7,7 @@ require 'pp'
 require 'logger'
 
 require 'faraday'
+require 'faraday_middleware'
 require 'hashie'
 require 'aha-api'
 
