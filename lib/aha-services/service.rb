@@ -69,6 +69,13 @@ class AhaService
     end.compact.collect {|e| e.to_sym }
   end
   
+  # Returns a list of the services.
+  def self.service_classes
+    subclasses = []
+    ObjectSpace.each_object(Module) {|m| subclasses << m if m.ancestors.include?(AhaService) && m != AhaService}
+    subclasses
+  end
+  
   def respond_to_event?
     !@event_method.nil?
   end
