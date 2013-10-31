@@ -132,7 +132,7 @@ protected
       logger.info("Created version #{new_version.inspect}")
       version_id = new_version["id"]
       
-      api.create_integration_field(release.reference_num, :jira, :id, version_id)
+      api.create_integration_field(release.reference_num, self.class.service_name, :id, version_id)
     end
   end
   
@@ -174,9 +174,9 @@ protected
       issue_key = new_issue["key"]
       logger.info("Created issue #{issue_id} / #{issue_key}")
       
-      api.create_integration_field(resource.reference_num, :jira, :id, issue_id)
-      api.create_integration_field(resource.reference_num, :jira, :key, issue_key)
-      api.create_integration_field(resource.reference_num, :jira, :url, "#{data.server_url}/browse/#{issue_key}")
+      api.create_integration_field(resource.reference_num, self.class.service_name, :id, issue_id)
+      api.create_integration_field(resource.reference_num, self.class.service_name, :key, issue_key)
+      api.create_integration_field(resource.reference_num, self.class.service_name, :url, "#{data.server_url}/browse/#{issue_key}")
     end
     
     # Add attachments.
@@ -257,7 +257,7 @@ protected
   def get_jira_id(integration_fields)
     return nil if integration_fields.nil?
     field = integration_fields.detect do |f|
-      f.service_name == "jira" and f.name == "id"
+      f.service_name == self.class.service_name and f.name == "id"
     end
     if field
       field.value
@@ -272,7 +272,7 @@ protected
       http_reset 
       http(:encoding => :multipart)
       http.headers['X-Atlassian-Token'] = 'nocheck'
-      http.basic_auth data.username, data.password
+      auth_header
       
       file = Faraday::UploadIO.new(downloaded_file, attachment.content_type, attachment.file_name)
       response = http_post '%s/rest/api/2/issue/%s/attachments' % [data.server_url, issue_id], {:file => file} 
@@ -297,6 +297,10 @@ protected
   
   def prepare_request
     http.headers['Content-Type'] = 'application/json'
+    auth_header
+  end
+  
+  def auth_header
     http.basic_auth data.username, data.password
   end
   

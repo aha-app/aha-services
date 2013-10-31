@@ -12,12 +12,7 @@ class AhaServices::JiraConnect < AhaServices::Jira
   internal :feature_status_mapping
   internal :resolution_mapping
   
-  def http(options = {})
-    h = super(options)
-  end
-  
-  def prepare_request
-    http.headers['Content-Type'] = 'application/json'
+  def auth_header
     # No auth here - we are doing it with middleware.
   end
   
