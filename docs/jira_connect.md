@@ -2,6 +2,11 @@
 
 This bi-directional integration allows you to push your completed features and requirements in Aha! into Jira. It also automatically updates your features and requirements in Aha! if text or status changes are made in Jira. This integration works with both the hosted and on prem versions of Jira. Note that if you are running the downloaded, on prem version of Jira you will need to create a firewall exception so Aha! can make calls to the Jira API. The exception should forward requests to the internal Jira server. 
 
+*Note* there are two separate integrations with Jira. Both have the same basic functionality, they differ in how they are authenticated and the installation procedure. You only need to enable one.
+
+1. Jira - this integration uses the username and password of a Jira user to authenticate with Jira. Can be used with downloaded or on-demand versions of Jira.
+2. Jira via Connect - this integration uses an Add-on that is installed into your Jira instance by an administrator. Can only be used with Jira on-demand.
+
 ## Features
 
 The integration supports features and requirements being sent from Aha! to Jira and updates in Jira being sent back and reflected in Aha!
@@ -39,13 +44,15 @@ You need to be a Product Owner in Aha! and an Administrator in Jira to set up th
 
 Please carefully follow these instructions to ensure that the integration is properly configured.
 
-1.	Configure the Server URL, Username and Password below.
-2.	After a short delay, you will be able to choose the Project the issues will be created in.
-3. 	Map how you want new features to show up in Jira and how the Jira status fields should map to Aha! 
-3.	Copy the Hook URL below. In the Jira administration section on the _System_ tab, choose _Webhooks_.
-4.	Create a new _Webhook_ in Jira and paste in the Hook URL that you copied. This will allow enable the features listed above in the From Jira to Aha! section.
-5.	Enable the integration.
-6. 	Test the integration by going to one of your features in Aha! and using the _Send to Jira_ item in the _Actions_ menu on the features page. You should then look at your project in Jira and see that the feature (and any requirements) were properly copied. 
+1. Log into your Jira On-demand instance. Under _Administration_ -> _Add-ons_ use the _Find new add-ons_ screen to find the _Aha! Product Roadmaps_ add-on and install it.
+2. Click on the _Configure_ button to configure the _Aha! Product Roadmaps_ add-on. 
+3. Enter the sub-domain of your Aha! instance and save.
+4.	Log into Aha! and find the _Account settings_ -> _Integrations_ -> _Jira via Connect_ page for the product you want to integrate with Jira.
+5. Click the _Test connection_ button to verify that the add-on was installed correctly and load the configuration from Jira.
+6.	After a short delay, you will be able to choose the Project the issues will be created in.
+7.	Map how you want new features to show up in Jira and how the Jira status fields should map to Aha! 
+7.	Enable the integration.
+8. 	Test the integration by going to one of your features in Aha! and using the _Send to Jira_ item in the _Actions_ menu on the features page. You should then look at your project in Jira and see that the feature (and any requirements) were properly copied. 
 
 
 ## Troubleshooting
@@ -55,8 +62,7 @@ There are a number of common problems to watch out for and steps to take if you 
 1. Look in the logs below.
 2. Creating issues may fail if you have required fields in your Jira project that are in addition to the default fields. You must make these fields optional in Jira.
 3. Your Jira system must have an issue link named Relates and issue linking must be turned on. This is included and is on by default.
-4. If your changes in Jira are not being reflected in Aha! check the Installation instructions for _Webhooks_. 
-5. Contact us at support@aha.io
+4. Contact us at support@aha.io
 
 
 

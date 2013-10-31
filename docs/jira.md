@@ -1,5 +1,10 @@
 This bi-directional integration allows you to push your completed features and requirements in Aha! into Jira. It also automatically updates your features and requirements in Aha! if text or status changes are made in Jira. This integration works with both the hosted and on prem versions of Jira. Note that if you are running the downloaded, on prem version of Jira you will need to create a firewall exception so Aha! can make calls to the Jira API. The exception should forward requests to the internal Jira server. 
 
+*Note* there are two separate integrations with Jira. Both have the same basic functionality, they differ in how they are authenticated and the installation procedure. You only need to enable one.
+
+1. Jira - this integration uses the username and password of a Jira user to authenticate with Jira. Can be used with downloaded or on-demand versions of Jira.
+2. Jira via Connect - this integration uses an Add-on that is installed into your Jira instance by an administrator. Can only be used with Jira on-demand.
+
 ## Features
 
 The integration supports features and requirements being sent from Aha! to Jira and updates in Jira being sent back and reflected in Aha!
@@ -37,7 +42,7 @@ You need to be a Product Owner in Aha! and an Administrator in Jira to set up th
 
 Please carefully follow these instructions to ensure that the integration is properly configured.
 
-1.	Configure the Server URL, Username and Password below.
+1.	Configure the Server URL, Username and Password below. Click the _Test connection_ button
 2.	After a short delay, you will be able to choose the Project the issues will be created in.
 3. 	Map how you want new features to show up in Jira and how the Jira status fields should map to Aha! 
 3.	Copy the Hook URL below. In the Jira administration section on the _System_ tab, choose _Webhooks_.
