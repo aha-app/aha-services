@@ -2,8 +2,6 @@ class AhaServices::Pivotaltracker < AhaService
   string :api_token, description: "Api token from pivotaltracker.com"
   install_button
   select :project, collection: ->(meta_data) { meta_data.projects.collect { |p| [p.name, p.id] } }
-  #select :integration, collection: ->(meta_data, data) { meta_data.projects.collect{|p| [p.name, p.id] } }
-  #callback_url description: "URL to add to the webhooks section of Pivotaltracker."
 
   @@api_url = 'https://www.pivotaltracker.com/services/v5'
 
@@ -17,15 +15,6 @@ class AhaServices::Pivotaltracker < AhaService
     process_response(response, 200) do |projects|
       projects.each do |project|
         projects_integrations = []
-
-=begin
-        response = http_get '%s/projects/%s/integrations' % [@@api_url, project['id']]
-        process_response(response, 200) do |integrations|
-          integrations.each do |integration|
-            projects_integrations << {:id => integration['id'], :name => integration['name']}
-          end
-        end
-=end
 
         available_projects << {:id => project['id'], :name => project['name'], :integrations => projects_integrations}
       end
@@ -87,8 +76,8 @@ class AhaServices::Pivotaltracker < AhaService
       story_url = new_story['url']
       logger.info("Created story #{story_id}")
 
-      #api.create_integration_field(resource.reference_num, self.class.service_name, :id, story_id)
-      #api.create_integration_field(resource.reference_num, self.class.service_name, :url, story_url)
+      api.create_integration_field(resource.reference_num, self.class.service_name, :id, story_id)
+      api.create_integration_field(resource.reference_num, self.class.service_name, :url, story_url)
     end
 
     story_id
@@ -130,7 +119,7 @@ class AhaServices::Pivotaltracker < AhaService
       task_id = new_task['id']
       logger.info("Created task #{task_id}")
 
-      #api.create_integration_field(resource.reference_num, self.class.service_name, :id, task_id)
+      api.create_integration_field(resource.reference_num, self.class.service_name, :id, task_id)
     end
 
     task_id
@@ -151,6 +140,7 @@ class AhaServices::Pivotaltracker < AhaService
 
   end
 
+  # add token to header
   def prepare_request
     http.headers['Content-Type'] = 'application/json'
     http.headers['X-TrackerToken'] = data.api_token
@@ -185,6 +175,7 @@ class AhaServices::Pivotaltracker < AhaService
     end
   end
 
+
   def parse(body)
     if body.nil? or body.length < 2
       {}
@@ -193,7 +184,7 @@ class AhaServices::Pivotaltracker < AhaService
     end
   end
 
-
+  # get id of current service
   def get_service_id(integration_fields)
     return nil if integration_fields.nil?
     field = integration_fields.detect do |f|
