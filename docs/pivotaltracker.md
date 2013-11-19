@@ -1,0 +1,1 @@
+This one-way integration allows to send features and requirements from Aha! application to Pivotaltracker.
