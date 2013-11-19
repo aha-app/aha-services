@@ -14,29 +14,31 @@ class AhaServices::Pivotaltracker < AhaService
     response = http_get '%s/projects' % [@@api_url]
     process_response(response, 200) do |projects|
       projects.each do |project|
-        projects_integrations = []
 
-        available_projects << {:id => project['id'], :name => project['name'], :integrations => projects_integrations}
+        available_projects << {
+            :id => project['id'],
+            :name => project['name'],
+        }
       end
     end
     @meta_data.projects = available_projects
   end
 
   def receive_create_feature
-    version_id = get_service_id(payload.feature.release.integration_fields)
+    #version_id = get_service_id(payload.feature.release.integration_fields)
     # add story
-    story_id = add_story(data.project, payload.feature, version_id)
+    story_id = add_story(data.project, payload.feature, nil)
     payload.feature.requirements.each do |requirement|
       add_task(data.project, story_id, requirement)
     end
   end
 
   def receive_update_feature
-    version_id = get_service_id(payload.feature.release.integration_fields)
+    #version_id = get_service_id(payload.feature.release.integration_fields)
     story_id = get_service_id(payload.feature.integration_fields)
 
     # Update story
-    update_story(data.project, story_id, payload.feature, version_id)
+    update_story(data.project, story_id, payload.feature, nil)
 
     # Create or update each requirement.
     payload.feature.requirements.each do |requirement|
@@ -160,16 +162,27 @@ class AhaServices::Pivotaltracker < AhaService
     if success_codes.include?(response.status)
       yield parse(response.body)
     elsif response.status == 404 || response.status == 403 || response.status == 401 || response.status == 400
-      errors = parse(response.body)
-      error_string = errors.error
-      if !errors.general_problem.nil?
-        error_string + ' ' + errors.general_problem
+
+      error_string = ""
+
+      error = parse(response.body)
+
+      if  error.has_key?('code')
+        error_string << " " + error['code'] + " - "
       end
-      if !errors.possible_fix.nil?
-        error_string + ' ' + errors.possible_fix
+      if  error.has_key?('error')
+        error_string << " " + error['error']
       end
 
-      raise AhaService::RemoteError, "Error code: #{errors.code} - #{error_string}"
+      if error.has_key?('general_problem')
+        error_string << " " + error['general_problem']
+      end
+
+      if error.has_key?('possible_fix')
+        error_string << " " + error['possible_fix']
+      end
+
+      raise AhaService::RemoteError, "Error code: #{error_string}"
     else
       raise AhaService::RemoteError, "Unhandled error: STATUS=#{response.status} BODY=#{response.body}"
     end

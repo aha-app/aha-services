@@ -1,0 +1,7 @@
+{
+    "kind": "error",
+    "possible_fix": "Your project permissions are determined on the Project Membership page. If you are receiving this error you may be trying to access the wrong project, or the project API access is disabled, or someone listed as the project's Owner needs to change your membership type.",
+    "code": "unauthorized_operation",
+    "general_problem": "You aren't authorized to access the requested resource.",
+    "error": "Authorization failure."
+}
