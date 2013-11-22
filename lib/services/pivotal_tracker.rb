@@ -1,23 +1,21 @@
-class AhaServices::Pivotaltracker < AhaService
-  string :api_token, description: "Api token from pivotaltracker.com"
+class AhaServices::PivotalTracker < AhaService
+  string :api_token, description: "Api token from www.pivotaltracker.com"
   install_button
   select :project, collection: ->(meta_data) { meta_data.projects.collect { |p| [p.name, p.id] } }
 
   @@api_url = 'https://www.pivotaltracker.com/services/v5'
 
   def receive_installed
-
-    prepare_request
-
     available_projects = []
+
     # get list of projects
+    prepare_request
     response = http_get '%s/projects' % [@@api_url]
     process_response(response, 200) do |projects|
       projects.each do |project|
-
         available_projects << {
-            :id => project['id'],
-            :name => project['name'],
+          :id => project['id'],
+          :name => project['name'],
         }
       end
     end
@@ -25,20 +23,18 @@ class AhaServices::Pivotaltracker < AhaService
   end
 
   def receive_create_feature
-    #version_id = get_service_id(payload.feature.release.integration_fields)
     # add story
-    story_id = add_story(data.project, payload.feature, nil)
+    story_id = add_story(data.project, payload.feature)
     payload.feature.requirements.each do |requirement|
       add_task(data.project, story_id, requirement)
     end
   end
 
   def receive_update_feature
-    #version_id = get_service_id(payload.feature.release.integration_fields)
     story_id = get_service_id(payload.feature.integration_fields)
 
     # Update story
-    update_story(data.project, story_id, payload.feature, nil)
+    update_story(data.project, story_id, payload.feature)
 
     # Create or update each requirement.
     payload.feature.requirements.each do |requirement|
@@ -54,20 +50,14 @@ class AhaServices::Pivotaltracker < AhaService
 
   end
 
-  def add_story(project_id, resource, version_id)
+  def add_story(project_id, resource)
     story_id = nil
 
     story = {
-        name: resource.name,
-        description: append_link(strip_html(resource.description.body), resource),
-        cl_numbers: version_id,
-        story_type: 'feature', #feature, bug, chore, release
-        created_at: resource.created_at,
-        #external_id: resource.id,
-        #integration_id: '',
-        #tasks: convert_requirements_to_tasks(resource.requirements),
-        #deadline: resource,
-        #current_state:'',  #accepted, delivered, finished, started, rejected, unstarted, unscheduled
+      name: resource.name,
+      description: append_link(strip_html(resource.description.body), resource),
+      story_type: 'feature', #feature, bug, chore, release
+      created_at: resource.created_at,
     }
 
     prepare_request
@@ -85,16 +75,12 @@ class AhaServices::Pivotaltracker < AhaService
     story_id
   end
 
-  def update_story(project_id, story_id, resource, version_id)
+  def update_story(project_id, story_id, resource)
 
     story = {
-        name: resource.name,
-        description: append_link(strip_html(resource.description.body), resource),
+      name: resource.name,
+      description: append_link(strip_html(resource.description.body), resource),
     }
-
-    if version_id
-      story[:cl_numbers] = version_id
-    end
 
     prepare_request
     response = http_put '%s/projects/%s/stories/%s' % [@@api_url, project_id, story_id], story.to_json
@@ -108,10 +94,10 @@ class AhaServices::Pivotaltracker < AhaService
     task_id = nil
 
     task = {
-        story_id: story_id,
-        project_id: project_id,
-        description: strip_html(resource.description.body),
-        complete: !resource.status.zero?,
+      story_id: story_id,
+      project_id: project_id,
+      description: strip_html(resource.description.body),
+      complete: !resource.status.zero?,
     }
 
     prepare_request
@@ -130,8 +116,8 @@ class AhaServices::Pivotaltracker < AhaService
   def update_task(project_id, story_id, task_id, resource)
 
     task = {
-        description: strip_html(resource.description.body),
-        complete: !resource.status.zero?,
+      description: strip_html(resource.description.body),
+      complete: !resource.status.zero?,
     }
 
     prepare_request
@@ -161,26 +147,9 @@ class AhaServices::Pivotaltracker < AhaService
   def process_response(response, *success_codes, &block)
     if success_codes.include?(response.status)
       yield parse(response.body)
-    elsif response.status == 404 || response.status == 403 || response.status == 401 || response.status == 400
-
-      error_string = ""
-
+    elsif [404, 403, 401, 400].include?(response.status)
       error = parse(response.body)
-
-      if  error.has_key?('code')
-        error_string << " " + error['code'] + " - "
-      end
-      if  error.has_key?('error')
-        error_string << " " + error['error']
-      end
-
-      if error.has_key?('general_problem')
-        error_string << " " + error['general_problem']
-      end
-
-      if error.has_key?('possible_fix')
-        error_string << " " + error['possible_fix']
-      end
+      error_string = "#{error['code']} - #{error['error']} #{error['general_problem']} #{error['possible_fix']}"
 
       raise AhaService::RemoteError, "Error code: #{error_string}"
     else
