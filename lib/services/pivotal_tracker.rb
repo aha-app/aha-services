@@ -1,5 +1,5 @@
 class AhaServices::PivotalTracker < AhaService
-  string :api_token, description: "Api token from www.pivotaltracker.com"
+  string :api_token, description: "API token from www.pivotaltracker.com"
   install_button
   select :project, collection: ->(meta_data) { meta_data.projects.collect { |p| [p.name, p.id] } }
 
