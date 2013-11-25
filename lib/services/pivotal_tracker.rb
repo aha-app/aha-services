@@ -71,6 +71,15 @@ class AhaServices::PivotalTracker < AhaService
   def add_story(project_id, resource, parent_id = nil, parent_resource = nil)
     story_id = nil
 
+    # Upload attachments and collect information.
+    attachments = []
+    resource.description.attachments.each do |attachment|
+      attachments << upload_attachment(attachment)
+    end
+    resource.attachments.each do |attachment|
+      attachments << upload_attachment(attachment)
+    end
+    
     story = {
       name: resource.name || description_to_title(resource.description.body),
       description: append_link(html_to_plain(resource.description.body), parent_id),
@@ -79,6 +88,9 @@ class AhaServices::PivotalTracker < AhaService
       external_id: parent_id ? parent_resource.reference_num : resource.reference_num,
       integration_id: data.integration.to_i,
     }
+    if attachments.any?
+      story[:comments] = [{file_attachments: attachments}]
+    end
 
     prepare_request
     response = http_post("#{@@api_url}/projects/#{project_id}/stories", story.to_json)
@@ -91,7 +103,7 @@ class AhaServices::PivotalTracker < AhaService
       api.create_integration_field(resource.reference_num, self.class.service_name, :id, story_id)
       api.create_integration_field(resource.reference_num, self.class.service_name, :url, story_url)
     end
-
+    
     story_id
   end
 
@@ -108,6 +120,26 @@ class AhaServices::PivotalTracker < AhaService
     end
   end
 
+  def upload_attachment(attachment)
+    open(attachment.download_url) do |downloaded_file|
+      # Reset Faraday and switch to multipart to do the file upload.
+      http_reset 
+      http(:encoding => :multipart)
+      http.headers['X-TrackerToken'] = data.api_token
+      
+      file = Faraday::UploadIO.new(downloaded_file, attachment.content_type, attachment.file_name)
+      response = http_post("#{@@api_url}/projects/#{data.project}/uploads", {:file => file})
+      process_response(response, 200) do |file_attachment|
+        return file_attachment
+      end
+    end
+        
+  rescue AhaService::RemoteError => e
+    logger.error("Failed to upload attachment to #{issue_key}: #{e.message}")
+  ensure
+    http_reset 
+  end
+  
   # add token to header
   def prepare_request
     http.headers['Content-Type'] = 'application/json'
