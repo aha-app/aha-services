@@ -2,6 +2,8 @@ require 'html2confluence'
 require 'open-uri'
 
 class AhaServices::Jira < AhaService
+  title "JIRA"
+  
   string :server_url, description: "URL for the Jira server, without the trailing slash, e.g. https://bigaha.atlassian.net"
   string :username
   password :password
