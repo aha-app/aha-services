@@ -1,7 +1,7 @@
 {
   "event": "create_feature",
   "feature": {
-    "name": "Feature with attachments",
+    "name": "Feature with attachments (new)",
     "reference_num": "PROD-2",
     "position": 2,
     "score": 0,
@@ -49,6 +49,18 @@
         "value": "https://watersco.atlassian.net/browse/APP-1",
         "id": "5885756848816972095",
         "service_name": "jira"
+      },
+      {
+        "name": "url",
+        "value": "http://www.pivotal_tracker.com/story/show/60958942",
+        "id": "5885756848816972096",
+        "service_name": "pivotal_tracker"
+      },
+      {
+        "name": "id",
+        "value": "61280364",
+        "id": "5885756848816972097",
+        "service_name": "pivotal_tracker"
       }
     ],
     "url": "http://watersco.aha.io/features/PROD-2",
@@ -74,7 +86,7 @@
         "resource": "http://watersco.aha.io/api/v1/requirements/PROD-2-1",
         "attachments": [],
         "description": {
-          "body": "<p>First requirement<br></p>",
+          "body": "<p>First requirement<br>, changed</p>",
           "id": "5886072825267650900",
           "attachments": [
             {
@@ -111,6 +123,12 @@
             "value": "https://watersco.atlassian.net/browse/APP-1",
             "id": "5885756848816972095",
             "service_name": "jira"
+          },
+          {
+            "name": "id",
+            "value": "18669866",
+            "id": "5885756848816972098",
+            "service_name": "pivotal_tracker"
           }
         ],
         "comments_count": 0
