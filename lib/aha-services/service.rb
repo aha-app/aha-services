@@ -6,6 +6,7 @@ class AhaService
   include Schema
   include Api
   include Documentation
+  include Helpers
   extend Schema::ClassMethods
   extend Documentation::ClassMethods
   

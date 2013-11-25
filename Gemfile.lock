@@ -1,4 +1,12 @@
 GIT
+  remote: git://github.com/k1w1/plain-david.git
+  revision: 50342418d936770adb3ac780740135039b21b1f9
+  specs:
+    plain-david (0.0.2)
+      html2markdown
+      htmlentities
+
+GIT
   remote: https://383f0d3f6e966653045bbbe228f0d2c3eaa693c2:x-oauth-basic@github.com/aha-app/aha-api
   revision: fbe28d54d65607653bbaecdbd3f0f1c2789239ab
   specs:
@@ -18,7 +26,7 @@ GIT
 PATH
   remote: .
   specs:
-    aha-services (1.1.4)
+    aha-services (1.1.6)
       activesupport
       aha-api
       faraday
@@ -45,10 +53,18 @@ GEM
     faraday_middleware (0.9.0)
       faraday (>= 0.7.4, < 0.9)
     hashie (2.0.5)
+    html2markdown (0.0.3)
+      nokogiri
+    htmlentities (4.3.1)
     i18n (0.6.5)
+    mini_portile (0.5.2)
     minitest (4.7.5)
     multi_json (1.8.0)
     multipart-post (1.2.0)
+    nokogiri (1.6.0)
+      mini_portile (~> 0.5.0)
+    nokogiri (1.6.0-x86-mingw32)
+      mini_portile (~> 0.5.0)
     rspec (2.13.0)
       rspec-core (~> 2.13.0)
       rspec-expectations (~> 2.13.0)
@@ -73,5 +89,6 @@ DEPENDENCIES
   aha-api!
   aha-services!
   html2confluence!
+  plain-david!
   rspec
   webmock

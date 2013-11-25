@@ -3,15 +3,18 @@ class AhaServices::PivotalTracker < AhaService
   install_button
   select :project, collection: -> (meta_data, data) { meta_data.projects.collect { |p| [p.name, p.id] } }, 
     description: "Tracker project that this Aha! product will integrate with."
+  select :integration,
+    collection: ->(meta_data, data) { meta_data.projects.detect {|p| p.id.to_s == data.project.to_s }.integrations.collect{|p| [p.name, p.id] } },
+    description: "Pivotal integration that you added for Aha!"
 
   @@api_url = 'https://www.pivotaltracker.com/services/v5'
 
   def receive_installed
     available_projects = []
 
-    # get list of projects
+    # Get list of projects.
     prepare_request
-    response = http_get '%s/projects' % [@@api_url]
+    response = http_get("#{@@api_url}/projects")
     process_response(response, 200) do |projects|
       projects.each do |project|
         available_projects << {
@@ -20,49 +23,65 @@ class AhaServices::PivotalTracker < AhaService
         }
       end
     end
+    
+    # For each project, get the integrations.
+    available_projects.each do |project|
+      project[:integrations] = []
+      response = http_get("#{@@api_url}/projects/#{project[:id]}/integrations")
+      process_response(response, 200) do |integrations|
+        integrations.each do |integration|
+          project[:integrations] << {
+            :id => integration['id'],
+            :name => integration['name'],
+          }
+        end
+      end
+    end
+    
     @meta_data.projects = available_projects
   end
 
   def receive_create_feature
-    # add story
+    # Add story
     story_id = add_story(data.project, payload.feature)
     payload.feature.requirements.each do |requirement|
-      add_task(data.project, story_id, requirement)
+      add_story(data.project, requirement, story_id, payload.feature)
     end
   end
 
   def receive_update_feature
-    story_id = get_service_id(payload.feature.integration_fields)
-
     # Update story
+    story_id = get_service_id(payload.feature.integration_fields)
     update_story(data.project, story_id, payload.feature)
 
     # Create or update each requirement.
     payload.feature.requirements.each do |requirement|
-      task_id = get_service_id(requirement.integration_fields)
-      if task_id
-        # Update task.
-        update_task(data.project, story_id, task_id, requirement)
+      req_story_id = get_service_id(requirement.integration_fields)
+      if req_story_id
+        # Update requirement.
+        update_story(data.project, req_story_id, requirement, story_id)
       else
-        # Create new task.
-        add_task(data.project, story_id, requirement)
+        # Create new story for requirement.
+        add_story(data.project, requirement, story_id, payload.feature)
       end
     end
 
   end
 
-  def add_story(project_id, resource)
+  def add_story(project_id, resource, parent_id = nil, parent_resource = nil)
     story_id = nil
 
     story = {
-      name: resource.name,
-      description: append_link(strip_html(resource.description.body), resource),
-      story_type: 'feature', #feature, bug, chore, release
+      name: resource.name || description_to_title(resource.description.body),
+      description: append_link(html_to_plain(resource.description.body), parent_id),
+      story_type: kind_to_story_type(resource.kind || parent_resource.kind),
       created_at: resource.created_at,
+      external_id: parent_id ? parent_resource.reference_num : resource.reference_num,
+      integration_id: data.integration.to_i,
     }
 
     prepare_request
-    response = http_post '%s/projects/%s/stories' % [@@api_url, project_id], story.to_json
+    response = http_post("#{@@api_url}/projects/#{project_id}/stories", story.to_json)
 
     process_response(response, 200) do |new_story|
       story_id = new_story['id']
@@ -76,57 +95,17 @@ class AhaServices::PivotalTracker < AhaService
     story_id
   end
 
-  def update_story(project_id, story_id, resource)
-
+  def update_story(project_id, story_id, resource, parent_id = nil)
     story = {
-      name: resource.name,
-      description: append_link(strip_html(resource.description.body), resource),
+      name: resource.name || description_to_title(resource.description.body),
+      description: append_link(html_to_plain(resource.description.body), parent_id),
     }
 
     prepare_request
-    response = http_put '%s/projects/%s/stories/%s' % [@@api_url, project_id, story_id], story.to_json
+    response = http_put("#{@@api_url}/projects/#{project_id}/stories/#{story_id}", story.to_json)
     process_response(response, 200) do |updated_story|
       logger.info("Updated story #{story_id}")
     end
-
-  end
-
-  def add_task(project_id, story_id, resource)
-    task_id = nil
-
-    task = {
-      story_id: story_id,
-      project_id: project_id,
-      description: strip_html(resource.description.body),
-      complete: !resource.status.zero?,
-    }
-
-    prepare_request
-    response = http_post '%s/projects/%s/stories/%s/tasks' % [@@api_url, project_id, story_id], task.to_json
-
-    process_response(response, 200) do |new_task|
-      task_id = new_task['id']
-      logger.info("Created task #{task_id}")
-
-      api.create_integration_field(resource.reference_num, self.class.service_name, :id, task_id)
-    end
-
-    task_id
-  end
-
-  def update_task(project_id, story_id, task_id, resource)
-
-    task = {
-      description: strip_html(resource.description.body),
-      complete: !resource.status.zero?,
-    }
-
-    prepare_request
-    response = http_put '%s/projects/%s/stories/%s/tasks/%s' % [@@api_url, project_id, story_id, task_id], task.to_json
-    process_response(response, 200) do |updated_task|
-      logger.info("Updated task #{task_id}")
-    end
-
   end
 
   # add token to header
@@ -135,16 +114,27 @@ class AhaServices::PivotalTracker < AhaService
     http.headers['X-TrackerToken'] = data.api_token
   end
 
-  # strip html
-  def strip_html(str)
-    str = str.gsub(/<br\W*?\/>/, "\n")
-    str.gsub(/<\/?[^>]*>/, "")
+  def append_link(body, parent_id)
+    if parent_id
+      "#{body}\n\nRequirement of ##{parent_id}."
+    else
+      body
+    end
   end
-
-  def append_link(body, resource)
-    "#{body}\n\nCreated from Aha! #{resource.url}"
+  
+  def kind_to_story_type(kind)
+    case kind
+    when "new", "improvement"
+      "feature"
+    when "bug_fix"
+      "bug"
+    when "research"
+      "chore"
+    else
+      "feature"
+    end
   end
-
+  
   def process_response(response, *success_codes, &block)
     if success_codes.include?(response.status)
       yield parse(response.body)
@@ -158,7 +148,6 @@ class AhaServices::PivotalTracker < AhaService
     end
   end
 
-
   def parse(body)
     if body.nil? or body.length < 2
       {}
@@ -167,7 +156,7 @@ class AhaServices::PivotalTracker < AhaService
     end
   end
 
-  # get id of current service
+  # Get id of current service
   def get_service_id(integration_fields)
     return nil if integration_fields.nil?
     field = integration_fields.detect do |f|

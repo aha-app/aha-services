@@ -17,6 +17,7 @@ require 'aha-services/schema'
 require 'aha-services/errors'
 require 'aha-services/api'
 require 'aha-services/documentation'
+require 'aha-services/helpers'
 require 'aha-services/service'
 
 Dir["#{File.dirname(__FILE__)}/services/**/*.rb"].each {|file| require file }

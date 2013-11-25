@@ -158,7 +158,7 @@ protected
     issue = {
       fields: {
         project: {key: project_key},
-        summary: resource.name || description_to_title(resource.description.body.dup),
+        summary: resource.name || description_to_title(resource.description.body),
         description: append_link(convert_html(resource.description.body), resource),
         issuetype: {id: data.feature_issue_type},
       }
@@ -325,17 +325,7 @@ protected
     parser.feed(html)
     parser.to_wiki_markup
   end
-  
-  def description_to_title(body)
-    # Truncate at end of paragraph or sentence
-    body.gsub!(/\. .*/, "")
-    body.gsub!(/<\/p>.*/, "")
-    body.gsub!(/<\/?[^>]*>/, "")
-    body.gsub!(/[\t\n\r]/, " ") # Remove newlines.
-    trailer = "..." if body.length > 80
-    "#{body[0..80]}#{trailer}"
-  end
-  
+
   def append_link(body, resource)
     "#{body}\n\nCreated from Aha! [#{resource.reference_num}|#{resource.url}]"
   end
