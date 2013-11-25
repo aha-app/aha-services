@@ -111,7 +111,7 @@ class AhaService
         @title ||= begin
           hook = name.dup
           hook.sub! /.*:/, ''
-          hook.underscore.humanize
+          hook.underscore.humanize.capitalize.titleize
         end
       end
     end
