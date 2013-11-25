@@ -21,9 +21,9 @@ Please carefully follow these instructions to ensure that the integration is pro
 
 First configure Pivotal Tracker:
 
-1. Go the the _Settings_ page for the project, and then choose the _Integrations_ tab.
+1. Go to the _Settings_ page for the project, and then choose the _Integrations_ tab.
 2. Under _External Tool Integrations_ at the bottom of the page, create a new _Other_ integration.
-3. Name the integration "Aha", and set the _Base URL_ to "https://<yourdomain>.aha.io/features" (where <yourdomain> is the sub-domain for your account).
+3. Name the integration "Aha", and set the _Base URL_ to "https://&lt;yourdomain&gt;.aha.io/features" (where &lt;yourdomain&gt; is the sub-domain for your account).
 4. Mark the integration as _Active_, leave the other fields blank and save the integration.
 5. On the _Profile_ page, copy the _API token_.
 
