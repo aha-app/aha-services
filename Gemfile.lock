@@ -19,14 +19,14 @@ GIT
 
 GIT
   remote: https://github.com/k1w1/html2confluence.git
-  revision: 3547124b74b2a9f2dd3699eda35970680050ec4c
+  revision: 98518db6a5ced4f63990277bbd7265e9bb20b68a
   specs:
-    html2confluence (1.0.0)
+    html2confluence (1.0.1)
 
 PATH
   remote: .
   specs:
-    aha-services (1.1.6)
+    aha-services (1.1.7)
       activesupport
       aha-api
       faraday
