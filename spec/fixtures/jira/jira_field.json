@@ -1,0 +1,791 @@
+[{
+  "id": "summary",
+  "name": "Summary",
+  "custom": false,
+  "orderable": true,
+  "navigable": true,
+  "searchable": true,
+  "schema": {
+    "type": "string",
+    "system": "summary"
+  }
+},
+{
+  "id": "progress",
+  "name": "Progress",
+  "custom": false,
+  "orderable": false,
+  "navigable": true,
+  "searchable": false,
+  "schema": {
+    "type": "progress",
+    "system": "progress"
+  }
+},
+{
+  "id": "timetracking",
+  "name": "Time Tracking",
+  "custom": false,
+  "orderable": true,
+  "navigable": false,
+  "searchable": true,
+  "schema": {
+    "type": "timetracking",
+    "system": "timetracking"
+  }
+},
+{
+  "id": "issuekey",
+  "name": "Key",
+  "custom": false,
+  "orderable": false,
+  "navigable": true,
+  "searchable": false
+},
+{
+  "id": "issuetype",
+  "name": "Issue Type",
+  "custom": false,
+  "orderable": true,
+  "navigable": true,
+  "searchable": true,
+  "schema": {
+    "type": "issuetype",
+    "system": "issuetype"
+  }
+},
+{
+  "id": "timespent",
+  "name": "Time Spent",
+  "custom": false,
+  "orderable": false,
+  "navigable": true,
+  "searchable": false,
+  "schema": {
+    "type": "number",
+    "system": "timespent"
+  }
+},
+{
+  "id": "reporter",
+  "name": "Reporter",
+  "custom": false,
+  "orderable": true,
+  "navigable": true,
+  "searchable": true,
+  "schema": {
+    "type": "user",
+    "system": "reporter"
+  }
+},
+{
+  "id": "created",
+  "name": "Created",
+  "custom": false,
+  "orderable": false,
+  "navigable": true,
+  "searchable": true,
+  "schema": {
+    "type": "datetime",
+    "system": "created"
+  }
+},
+{
+  "id": "updated",
+  "name": "Updated",
+  "custom": false,
+  "orderable": false,
+  "navigable": true,
+  "searchable": true,
+  "schema": {
+    "type": "datetime",
+    "system": "updated"
+  }
+},
+{
+  "id": "description",
+  "name": "Description",
+  "custom": false,
+  "orderable": true,
+  "navigable": true,
+  "searchable": true,
+  "schema": {
+    "type": "string",
+    "system": "description"
+  }
+},
+{
+  "id": "priority",
+  "name": "Priority",
+  "custom": false,
+  "orderable": true,
+  "navigable": true,
+  "searchable": true,
+  "schema": {
+    "type": "priority",
+    "system": "priority"
+  }
+},
+{
+  "id": "customfield_10001",
+  "name": "[CHART] Date of First Response",
+  "custom": true,
+  "orderable": true,
+  "navigable": true,
+  "searchable": true,
+  "schema": {
+    "type": "array",
+    "items": "string",
+    "custom": "com.atlassian.jira.ext.charting:firstresponsedate",
+    "customId": 10001
+  }
+},
+{
+  "id": "customfield_10002",
+  "name": "Flagged",
+  "custom": true,
+  "orderable": true,
+  "navigable": true,
+  "searchable": true,
+  "schema": {
+    "type": "array",
+    "items": "string",
+    "custom": "com.atlassian.jira.plugin.system.customfieldtypes:multicheckboxes",
+    "customId": 10002
+  }
+},
+{
+  "id": "customfield_10003",
+  "name": "Epic/Theme",
+  "custom": true,
+  "orderable": true,
+  "navigable": true,
+  "searchable": true,
+  "schema": {
+    "type": "array",
+    "items": "string",
+    "custom": "com.atlassian.jira.plugin.system.customfieldtypes:labels",
+    "customId": 10003
+  }
+},
+{
+  "id": "customfield_10004",
+  "name": "Story Points",
+  "custom": true,
+  "orderable": true,
+  "navigable": true,
+  "searchable": true,
+  "schema": {
+    "type": "number",
+    "custom": "com.atlassian.jira.plugin.system.customfieldtypes:float",
+    "customId": 10004
+  }
+},
+{
+  "id": "issuelinks",
+  "name": "Linked Issues",
+  "custom": false,
+  "orderable": true,
+  "navigable": true,
+  "searchable": true,
+  "schema": {
+    "type": "array",
+    "items": "issuelinks",
+    "system": "issuelinks"
+  }
+},
+{
+  "id": "customfield_10000",
+  "name": "[CHART] Time in Status",
+  "custom": true,
+  "orderable": true,
+  "navigable": true,
+  "searchable": true,
+  "schema": {
+    "type": "array",
+    "items": "string",
+    "custom": "com.atlassian.jira.ext.charting:timeinstatus",
+    "customId": 10000
+  }
+},
+{
+  "id": "subtasks",
+  "name": "Sub-Tasks",
+  "custom": false,
+  "orderable": false,
+  "navigable": true,
+  "searchable": false,
+  "schema": {
+    "type": "array",
+    "items": "issuelinks",
+    "system": "subtasks"
+  }
+},
+{
+  "id": "customfield_10009",
+  "name": "Epic Name",
+  "custom": true,
+  "orderable": true,
+  "navigable": true,
+  "searchable": true,
+  "schema": {
+    "type": "string",
+    "custom": "com.pyxis.greenhopper.jira:gh-epic-label",
+    "customId": 10009
+  }
+},
+{
+  "id": "customfield_10008",
+  "name": "Epic Link",
+  "custom": true,
+  "orderable": true,
+  "navigable": true,
+  "searchable": true,
+  "schema": {
+    "type": "array",
+    "items": "string",
+    "custom": "com.pyxis.greenhopper.jira:gh-epic-link",
+    "customId": 10008
+  }
+},
+{
+  "id": "customfield_10007",
+  "name": "Sprint",
+  "custom": true,
+  "orderable": true,
+  "navigable": true,
+  "searchable": true,
+  "schema": {
+    "type": "array",
+    "items": "string",
+    "custom": "com.pyxis.greenhopper.jira:gh-sprint",
+    "customId": 10007
+  }
+},
+{
+  "id": "status",
+  "name": "Status",
+  "custom": false,
+  "orderable": false,
+  "navigable": true,
+  "searchable": true,
+  "schema": {
+    "type": "status",
+    "system": "status"
+  }
+},
+{
+  "id": "customfield_10006",
+  "name": "Rank",
+  "custom": true,
+  "orderable": true,
+  "navigable": true,
+  "searchable": true,
+  "schema": {
+    "type": "array",
+    "items": "string",
+    "custom": "com.pyxis.greenhopper.jira:gh-global-rank",
+    "customId": 10006
+  }
+},
+{
+  "id": "customfield_10005",
+  "name": "Business Value",
+  "custom": true,
+  "orderable": true,
+  "navigable": true,
+  "searchable": true,
+  "schema": {
+    "type": "number",
+    "custom": "com.atlassian.jira.plugin.system.customfieldtypes:float",
+    "customId": 10005
+  }
+},
+{
+  "id": "labels",
+  "name": "Labels",
+  "custom": false,
+  "orderable": true,
+  "navigable": true,
+  "searchable": true,
+  "schema": {
+    "type": "array",
+    "items": "string",
+    "system": "labels"
+  }
+},
+{
+  "id": "workratio",
+  "name": "Work Ratio",
+  "custom": false,
+  "orderable": false,
+  "navigable": true,
+  "searchable": true,
+  "schema": {
+    "type": "number",
+    "system": "workratio"
+  }
+},
+{
+  "id": "project",
+  "name": "Project",
+  "custom": false,
+  "orderable": false,
+  "navigable": true,
+  "searchable": true,
+  "schema": {
+    "type": "project",
+    "system": "project"
+  }
+},
+{
+  "id": "thumbnail",
+  "name": "Images",
+  "custom": false,
+  "orderable": false,
+  "navigable": true,
+  "searchable": false
+},
+{
+  "id": "environment",
+  "name": "Environment",
+  "custom": false,
+  "orderable": true,
+  "navigable": true,
+  "searchable": true,
+  "schema": {
+    "type": "string",
+    "system": "environment"
+  }
+},
+{
+  "id": "customfield_10014",
+  "name": "JIRA Capture User Agent",
+  "custom": true,
+  "orderable": true,
+  "navigable": true,
+  "searchable": true,
+  "schema": {
+    "type": "string",
+    "custom": "com.atlassian.bonfire.plugin:bonfire-text",
+    "customId": 10014
+  }
+},
+{
+  "id": "lastViewed",
+  "name": "Last Viewed",
+  "custom": false,
+  "orderable": false,
+  "navigable": true,
+  "searchable": false,
+  "schema": {
+    "type": "datetime",
+    "system": "lastViewed"
+  }
+},
+{
+  "id": "aggregateprogress",
+  "name": "Σ Progress",
+  "custom": false,
+  "orderable": false,
+  "navigable": true,
+  "searchable": false,
+  "schema": {
+    "type": "progress",
+    "system": "aggregateprogress"
+  }
+},
+{
+  "id": "customfield_10015",
+  "name": "JIRA Capture Browser",
+  "custom": true,
+  "orderable": true,
+  "navigable": true,
+  "searchable": true,
+  "schema": {
+    "type": "string",
+    "custom": "com.atlassian.bonfire.plugin:bonfire-text",
+    "customId": 10015
+  }
+},
+{
+  "id": "customfield_10012",
+  "name": "Test Sessions",
+  "custom": true,
+  "orderable": true,
+  "navigable": true,
+  "searchable": true,
+  "schema": {
+    "type": "string",
+    "custom": "com.atlassian.bonfire.plugin:bonfire-multi-session-cft",
+    "customId": 10012
+  }
+},
+{
+  "id": "customfield_10013",
+  "name": "Raised During",
+  "custom": true,
+  "orderable": true,
+  "navigable": true,
+  "searchable": true,
+  "schema": {
+    "type": "string",
+    "custom": "com.atlassian.bonfire.plugin:bonfire-session-cft",
+    "customId": 10013
+  }
+},
+{
+  "id": "components",
+  "name": "Component/s",
+  "custom": false,
+  "orderable": true,
+  "navigable": true,
+  "searchable": true,
+  "schema": {
+    "type": "array",
+    "items": "component",
+    "system": "components"
+  }
+},
+{
+  "id": "comment",
+  "name": "Comment",
+  "custom": false,
+  "orderable": true,
+  "navigable": false,
+  "searchable": true,
+  "schema": {
+    "type": "array",
+    "items": "comment",
+    "system": "comment"
+  }
+},
+{
+  "id": "customfield_10010",
+  "name": "Epic Status",
+  "custom": true,
+  "orderable": true,
+  "navigable": true,
+  "searchable": true,
+  "schema": {
+    "type": "string",
+    "custom": "com.pyxis.greenhopper.jira:gh-epic-status",
+    "customId": 10010
+  }
+},
+{
+  "id": "timeoriginalestimate",
+  "name": "Original Estimate",
+  "custom": false,
+  "orderable": false,
+  "navigable": true,
+  "searchable": false,
+  "schema": {
+    "type": "number",
+    "system": "timeoriginalestimate"
+  }
+},
+{
+  "id": "customfield_10011",
+  "name": "Epic Colour",
+  "custom": true,
+  "orderable": true,
+  "navigable": true,
+  "searchable": true,
+  "schema": {
+    "type": "string",
+    "custom": "com.pyxis.greenhopper.jira:gh-epic-color",
+    "customId": 10011
+  }
+},
+{
+  "id": "customfield_10017",
+  "name": "JIRA Capture URL",
+  "custom": true,
+  "orderable": true,
+  "navigable": true,
+  "searchable": true,
+  "schema": {
+    "type": "string",
+    "custom": "com.atlassian.bonfire.plugin:bonfire-text",
+    "customId": 10017
+  }
+},
+{
+  "id": "customfield_10016",
+  "name": "JIRA Capture Operating System",
+  "custom": true,
+  "orderable": true,
+  "navigable": true,
+  "searchable": true,
+  "schema": {
+    "type": "string",
+    "custom": "com.atlassian.bonfire.plugin:bonfire-text",
+    "customId": 10016
+  }
+},
+{
+  "id": "customfield_10019",
+  "name": "JIRA Capture jQuery Version",
+  "custom": true,
+  "orderable": true,
+  "navigable": true,
+  "searchable": true,
+  "schema": {
+    "type": "string",
+    "custom": "com.atlassian.bonfire.plugin:bonfire-text",
+    "customId": 10019
+  }
+},
+{
+  "id": "customfield_10018",
+  "name": "JIRA Capture Screen Resolution",
+  "custom": true,
+  "orderable": true,
+  "navigable": true,
+  "searchable": true,
+  "schema": {
+    "type": "string",
+    "custom": "com.atlassian.bonfire.plugin:bonfire-text",
+    "customId": 10018
+  }
+},
+{
+  "id": "votes",
+  "name": "Votes",
+  "custom": false,
+  "orderable": false,
+  "navigable": true,
+  "searchable": false,
+  "schema": {
+    "type": "array",
+    "items": "votes",
+    "system": "votes"
+  }
+},
+{
+  "id": "security",
+  "name": "Security Level",
+  "custom": false,
+  "orderable": true,
+  "navigable": true,
+  "searchable": true,
+  "schema": {
+    "type": "securitylevel",
+    "system": "security"
+  }
+},
+{
+  "id": "resolution",
+  "name": "Resolution",
+  "custom": false,
+  "orderable": true,
+  "navigable": true,
+  "searchable": true,
+  "schema": {
+    "type": "resolution",
+    "system": "resolution"
+  }
+},
+{
+  "id": "fixVersions",
+  "name": "Fix Version/s",
+  "custom": false,
+  "orderable": true,
+  "navigable": true,
+  "searchable": true,
+  "schema": {
+    "type": "array",
+    "items": "version",
+    "system": "fixVersions"
+  }
+},
+{
+  "id": "resolutiondate",
+  "name": "Resolved",
+  "custom": false,
+  "orderable": false,
+  "navigable": true,
+  "searchable": true,
+  "schema": {
+    "type": "datetime",
+    "system": "resolutiondate"
+  }
+},
+{
+  "id": "aggregatetimeoriginalestimate",
+  "name": "Σ Original Estimate",
+  "custom": false,
+  "orderable": false,
+  "navigable": true,
+  "searchable": false,
+  "schema": {
+    "type": "number",
+    "system": "aggregatetimeoriginalestimate"
+  }
+},
+{
+  "id": "duedate",
+  "name": "Due Date",
+  "custom": false,
+  "orderable": true,
+  "navigable": true,
+  "searchable": true,
+  "schema": {
+    "type": "date",
+    "system": "duedate"
+  }
+},
+{
+  "id": "customfield_10020",
+  "name": "JIRA Capture Document Mode",
+  "custom": true,
+  "orderable": true,
+  "navigable": true,
+  "searchable": true,
+  "schema": {
+    "type": "string",
+    "custom": "com.atlassian.bonfire.plugin:bonfire-text",
+    "customId": 10020
+  }
+},
+{
+  "id": "customfield_10021",
+  "name": "Testing Status",
+  "custom": true,
+  "orderable": true,
+  "navigable": true,
+  "searchable": true,
+  "schema": {
+    "type": "array",
+    "items": "string",
+    "custom": "com.atlassian.bonfire.plugin:bonfire-testing-status-cft",
+    "customId": 10021
+  }
+},
+{
+  "id": "watches",
+  "name": "Watchers",
+  "custom": false,
+  "orderable": false,
+  "navigable": true,
+  "searchable": false,
+  "schema": {
+    "type": "array",
+    "items": "watches",
+    "system": "watches"
+  }
+},
+{
+  "id": "customfield_10024",
+  "name": "Aha! Reference",
+  "custom": true,
+  "orderable": true,
+  "navigable": true,
+  "searchable": true,
+  "schema": {
+    "type": "string",
+    "custom": "com.atlassian.jira.plugin.system.customfieldtypes:readonlyfield",
+    "customId": 10024
+  }
+},
+{
+  "id": "customfield_10025",
+  "name": "Release Version History",
+  "custom": true,
+  "orderable": true,
+  "navigable": true,
+  "searchable": true,
+  "schema": {
+    "type": "version",
+    "custom": "com.pyxis.greenhopper.jira:greenhopper-releasedmultiversionhistory",
+    "customId": 10025
+  }
+},
+{
+  "id": "worklog",
+  "name": "Log Work",
+  "custom": false,
+  "orderable": true,
+  "navigable": false,
+  "searchable": true,
+  "schema": {
+    "type": "array",
+    "items": "worklog",
+    "system": "worklog"
+  }
+},
+{
+  "id": "assignee",
+  "name": "Assignee",
+  "custom": false,
+  "orderable": true,
+  "navigable": true,
+  "searchable": true,
+  "schema": {
+    "type": "user",
+    "system": "assignee"
+  }
+},
+{
+  "id": "attachment",
+  "name": "Attachment",
+  "custom": false,
+  "orderable": true,
+  "navigable": false,
+  "searchable": true,
+  "schema": {
+    "type": "array",
+    "items": "attachment",
+    "system": "attachment"
+  }
+},
+{
+  "id": "aggregatetimeestimate",
+  "name": "Σ Remaining Estimate",
+  "custom": false,
+  "orderable": false,
+  "navigable": true,
+  "searchable": false,
+  "schema": {
+    "type": "number",
+    "system": "aggregatetimeestimate"
+  }
+},
+{
+  "id": "versions",
+  "name": "Affects Version/s",
+  "custom": false,
+  "orderable": true,
+  "navigable": true,
+  "searchable": true,
+  "schema": {
+    "type": "array",
+    "items": "version",
+    "system": "versions"
+  }
+},
+{
+  "id": "timeestimate",
+  "name": "Remaining Estimate",
+  "custom": false,
+  "orderable": false,
+  "navigable": true,
+  "searchable": false,
+  "schema": {
+    "type": "number",
+    "system": "timeestimate"
+  }
+},
+{
+  "id": "aggregatetimespent",
+  "name": "Σ Time Spent",
+  "custom": false,
+  "orderable": false,
+  "navigable": true,
+  "searchable": false,
+  "schema": {
+    "type": "number",
+    "system": "aggregatetimespent"
+  }
+}]

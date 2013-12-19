@@ -1,6 +1,9 @@
 require 'spec_helper'
 
 describe AhaServices::Jira do
+  let(:integration_data) { {'projects'=>[{'id'=>'10000', 'key'=>'DEMO', 'name'=>'Aha! App Development', 'issue_types'=>[{'id'=>'1', 'name'=>'Bug', 'subtask'=>false, 'statuses'=>[{'id'=>'1', 'name'=>'Open'}, {'id'=>'3', 'name'=>'In Progress'}, {'id'=>'5', 'name'=>'Resolved'}, {'id'=>'4', 'name'=>'Reopened'}, {'id'=>'6', 'name'=>'Closed'}]}, {'id'=>'2', 'name'=>'New Feature', 'subtask'=>false, 'statuses'=>[{'id'=>'1', 'name'=>'Open'}, {'id'=>'3', 'name'=>'In Progress'}, {'id'=>'5', 'name'=>'Resolved'}, {'id'=>'4', 'name'=>'Reopened'}, {'id'=>'6', 'name'=>'Closed'}]}, {'id'=>'3', 'name'=>'Task', 'subtask'=>false, 'statuses'=>[{'id'=>'1', 'name'=>'Open'}, {'id'=>'3', 'name'=>'In Progress'}, {'id'=>'5', 'name'=>'Resolved'}, {'id'=>'4', 'name'=>'Reopened'}, {'id'=>'6', 'name'=>'Closed'}]}, {'id'=>'4', 'name'=>'Improvement', 'subtask'=>false, 'statuses'=>[{'id'=>'1', 'name'=>'Open'}, {'id'=>'3', 'name'=>'In Progress'}, {'id'=>'5', 'name'=>'Resolved'}, {'id'=>'4', 'name'=>'Reopened'}, {'id'=>'6', 'name'=>'Closed'}]}, {'id'=>'5', 'name'=>'Sub-task', 'subtask'=>true, 'statuses'=>[{'id'=>'1', 'name'=>'Open'}, {'id'=>'3', 'name'=>'In Progress'}, {'id'=>'5', 'name'=>'Resolved'}, {'id'=>'4', 'name'=>'Reopened'}, {'id'=>'6', 'name'=>'Closed'}]}, {'id'=>'6', 'name'=>'Epic', 'subtask'=>false, 'statuses'=>[{'id'=>'1', 'name'=>'Open'}, {'id'=>'3', 'name'=>'In Progress'}, {'id'=>'5', 'name'=>'Resolved'}, {'id'=>'4', 'name'=>'Reopened'}, {'id'=>'6', 'name'=>'Closed'}]}, {'id'=>'7', 'name'=>'Story', 'subtask'=>false, 'statuses'=>[{'id'=>'1', 'name'=>'Open'}, {'id'=>'3', 'name'=>'In Progress'}, {'id'=>'5', 'name'=>'Resolved'}, {'id'=>'4', 'name'=>'Reopened'}, {'id'=>'6', 'name'=>'Closed'}]}, {'id'=>'8', 'name'=>'Technical task', 'subtask'=>true, 'statuses'=>[{'id'=>'1', 'name'=>'Open'}, {'id'=>'3', 'name'=>'In Progress'}, {'id'=>'5', 'name'=>'Resolved'}, {'id'=>'4', 'name'=>'Reopened'}, {'id'=>'6', 'name'=>'Closed'}]}]}]} }
+  
+  
   it "can receive new features" do
     # Call to Jira
     stub_request(:post, "http://u:p@foo.com/a/rest/api/2/issue").
@@ -45,8 +48,8 @@ describe AhaServices::Jira do
       to_return(:status => 200, :body => "dddddd", :headers => {})
         
     AhaServices::Jira.new(:create_feature,
-      {'server_url' => 'http://foo.com/a', 'username' => 'u', 'password' => 'p'},
-      json_fixture('create_feature_event.json')).receive
+      {'server_url' => 'http://foo.com/a', 'username' => 'u', 'password' => 'p', 'project'=>'DEMO', 'feature_issue_type' =>'6'},
+      json_fixture('create_feature_event.json'), integration_data).receive
   end
   
   it "can upate existing features" do
@@ -77,7 +80,7 @@ describe AhaServices::Jira do
   
     AhaServices::Jira.new(:update_feature,
       {'server_url' => 'http://foo.com/a', 'username' => 'u', 'password' => 'p'},
-      json_fixture('update_feature_event.json')).receive
+      json_fixture('update_feature_event.json'), integration_data).receive
   end
   
   it "raises error when Jira fails" do
@@ -85,8 +88,8 @@ describe AhaServices::Jira do
       to_return(:status => 400, :body => "{\"errorMessages\":[],\"errors\":{\"description\":\"Operation value must be a string\"}}", :headers => {})
     expect {
       AhaServices::Jira.new(:create_feature,
-        {'server_url' => 'http://foo.com/a', 'username' => 'u', 'password' => 'p'},
-        json_fixture('create_feature_event.json')).receive
+        {'server_url' => 'http://foo.com/a', 'username' => 'u', 'password' => 'p', 'project'=>'DEMO', 'feature_issue_type' =>'6'},
+        json_fixture('create_feature_event.json'), integration_data).receive
     }.to raise_error(AhaService::RemoteError)
   end
   
@@ -95,8 +98,8 @@ describe AhaServices::Jira do
       to_return(:status => 401, :body => "", :headers => {})
     expect {
       AhaServices::Jira.new(:create_feature,
-        {'server_url' => 'http://foo.com/a', 'username' => 'u', 'password' => 'p'},
-        json_fixture('create_feature_event.json')).receive
+        {'server_url' => 'http://foo.com/a', 'username' => 'u', 'password' => 'p', 'project'=>'DEMO', 'feature_issue_type' =>'6'},
+        json_fixture('create_feature_event.json'), integration_data).receive
     }.to raise_error(AhaService::RemoteError)
   end
   
@@ -122,6 +125,8 @@ describe AhaServices::Jira do
         to_return(:status => 200, :body => raw_fixture('jira/jira_project_statuses.json'), :headers => {})
       stub_request(:get, "http://u:p@foo.com/a/rest/api/2/resolution").
         to_return(:status => 200, :body => raw_fixture('jira/jira_resolutions.json'), :headers => {})
+      stub_request(:get, "http://u:p@foo.com/a/rest/api/2/field").
+        to_return(:status => 200, :body => raw_fixture('jira/jira_field.json'), :headers => {})
       
       service = AhaServices::Jira.new(:installed,
         {'server_url' => 'http://foo.com/a', 'username' => 'u', 'password' => 'p', 'api_version' => 'a'},
@@ -141,7 +146,9 @@ describe AhaServices::Jira do
         to_return(:status => 200, :body => raw_fixture('jira/jira_status.json'), :headers => {})
       stub_request(:get, "http://u:p@foo.com/a/rest/api/2/resolution").
         to_return(:status => 200, :body => raw_fixture('jira/jira_resolutions.json'), :headers => {})
-      
+      stub_request(:get, "http://u:p@foo.com/a/rest/api/2/field").
+        to_return(:status => 200, :body => raw_fixture('jira/jira_field.json'), :headers => {})
+    
       service = AhaServices::Jira.new(:installed,
         {'server_url' => 'http://foo.com/a', 'username' => 'u', 'password' => 'p', 'api_version' => 'a'},
         nil)

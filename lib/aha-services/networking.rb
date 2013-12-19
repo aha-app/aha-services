@@ -179,7 +179,7 @@ module Networking
 
     def on_complete(env)
       #@service.receive_http(@service.reportable_http_env(env, @time))
-      @service.logger.info @service.reportable_http_env(env, @time)
+      @service.logger.debug @service.reportable_http_env(env, @time)
     end
   end
 end
