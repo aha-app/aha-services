@@ -134,6 +134,18 @@ class AhaServices::Jira < AhaService
 protected
   
   def create_jira_version(release, project_key)
+    # Query to see if version already exists with same name.
+    prepare_request
+    response = http_get "#{data.server_url}/rest/api/2/project/#{project_key}/versions"
+    process_response(response, 200) do |versions|      
+      version = versions.find {|version| version['name'] == release.name }
+      if version
+        logger.info("Using existing version #{version.inspect}")
+        api.create_integration_field(release.reference_num, self.class.service_name, :id, version['id'])
+        return
+      end
+    end
+    
     version = {
       project: project_key,
       name: release.name,
@@ -142,7 +154,6 @@ protected
       released: release.released
     }
           
-    prepare_request
     response = http_post '%s/rest/api/2/version' % [data.server_url], version.to_json 
     process_response(response, 201) do |new_version|
       logger.info("Created version #{new_version.inspect}")
