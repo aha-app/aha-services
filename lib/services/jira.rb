@@ -80,9 +80,34 @@ class AhaServices::Jira < AhaService
     process_response(response, 200) do |fields|
       epic_name_field = fields.find {|field| field['schema'] && field['schema']['custom'] == "com.pyxis.greenhopper.jira:gh-epic-label"}
       epic_link_field = fields.find {|field| field['schema'] && field['schema']['custom'] == "com.pyxis.greenhopper.jira:gh-epic-link"}
+      aha_reference_field = fields.find {|field| field['name'] == "Aha! Reference"}
       
       @meta_data.epic_name_field = epic_name_field['id'] if epic_name_field
       @meta_data.epic_link_field = epic_link_field['id'] if epic_link_field
+      if aha_reference_field
+        @meta_data.aha_reference_field = aha_reference_field['id']
+      else
+        @meta_data.aha_reference_field = nil
+      end
+    end
+    
+    # Create custom field for Aha! reference.
+    unless @meta_data.aha_reference_field
+      field = {
+        name: "Aha! Reference",
+        description: "Link to the Aha! item this issue is related to.",
+        type: "com.atlassian.jira.plugin.system.customfieldtypes:url"
+      }
+
+      response = http_post("#{data.server_url}/rest/api/2/field", field.to_json)
+      process_response(response, 201) do |new_field|
+        logger.info("Created field #{new_field.inspect}")
+        @meta_data.aha_reference_field = new_field["id"]
+      end
+      
+      # Add field to the default screen.
+      response = http_post("#{data.server_url}/rest/api/2/screens/addToDefault/#{@meta_data.aha_reference_field}")
+      # Ignore the respnse - this API is broken, it doesn't return JSON.
     end
   end
   
@@ -195,6 +220,9 @@ protected
     }
     if version_id
       issue[:fields][:fixVersions] = [{id: version_id}]
+    end
+    if @meta_data.aha_reference_field
+      issue[:fields][@meta_data.aha_reference_field] = resource.url
     end
     case issue_type_name
     when "Epic"
