@@ -214,7 +214,7 @@ protected
       fields: {
         project: {key: project_key},
         summary: summary,
-        description: append_link(convert_html(resource.description.body), resource),
+        description: convert_html(resource.description.body),
         issuetype: {id: issue_type}
       }
     }
@@ -275,7 +275,7 @@ protected
   def update_jira_issue(issue_id, resource, version_id)
     issue = {
       fields: {
-        description: append_link(convert_html(resource.description.body), resource),
+        description: convert_html(resource.description.body),
       }
     }
     issue[:fields][:summary] = resource.name if resource.name
@@ -399,10 +399,6 @@ protected
     parser = HTMLToConfluenceParser.new
     parser.feed(html)
     parser.to_wiki_markup
-  end
-
-  def append_link(body, resource)
-    "#{body}\n\nCreated from Aha! [#{resource.reference_num}|#{resource.url}]"
   end
   
 end
