@@ -156,6 +156,14 @@ class AhaServices::Jira < AhaService
     update_jira_version(version_id, payload.release)
   end
   
+  def get_issue(issue_id)
+    prepare_request
+    response = http_get("#{data.server_url}/rest/api/2/issue/#{issue_id}?expand=renderedFields")
+    process_response(response, 200) do |issue|
+      return issue
+    end
+  end
+  
 protected
   
   def create_jira_version(release, project_key)

@@ -42,14 +42,10 @@ class AhaService
   # Returns a Hashie Mash.
   attr_reader :meta_data
   
-  def initialize(event, data = {}, payload = nil, meta_data = {})
-    @event = event.to_sym
+  def initialize(data = {}, payload = nil, meta_data = {})
     @data = Hashie::Mash.new(data || {})
     @meta_data = Hashie::Mash.new(meta_data || {})
     @payload = Hashie::Mash.new(payload)
-    @event_method = ["receive_#{event}", "receive_event"].detect do |method|
-      respond_to?(method)
-    end
     @api = @data.api_client || allocate_api_client
     @logger = @data.logger || allocate_logger
   end
@@ -81,7 +77,12 @@ class AhaService
     !@event_method.nil?
   end
   
-  def receive(timeout = nil)
+  def receive(event, timeout = nil)
+    @event = event.to_sym
+    @event_method = ["receive_#{event}", "receive_event"].detect do |method|
+      respond_to?(method)
+    end
+    
     unless respond_to_event?
       logger.info("#{self.class.title} ignoring event :#{@event}")
       return
