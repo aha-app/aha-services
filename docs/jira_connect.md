@@ -18,7 +18,7 @@ From Aha! to JIRA
 * All features in a release (that have not already been implemented or sent to JIRA previously) can be sent to JIRA using the _Send to JIRA_ item in the _Actions_ menu on the release page.
 * When a feature is copied to JIRA one issue will be created for the feature. If 
   the feature has requirements then each requirement will also be sent as a 
-  linked issue of the feature issue.
+  linked issue of the feature issue (or a story under an epic if you choose the Epic and Story issue types).
 * Only the description of a feature or requirement is sent. No tasks or comments are included. 
 * Attachments of a feature or requirement are also sent.
 * When a feature is sent to JIRA, its status in Aha! is automatically changed to Ready to develop.
@@ -27,7 +27,7 @@ From Aha! to JIRA
 From JIRA to Aha!
 
 * Any comments that are added to the JIRA issue will also be automatically added to the Aha! item that the issue was created from.
-* Changes to the status of a JIRA issue will be reflected in the Aha! item the issue was created from.
+* Changes to the status, name or description of a JIRA issue will be reflected in the Aha! item the issue was created from. Any other changes will cause a comment to be added to the Aha! item describing the change.
 
 The integration will also create a version in JIRA when you send a release from Aha!
 
