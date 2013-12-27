@@ -46,7 +46,7 @@ Please carefully follow these instructions to ensure that the integration is pro
 1. Log into your JIRA On-demand instance. Under _Administration_ -> _Add-ons_ use the _Find new add-ons_ screen to find the _Aha! Product Roadmaps_ add-on and install it.
 2. Click on the _Configure_ button to configure the _Aha! Product Roadmaps_ add-on.
 3. Enter the sub-domain of your Aha! instance and save.
-4. Create a new custom field in your JIRA instance. The custom field must be a URL type and be named exactly "Aha! Reference". Aha! will use this field to store the link back to the related feature for each issue.
+4. Create a new custom field in your JIRA instance. The custom field must be a URL type and be named exactly "Aha! Reference". Aha! will use this field to store the link back to the related feature for each issue. The field should be added to the default screen.
 5. Log into Aha! and find the _Account settings_ -> _Integrations_ -> _JIRA via Connect_ page for the product you want to integrate with JIRA.
 6. Click on the _Create integration_ button below.
 7. Click the _Test connection_ button to verify that the add-on was installed correctly and load the configuration from JIRA.
