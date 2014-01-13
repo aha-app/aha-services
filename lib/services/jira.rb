@@ -164,6 +164,14 @@ class AhaServices::Jira < AhaService
     end
   end
   
+  def search_issues(params)
+    prepare_request
+    response = http_get("#{data.server_url}/rest/api/2/search?#{params.to_query}")
+    process_response(response, 200) do |results|
+      return results
+    end
+  end
+  
 protected
   
   def create_jira_version(release, project_key)
