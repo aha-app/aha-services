@@ -10,8 +10,8 @@ module Helpers
     body.gsub!(/<\/p>.*/, "")
     body.gsub!(/<\/?[^>]*>/, "")
     body.gsub!(/[\t\n\r]/, " ") # Remove newlines.
-    trailer = "..." if body.length > 80
-    "#{body[0..80]}#{trailer}"
+    trailer = "..." if body.length > 200
+    "#{body[0..200]}#{trailer}"
   end
   
   # Convert HTML to formatted plain text.
