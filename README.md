@@ -17,10 +17,18 @@ Service events
 Service code is called in response to events triggered by the Aha! user interface. Each event is accompanied by a ruby hash `payload` that describes the particular event in detail. The possible events are:
 
 * `installed` - occurs when the service is installed by an Aha! user. This event can be triggered by the _Test connection_ button in the Aha! integrations UI, but may also occur at other times. The event may occur many times for a service and must be idempotent. There is no payload.
-* `create_feature` - occurs when a user chooses _Send to <service name>_ in the Aha! UI and no integration fields exist for the feature. The payload contains complete information about the feature. See `spec/fixtures/create_feature_event.json` for an example.
-* `update_feature` - occurs when a user chooses _Update to <service name>_ in the Aha! UI and integration fields already exist for the feature. The payload contains complete information about the feature. See `spec/fixtures/update_feature_event.json` for an example.
-* `create_feature` - occurs before `create_feature` if there are no integration fields for the release the feature belongs to. The payload contains complete information about the release. See `spec/fixtures/update_release_event.json` for an example.
-* `update_feature` - occurs when there are changes to a release which has integration fields. The payload contains complete information about the release. See `spec/fixtures/update_release_event.json` for an example.
+* `create_feature` - occurs when a user chooses _Send to <service name>_ in the Aha! UI and no integration fields exist for the feature. The payload contains complete information about the feature. See [spec/fixtures/create_feature_event.json](spec/fixtures/create_feature_event.json) for an example.
+* `update_feature` - occurs when a user chooses _Update to <service name>_ in the Aha! UI and integration fields already exist for the feature. The payload contains complete information about the feature. See [spec/fixtures/update_feature_event.json](spec/fixtures/update_feature_event.json) for an example.
+* `create_feature` - occurs before `create_feature` if there are no integration fields for the release the feature belongs to. The payload contains complete information about the release. See [spec/fixtures/update_release_event.json](spec/fixtures/update_release_event.json) for an example.
+* `update_feature` - occurs when there are changes to a release which has integration fields. The payload contains complete information about the release. See [spec/fixtures/update_release_event.json](spec/fixtures/update_release_event.json) for an example.
+
+Configuration
+-------------
+
+Each service has two types of configuration information, each persistently stored and available via a Hashie mash. Each mash can store Ruby scalar values `String`, `Symbol`, `Numeric`, `NilClass`, `TrueClass`, `FalseClass`, `Date`, `Time`, `DateTime` as well as `Array` and `Hash`, but should not be used for other objects.
+
+* `meta_data` - this mash is solely for the use of the integration to store any configuration information it needs to persist between events.
+* `data` - this mash stores the user entered configuration information, corresponding to the fields in the Integrations user interface. It should not be modified by the integration code.
 
 Integration fields
 ------------------
