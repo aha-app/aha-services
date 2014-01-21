@@ -21,6 +21,7 @@ Gem::Specification.new do |s|
   s.add_dependency "faraday_middleware"
   s.add_dependency "simple_oauth"
   s.add_dependency "activesupport"
+  s.add_dependency "htmlentities"
   
   # For Jira integration.
   s.add_dependency "html2confluence"

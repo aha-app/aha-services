@@ -10,6 +10,7 @@ module Helpers
     body.gsub!(/<\/p>.*/, "")
     body.gsub!(/<\/?[^>]*>/, "")
     body.gsub!(/[\t\n\r]/, " ") # Remove newlines.
+    body = HTMLEntities.new.decode(body) # Decode HTML entities.
     trailer = "..." if body.length > 200
     "#{body[0..200]}#{trailer}"
   end
