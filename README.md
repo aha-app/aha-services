@@ -21,6 +21,7 @@ Service code is called in response to events triggered by the Aha! user interfac
 * `update_feature` - occurs when a user chooses _Update to <service name>_ in the Aha! UI and integration fields already exist for the feature. The payload contains complete information about the feature. See [spec/fixtures/update_feature_event.json](spec/fixtures/update_feature_event.json) for an example.
 * `create_feature` - occurs before `create_feature` if there are no integration fields for the release the feature belongs to. The payload contains complete information about the release. See [spec/fixtures/update_release_event.json](spec/fixtures/update_release_event.json) for an example.
 * `update_feature` - occurs when there are changes to a release which has integration fields. The payload contains complete information about the release. See [spec/fixtures/update_release_event.json](spec/fixtures/update_release_event.json) for an example.
+* `webhook` - occurs when a POST call to a webhook is received by Aha! The payload contains the body of the POST.
 
 Configuration
 -------------
@@ -43,10 +44,10 @@ Running from the command line
 
 An integration can be triggered from the command line during testing. Here is an example:
 
-    bundle exec ruby -r ./config/load.rb -e "AhaServices::Jira.new(:create_feature, 
+    bundle exec ruby -r ./config/load.rb -e "AhaServices::Jira.new( 
       {'server_url' => 'https://watersco.atlassian.net', 
         'username' => 'u', 
         'password' => 'p', 
         'api_version' => '2'},
-      JSON.parse(File.new('spec/fixtures/create_feature_event.json').read)).receive"
+      JSON.parse(File.new('spec/fixtures/create_feature_event.json').read)).receive(:create_feature)"
     

@@ -8,7 +8,7 @@ def service(klass, event_or_data, data, payload=nil)
     event   = :create_feature
   end
 
-  service = klass.new(event, data, payload)
+  service = klass.new(data, payload)
   #service.http :adapter => [:test, @stubs]
   service
 end

@@ -1,3 +1,5 @@
+require 'htmlentities'
+
 # Utility routines specific to Aha! data.
 module Helpers
   

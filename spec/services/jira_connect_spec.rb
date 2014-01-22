@@ -15,11 +15,11 @@ uUGJ+z3RwLiM3QIgXDcBdyc+l5Grs8St5WyaIl4Lc/n+/WzRu016WxqUZBMCIFZd
 AP8se1NO6bEg8WfYO7jYic+ppDHLssu0a5xvo1z8
 -----END RSA PRIVATE KEY-----
 EOF
-      service = AhaServices::JiraConnect.new(:installed,
+      service = AhaServices::JiraConnect.new(
         {'server_url' => 'http://foo.com/a', 'api_version' => 'a', 
           'consumer_key' => 'io.aha.connect', 'consumer_secret' => private_key, 'user_id' => 'chris'},
         nil)
-      service.receive
+      service.receive(:installed)
       service.meta_data.projects[0]["key"].should == "APPJ"
       service.meta_data.projects[0].issue_types[0].name.should == "Bug"     
       service.meta_data.projects[0].issue_types[0].statuses[0].name.should == "Open"     

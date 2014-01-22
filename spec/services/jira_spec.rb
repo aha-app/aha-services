@@ -37,19 +37,11 @@ describe AhaServices::Jira do
       with(:body => {:integration_field => {:name => "url", :value => "http://foo.com/a/browse/DEMO-10"}}).
       to_return(:status => 201, :body => "", :headers => {})
     
-    # Download attachments.
-    stub_request(:get, "https://attachments.s3.amazonaws.com/attachments/6cce987f6283d15c080e53bba15b1072a7ab5b07/original.png?1370457053").
-      to_return(:status => 200, :body => "aaaaaa", :headers => {})
-    stub_request(:get, "https://attachments.s3.amazonaws.com/attachments/d1cb788065a70dad7ba481c973e19dcd379eb202/original.png?1370457055").
-      to_return(:status => 200, :body => "bbbbbb", :headers => {})
-    stub_request(:get, "https://attachments.s3.amazonaws.com/attachments/80641a3d3141ce853ea8642bb6324534fafef5b3/original.png?1370458143").
-      to_return(:status => 200, :body => "cccccc", :headers => {})
-    stub_request(:get, "https://attachments.s3.amazonaws.com/attachments/6fad2068e2aa0e031643d289367263d3721c8683/original.png?1370458145").
-      to_return(:status => 200, :body => "dddddd", :headers => {})
+    stub_download_feature_attachments
         
-    AhaServices::Jira.new(:create_feature,
+    AhaServices::Jira.new(
       {'server_url' => 'http://foo.com/a', 'username' => 'u', 'password' => 'p', 'project'=>'DEMO', 'feature_issue_type' =>'6'},
-      json_fixture('create_feature_event.json'), integration_data).receive
+      json_fixture('create_feature_event.json'), integration_data).receive(:create_feature)
   end
   
   it "can upate existing features" do
@@ -59,15 +51,7 @@ describe AhaServices::Jira do
     stub_request(:put, "http://u:p@foo.com/a/rest/api/2/issue/10009").
       to_return(:status => 204, :body => "{\"fields\":{\"description\":\"\\n\\nCreated from Aha! [PROD-2|http://watersco.aha.io/features/PROD-2]\",\"summary\":\"Feature with attachments\"}}", :headers => {})
       
-    # Get attachments.
-    stub_request(:get, "https://attachments.s3.amazonaws.com/attachments/6cce987f6283d15c080e53bba15b1072a7ab5b07/original.png?1370457053").
-      to_return(:status => 200, :body => "aaaaaa", :headers => {})
-    stub_request(:get, "https://attachments.s3.amazonaws.com/attachments/d1cb788065a70dad7ba481c973e19dcd379eb202/original.png?1370457055").
-      to_return(:status => 200, :body => "bbbbbb", :headers => {})
-    stub_request(:get, "https://attachments.s3.amazonaws.com/attachments/80641a3d3141ce853ea8642bb6324534fafef5b3/original.png?1370458143").
-      to_return(:status => 200, :body => "cccccc", :headers => {})
-    stub_request(:get, "https://attachments.s3.amazonaws.com/attachments/6fad2068e2aa0e031643d289367263d3721c8683/original.png?1370458145").
-      to_return(:status => 200, :body => "dddddd", :headers => {})
+    stub_download_feature_attachments
       
     # Upload new attachments.
     stub_request(:post, "http://u:p@foo.com/a/rest/api/2/issue/10009/attachments").
@@ -78,18 +62,18 @@ describe AhaServices::Jira do
       to_return(:status => 200, :body => "", :headers => {})
   
   
-    AhaServices::Jira.new(:update_feature,
+    AhaServices::Jira.new(
       {'server_url' => 'http://foo.com/a', 'username' => 'u', 'password' => 'p'},
-      json_fixture('update_feature_event.json'), integration_data).receive
+      json_fixture('update_feature_event.json'), integration_data).receive(:update_feature)
   end
   
   it "raises error when Jira fails" do
     stub_request(:post, "http://u:p@foo.com/a/rest/api/2/issue").
       to_return(:status => 400, :body => "{\"errorMessages\":[],\"errors\":{\"description\":\"Operation value must be a string\"}}", :headers => {})
     expect {
-      AhaServices::Jira.new(:create_feature,
+      AhaServices::Jira.new(
         {'server_url' => 'http://foo.com/a', 'username' => 'u', 'password' => 'p', 'project'=>'DEMO', 'feature_issue_type' =>'6'},
-        json_fixture('create_feature_event.json'), integration_data).receive
+        json_fixture('create_feature_event.json'), integration_data).receive(:create_feature)
     }.to raise_error(AhaService::RemoteError)
   end
   
@@ -97,9 +81,9 @@ describe AhaServices::Jira do
     stub_request(:post, "http://u:p@foo.com/a/rest/api/2/issue").
       to_return(:status => 401, :body => "", :headers => {})
     expect {
-      AhaServices::Jira.new(:create_feature,
+      AhaServices::Jira.new(
         {'server_url' => 'http://foo.com/a', 'username' => 'u', 'password' => 'p', 'project'=>'DEMO', 'feature_issue_type' =>'6'},
-        json_fixture('create_feature_event.json'), integration_data).receive
+        json_fixture('create_feature_event.json'), integration_data).receive(:create_feature)
     }.to raise_error(AhaService::RemoteError)
   end
   
@@ -109,9 +93,9 @@ describe AhaServices::Jira do
         with(:body => "{\"id\":null,\"name\":\"Production Web Hosting\",\"releaseDate\":\"2013-01-28\",\"released\":false}").
         to_return(:status => 200, :body => "", :headers => {})
       
-      AhaServices::Jira.new(:update_release,
+      AhaServices::Jira.new(
         {'server_url' => 'http://foo.com/a', 'username' => 'u', 'password' => 'p'},
-        json_fixture('update_release_event.json')).receive
+        json_fixture('update_release_event.json')).receive(:update_release)
     end
     
   end
@@ -128,10 +112,10 @@ describe AhaServices::Jira do
       stub_request(:get, "http://u:p@foo.com/a/rest/api/2/field").
         to_return(:status => 200, :body => raw_fixture('jira/jira_field.json'), :headers => {})
       
-      service = AhaServices::Jira.new(:installed,
+      service = AhaServices::Jira.new(
         {'server_url' => 'http://foo.com/a', 'username' => 'u', 'password' => 'p', 'api_version' => 'a'},
         nil)
-      service.receive
+      service.receive(:installed)
       service.meta_data.projects[0]["key"].should == "APPJ"
       service.meta_data.projects[0].issue_types[0].name.should == "Bug"     
       service.meta_data.projects[0].issue_types[0].statuses[0].name.should == "Open"     
@@ -149,10 +133,10 @@ describe AhaServices::Jira do
       stub_request(:get, "http://u:p@foo.com/a/rest/api/2/field").
         to_return(:status => 200, :body => raw_fixture('jira/jira_field.json'), :headers => {})
     
-      service = AhaServices::Jira.new(:installed,
+      service = AhaServices::Jira.new(
         {'server_url' => 'http://foo.com/a', 'username' => 'u', 'password' => 'p', 'api_version' => 'a'},
         nil)
-      service.receive
+      service.receive(:installed)
       service.meta_data.projects[0]["key"].should == "APPJ"
       service.meta_data.projects[0].issue_types[0].name.should == "Bug"     
       service.meta_data.projects[0].issue_types[0].statuses[0].name.should == "Open"     

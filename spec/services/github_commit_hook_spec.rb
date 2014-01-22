@@ -13,8 +13,8 @@ describe AhaServices::GithubCommitHook do
       with(:body => {:comment => {:user_email => "lolwut@noway.biz", :body => /committed/}}).
       to_return(:status => 201, :body => "", :headers => {})
       
-    AhaServices::GithubCommitHook.new(:webhook,
-      {},{"payload" => fixture('github_commit_hook/github_commit_hook_webhook.json').read}).receive
+    AhaServices::GithubCommitHook.new(
+      {},{"payload" => fixture('github_commit_hook/github_commit_hook_webhook.json').read}).receive(:webhook)
   end
   
   it "silently ignores invalid references" do
@@ -22,8 +22,8 @@ describe AhaServices::GithubCommitHook do
     stub_request(:post, /.*/).
       to_return(:status => 404, :body => "", :headers => {})
       
-    AhaServices::GithubCommitHook.new(:webhook,
-      {},{"payload" => fixture('github_commit_hook/github_commit_hook_webhook.json').read}).receive
+    AhaServices::GithubCommitHook.new(
+      {},{"payload" => fixture('github_commit_hook/github_commit_hook_webhook.json').read}).receive(:webhook)
   end
   
 end

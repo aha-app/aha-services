@@ -12,6 +12,8 @@ describe AhaServices::PivotalTracker do
       story_url: 'http://www.pivotaltracker.com/story/show/61017898',
       task_one_id: '18669866'
     }
+    
+    stub_download_feature_attachments
   end
 
   it "can receive new features" do
@@ -37,9 +39,9 @@ describe AhaServices::PivotalTracker do
       to_return(:status => 201, :body => "", :headers => {})
 
     # run service
-    AhaServices::PivotalTracker.new(:create_feature,
+    AhaServices::PivotalTracker.new(
       {'api_token' => @api_token, 'project' => @project_id, 'api_version' => 'a'},
-      json_fixture('create_feature_event.json')).receive
+      json_fixture('create_feature_event.json')).receive(:create_feature)
   end
 
   it "can update existing features" do
@@ -50,9 +52,9 @@ describe AhaServices::PivotalTracker do
     stub_request(:put, '%s/projects/%s/stories/%s/tasks/%s' % [@api_url, @project_id, @pivot_data[:story_id], @pivot_data[:task_one_id]]).
       to_return(:status => 200, :body => "{}", :headers => {})
 
-    AhaServices::PivotalTracker.new(:update_feature,
+    AhaServices::PivotalTracker.new(
       {'api_token' => @api_token, 'project' => @project_id, 'api_version' => 'a'},
-      json_fixture('update_feature_event.json')).receive
+      json_fixture('update_feature_event.json')).receive(:update_feature)
   end
 
   it "raises error when PivotalTracker fails" do
@@ -60,9 +62,9 @@ describe AhaServices::PivotalTracker do
     stub_request(:post, '%s/projects/%s/stories' % [@api_url, @project_id]).
       to_return(:status => 401, :body => raw_fixture('pivotal_tracker/invalid_parameter.json'), :headers => {})
     expect {
-      AhaServices::PivotalTracker.new(:create_feature,
+      AhaServices::PivotalTracker.new(
         {'api_token' => @api_token, 'project' => @project_id, 'api_version' => 'a'},
-        json_fixture('create_feature_event.json')).receive
+        json_fixture('create_feature_event.json')).receive(:create_feature)
     }.to raise_error(AhaService::RemoteError)
   end
 
@@ -73,9 +75,9 @@ describe AhaServices::PivotalTracker do
 
     expect {
       # run service
-      AhaServices::PivotalTracker.new(:create_feature,
+      AhaServices::PivotalTracker.new(
         {'api_token' => '', 'project' => @project_id, 'api_version' => 'a'},
-        json_fixture('create_feature_event.json')).receive
+        json_fixture('create_feature_event.json')).receive(:create_feature)
     }.to raise_error(AhaService::RemoteError)
   end
 
@@ -87,10 +89,10 @@ describe AhaServices::PivotalTracker do
         to_return(:status => 200, :body => raw_fixture('pivotal_tracker/projects.json'), :headers => {})
 
 
-      service = AhaServices::PivotalTracker.new(:installed,
+      service = AhaServices::PivotalTracker.new(
         {'api_token' => @api_token, 'api_version' => 'a'},
         nil)
-      service.receive
+      service.receive(:installed)
       service.meta_data.projects[0]["name"].should == "Learn About the Force"
       service.meta_data.projects[0]["id"].should == 98
     end
