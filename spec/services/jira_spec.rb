@@ -3,8 +3,22 @@ require 'spec_helper'
 describe AhaServices::Jira do
   let(:integration_data) { {'projects'=>[{'id'=>'10000', 'key'=>'DEMO', 'name'=>'Aha! App Development', 'issue_types'=>[{'id'=>'1', 'name'=>'Bug', 'subtask'=>false, 'statuses'=>[{'id'=>'1', 'name'=>'Open'}, {'id'=>'3', 'name'=>'In Progress'}, {'id'=>'5', 'name'=>'Resolved'}, {'id'=>'4', 'name'=>'Reopened'}, {'id'=>'6', 'name'=>'Closed'}]}, {'id'=>'2', 'name'=>'New Feature', 'subtask'=>false, 'statuses'=>[{'id'=>'1', 'name'=>'Open'}, {'id'=>'3', 'name'=>'In Progress'}, {'id'=>'5', 'name'=>'Resolved'}, {'id'=>'4', 'name'=>'Reopened'}, {'id'=>'6', 'name'=>'Closed'}]}, {'id'=>'3', 'name'=>'Task', 'subtask'=>false, 'statuses'=>[{'id'=>'1', 'name'=>'Open'}, {'id'=>'3', 'name'=>'In Progress'}, {'id'=>'5', 'name'=>'Resolved'}, {'id'=>'4', 'name'=>'Reopened'}, {'id'=>'6', 'name'=>'Closed'}]}, {'id'=>'4', 'name'=>'Improvement', 'subtask'=>false, 'statuses'=>[{'id'=>'1', 'name'=>'Open'}, {'id'=>'3', 'name'=>'In Progress'}, {'id'=>'5', 'name'=>'Resolved'}, {'id'=>'4', 'name'=>'Reopened'}, {'id'=>'6', 'name'=>'Closed'}]}, {'id'=>'5', 'name'=>'Sub-task', 'subtask'=>true, 'statuses'=>[{'id'=>'1', 'name'=>'Open'}, {'id'=>'3', 'name'=>'In Progress'}, {'id'=>'5', 'name'=>'Resolved'}, {'id'=>'4', 'name'=>'Reopened'}, {'id'=>'6', 'name'=>'Closed'}]}, {'id'=>'6', 'name'=>'Epic', 'subtask'=>false, 'statuses'=>[{'id'=>'1', 'name'=>'Open'}, {'id'=>'3', 'name'=>'In Progress'}, {'id'=>'5', 'name'=>'Resolved'}, {'id'=>'4', 'name'=>'Reopened'}, {'id'=>'6', 'name'=>'Closed'}]}, {'id'=>'7', 'name'=>'Story', 'subtask'=>false, 'statuses'=>[{'id'=>'1', 'name'=>'Open'}, {'id'=>'3', 'name'=>'In Progress'}, {'id'=>'5', 'name'=>'Resolved'}, {'id'=>'4', 'name'=>'Reopened'}, {'id'=>'6', 'name'=>'Closed'}]}, {'id'=>'8', 'name'=>'Technical task', 'subtask'=>true, 'statuses'=>[{'id'=>'1', 'name'=>'Open'}, {'id'=>'3', 'name'=>'In Progress'}, {'id'=>'5', 'name'=>'Resolved'}, {'id'=>'4', 'name'=>'Reopened'}, {'id'=>'6', 'name'=>'Closed'}]}]}]} }
   
+  def stub_creating_version
+    # Create version.
+    stub_request(:get, "http://u:p@foo.com/a/rest/api/2/project/DEMO/versions").
+      to_return(:status => 200, :body => "[]", :headers => {})
+    stub_request(:post, "http://u:p@foo.com/a/rest/api/2/version").
+      with(:body => "{\"project\":\"DEMO\",\"name\":\"Summer\",\"description\":\"Created from Aha! \",\"releaseDate\":null,\"released\":null}").
+      to_return(:status => 201, :body => "{\"id\":\"666\"}", :headers => {})
+    # Call back into Aha! for release.
+    stub_request(:post, "https://a.aha.io/api/v1/releases/PROD-R-1/integrations/jira/fields").
+      with(:body => {:integration_field => {:name => "id", :value => "666"}}).
+      to_return(:status => 201, :body => "", :headers => {})
+  end
   
   it "can receive new features" do
+    stub_creating_version
+    
     # Call to Jira
     stub_request(:post, "http://u:p@foo.com/a/rest/api/2/issue").
       to_return(:status => 201, :body => "{\"id\":\"10009\",\"key\":\"DEMO-10\",\"self\":\"https://myhost.atlassian.net/rest/api/2/issue/10009\"}", :headers => {})
@@ -15,7 +29,7 @@ describe AhaServices::Jira do
     stub_request(:post, "http://foo.com/a/rest/api/2/issueLink").
       with(:body => {"{\"type\":{\"name\":\"Relates\"},\"outwardIssue\":{\"id\":\"10009\"},\"inwardIssue\":{\"id\":\"10009\"}}"=>true}).
       to_return(:status => 201)
-    
+      
     # Call back into Aha! for feature
     stub_request(:post, "https://a.aha.io/api/v1/features/PROD-2/integrations/jira/fields").
       with(:body => {:integration_field => {:name => "id", :value => "10009"}}).
@@ -72,6 +86,8 @@ describe AhaServices::Jira do
   end
   
   it "raises error when Jira fails" do
+    stub_creating_version
+    
     stub_request(:post, "http://u:p@foo.com/a/rest/api/2/issue").
       to_return(:status => 400, :body => "{\"errorMessages\":[],\"errors\":{\"description\":\"Operation value must be a string\"}}", :headers => {})
     expect {
@@ -82,6 +98,8 @@ describe AhaServices::Jira do
   end
   
   it "raises authentication error" do
+    stub_creating_version
+    
     stub_request(:post, "http://u:p@foo.com/a/rest/api/2/issue").
       to_return(:status => 401, :body => "", :headers => {})
     expect {

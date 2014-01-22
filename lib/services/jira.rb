@@ -112,7 +112,7 @@ class AhaServices::Jira < AhaService
   end
   
   def receive_create_feature
-    version_id = get_jira_id(payload.feature.release.integration_fields)
+    version_id = create_jira_version(payload.feature.release, data.project)
     unless version_id
       logger.error("Version not created for release #{payload.feature.release.id}")
     end
