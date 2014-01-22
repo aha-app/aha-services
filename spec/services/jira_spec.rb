@@ -45,12 +45,16 @@ describe AhaServices::Jira do
   end
   
   it "can upate existing features" do
+    # Verify release.
+    stub_request(:get, "http://u:p@foo.com/a/rest/api/2/version/777").
+      to_return(:status => 200, :body => "", :headers => {})
+    
     # Call to Jira
     stub_request(:get, "http://u:p@foo.com/a/rest/api/2/issue/10009?fields=attachment").
       to_return(:status => 200, :body => raw_fixture('jira/jira_attachments.json'), :headers => {})
     stub_request(:put, "http://u:p@foo.com/a/rest/api/2/issue/10009").
       to_return(:status => 204, :body => "{\"fields\":{\"description\":\"\\n\\nCreated from Aha! [PROD-2|http://watersco.aha.io/features/PROD-2]\",\"summary\":\"Feature with attachments\"}}", :headers => {})
-      
+    
     stub_download_feature_attachments
       
     # Upload new attachments.
@@ -63,7 +67,7 @@ describe AhaServices::Jira do
   
   
     AhaServices::Jira.new(
-      {'server_url' => 'http://foo.com/a', 'username' => 'u', 'password' => 'p'},
+      {'server_url' => 'http://foo.com/a', 'username' => 'u', 'password' => 'p', 'project'=>'DEMO'},
       json_fixture('update_feature_event.json'), integration_data).receive(:update_feature)
   end
   
@@ -89,13 +93,16 @@ describe AhaServices::Jira do
   
   context "releases" do
     it "can be updated" do
-      stub_request(:put, "http://u:p@foo.com/a/rest/api/2/version/").
-        with(:body => "{\"id\":null,\"name\":\"Production Web Hosting\",\"releaseDate\":\"2013-01-28\",\"released\":false}").
+      stub_request(:put, "http://u:p@foo.com/a/rest/api/2/version/777").
+        with(:body => "{\"id\":\"777\",\"name\":\"Production Web Hosting\",\"releaseDate\":\"2013-01-28\",\"released\":false}").
         to_return(:status => 200, :body => "", :headers => {})
       
       AhaServices::Jira.new(
         {'server_url' => 'http://foo.com/a', 'username' => 'u', 'password' => 'p'},
         json_fixture('update_release_event.json')).receive(:update_release)
+    end
+    
+    it "can handle version being deleted" do
     end
     
   end

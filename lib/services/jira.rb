@@ -125,7 +125,8 @@ class AhaServices::Jira < AhaService
   end
   
   def receive_update_feature
-    version_id = get_jira_id(payload.feature.release.integration_fields)
+    # Ensure the version is still valid.
+    version_id = create_jira_version(payload.feature.release, data.project)
     unless version_id
       logger.error("Version not created for release #{payload.feature.release.id}")
     end
@@ -175,15 +176,27 @@ class AhaServices::Jira < AhaService
 protected
   
   def create_jira_version(release, project_key)
-    # Query to see if version already exists with same name.
     prepare_request
+
+    # If the release is already integrated with a version, make sure it still
+    # exists.
+    if version_id = get_jira_id(release.integration_fields)
+      response = http_get "#{data.server_url}/rest/api/2/version/#{version_id}"
+      if response.status == 404
+        # Fall through so we recreate the version.
+      elsif response.status == 200
+        return version_id # The version exists already.
+      end
+    end
+    
+    # Query to see if version already exists with same name.
     response = http_get "#{data.server_url}/rest/api/2/project/#{project_key}/versions"
     process_response(response, 200) do |versions|      
       version = versions.find {|version| version['name'] == release.name }
       if version
         logger.info("Using existing version #{version.inspect}")
         api.create_integration_field(release.reference_num, self.class.service_name, :id, version['id'])
-        return
+        return version['id']
       end
     end
     
@@ -202,6 +215,8 @@ protected
       
       api.create_integration_field(release.reference_num, self.class.service_name, :id, version_id)
     end
+    
+    return version_id
   end
   
   def update_jira_version(version_id, release)
