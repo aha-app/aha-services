@@ -1,5 +1,12 @@
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
+
+# This explicit bundler load is required to make specs run properly in my
+# textmate.
+require 'rubygems'
+require 'bundler'
+Bundler.require(:default)
+
 require 'rspec'
 require 'webmock/rspec'
 require 'aha-services'

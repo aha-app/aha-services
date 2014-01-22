@@ -12,12 +12,28 @@ describe AhaServices::PivotalTracker do
       story_url: 'http://www.pivotaltracker.com/story/show/61017898',
       task_one_id: '18669866'
     }
-    
-    stub_download_feature_attachments
   end
-
+  
+  def stub_pivotal_attachment_uploads
+    # Upload attachments
+    stub_request(:post, "https://www.pivotaltracker.com/services/v5/projects/202020/uploads").
+      with(:body => "-------------RubyMultipartPost\r\nContent-Disposition: form-data; name=\"file\"; filename=\"Austria.png\"\r\nContent-Length: 6\r\nContent-Type: image/png\r\nContent-Transfer-Encoding: binary\r\n\r\naaaaaa\r\n-------------RubyMultipartPost--\r\n\r\n").
+      to_return(:status => 200, :body => "", :headers => {})
+    stub_request(:post, "https://www.pivotaltracker.com/services/v5/projects/202020/uploads").
+      with(:body => "-------------RubyMultipartPost\r\nContent-Disposition: form-data; name=\"file\"; filename=\"Belgium.png\"\r\nContent-Length: 6\r\nContent-Type: image/png\r\nContent-Transfer-Encoding: binary\r\n\r\nbbbbbb\r\n-------------RubyMultipartPost--\r\n\r\n").
+      to_return(:status => 200, :body => "", :headers => {})
+    stub_request(:post, "https://www.pivotaltracker.com/services/v5/projects/202020/uploads").
+      with(:body => "-------------RubyMultipartPost\r\nContent-Disposition: form-data; name=\"file\"; filename=\"Finland.png\"\r\nContent-Length: 6\r\nContent-Type: image/png\r\nContent-Transfer-Encoding: binary\r\n\r\ncccccc\r\n-------------RubyMultipartPost--\r\n\r\n").
+      to_return(:status => 200, :body => "", :headers => {})
+    stub_request(:post, "https://www.pivotaltracker.com/services/v5/projects/202020/uploads").
+      with(:body => "-------------RubyMultipartPost\r\nContent-Disposition: form-data; name=\"file\"; filename=\"France.png\"\r\nContent-Length: 6\r\nContent-Type: image/png\r\nContent-Transfer-Encoding: binary\r\n\r\ndddddd\r\n-------------RubyMultipartPost--\r\n\r\n").
+      to_return(:status => 200, :body => "", :headers => {})
+  end
+  
   it "can receive new features" do
-
+    stub_download_feature_attachments
+    stub_pivotal_attachment_uploads
+    
     # PivotalTracker api v5
     stub_request(:post, '%s/projects/%s/stories' % [@api_url, @project_id]).
       to_return(:status => 200, :body => "{\"id\":\"#{@pivot_data[:story_id]}\",\"url\":\"#{@pivot_data[:story_url]}\"}", :headers => {})
@@ -35,9 +51,12 @@ describe AhaServices::PivotalTracker do
 
     # Call back into Aha! for requirement
     stub_request(:post, "https://a.aha.io/api/v1/requirements/PROD-2-1/integrations/pivotal_tracker/fields").
-      with(:body => {:integration_field => {:name => "id", :value => "#{@pivot_data[:task_one_id]}"}}).
+      with(:body => "{\"integration_field\":{\"name\":\"id\",\"value\":\"61280364\"}}").
       to_return(:status => 201, :body => "", :headers => {})
-
+    stub_request(:post, "https://a.aha.io/api/v1/requirements/PROD-2-1/integrations/pivotal_tracker/fields").
+      with(:body => "{\"integration_field\":{\"name\":\"url\",\"value\":\"http://www.pivotaltracker.com/story/show/61017898\"}}").
+      to_return(:status => 201, :body => "", :headers => {})
+      
     # run service
     AhaServices::PivotalTracker.new(
       {'api_token' => @api_token, 'project' => @project_id, 'api_version' => 'a'},
@@ -47,9 +66,9 @@ describe AhaServices::PivotalTracker do
   it "can update existing features" do
 
     # Call to PivotalTracker
-    stub_request(:put, '%s/projects/%s/stories/%s' % [@api_url, @project_id, @pivot_data[:story_id]]).
+    stub_request(:put, 'https://www.pivotaltracker.com/services/v5/projects/202020/stories/18669866').
       to_return(:status => 200, :body => "{}", :headers => {})
-    stub_request(:put, '%s/projects/%s/stories/%s/tasks/%s' % [@api_url, @project_id, @pivot_data[:story_id], @pivot_data[:task_one_id]]).
+    stub_request(:put, 'https://www.pivotaltracker.com/services/v5/projects/202020/stories/61280364').
       to_return(:status => 200, :body => "{}", :headers => {})
 
     AhaServices::PivotalTracker.new(
@@ -58,6 +77,8 @@ describe AhaServices::PivotalTracker do
   end
 
   it "raises error when PivotalTracker fails" do
+    stub_download_feature_attachments
+    stub_pivotal_attachment_uploads
 
     stub_request(:post, '%s/projects/%s/stories' % [@api_url, @project_id]).
       to_return(:status => 401, :body => raw_fixture('pivotal_tracker/invalid_parameter.json'), :headers => {})
@@ -69,7 +90,9 @@ describe AhaServices::PivotalTracker do
   end
 
   it "raises authentication error" do
-
+    stub_download_feature_attachments
+    stub_pivotal_attachment_uploads
+    
     stub_request(:post, '%s/projects/%s/stories' % [@api_url, @project_id]).
       to_return(:status => 401, :body => raw_fixture('pivotal_tracker/auth_error.json'), :headers => {})
 
@@ -87,8 +110,11 @@ describe AhaServices::PivotalTracker do
 
       stub_request(:get, '%s/projects' % [@api_url]).
         to_return(:status => 200, :body => raw_fixture('pivotal_tracker/projects.json'), :headers => {})
-
-
+      stub_request(:get, "https://www.pivotaltracker.com/services/v5/projects/98/integrations").
+        to_return(:status => 200, :body => "", :headers => {})
+      stub_request(:get, "https://www.pivotaltracker.com/services/v5/projects/99/integrations").
+        to_return(:status => 200, :body => "", :headers => {})
+          
       service = AhaServices::PivotalTracker.new(
         {'api_token' => @api_token, 'api_version' => 'a'},
         nil)
