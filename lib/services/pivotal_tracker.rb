@@ -1,7 +1,9 @@
+require "plain-david"
+
 class AhaServices::PivotalTracker < AhaService
   string :api_token, description: "API token from www.pivotaltracker.com"
   install_button
-  select :project, collection: -> (meta_data, data) { meta_data.projects.collect { |p| [p.name, p.id] } }, 
+  select :project, collection: -> (meta_data, data) { meta_data.projects.collect { |p| [p.name, p.id] } },
     description: "Tracker project that this Aha! product will integrate with."
   select :integration,
     collection: ->(meta_data, data) { meta_data.projects.detect {|p| p.id.to_s == data.project.to_s }.integrations.collect{|p| [p.name, p.id] } },
@@ -23,7 +25,7 @@ class AhaServices::PivotalTracker < AhaService
         }
       end
     end
-    
+
     # For each project, get the integrations.
     available_projects.each do |project|
       project[:integrations] = []
@@ -37,7 +39,7 @@ class AhaServices::PivotalTracker < AhaService
         end
       end
     end
-    
+
     @meta_data.projects = available_projects
   end
 
@@ -79,7 +81,7 @@ class AhaServices::PivotalTracker < AhaService
     resource.attachments.each do |attachment|
       attachments << upload_attachment(attachment)
     end
-    
+
     story = {
       name: resource_name(resource),
       description: append_link(html_to_plain(resource.description.body), parent_id),
@@ -103,7 +105,7 @@ class AhaServices::PivotalTracker < AhaService
       api.create_integration_field(reference_num_to_resource_type(resource.reference_num), resource.reference_num, self.class.service_name, :id, story_id)
       api.create_integration_field(reference_num_to_resource_type(resource.reference_num), resource.reference_num, self.class.service_name, :url, story_url)
     end
-    
+
     story_id
   end
 
@@ -123,23 +125,23 @@ class AhaServices::PivotalTracker < AhaService
   def upload_attachment(attachment)
     open(attachment.download_url) do |downloaded_file|
       # Reset Faraday and switch to multipart to do the file upload.
-      http_reset 
+      http_reset
       http(:encoding => :multipart)
       http.headers['X-TrackerToken'] = data.api_token
-      
+
       file = Faraday::UploadIO.new(downloaded_file, attachment.content_type, attachment.file_name)
       response = http_post("#{@@api_url}/projects/#{data.project}/uploads", {:file => file})
       process_response(response, 200) do |file_attachment|
         return file_attachment
       end
     end
-        
+
   rescue AhaService::RemoteError => e
     logger.error("Failed to upload attachment to #{issue_key}: #{e.message}")
   ensure
-    http_reset 
+    http_reset
   end
-  
+
   # add token to header
   def prepare_request
     http.headers['Content-Type'] = 'application/json'
@@ -153,7 +155,7 @@ class AhaServices::PivotalTracker < AhaService
       body
     end
   end
-  
+
   def kind_to_story_type(kind)
     case kind
     when "new", "improvement"
@@ -166,7 +168,7 @@ class AhaServices::PivotalTracker < AhaService
       "feature"
     end
   end
-  
+
   def process_response(response, *success_codes, &block)
     if success_codes.include?(response.status)
       yield parse(response.body)
