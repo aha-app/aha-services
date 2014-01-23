@@ -12,6 +12,8 @@ class AhaServices::Redmine < AhaService
 #======
 
   def receive_installed
+    @meta_data.projects ||= []
+
     prepare_request
     response = http_get("#{data.redmine_url}/projects.json")
     process_response(response, 200) do |body|
