@@ -6,24 +6,22 @@ class AhaServices::Redmine < AhaService
   string :api_key
   select :project, collection: -> (meta_data, data) { meta_data.projects.collect { |p| [p.name, p.id] } },
     description: "Redmine project that this Aha! product will integrate with."
-  select :integration,
-    collection: ->(meta_data, data) { meta_data.projects.detect {|p| p.id.to_s == data.project.to_s }.integrations.collect{|p| [p.name, p.id] } },
-    description: "Redmine integration that you added for Aha!"
+
+#========
+# EVENTS
+#======
 
   def receive_installed
-    available_projects = []
-    # Get list of projects.
     prepare_request
     response = http_get("#{data.redmine_url}/projects.json")
     process_response(response, 200) do |body|
       body['projects'].each do |project|
-        available_projects << {
+        @meta_data.projects << {
           :id => project['id'],
           :name => project['name'],
         }
       end
     end
-    @meta_data.projects = available_projects
   end
 
 private

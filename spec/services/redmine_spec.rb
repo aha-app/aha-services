@@ -39,6 +39,5 @@ describe AhaServices::Redmine do
         proj["id"].should == json_response['projects'][index]['id']
       end
     end
-
   end
 end
