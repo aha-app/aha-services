@@ -4,7 +4,6 @@ ActiveSupport::JSON
 require 'net/http'
 require 'net/https'
 require 'pp'
-require 'logger'
 
 require 'faraday'
 require 'faraday_middleware'
@@ -21,6 +20,7 @@ require 'aha-services/api'
 require 'aha-services/documentation'
 require 'aha-services/helpers'
 require 'aha-services/service'
+require 'aha-services/logger'
 
 require 'services/generic_resource'
 
