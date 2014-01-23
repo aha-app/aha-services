@@ -1,0 +1,31 @@
+{
+  "projects": [
+    {
+      "id": 1,
+      "name": "Test Project 1",
+      "identifier": "test-project-1",
+      "description": "",
+      "created_on": "2014-01-22T12:57:44Z",
+      "updated_on": "2014-01-22T12:57:44Z"
+    },
+    {
+      "id": 2,
+      "name": "Test Project 2",
+      "identifier": "test-project-2",
+      "description": "",
+      "created_on": "2014-01-23T14:49:56Z",
+      "updated_on": "2014-01-23T14:49:56Z"
+    },
+    {
+      "id": 3,
+      "name": "Test Project 3",
+      "identifier": "test-project-3",
+      "description": "",
+      "created_on": "2014-01-23T14:50:04Z",
+      "updated_on": "2014-01-23T14:50:04Z"
+    }
+  ],
+  "total_count": 3,
+  "offset": 0,
+  "limit": 25
+}
