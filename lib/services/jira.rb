@@ -422,7 +422,11 @@ protected
   
   def issue_type_name(issue_type_id)
     raise AhaService::RemoteError, "Integration has not been configured" if @meta_data.projects.nil?
-    @meta_data.projects.find {|project| project['key'] == data.project }.issue_types.find {|type| type.id == issue_type_id }['name']
+    project = @meta_data.projects.find {|project| project['key'] == data.project }
+    raise AhaService::RemoteError, "Integration has not been configured, can't find project '#{data.project}'" if project.nil?
+    issue_type = project.issue_types.find {|type| type.id == issue_type_id }
+    raise AhaService::RemoteError, "Integration needs to be reconfigured, issue types have changed, can't find issue type '#{issue_type_id}'" if issue_type.nil?
+    issue_type['name']
   end
   
   # Convert HTML from Aha! into Confluence-style wiki markup.
