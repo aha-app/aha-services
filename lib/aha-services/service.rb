@@ -77,7 +77,7 @@ class AhaService
     !@event_method.nil?
   end
 
-  def receive(event, timeout = nil)
+  def receive(event, *args, timeout: 310)
     @event = event.to_sym
     @event_method = ["receive_#{event}", "receive_event"].detect do |method|
       respond_to?(method)
@@ -90,7 +90,7 @@ class AhaService
     logger.info("Sending :#{@event} using #{self.class.title}")
     timeout_sec = (timeout || 310).to_i
     Timeout.timeout(timeout_sec, TimeoutError) do
-      send(event_method)
+      send(event_method, *args)
     end
     self
   rescue AhaService::ConfigurationError, Errno::EHOSTUNREACH, Errno::ECONNRESET,
