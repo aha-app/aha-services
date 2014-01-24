@@ -385,7 +385,8 @@ protected
   rescue AhaService::RemoteError => e
     logger.error("Failed to upload attachment to #{issue_key}: #{e.message}")
   ensure
-    http_reset 
+    http_reset
+    prepare_request
   end
   
   def parse(body)
