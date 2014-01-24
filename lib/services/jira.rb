@@ -237,8 +237,8 @@ protected
   def create_jira_issue(resource, project_key, version_id, parent = nil)
     issue_id = nil
     issue_key = nil
-    issue_type = parent ? (data.requirement_issue_type || data.feature_issue_type): data.feature_issue_type
-    issue_type_name = issue_type_name(issue_type)
+    issue_type_id = parent ? (data.requirement_issue_type || data.feature_issue_type) : data.feature_issue_type
+    issue_type_str = issue_type_name(issue_type_id)
     summary = resource.name || description_to_title(resource.description.body)
     
     issue = {
@@ -255,7 +255,7 @@ protected
     if @meta_data.aha_reference_field
       issue[:fields][@meta_data.aha_reference_field] = resource.url
     end
-    case issue_type_name
+    case issue_type_str
     when "Epic"
       issue[:fields][@meta_data.epic_name_field] = summary
     when "Story"
@@ -283,7 +283,7 @@ protected
     end
     
     # Create links.
-    if parent and !["Epic", "Story"].include?(issue_type_name)
+    if parent and !["Epic", "Story"].include?(issue_type_str)
       link = {
         type: {
           name: "Relates"
