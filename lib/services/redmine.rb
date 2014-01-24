@@ -26,6 +26,20 @@ class AhaServices::Redmine < AhaService
     end
   end
 
+  def receive_create_project name, identifier=nil
+    identifier = name.downcase.squish.gsub( /\s/, '-' )
+    @meta_data.projects ||= []
+
+    prepare_request
+    response = http_post("#{data.redmine_url}/projects.json", {project:{name: name, identifier: identifier}}.to_json)
+    process_response(response, 200) do |body|
+      @meta_data.projects << {
+        :id => body['project']['id'],
+        :name => body['project']['name']
+      }
+    end
+  end
+
 private
 
   def prepare_request
