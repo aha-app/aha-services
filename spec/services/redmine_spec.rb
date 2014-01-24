@@ -79,7 +79,21 @@ describe AhaServices::Redmine do
     end
 
     context 'unauthenticated' do
-      pending
+      before do
+        stub_request(:post, "#{service.data.redmine_url}/projects.json").
+          to_return(status: 401, body: nil, headers: {})
+      end
+
+      it "responds to receive(:create_project)" do
+        expect(service).to receive(:receive_create_project)
+        service.receive(:create_project, project_name, project_identifier)
+      end
+
+      it "raises RemoteError" do
+        expect {
+          service.receive(:create_project, project_name, project_identifier)
+        }.to raise_error(AhaService::RemoteError)
+      end
     end
   end
 
