@@ -52,6 +52,8 @@ describe AhaServices::Redmine do
   end
 
   context 'project creation' do
+    let(:project_name) { 'New Project' }
+    let(:project_identifier) { 'new-project' }
     let(:service) { described_class.new redmine_url: 'http://localhost:4000', api_key: '123456' }
 
     context 'authenticated' do
@@ -65,11 +67,14 @@ describe AhaServices::Redmine do
 
       it "responds to receive(:create_project)" do
         expect(service).to receive(:receive_create_project)
-        service.receive(:create_project)
+        service.receive(:create_project, project_name, project_identifier)
       end
 
       it "handles receive_create_project event" do
-        service.receive(:create_project)
+        service.receive(:create_project, project_name, project_identifier)
+        new_project = service.meta_data.projects.last
+        new_project[:name].should == project_name
+        new_project[:id].should == json_response['project']['id']
       end
     end
 
