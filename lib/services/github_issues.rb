@@ -6,11 +6,11 @@ class AhaServices::GithubIssues < AhaService
   end
 
   def receive_create_feature
-    milestone_id = get_or_create_github_milestone(payload.feature.release)
+    milestone_id = find_or_attach_github_milestone(payload.feature.release)
   end
 
   def receive_create_release
-    get_or_create_github_milestone(payload.release)
+    find_or_attach_github_milestone(payload.release)
   end
 
 protected
@@ -26,7 +26,7 @@ protected
     @repos
   end
 
-  def get_or_create_github_milestone(release)
+  def find_or_attach_github_milestone(release)
     if milestone = existing_milestone_integrated_with(release)
       milestone
     else
