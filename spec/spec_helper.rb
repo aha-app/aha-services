@@ -10,6 +10,9 @@ Bundler.require(:default)
 require 'rspec'
 require 'webmock/rspec'
 require 'aha-services'
+require 'github/github_resource'
+require 'github/github_repo_resource'
+require 'github/github_milestone_resource'
 
 Dir[File.expand_path(File.join(File.dirname(__FILE__),'support','**','*.rb'))].each {|f| require f}
 
