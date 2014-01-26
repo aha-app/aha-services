@@ -27,48 +27,55 @@ protected
   end
 
   def get_or_create_github_milestone(release)
-    github_milestones_path = "#{API_URL}/repos/#{data.username}/#{data.repo}/milestones"
-
-    prepare_request
-
-    # If the release is already integrated with a milestone, make sure it still
-    # exists.
-    if milestone_id = get_integration_field(release.integration_fields, 'id')
-      response = http_get "#{github_milestones_path}/#{milestone_id}"
-      if response.status == 404
-        # Fall through so we recreate the milestone.
-      elsif response.status == 200
-        return milestone_id # The milestone exists already.
-      end
+    if milestone = existing_milestone_integrated_with(release)
+      milestone
+    else
+      attach_milestone_to(release)
     end
+  end
 
-    # Query to see if milestone already exists with same title.
+  def existing_milestone_integrated_with(release)
+    if milestone_id = get_integration_field(release.integration_fields, 'id')
+      find_github_milestone_by_id(milestone_id)
+    end
+  end
+
+  def find_github_milestone_by_id(id)
+    prepare_request
+    response = http_get "#{github_milestones_path}/#{id}"
+    response.status == 200 ? parse(response.body) : nil
+  end
+
+  def attach_milestone_to(release)
+    if milestone = find_github_milestone_by_title(release.name)
+      api.create_integration_field(release.reference_num, self.class.service_name, :id, milestone['number'])
+      milestone
+    else
+      new_milestone_for(release)
+    end
+  end
+
+  def find_github_milestone_by_title(title)
+    prepare_request
     response = http_get github_milestones_path
     process_response(response, 200) do |milestones|
-      milestone = milestones.find {|milestone| milestone['title'] == release.name }
-      if milestone
-        logger.info("Using existing milestone #{milestone.inspect}")
-        api.create_integration_field(release.reference_num, self.class.service_name, :id, milestone['id'])
-        return milestone['id']
-      end
+      return milestones.find { |milestone| milestone['title'] == title }
     end
+  end
 
-    milestone = {
+  def new_milestone_for(release)
+    new_milestone = {
       title: release.name,
       description: "Created from Aha! #{release.url}",
       due_on: release.release_date,
       state: release.released ? "closed" : "open"
     }
-
-    response = http_post github_milestones_path, milestone.to_json
-    process_response(response, 201) do |new_milestone|
-      logger.info("Created milestone #{new_milestone.inspect}")
-      milestone_id = new_milestone["id"]
-
-      api.create_integration_field(release.reference_num, self.class.service_name, :id, version_id)
+    prepare_request
+    response = http_post github_milestones_path, new_milestone.to_json
+    process_response(response, 201) do |milestone|
+      api.create_integration_field(release.reference_num, self.class.service_name, :id, milestone['number'])
+      return milestone
     end
-
-    return milestone_id
   end
 
   def get_integration_field(integration_fields, field_name)
@@ -105,5 +112,10 @@ protected
     else
       raise AhaService::RemoteError, "Unhandled error: STATUS=#{response.status} BODY=#{response.body}"
     end
+  end
+
+private
+  def github_milestones_path
+    "#{API_URL}/repos/#{data.username}/#{data.repo}/milestones"
   end
 end
