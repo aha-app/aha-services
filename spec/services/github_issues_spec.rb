@@ -46,7 +46,7 @@ describe AhaServices::GithubIssues do
         mock_milestone = { title: 'First milestone' }
         service.stub(:existing_milestone_integrated_with)
           .and_return(mock_milestone)
-        expect(service.send(:find_or_attach_github_milestone, release))
+        expect(service.find_or_attach_github_milestone(release))
           .to eq mock_milestone
       end
     end
@@ -55,7 +55,7 @@ describe AhaServices::GithubIssues do
         service.stub(:existing_milestone_integrated_with)
           .and_return(nil)
         service.should_receive(:attach_milestone_to).with(release)
-        service.send(:find_or_attach_github_milestone, release)
+        service.find_or_attach_github_milestone(release)
       end
     end
   end
@@ -68,14 +68,14 @@ describe AhaServices::GithubIssues do
         service.stub(:get_integration_field).and_return(milestone_number)
         milestone_resource.stub(:find_by_number)
           .and_return(mock_milestone)
-        expect(service.send(:existing_milestone_integrated_with, release))
+        expect(service.existing_milestone_integrated_with(release))
           .to eq mock_milestone
       end
     end
     context "when the release doesn't have a 'number' integration field" do
       it "returns nil" do
         service.stub(:get_integration_field).and_return(nil)
-        expect(service.send(:existing_milestone_integrated_with, release))
+        expect(service.existing_milestone_integrated_with(release))
           .to be_nil
       end
     end

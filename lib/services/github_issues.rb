@@ -112,16 +112,6 @@ class AhaServices::GithubIssues < AhaService
     find_or_attach_github_milestone(payload.release)
   end
 
-protected
-
-  def repo_resource
-    @repo_resource ||= GithubRepoResource.new(self)
-  end
-
-  def milestone_resource
-    @milestone_resource ||= GithubMilestoneResource.new(self)
-  end
-
   def find_or_attach_github_milestone(release)
     if milestone = existing_milestone_integrated_with(release)
       milestone
@@ -141,11 +131,11 @@ protected
       integrate_release_with_github_milestone(release, milestone)
       milestone
     else
-      new_milestone_for(release)
+      create_milestone_for(release)
     end
   end
 
-  def new_milestone_for(release)
+  def create_milestone_for(release)
     new_milestone = {
       title: release.name,
       description: "Created from Aha! #{release.url}",
@@ -155,6 +145,16 @@ protected
     milestone = milestone_resource.create(new_milestone)
     integrate_release_with_github_milestone(release, milestone)
     milestone
+  end
+
+protected
+
+  def repo_resource
+    @repo_resource ||= GithubRepoResource.new(self)
+  end
+
+  def milestone_resource
+    @milestone_resource ||= GithubMilestoneResource.new(self)
   end
 
   def integrate_release_with_github_milestone(release, milestone)
