@@ -67,6 +67,20 @@ class GithubRepoResource < GithubResource
   end
 end
 
+class GithubMilestoneResource < GithubResource
+  def find_by_number(number)
+    prepare_request
+    response = http_get "#{github_milestones_path}/#{number}"
+    response.status == 200 ? parse(response.body) : nil
+  end
+
+private
+
+  def github_milestones_path
+    "#{API_URL}/repos/#{@service.data.username}/#{@service.data.repo}/milestones"
+  end
+end
+
 class AhaServices::GithubIssues < AhaService
   API_URL = "https://api.github.com"
 
@@ -88,6 +102,10 @@ protected
     @repo_resource ||= GithubRepoResource.new(self)
   end
 
+  def milestone_resource
+    @milestone_resource ||= GithubMilestoneResource.new(self)
+  end
+
   def find_or_attach_github_milestone(release)
     if milestone = existing_milestone_integrated_with(release)
       milestone
@@ -98,14 +116,8 @@ protected
 
   def existing_milestone_integrated_with(release)
     if milestone_number = get_integration_field(release.integration_fields, 'number')
-      find_github_milestone_by_number(milestone_number)
+      milestone_resource.find_by_number(milestone_number)
     end
-  end
-
-  def find_github_milestone_by_number(number)
-    prepare_request
-    response = http_get "#{github_milestones_path}/#{number}"
-    response.status == 200 ? parse(response.body) : nil
   end
 
   def attach_milestone_to(release)

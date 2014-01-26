@@ -12,13 +12,18 @@ describe AhaServices::GithubIssues do
   end
   let(:release) { Hashie::Mash.new(name: 'First release') }
 
+  let(:repo_resource) { double }
+  let(:milestone_resource) { double }
+
+  before do
+    service.stub(:repo_resource).and_return(repo_resource)
+    service.stub(:milestone_resource).and_return(milestone_resource)
+  end
+
   context "can be installed" do
     it "and handles installed event" do
       mock_repos = [ { name: 'First repo' } ]
-      repo_resource = double
       repo_resource.stub(:all).and_return(mock_repos)
-      service.should_receive(:repo_resource)
-        .and_return(repo_resource)
       service.receive(:installed)
       expect(service.meta_data.repos.first)
         .to eq Hashie::Mash.new(mock_repos.first)
@@ -57,12 +62,12 @@ describe AhaServices::GithubIssues do
 
   describe "#existing_milestone_integrated_with" do
     context "when the release has a 'number' integration field" do
-      it "returns the result of 'find_github_milestone_by_number'" do
+      it "returns the result of 'milestone_resource.find_by_number'" do
         milestone_number = 42
         mock_milestone = { number: 42, title: 'First milestone' }
         service.stub(:get_integration_field).and_return(milestone_number)
-        service.should_receive(:find_github_milestone_by_number)
-          .with(milestone_number).and_return(mock_milestone)
+        milestone_resource.stub(:find_by_number)
+          .and_return(mock_milestone)
         expect(service.send(:existing_milestone_integrated_with, release))
           .to eq mock_milestone
       end
@@ -96,4 +101,8 @@ describe GithubRepoResource do
       expect(repo_resource.all).to eq JSON.parse(mock_repos)
     end
   end
+end
+
+describe GithubMilestoneResource do
+
 end
