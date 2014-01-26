@@ -127,12 +127,11 @@ class AhaServices::GithubIssues < AhaService
   end
 
   def attach_milestone_to(release)
-    if milestone = milestone_resource.find_by_title(release.name)
-      integrate_release_with_github_milestone(release, milestone)
-      milestone
-    else
-      create_milestone_for(release)
+    unless milestone = milestone_resource.find_by_title(release.name)
+      milestone = create_milestone_for(release)
     end
+    integrate_release_with_github_milestone(release, milestone)
+    milestone
   end
 
   def create_milestone_for(release)
@@ -142,9 +141,7 @@ class AhaServices::GithubIssues < AhaService
       due_on: release.release_date,
       state: release.released ? "closed" : "open"
     }
-    milestone = milestone_resource.create(new_milestone)
-    integrate_release_with_github_milestone(release, milestone)
-    milestone
+    milestone_resource.create(new_milestone)
   end
 
 protected

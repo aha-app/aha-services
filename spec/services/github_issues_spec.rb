@@ -80,6 +80,42 @@ describe AhaServices::GithubIssues do
       end
     end
   end
+
+  describe "#attach_milestone_to" do
+    let(:mock_milestone) { { 'number' => 42 } }
+    before { service.api.stub(:create_integration_field) }
+
+    shared_examples "attaching the milestone" do
+      it "integrates the milestone with the release" do
+        service.should_receive(:integrate_release_with_github_milestone)
+          .with(release, mock_milestone)
+        service.attach_milestone_to(release)
+      end
+      it "returns the milestone" do
+        expect(service.attach_milestone_to(release)).to eq mock_milestone
+      end
+    end
+
+    context "when a milestone with a title the same as release's name exists" do
+      before do
+        milestone_resource.stub(:find_by_title).and_return(mock_milestone)
+      end
+
+      it_behaves_like "attaching the milestone"
+    end
+    context "when a milestone with a corresponding title doesn't exist" do
+      before do
+        milestone_resource.stub(:find_by_title).and_return(nil)
+        service.stub(:create_milestone_for).and_return(mock_milestone)
+      end
+      it "creates a new milestone" do
+        service.should_receive(:create_milestone_for).with(release)
+        service.attach_milestone_to(release)
+      end
+
+      it_behaves_like "attaching the milestone"
+    end
+  end
 end
 
 describe GithubRepoResource do
