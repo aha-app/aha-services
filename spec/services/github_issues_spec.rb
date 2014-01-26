@@ -206,4 +206,13 @@ describe GithubMilestoneResource do
       end
     end
   end
+
+  describe "#create" do
+    it "creates the new milestone" do
+      stub_request(:post, base_request_url)
+        .to_return(status: 201, body: mock_milestone)
+      expect(milestone_resource.create({ title: "First milestone" }))
+        .to eq JSON.parse(mock_milestone)
+    end
+  end
 end
