@@ -169,22 +169,39 @@ describe GithubMilestoneResource do
   describe "#find_by_number" do
     let(:number) { 42 }
     context "when a milestone with such number exists" do
-      before do
+      it "returns the milestone" do
         stub_request(:get, "#{base_request_url}/#{number}")
           .to_return(status: 200, body: mock_milestone)
-      end
-      it "returns the milestone" do
         expect(milestone_resource.find_by_number(number))
           .to eq JSON.parse(mock_milestone)
       end
     end
     context "when there is no milestone with the given number" do
-      before do
+      it "returns nil" do
         stub_request(:get, "#{base_request_url}/#{number}")
           .to_return(status: 404)
-      end
-      it "returns nil" do
         expect(milestone_resource.find_by_number(number))
+          .to be_nil
+      end
+    end
+  end
+
+  describe "#find_by_title" do
+    before do
+      stub_request(:get, base_request_url)
+        .to_return(status: 200, body: raw_fixture('github_issues/milestones.json'))
+    end
+    context "when a milestone with such title exists" do
+      it "returns the milestone" do
+        title = "First milestone"
+        expect(milestone_resource.find_by_title(title)['title'])
+          .to eq "First milestone"
+      end
+    end
+    context "when there is no milestone with the given number" do
+      title = "Inexistent milestone"
+      it "returns nil" do
+        expect(milestone_resource.find_by_title(title))
           .to be_nil
       end
     end
