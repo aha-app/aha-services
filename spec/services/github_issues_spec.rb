@@ -150,5 +150,43 @@ describe GithubRepoResource do
 end
 
 describe GithubMilestoneResource do
+  let(:protocol) { 'https' }
+  let(:domain) { 'api.github.com' }
+  let(:username) { 'user' }
+  let(:password) { 'secret' }
+  let(:repo) { 'my_repo' }
+  let(:base_request_url) do
+    "#{protocol}://#{username}:#{password}@#{domain}/repos/#{username}/#{repo}/milestones"
+  end
+  let(:service) do
+    AhaServices::GithubIssues.new 'server_url' => "#{protocol}://#{domain}",
+                                  'username' => username, 'password' => password,
+                                  'repo' => repo
+  end
+  let(:milestone_resource) { GithubMilestoneResource.new(service) }
+  let(:mock_milestone) { raw_fixture('github_issues/milestone.json') }
 
+  describe "#find_by_number" do
+    let(:number) { 42 }
+    context "when a milestone with such number exists" do
+      before do
+        stub_request(:get, "#{base_request_url}/#{number}")
+          .to_return(status: 200, body: mock_milestone)
+      end
+      it "returns the milestone" do
+        expect(milestone_resource.find_by_number(number))
+          .to eq JSON.parse(mock_milestone)
+      end
+    end
+    context "when there is no milestone with the given number" do
+      before do
+        stub_request(:get, "#{base_request_url}/#{number}")
+          .to_return(status: 404)
+      end
+      it "returns nil" do
+        expect(milestone_resource.find_by_number(number))
+          .to be_nil
+      end
+    end
+  end
 end
