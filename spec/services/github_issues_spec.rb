@@ -116,6 +116,16 @@ describe AhaServices::GithubIssues do
       it_behaves_like "attaching the milestone"
     end
   end
+
+  describe "#create_milestone_for" do
+    let(:mock_milestone) { { title: 'First milestone' } }
+    before do
+      milestone_resource.should_receive(:create).and_return(mock_milestone)
+    end
+    it "returns the newly created milestone" do
+      expect(service.create_milestone_for(release)).to eq mock_milestone
+    end
+  end
 end
 
 describe GithubRepoResource do

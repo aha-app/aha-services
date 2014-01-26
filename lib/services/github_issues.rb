@@ -135,13 +135,10 @@ class AhaServices::GithubIssues < AhaService
   end
 
   def create_milestone_for(release)
-    new_milestone = {
-      title: release.name,
-      description: "Created from Aha! #{release.url}",
-      due_on: release.release_date,
-      state: release.released ? "closed" : "open"
-    }
-    milestone_resource.create(new_milestone)
+    milestone_resource.create title: release.name,
+                              description: "Created from Aha! #{release.url}",
+                              due_on: release.release_date,
+                              state: release.released ? "closed" : "open"
   end
 
 protected
