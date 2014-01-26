@@ -1,8 +1,60 @@
+class GithubResource
+  API_URL = "https://api.github.com"
+
+  include Networking
+  include Errors
+
+  def initialize(service)
+    @service = service
+  end
+
+  def parse(body)
+    if body.nil? or body.length < 2
+      {}
+    else
+      JSON.parse(body)
+    end
+  end
+
+  def prepare_request
+    http.headers['Content-Type'] = 'application/json'
+    auth_header
+  end
+
+  def auth_header
+    http.basic_auth @service.data.username, @service.data.password
+  end
+
+  def process_response(response, *success_codes, &block)
+    if success_codes.include?(response.status)
+      yield parse(response.body)
+    elsif response.status.between?(400, 499)
+      error = parse(response.body)
+      raise RemoteError, "Error message: #{error['message']}"
+    else
+      raise RemoteError, "Unhandled error: STATUS=#{response.status} BODY=#{response.body}"
+    end
+  end
+end
+
+class GithubRepoResource < GithubResource
+  def all
+    unless (@repos)
+      prepare_request
+      response = http_get("#{API_URL}/user/repos")
+      process_response(response, 200) do |repos|
+        @repos = repos
+      end
+    end
+    @repos
+  end
+end
+
 class AhaServices::GithubIssues < AhaService
   API_URL = "https://api.github.com"
 
   def receive_installed
-    meta_data.repos = github_repos
+    meta_data.repos = repo_resource.all
   end
 
   def receive_create_feature
@@ -15,15 +67,8 @@ class AhaServices::GithubIssues < AhaService
 
 protected
 
-  def github_repos
-    unless (@repos)
-      prepare_request
-      response = http_get("#{API_URL}/user/repos")
-      process_response(response, 200) do |repos|
-        @repos = repos
-      end
-    end
-    @repos
+  def repo_resource
+    @repo_resource ||= GithubRepoResource.new(self)
   end
 
   def find_or_attach_github_milestone(release)

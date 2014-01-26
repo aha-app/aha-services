@@ -15,8 +15,10 @@ describe AhaServices::GithubIssues do
   context "can be installed" do
     it "and handles installed event" do
       mock_repos = [ { name: 'First repo' } ]
-      service.should_receive(:github_repos)
-        .and_return(mock_repos)
+      repo_resource = double
+      repo_resource.stub(:all).and_return(mock_repos)
+      service.should_receive(:repo_resource)
+        .and_return(repo_resource)
       service.receive(:installed)
       expect(service.meta_data.repos.first)
         .to eq Hashie::Mash.new(mock_repos.first)
@@ -33,14 +35,14 @@ describe AhaServices::GithubIssues do
     service.receive(:create_release)
   end
 
-  describe "#github_repos" do
-    it "returns repos received from Github" do
-      mock_repos = raw_fixture('github_issues/repos.json')
-      stub_request(:get, "#{base_request_url}/user/repos").
-        to_return(status: 200, body: mock_repos)
-      expect(service.send(:github_repos)).to eq JSON.parse(mock_repos)
-    end
-  end
+  # describe "#github_repos" do
+  #   it "returns repos received from Github" do
+  #     mock_repos = raw_fixture('github_issues/repos.json')
+  #     stub_request(:get, "#{base_request_url}/user/repos").
+  #       to_return(status: 200, body: mock_repos)
+  #     expect(service.send(:github_repos)).to eq JSON.parse(mock_repos)
+  #   end
+  # end
 
   describe "#find_or_attach_github_milestone" do
     context "when there is an existing milestone integrated with the release" do
