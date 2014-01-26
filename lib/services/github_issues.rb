@@ -6,7 +6,7 @@ class AhaServices::GithubIssues < AhaService
   end
 
   def receive_create_feature
-    milestone_id = find_or_attach_github_milestone(payload.feature.release)
+    milestone = find_or_attach_github_milestone(payload.feature.release)
   end
 
   def receive_create_release
@@ -35,20 +35,20 @@ protected
   end
 
   def existing_milestone_integrated_with(release)
-    if milestone_id = get_integration_field(release.integration_fields, 'id')
-      find_github_milestone_by_id(milestone_id)
+    if milestone_number = get_integration_field(release.integration_fields, 'number')
+      find_github_milestone_by_number(milestone_number)
     end
   end
 
-  def find_github_milestone_by_id(id)
+  def find_github_milestone_by_number(number)
     prepare_request
-    response = http_get "#{github_milestones_path}/#{id}"
+    response = http_get "#{github_milestones_path}/#{number}"
     response.status == 200 ? parse(response.body) : nil
   end
 
   def attach_milestone_to(release)
     if milestone = find_github_milestone_by_title(release.name)
-      api.create_integration_field(release.reference_num, self.class.service_name, :id, milestone['number'])
+      integrate_release_with_github_milestone(release, milestone)
       milestone
     else
       new_milestone_for(release)
@@ -73,9 +73,13 @@ protected
     prepare_request
     response = http_post github_milestones_path, new_milestone.to_json
     process_response(response, 201) do |milestone|
-      api.create_integration_field(release.reference_num, self.class.service_name, :id, milestone['number'])
+      integrate_release_with_github_milestone(release, milestone)
       return milestone
     end
+  end
+
+  def integrate_release_with_github_milestone(release, milestone)
+    api.create_integration_field(release.reference_num, self.class.service_name, :number, milestone['number'])
   end
 
   def get_integration_field(integration_fields, field_name)

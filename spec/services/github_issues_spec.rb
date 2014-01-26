@@ -10,6 +10,7 @@ describe AhaServices::GithubIssues do
     AhaServices::GithubIssues.new 'server_url' => "#{protocol}://#{domain}",
                                   'username' => username, 'password' => password
   end
+  let(:release) { Hashie::Mash.new(name: 'First release') }
 
   context "can be installed" do
     it "and handles installed event" do
@@ -23,7 +24,7 @@ describe AhaServices::GithubIssues do
   end
 
   it "handles the 'create release' event" do
-    mock_payload = Hashie::Mash.new({ release: { name: "First release" } })
+    mock_payload = Hashie::Mash.new(release: release)
     service.stub(:payload).and_return(mock_payload)
     service.stub(:find_or_attach_github_milestone)
       .and_return({ title: "First release" })
@@ -42,7 +43,6 @@ describe AhaServices::GithubIssues do
   end
 
   describe "#find_or_attach_github_milestone" do
-    let(:release) { { name: 'First release' } }
     context "when there is an existing milestone integrated with the release" do
       it "returns the milestone" do
         mock_milestone = { title: 'First milestone' }
@@ -58,6 +58,27 @@ describe AhaServices::GithubIssues do
           .and_return(nil)
         service.should_receive(:attach_milestone_to).with(release)
         service.send(:find_or_attach_github_milestone, release)
+      end
+    end
+  end
+
+  describe "#existing_milestone_integrated_with" do
+    context "when the release has a 'number' integration field" do
+      it "returns the result of 'find_github_milestone_by_number'" do
+        milestone_number = 42
+        mock_milestone = { number: 42, title: 'First milestone' }
+        service.stub(:get_integration_field).and_return(milestone_number)
+        service.should_receive(:find_github_milestone_by_number)
+          .with(milestone_number).and_return(mock_milestone)
+        expect(service.send(:existing_milestone_integrated_with, release))
+          .to eq mock_milestone
+      end
+    end
+    context "when the release doesn't have a 'number' integration field" do
+      it "returns nil" do
+        service.stub(:get_integration_field).and_return(nil)
+        expect(service.send(:existing_milestone_integrated_with, release))
+          .to be_nil
       end
     end
   end
