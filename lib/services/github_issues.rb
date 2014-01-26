@@ -2,20 +2,7 @@ class AhaServices::GithubIssues < AhaService
   API_URL = "https://api.github.com"
 
   def receive_installed
-    available_repos = []
-
-    prepare_request
-    response = http_get("#{API_URL}/user/repos")
-    process_response(response, 200) do |repos|
-      repos.each do |repo|
-        available_repos << {
-          id: repo['id'],
-          name: repo['name']
-        }
-      end
-    end
-
-    @meta_data.repos = available_repos
+    @meta_data.repos = github_repos
   end
 
   def receive_create_feature
@@ -27,6 +14,17 @@ class AhaServices::GithubIssues < AhaService
   end
 
 protected
+
+  def github_repos
+    unless (@repos)
+      prepare_request
+      response = http_get("#{API_URL}/user/repos")
+      process_response(response, 200) do |repos|
+        @repos = repos
+      end
+    end
+    @repos
+  end
 
   def create_github_milestone(release)
     github_milestones_path = "#{API_URL}/repos/#{data.username}/#{data.repo}/milestones"
