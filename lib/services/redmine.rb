@@ -29,6 +29,12 @@ class AhaServices::Redmine < AhaService
     update_project id, new_name
   end
 
+  def receive_delete_project
+    id = payload['id']
+
+    delete_project id
+  end
+
 private
 
 #===============
@@ -79,6 +85,19 @@ private
           :id => id,
           :name => new_name,
         }
+      end
+    end
+  end
+
+  def delete_project id
+    @meta_data.projects ||= []
+    project = @meta_data.projects.find {|proj| proj[:id] == id}
+
+    prepare_request
+    response = http_delete("#{data.redmine_url}/projects/#{id}.json")
+    process_response(response, 200) do
+      if project
+        @meta_data.projects.delete project
       end
     end
   end
