@@ -139,24 +139,32 @@ describe AhaServices::Redmine do
     before do
       stub_request(:get, "#{service.data.redmine_url}/projects.json").
         to_return(status: 200, body: project_index_response_raw, headers: {})
+      stub_request(:put, "#{service.data.redmine_url}/projects/#{project_id}.json").
+        to_return(status: 200, body: '{}', headers: {})
+      service.receive(:installed)
     end
 
     context 'authenticated' do
-      before do
-        stub_request(:put, "#{service.data.redmine_url}/projects/#{project_id}.json").
-          to_return(status: 200, body: '{}', headers: {})
-        service.receive(:installed)
+      context 'edited_project is installed' do
+        it "responds to receive(:update_project)" do
+          expect(service).to receive(:receive_update_project)
+          service.receive(:update_project)
+        end
+
+        it "handles receive_update_project event" do
+          service.receive(:update_project)
+          edited_project = service.meta_data['projects'].find {|p| p[:id] == project_id}
+          expect(edited_project[:name]).to eq project_name
+        end
       end
 
-      it "responds to receive(:update_project)" do
-        expect(service).to receive(:receive_update_project)
-        service.receive(:update_project)
-      end
-
-      it "handles receive_update_project event" do
-        service.receive(:update_project)
-        edited_project = service.meta_data['projects'].find {|p| p[:id] == project_id}
-        expect(edited_project[:name]).to eq project_name
+      context 'edited_project is not installed' do
+        it 'creates the missing edited_project' do
+          service.meta_data.projects.pop
+          old_project_count = service.meta_data.projects.size
+          service.receive(:update_project)
+          expect(service.meta_data.projects.size).to eq(1 + old_project_count)
+        end
       end
     end
 
