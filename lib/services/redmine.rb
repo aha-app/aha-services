@@ -16,7 +16,6 @@ class AhaServices::Redmine < AhaService
   end
 
   def receive_create_project
-    @meta_data.projects ||= []
     project_name = payload.project_name
     project_identifier = project_name.downcase.squish.gsub( /\s/, '-' )
 
@@ -26,10 +25,15 @@ class AhaServices::Redmine < AhaService
   def receive_update_project
     id = payload['id']
     new_name = payload['project_name']
+
     update_project id, new_name
   end
 
 private
+
+#===============
+# EVENT METHODS
+#=============
 
   def install_projects
     @meta_data.projects ||= []
@@ -47,6 +51,8 @@ private
   end
 
   def create_project name, identifier
+    @meta_data.projects ||= []
+
     prepare_request
     params = { project:{ name: name, identifier: identifier }}
     response = http_post("#{data.redmine_url}/projects.json", params.to_json)
@@ -68,6 +74,10 @@ private
       project[:name] = new_name
     end
   end
+
+#==================
+# REQUEST HANDLING
+#================
 
   def prepare_request
     http.headers['Content-Type'] = 'application/json'
