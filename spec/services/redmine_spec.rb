@@ -128,7 +128,6 @@ describe AhaServices::Redmine do
     let(:project_index_response_json) { JSON.parse(project_index_response_raw) }
     let(:project_id) { project_index_response_json['projects'].last['id'] }
     let(:project_name) { 'NewAwesomeProjectName' }
-    let(:project_identifier) { 'newawesomeprojectname' }
     let(:service) do
       described_class.new(
         { redmine_url: 'http://localhost:4000', api_key: '123456' },
