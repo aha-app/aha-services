@@ -44,7 +44,8 @@ private
 
   def create_project name, identifier
     prepare_request
-    response = http_post("#{data.redmine_url}/projects.json", {project:{name: name, identifier: identifier}}.to_json)
+    params = { project:{ name: name, identifier: identifier }}
+    response = http_post("#{data.redmine_url}/projects.json", params.to_json)
     process_response(response, 200) do |body|
       @meta_data.projects << {
         :id => body['project']['id'],
@@ -55,7 +56,13 @@ private
 
   def update_project id, new_name
     project = @meta_data.projects.find {|proj| proj[:id] == id}
-    project[:name] = new_name
+
+    prepare_request
+    params = { project:{ name: new_name }}
+    response = http_put("#{data.redmine_url}/projects/#{id}.json", params.to_json)
+    process_response(response, 200) do |body|
+      project[:name] = new_name
+    end
   end
 
   def prepare_request
