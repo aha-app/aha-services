@@ -205,5 +205,47 @@ describe AhaServices::Redmine do
     end
   end
 
+  context 'project deletion' do
+    let(:project_index_response_raw) { raw_fixture('redmine/projects.json') }
+    let(:project_index_response_json) { JSON.parse(project_index_response_raw) }
+    let(:project_id) { project_index_response_json['projects'].last['id'] }
+    let(:service) do
+      described_class.new(
+        { redmine_url: 'http://localhost:4000', api_key: '123456' },
+        { id: project_id })
+    end
+
+    before do
+      stub_request(:get, "#{service.data.redmine_url}/projects.json").
+        to_return(status: 200, body: project_index_response_raw, headers: {})
+      stub_request(:delete, "#{service.data.redmine_url}/projects/#{project_id}.json").
+        to_return(status: 200, body: '{}', headers: {})
+      service.receive(:installed)
+    end
+
+    context 'authenticated' do
+      it "responds to receive(:delete_project)" do
+        expect(service).to receive(:receive_delete_project)
+        service.receive(:delete_project)
+      end
+
+      it "handles receive_update_project event" do
+        service.receive(:delete_project)
+        expect(service.meta_data['projects'].find {|p| p[:id] == project_id}).to be_nil
+      end
+    end
+
+    context 'unauthenticated' do
+      before do
+        stub_request(:delete, "#{service.data.redmine_url}/projects/#{project_id}.json").
+          to_return(status: 401, body: '{}', headers: {})
+        service.receive(:installed)
+      end
+
+      it "handles receive_update_project event" do
+        expect { service.receive(:delete_project) }.to raise_error(AhaService::RemoteError)
+      end
+    end
+  end
 
 end
