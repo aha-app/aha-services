@@ -95,9 +95,7 @@ describe AhaServices::Redmine do
       end
 
       it "raises RemoteError" do
-        expect {
-          service.receive(:create_project)
-        }.to raise_error(AhaService::RemoteError)
+        expect { service.receive(:create_project) }.to raise_error(AhaService::RemoteError)
       end
     end
   end
@@ -108,6 +106,13 @@ describe AhaServices::Redmine do
     let(:project_id) { project_index_response_json['projects'].last['id'] }
     let(:project_name) { 'NewAwesomeProjectName' }
     let(:project_identifier) { 'newawesomeprojectname' }
+    let(:service) do
+      described_class.new(
+        { redmine_url: 'http://localhost:4000', api_key: '123456' },
+        { id: project_id,
+          project_name: project_name
+        })
+    end
 
     before do
       stub_request(:get, "#{service.data.redmine_url}/projects.json").
@@ -115,19 +120,9 @@ describe AhaServices::Redmine do
     end
 
     context 'authenticated' do
-      let(:project_update_response_raw) { raw_fixture('redmine/create_project.json') }
-      let(:project_update_response_json) { JSON.parse(raw_response) }
-      let(:service) do
-        described_class.new(
-          { redmine_url: 'http://localhost:4000', api_key: '123456' },
-          { id: project_id,
-            project_name: project_name
-          })
-      end
-
       before do
-        stub_request(:post, "#{service.data.redmine_url}/projects.json").
-          to_return(status: 200, body: project_update_response_raw, headers: {})
+        stub_request(:put, "#{service.data.redmine_url}/projects/#{project_id}.json").
+          to_return(status: 200, body: '{}', headers: {})
         service.receive(:installed)
       end
 
@@ -144,7 +139,19 @@ describe AhaServices::Redmine do
     end
 
     context 'unauthenticated' do
-      pending "not ready"
+      before do
+        stub_request(:put, "#{service.data.redmine_url}/projects/#{project_id}.json").
+          to_return(status: 401, body: '{}', headers: {})
+        service.receive(:installed)
+      end
+
+      it "handles receive_update_project event" do
+        edited_project = service.meta_data['projects'].find {|p| p[:id] == project_id}
+        old_name = edited_project[:name]
+        expect { service.receive(:update_project) }.to raise_error(AhaService::RemoteError)
+        expect(edited_project[:name]).to eq old_name
+        expect(edited_project[:name]).not_to eq project_name
+      end
     end
   end
 
