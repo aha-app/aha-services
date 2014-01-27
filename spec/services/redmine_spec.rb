@@ -58,12 +58,13 @@ describe AhaServices::Redmine do
         stub_request(:get, "#{service.data.redmine_url}/projects.json").
           to_return(status: 200, body: raw_response_old_install, headers: {})
         service.receive(:installed)
+        stub_request(:get, "#{service.data.redmine_url}/projects.json").
+          to_return(status: 200, body: raw_response_new_install, headers: {})
       end
 
       it "handles a second installed event" do
         expect(service.meta_data.projects.size).to eq(JSON.parse(raw_response_old_install)['projects'].size)
-        stub_request(:get, "#{service.data.redmine_url}/projects.json").
-          to_return(status: 200, body: raw_response_new_install, headers: {})
+
         service.receive(:installed)
         expect(service.meta_data.projects.size).to eq(JSON.parse(raw_response_new_install)['projects'].size)
       end
