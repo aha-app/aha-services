@@ -27,7 +27,7 @@ describe AhaServices::Redmine do
   context "installation" do
     let(:service) { described_class.new redmine_url: 'http://localhost:4000', api_key: '123456' }
 
-    context 'authenticated' do
+    context 'fresh installation' do
       let(:raw_response) { raw_fixture('redmine/projects.json') }
       let(:json_response) { JSON.parse(raw_response) }
 
@@ -47,6 +47,25 @@ describe AhaServices::Redmine do
           expect(proj[:name]).to eq json_response['projects'][index]['name']
           expect(proj[:id]).to eq json_response['projects'][index]['id']
         end
+      end
+    end
+
+    context 'overwriting previous installation' do
+      let(:raw_response_old_install) { raw_fixture('redmine/projects_limit_2.json') }
+      let(:raw_response_new_install) { raw_fixture('redmine/projects.json') }
+
+      before do
+        stub_request(:get, "#{service.data.redmine_url}/projects.json").
+          to_return(status: 200, body: raw_response_old_install, headers: {})
+        service.receive(:installed)
+      end
+
+      it "handles a second installed event" do
+        expect(service.meta_data.projects.size).to eq(JSON.parse(raw_response_old_install)['projects'].size)
+        stub_request(:get, "#{service.data.redmine_url}/projects.json").
+          to_return(status: 200, body: raw_response_new_install, headers: {})
+        service.receive(:installed)
+        expect(service.meta_data.projects.size).to eq(JSON.parse(raw_response_new_install)['projects'].size)
       end
     end
   end

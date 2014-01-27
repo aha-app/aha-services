@@ -36,7 +36,7 @@ private
 #=============
 
   def install_projects
-    @meta_data.projects ||= []
+    @meta_data.projects = []
 
     prepare_request
     response = http_get("#{data.redmine_url}/projects.json")
