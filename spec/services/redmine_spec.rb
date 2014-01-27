@@ -85,7 +85,7 @@ describe AhaServices::Redmine do
         end
       end
 
-      context 'some projects already isntalled' do
+      context 'some projects already installed' do
         let(:project_index_response_raw) { raw_fixture('redmine/projects.json') }
         before do
           stub_request(:get, "#{service.data.redmine_url}/projects.json").
