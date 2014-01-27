@@ -34,6 +34,9 @@ class AhaServices::Redmine < AhaService
     create_project project_name, project_identifier
   end
 
+  def receive_update_project
+  end
+
 private
 
   def create_project name, identifier
