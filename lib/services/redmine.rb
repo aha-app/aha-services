@@ -12,18 +12,7 @@ class AhaServices::Redmine < AhaService
 #======
 
   def receive_installed
-    @meta_data.projects ||= []
-
-    prepare_request
-    response = http_get("#{data.redmine_url}/projects.json")
-    process_response(response, 200) do |body|
-      body['projects'].each do |project|
-        @meta_data.projects << {
-          :id => project['id'],
-          :name => project['name'],
-        }
-      end
-    end
+    install_projects
   end
 
   def receive_create_project
@@ -41,6 +30,21 @@ class AhaServices::Redmine < AhaService
   end
 
 private
+
+  def install_projects
+    @meta_data.projects ||= []
+
+    prepare_request
+    response = http_get("#{data.redmine_url}/projects.json")
+    process_response(response, 200) do |body|
+      body['projects'].each do |project|
+        @meta_data.projects << {
+          :id => project['id'],
+          :name => project['name'],
+        }
+      end
+    end
+  end
 
   def create_project name, identifier
     prepare_request
