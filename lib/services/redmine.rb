@@ -35,6 +35,8 @@ class AhaServices::Redmine < AhaService
   end
 
   def receive_update_project
+    project = @meta_data.projects.find {|proj| proj[:id] == payload['id']}
+    project[:name] = payload['project_name']
   end
 
 private
