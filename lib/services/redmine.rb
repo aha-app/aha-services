@@ -65,13 +65,21 @@ private
   end
 
   def update_project id, new_name
+    @meta_data.projects ||= []
     project = @meta_data.projects.find {|proj| proj[:id] == id}
 
     prepare_request
     params = { project:{ name: new_name }}
     response = http_put("#{data.redmine_url}/projects/#{id}.json", params.to_json)
-    process_response(response, 200) do |body|
-      project[:name] = new_name
+    process_response(response, 200) do
+      if project
+        project[:name] = new_name
+      else
+        @meta_data.projects << {
+          :id => id,
+          :name => new_name,
+        }
+      end
     end
   end
 
