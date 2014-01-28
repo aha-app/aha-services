@@ -63,16 +63,35 @@ private
     response = http_get("#{data.redmine_url}/projects.json")
     process_response(response, 200) do |body|
       body['projects'].each do |project|
-        install_versions project['id']
         @meta_data.projects << {
           :id => project['id'],
           :name => project['name'],
         }
+        install_versions project['id']
       end
     end
   end
 
-  def install_versions(project_id); end
+  def install_versions project_id
+    project = @meta_data.projects.find {|proj| proj[:id] == project_id}
+    project[:versions] = []
+
+    prepare_request
+    response = http_get("#{data.redmine_url}/projects/#{project_id}/versions.json")
+    process_response response, 200 do |body|
+      next if body.empty?
+      body.deep_symbolize_keys!
+      body[:versions].each do |version|
+        project[:versions] << {
+          id: version[:id],
+          name: version[:name],
+          description: version[:description],
+          status: version[:status],
+          sharing: version[:sharing]
+        }
+      end
+    end
+  end
 
   def create_project name, identifier
     @meta_data.projects ||= []
@@ -92,13 +111,13 @@ private
     @meta_data.projects ||= []
     install_projects if @meta_data.projects.empty?
     project = meta_data.projects.find {|p| p[:id] == project_id}
+    project[:versions] ||= []
 
     prepare_request
     params = { version: { name: version_name }}
     response = http_post("#{data.redmine_url}/projects/#{project_id}/versions.json", params.to_json)
     process_response(response, 201) do |body|
       body.deep_symbolize_keys!
-      project[:versions] ||= []
       project[:versions] << {
         id: body[:version][:id],
         name: body[:version][:name],
