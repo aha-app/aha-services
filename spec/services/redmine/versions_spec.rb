@@ -23,8 +23,7 @@ describe AhaServices::Redmine do
       let(:project) { service.meta_data.projects.find {|p| p[:id] == project_id }}
 
       before do
-        stub_request(:get, "#{service.data.redmine_url}/projects.json").
-          to_return(status: 200, body: projects_index_raw, headers: {})
+        stub_redmine_projects_without_versions
         stub_request(:post, "#{service.data.redmine_url}/projects/#{project_id}/versions.json").
           to_return(status: 201, body: raw_response, headers: {})
       end
