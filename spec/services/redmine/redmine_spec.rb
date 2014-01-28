@@ -35,14 +35,7 @@ describe AhaServices::Redmine do
       let(:versions_index_json) { JSON.parse(versions_index_raw) }
 
       before do
-        stub_request(:get, "#{service.data.redmine_url}/projects.json").
-          to_return(status: 200, body: projects_index_raw, headers: {})
-        stub_request(:get, "#{service.data.redmine_url}/projects/1/versions.json").
-          to_return(status: 200, body: {}, headers: {})
-        stub_request(:get, "#{service.data.redmine_url}/projects/2/versions.json").
-          to_return(status: 200, body: versions_index_raw, headers: {})
-        stub_request(:get, "#{service.data.redmine_url}/projects/3/versions.json").
-          to_return(status: 200, body: {}, headers: {})
+        stub_redmine_projects_with_versions
       end
 
       it "responds to receive(:installed)" do
@@ -75,23 +68,9 @@ describe AhaServices::Redmine do
 
       context 'adding installations' do
         before do
-          stub_request(:get, "#{service.data.redmine_url}/projects.json").
-            to_return(status: 200, body: projects_index_less_raw, headers: {})
-          stub_request(:get, "#{service.data.redmine_url}/projects/1/versions.json").
-            to_return(status: 200, body: {}, headers: {})
-          stub_request(:get, "#{service.data.redmine_url}/projects/2/versions.json").
-            to_return(status: 200, body: versions_index_less_raw, headers: {})
-
+          stub_redmine_projects_with_versions false, false
           service.receive(:installed)
-
-          stub_request(:get, "#{service.data.redmine_url}/projects.json").
-            to_return(status: 200, body: projects_index_more_raw, headers: {})
-          stub_request(:get, "#{service.data.redmine_url}/projects/1/versions.json").
-            to_return(status: 200, body: {}, headers: {})
-          stub_request(:get, "#{service.data.redmine_url}/projects/2/versions.json").
-            to_return(status: 200, body: versions_index_more_raw, headers: {})
-          stub_request(:get, "#{service.data.redmine_url}/projects/3/versions.json").
-            to_return(status: 200, body: {}, headers: {})
+          stub_redmine_projects_with_versions
         end
 
         it "installs new projects" do
@@ -113,23 +92,9 @@ describe AhaServices::Redmine do
 
       context 'reducing installations' do
         before do
-          stub_request(:get, "#{service.data.redmine_url}/projects.json").
-            to_return(status: 200, body: projects_index_more_raw, headers: {})
-          stub_request(:get, "#{service.data.redmine_url}/projects/1/versions.json").
-            to_return(status: 200, body: {}, headers: {})
-          stub_request(:get, "#{service.data.redmine_url}/projects/2/versions.json").
-            to_return(status: 200, body: versions_index_more_raw, headers: {})
-          stub_request(:get, "#{service.data.redmine_url}/projects/3/versions.json").
-            to_return(status: 200, body: {}, headers: {})
-
+          stub_redmine_projects_with_versions
           service.receive(:installed)
-
-          stub_request(:get, "#{service.data.redmine_url}/projects.json").
-            to_return(status: 200, body: projects_index_less_raw, headers: {})
-          stub_request(:get, "#{service.data.redmine_url}/projects/1/versions.json").
-            to_return(status: 200, body: {}, headers: {})
-          stub_request(:get, "#{service.data.redmine_url}/projects/2/versions.json").
-            to_return(status: 200, body: versions_index_less_raw, headers: {})
+          stub_redmine_projects_with_versions false, false
         end
 
         it "installs new projects" do
