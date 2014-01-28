@@ -28,7 +28,7 @@ describe AhaServices::Redmine do
     let(:service) { described_class.new redmine_url: 'http://localhost:4000', api_key: '123456' }
 
     context 'fresh installation' do
-      let(:raw_response) { raw_fixture('redmine/projects.json') }
+      let(:raw_response) { raw_fixture('redmine/projects/index.json') }
       let(:json_response) { JSON.parse(raw_response) }
 
       before do
@@ -51,8 +51,8 @@ describe AhaServices::Redmine do
     end
 
     context 'overwriting previous installation' do
-      let(:raw_response_old_install) { raw_fixture('redmine/projects_2.json') }
-      let(:raw_response_new_install) { raw_fixture('redmine/projects.json') }
+      let(:raw_response_old_install) { raw_fixture('redmine/projects/index_2.json') }
+      let(:raw_response_new_install) { raw_fixture('redmine/projects/index.json') }
 
       before do
         stub_request(:get, "#{service.data.redmine_url}/projects.json").
