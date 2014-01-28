@@ -20,6 +20,7 @@ describe AhaServices::Redmine do
     context 'authenticated' do
       let(:raw_response) { raw_fixture('redmine/versions/create.json') }
       let(:json_response) { JSON.parse(raw_response) }
+      let(:project) { service.meta_data.projects.find {|p| p[:id] == project_id }}
 
       before do
         stub_request(:get, "#{service.data.redmine_url}/projects.json").
@@ -34,7 +35,6 @@ describe AhaServices::Redmine do
       end
 
       context 'no other versions previously installed' do
-        let(:project) { service.meta_data.projects.find {|p| p[:id] == project_id }}
         let(:new_version) { project[:versions].last }
 
         it "handles receive_create_version event" do
@@ -43,6 +43,16 @@ describe AhaServices::Redmine do
           expect(project[:versions].size).to eq 1
           expect(new_version[:name]).to eq version_name
           expect(new_version[:id]).to eq json_response['version']['id']
+        end
+      end
+
+      context 'no other versions previously installed' do
+        let(:new_version) { project[:versions].find {|v| v[:id] == json_response['version']['id'] }}
+
+        it "handles receive_create_version event" do
+          service.receive(:create_version)
+          expect(project[:versions].size).to eq 1
+          expect(new_version[:name]).to eq version_name
         end
       end
 
