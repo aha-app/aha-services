@@ -38,8 +38,7 @@ describe AhaServices::Redmine do
       context 'some projects already installed' do
         let(:project_index_response_raw) { raw_fixture('redmine/projects/index.json') }
         before do
-          stub_request(:get, "#{service.data.redmine_url}/projects.json").
-            to_return(status: 200, body: project_index_response_raw, headers: {})
+          stub_redmine_projects_without_versions
         end
 
         it "handles receive_create_project event" do
@@ -87,8 +86,7 @@ describe AhaServices::Redmine do
     end
 
     before do
-      stub_request(:get, "#{service.data.redmine_url}/projects.json").
-        to_return(status: 200, body: project_index_response_raw, headers: {})
+      stub_redmine_projects_without_versions
       stub_request(:put, "#{service.data.redmine_url}/projects/#{project_id}.json").
         to_return(status: 200, body: '{}', headers: {})
       service.receive(:installed)
@@ -146,8 +144,7 @@ describe AhaServices::Redmine do
     end
 
     before do
-      stub_request(:get, "#{service.data.redmine_url}/projects.json").
-        to_return(status: 200, body: project_index_response_raw, headers: {})
+      stub_redmine_projects_without_versions
       stub_request(:delete, "#{service.data.redmine_url}/projects/#{project_id}.json").
         to_return(status: 200, body: '{}', headers: {})
       service.receive(:installed)
