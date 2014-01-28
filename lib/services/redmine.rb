@@ -11,7 +11,7 @@ class AhaServices::Redmine < AhaService
     description: "Redmine project that this Aha! product will integrate with."
   select :version,
     collection: -> (meta_data, data) do
-      meta_data.projects.find {|p| p.id.to_s == data.project.to_s }.versions.collect{|p| [p.name, p.id] }
+      meta_data.projects.find {|p| p.id.to_s == data.project_id.to_s }.versions.collect{|p| [p.name, p.id] }
     end,
     description: "Redmine project versions."
 
@@ -28,6 +28,13 @@ class AhaServices::Redmine < AhaService
     project_identifier = project_name.downcase.squish.gsub( /\s/, '-' )
 
     create_project project_name, project_identifier
+  end
+
+  def receive_create_version
+    project_id = payload.project_id
+    version_name = payload.version_name
+
+    create_version project_id, version_name
   end
 
   def receive_update_project
@@ -56,6 +63,7 @@ private
     response = http_get("#{data.redmine_url}/projects.json")
     process_response(response, 200) do |body|
       body['projects'].each do |project|
+        install_versions project['id']
         @meta_data.projects << {
           :id => project['id'],
           :name => project['name'],
@@ -63,6 +71,8 @@ private
       end
     end
   end
+
+  def install_versions(project_id); end
 
   def create_project name, identifier
     @meta_data.projects ||= []
@@ -74,6 +84,27 @@ private
       @meta_data.projects << {
         :id => body['project']['id'],
         :name => body['project']['name']
+      }
+    end
+  end
+
+  def create_version project_id, version_name
+    @meta_data.projects ||= []
+    install_projects if @meta_data.projects.empty?
+    project = meta_data.projects.find {|p| p[:id] == project_id}
+
+    prepare_request
+    params = { version: { name: version_name }}
+    response = http_post("#{data.redmine_url}/projects/#{project_id}/versions.json", params.to_json)
+    process_response(response, 201) do |body|
+      body.deep_symbolize_keys!
+      project[:versions] ||= []
+      project[:versions] << {
+        id: body[:version][:id],
+        name: body[:version][:name],
+        description: body[:version][:description],
+        status: body[:version][:status],
+        sharing: body[:version][:sharing]
       }
     end
   end
@@ -91,7 +122,7 @@ private
       else
         @meta_data.projects << {
           :id => id,
-          :name => new_name,
+          :name => new_name
         }
       end
     end
