@@ -1,0 +1,33 @@
+{
+  "total_count":
+  2,
+  "versions":
+  [
+    {
+      "created_on": "2014-01-28T13:11:11Z",
+      "description": "",
+      "id": 2,
+      "name": "milestone2",
+      "project": {
+        "id": 2,
+        "name": "Test Project 2"
+      },
+      "sharing": "none",
+      "status": "open",
+      "updated_on": "2014-01-28T13:11:11Z"
+    },
+    {
+      "created_on": "2014-01-28T13:11:02Z",
+      "description": "",
+      "id": 1,
+      "name": "milestone1",
+      "project": {
+        "id": 2,
+        "name": "Test Project 2"
+      },
+      "sharing": "none",
+      "status": "open",
+      "updated_on": "2014-01-28T13:11:02Z"
+    }
+  ]
+}
