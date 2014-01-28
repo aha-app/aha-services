@@ -20,8 +20,8 @@ require 'aha-services/documentation'
 require 'aha-services/helpers'
 require 'aha-services/service'
 
-require 'github/github_resource'
-require 'github/github_repo_resource'
-require 'github/github_milestone_resource'
+require 'services/github/github_resource'
+require 'services/github/github_repo_resource'
+require 'services/github/github_milestone_resource'
 
 Dir["#{File.dirname(__FILE__)}/services/**/*.rb"].each {|file| require file }
