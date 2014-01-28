@@ -4,8 +4,16 @@ class AhaServices::Redmine < AhaService
 
   string :redmine_url
   string :api_key
-  select :project, collection: -> (meta_data, data) { meta_data.projects.collect { |p| [p.name, p.id] } },
+  select :project,
+    collection: -> (meta_data, data) do
+      meta_data.projects.collect { |p| [p.name, p.id] }
+    end,
     description: "Redmine project that this Aha! product will integrate with."
+  select :version,
+    collection: -> (meta_data, data) do
+      meta_data.projects.find {|p| p.id.to_s == data.project.to_s }.versions.collect{|p| [p.name, p.id] }
+    end,
+    description: "Redmine project versions."
 
 #========
 # EVENTS

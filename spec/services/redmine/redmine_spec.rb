@@ -9,6 +9,7 @@ describe AhaServices::Redmine do
         {type: :string, field_name: :redmine_url},
         {type: :string, field_name: :api_key},
         {type: :select, field_name: :project},
+        {type: :select, field_name: :version}
       ]
     }
 
