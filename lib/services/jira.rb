@@ -120,7 +120,14 @@ class AhaServices::Jira < AhaService
     feature_info = create_jira_issue(payload.feature, data.project, version_id)
     payload.feature.requirements.each do |requirement|
       # TODO: don't create requirements that have been dropped.
-      create_jira_issue(requirement, data.project, version_id, feature_info)
+      requirement_id = get_jira_id(requirement.integration_fields)
+      if requirement_id
+        # Update requirement.
+        update_jira_issue(requirement_id, requirement, version_id)
+      else
+        # Create new requirement.
+        create_jira_issue(requirement, data.project, version_id, feature_info)
+      end
     end
   end
   
