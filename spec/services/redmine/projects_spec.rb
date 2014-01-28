@@ -12,7 +12,7 @@ describe AhaServices::Redmine do
     end
 
     context 'authenticated' do
-      let(:raw_response) { raw_fixture('redmine/create_project.json') }
+      let(:raw_response) { raw_fixture('redmine/projects/create.json') }
       let(:json_response) { JSON.parse(raw_response) }
 
       before do
@@ -36,7 +36,7 @@ describe AhaServices::Redmine do
       end
 
       context 'some projects already installed' do
-        let(:project_index_response_raw) { raw_fixture('redmine/projects.json') }
+        let(:project_index_response_raw) { raw_fixture('redmine/projects/index.json') }
         before do
           stub_request(:get, "#{service.data.redmine_url}/projects.json").
             to_return(status: 200, body: project_index_response_raw, headers: {})
@@ -74,7 +74,7 @@ describe AhaServices::Redmine do
   end
 
   context 'project update' do
-    let(:project_index_response_raw) { raw_fixture('redmine/projects.json') }
+    let(:project_index_response_raw) { raw_fixture('redmine/projects/index.json') }
     let(:project_index_response_json) { JSON.parse(project_index_response_raw) }
     let(:project_id) { project_index_response_json['projects'].last['id'] }
     let(:project_name) { 'NewAwesomeProjectName' }
@@ -136,7 +136,7 @@ describe AhaServices::Redmine do
   end
 
   context 'project deletion' do
-    let(:project_index_response_raw) { raw_fixture('redmine/projects.json') }
+    let(:project_index_response_raw) { raw_fixture('redmine/projects/index.json') }
     let(:project_index_response_json) { JSON.parse(project_index_response_raw) }
     let(:project_id) { project_index_response_json['projects'].last['id'] }
     let(:service) do
