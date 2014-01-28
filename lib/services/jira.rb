@@ -329,6 +329,9 @@ protected
     end
     
     update_attachments(issue_id, resource)
+    
+    # TODO: Should update epic link field, or issue links if parent feature has
+    # changed for a requirement.
   end
 
   def update_attachments(issue_id, resource)
