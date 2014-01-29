@@ -37,9 +37,7 @@ describe AhaServices::Redmine do
 
       context 'some projects already installed' do
         let(:project_index_response_raw) { raw_fixture('redmine/projects/index.json') }
-        before do
-          stub_redmine_projects
-        end
+        before { stub_redmine_projects }
 
         it "handles receive_create_project event" do
           service.receive(:installed)
@@ -84,10 +82,9 @@ describe AhaServices::Redmine do
     end
 
     before do
-      stub_redmine_projects
+      populate_redmine_projects service
       stub_request(:put, "#{service.data.redmine_url}/projects/#{project_id}.json").
         to_return(status: 200, body: '{}', headers: {})
-      service.receive(:installed)
     end
 
     context 'authenticated' do
@@ -99,7 +96,7 @@ describe AhaServices::Redmine do
 
         it "handles receive_update_project event" do
           service.receive(:update_project)
-          edited_project = service.meta_data['projects'].find {|p| p[:id] == project_id}
+          edited_project = service.send :find_project, project_id
           expect(edited_project[:name]).to eq project_name
         end
       end
@@ -122,7 +119,7 @@ describe AhaServices::Redmine do
       end
 
       it "handles receive_update_project event" do
-        edited_project = service.meta_data['projects'].find {|p| p[:id] == project_id}
+        edited_project = service.send :find_project, project_id
         old_name = edited_project[:name]
         expect { service.receive(:update_project) }.to raise_error(AhaService::RemoteError)
         expect(edited_project[:name]).to eq old_name
@@ -156,7 +153,7 @@ describe AhaServices::Redmine do
 
       it "handles receive_update_project event" do
         service.receive(:delete_project)
-        expect(service.meta_data['projects'].find {|p| p[:id] == project_id}).to be_nil
+        expect(service.send :find_project, project_id).to be_nil
       end
     end
 
