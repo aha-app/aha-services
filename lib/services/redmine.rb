@@ -85,7 +85,7 @@ private
   end
 
   def install_versions project_id
-    project = @meta_data.projects.find {|proj| proj[:id] == project_id}
+    project = project_find project_id
     project[:versions] = []
 
     prepare_request
@@ -122,7 +122,7 @@ private
   def create_version project_id, version_name
     @meta_data.projects ||= []
     install_projects if @meta_data.projects.empty?
-    project = meta_data.projects.find {|p| p[:id] == project_id}
+    project = find_project project_id
     project[:versions] ||= []
 
     prepare_request
