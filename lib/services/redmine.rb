@@ -85,7 +85,7 @@ private
   end
 
   def install_versions project_id
-    project = project_find project_id
+    project = find_project project_id
     project[:versions] = []
 
     prepare_request
