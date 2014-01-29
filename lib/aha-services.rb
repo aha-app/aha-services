@@ -9,7 +9,7 @@ require 'logger'
 require 'faraday'
 require 'faraday_middleware'
 require 'ipaddr'
-require 'resolv'
+require 'socket'
 require 'hashie'
 require 'aha-api'
 

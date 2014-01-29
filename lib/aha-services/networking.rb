@@ -175,7 +175,7 @@ module Networking
       return url_to_check
     end
     
-    ip_to_check = Resolv.getaddress(uri.host)
+    ip_to_check = IPSocket::getaddress(uri.host)
     @@prohibited_addresses.each do |addr|
       if addr === ip_to_check
         @@verified_urls[uri.host] = false
