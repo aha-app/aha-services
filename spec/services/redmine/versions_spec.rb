@@ -63,9 +63,9 @@ describe AhaServices::Redmine do
 
   context 'version update' do
     let(:project_id) { 2 }
-    let(:project) { service.meta_data.projects.find {|p| p[:id]==project_id }}
     let(:version_id) { 1 }
-    let(:version) { project[:versions].find {|v| v[:id]==version_id }}
+    let(:project) { service.send :find_project, project_id }
+    let(:version) { service.send :find_version, project_id, version_id }
     let(:new_version_name) { 'New Awesome Version Name' }
     let(:service) do
       described_class.new(
@@ -107,6 +107,39 @@ describe AhaServices::Redmine do
       it 'reinstalls projects with versions' do
         expect(service).to receive(:install_projects)
         service.receive(:update_version)
+      end
+    end
+  end
+
+  context 'version delete' do
+    let(:project_id) { 2 }
+    let(:version_id) { 1 }
+    let(:project) { service.send :find_project, project_id }
+    let(:version) { service.send :find_version, project_id, version_id }
+    let(:service) do
+      described_class.new(
+        { redmine_url: 'http://localhost:4000', api_key: '123456' },
+        { project_id: project_id,
+          version_id: version_id
+        })
+    end
+
+    it 'responds to receive(:delete_version)' do
+      expect(service).to receive(:receive_delete_version)
+      service.receive(:delete_version)
+    end
+
+    context 'installed version' do
+      before do
+        stub_redmine_projects_with_versions
+        stub_request(:delete, "#{service.data.redmine_url}/projects/#{project_id}/versions/#{version_id}.json").
+          to_return(status: 200, body: '{}', headers: {})
+        service.receive(:installed)
+      end
+
+      it 'deletes version' do
+        service.receive(:delete_version)
+        expect(version).to be_nil
       end
     end
   end
