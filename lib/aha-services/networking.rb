@@ -162,6 +162,25 @@ module Networking
     end
   end
   
+  #
+  # Make sure that user provided URLs cannot be used to attack any internal
+  # services. We sanitize URLs are reject any that resolve to a local
+  # address.
+  #
+  def sanitize_url(url)
+    "0.0.0.0/8",
+    "255.255.255.255/32",
+    "127.0.0.0/8",
+    "10.0.0.0/8",
+    "169.254.0.0/16",
+    "172.16.0.0/12",
+    "192.168.0.0/16",
+    "224.0.0.0/4",
+    "fc00::/7",
+    "fe80::/10",
+  end
+    
+  
   # Public: Checks for an SSL error, and re-raises a Services configuration error.
   #
   # Returns nothing.
