@@ -167,10 +167,14 @@ private
     prepare_request
     response = http_put("#{data.redmine_url}/projects/#{project_id}/versions/#{version_id}.json", params.to_json)
     process_response(response, 200) do
-      params.deep_symbolize_keys!
-      params.each do |key, val|
-        version[key] = val
-      end if project && version
+      if project && version
+        params.deep_symbolize_keys!
+        params.each do |key, val|
+          version[key] = val
+        end
+      else
+        install_projects
+      end
     end
   end
 
