@@ -35,7 +35,7 @@ describe AhaServices::Redmine do
       let(:versions_index_json) { JSON.parse(versions_index_raw) }
 
       before do
-        stub_redmine_projects_with_versions
+        stub_redmine_projects_and_versions
       end
 
       it "responds to receive(:installed)" do
@@ -68,9 +68,9 @@ describe AhaServices::Redmine do
 
       context 'adding installations' do
         before do
-          stub_redmine_projects_with_versions false, false
+          stub_redmine_projects_and_versions false, false
           service.receive(:installed)
-          stub_redmine_projects_with_versions
+          stub_redmine_projects_and_versions
         end
 
         it "installs new projects" do
@@ -92,9 +92,9 @@ describe AhaServices::Redmine do
 
       context 'reducing installations' do
         before do
-          stub_redmine_projects_with_versions
+          stub_redmine_projects_and_versions
           service.receive(:installed)
-          stub_redmine_projects_with_versions false, false
+          stub_redmine_projects_and_versions false, false
         end
 
         it "installs new projects" do
