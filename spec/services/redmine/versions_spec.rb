@@ -33,7 +33,6 @@ describe AhaServices::Redmine do
           stub_request(:post, "#{service.data.redmine_url}/projects/#{project_id}/versions.json").
             to_return(status: 201, body: raw_response, headers: {})
         end
-
         let(:new_version) { project[:versions].last }
 
         it "handles receive_create_version event" do
@@ -50,7 +49,6 @@ describe AhaServices::Redmine do
           stub_request(:post, "#{service.data.redmine_url}/projects/#{project_id}/versions.json").
             to_return(status: 201, body: raw_response, headers: {})
         end
-
         let(:new_version) { project[:versions].find {|v| v[:id] == json_response['version']['id'] }}
 
         it "handles receive_create_version event" do
@@ -74,7 +72,7 @@ describe AhaServices::Redmine do
         { redmine_url: 'http://localhost:4000', api_key: '123456' },
         { project_id: project_id,
           version_id: version_id,
-          version_name: new_version_name
+          version: {name: new_version_name}
         })
     end
 
@@ -93,7 +91,6 @@ describe AhaServices::Redmine do
     context 'installed version' do
       it 'updates the version`s name' do
         service.receive(:update_version)
-
         expect(version[:name]).to eq new_version_name
       end
     end
