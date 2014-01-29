@@ -15,6 +15,10 @@ class AhaServices::Redmine < AhaService
     end,
     description: "Redmine project versions."
 
+  PARAMLISTS = {
+    version: [:name, :description, :sharing, :status]
+  }
+
 #========
 # EVENTS
 #======
@@ -187,6 +191,15 @@ private
     else
       JSON.parse(body)
     end
+  end
+
+#=========
+# SUPPORT
+#=======
+
+  def sanitize_params params, paramlist_name
+    paramlist = PARAMLISTS[paramlist_name]
+    params.select {|key, value| paramlist.include? key.to_sym}
   end
 
 end
