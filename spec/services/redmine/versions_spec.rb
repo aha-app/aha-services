@@ -138,8 +138,10 @@ describe AhaServices::Redmine do
       end
 
       it 'deletes version' do
+        old_version_count = project[:versions].size
         service.receive(:delete_version)
         expect(version).to be_nil
+        expect(project[:versions].size).to eq(old_version_count - 1)
       end
     end
   end
