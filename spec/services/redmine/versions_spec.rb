@@ -76,22 +76,37 @@ describe AhaServices::Redmine do
         })
     end
 
-    before do
-      stub_redmine_projects_with_versions
-      stub_request(:put, "#{service.data.redmine_url}/projects/#{project_id}/versions/#{version_id}.json").
-        to_return(status: 200, body: '{}', headers: {})
-      service.receive(:installed)
-    end
-
     it 'responds to receive(:update_version)' do
       expect(service).to receive(:receive_update_version)
       service.receive(:update_version)
     end
 
     context 'installed version' do
+      before do
+        stub_redmine_projects_with_versions
+        stub_request(:put, "#{service.data.redmine_url}/projects/#{project_id}/versions/#{version_id}.json").
+          to_return(status: 200, body: '{}', headers: {})
+        service.receive(:installed)
+      end
+
       it 'updates the version`s name' do
         service.receive(:update_version)
         expect(version[:name]).to eq new_version_name
+      end
+    end
+
+    context 'not installed version' do
+      before do
+        stub_redmine_projects_without_versions
+        stub_request(:put, "#{service.data.redmine_url}/projects/#{project_id}/versions/#{version_id}.json").
+          to_return(status: 200, body: '{}', headers: {})
+        service.receive(:installed)
+        stub_redmine_projects_with_versions
+      end
+
+      it 'reinstalls projects with versions' do
+        expect(service).to receive(:install_projects)
+        service.receive(:update_version)
       end
     end
   end
