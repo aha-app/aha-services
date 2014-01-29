@@ -83,11 +83,11 @@ private
       body.deep_symbolize_keys!
       body[:versions].each do |version|
         project[:versions] << {
-          id: version[:id],
-          name: version[:name],
-          description: version[:description],
-          status: version[:status],
-          sharing: version[:sharing]
+          id: version['id'],
+          name: version['name'],
+          description: version['description'],
+          status: version['status'],
+          sharing: version['sharing']
         }
       end
     end
