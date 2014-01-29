@@ -48,6 +48,14 @@ class AhaServices::Redmine < AhaService
     update_project id, new_name
   end
 
+  def receive_update_version
+    project_id = payload['project_id']
+    version_id = payload['version_id']
+    params = payload['version']
+
+    update_version project_id, version_id, params
+  end
+
   def receive_delete_project
     id = payload['id']
 
@@ -134,7 +142,7 @@ private
 
   def update_project id, new_name
     @meta_data.projects ||= []
-    project = @meta_data.projects.find {|proj| proj[:id] == id}
+    project = find_project id
 
     prepare_request
     params = { project:{ name: new_name }}
@@ -151,9 +159,24 @@ private
     end
   end
 
+  def update_version project_id, version_id, **params
+    project = find_project project_id
+    version = find_version project, version_id
+    params = sanitize_params params, :version
+
+    prepare_request
+    response = http_put("#{data.redmine_url}/projects/#{project_id}/versions/#{version_id}.json", params.to_json)
+    process_response(response, 200) do
+      params.deep_symbolize_keys!
+      params.each do |key, val|
+        version[key] = val
+      end if project && version
+    end
+  end
+
   def delete_project id
     @meta_data.projects ||= []
-    project = @meta_data.projects.find {|proj| proj[:id] == id}
+    project = find_project id
 
     prepare_request
     response = http_delete("#{data.redmine_url}/projects/#{id}.json")

@@ -51,8 +51,6 @@ describe AhaServices::Redmine do
           expect(new_project[:id]).to eq json_response['project']['id']
         end
       end
-
-
     end
 
     context 'unauthenticated' do
