@@ -10,7 +10,7 @@ def stub_download_feature_attachments
     to_return(:status => 200, :body => "dddddd", :headers => {})
 end
 
-def stub_redmine_projects_without_versions more_projects=true
+def stub_redmine_projects more_projects=true
   projects_index_raw = more_projects ? raw_fixture('redmine/projects/index.json') : raw_fixture('redmine/projects/index_2.json')
 
   stub_request(:get, "#{service.data.redmine_url}/projects.json").
@@ -23,7 +23,7 @@ def stub_redmine_projects_without_versions more_projects=true
     to_return(status: 200, body: {}, headers: {})
 end
 
-def stub_redmine_projects_with_versions more_projects=true, more_versions=true
+def stub_redmine_projects_and_versions more_projects=true, more_versions=true
   projects_index_raw = more_projects ? raw_fixture('redmine/projects/index.json') : raw_fixture('redmine/projects/index_2.json')
   versions_index_raw = more_versions ? raw_fixture('redmine/versions/index.json') : raw_fixture('redmine/versions/index_2.json')
 
@@ -35,4 +35,14 @@ def stub_redmine_projects_with_versions more_projects=true, more_versions=true
     to_return(status: 200, body: versions_index_raw, headers: {})
   stub_request(:get, "#{service.data.redmine_url}/projects/3/versions.json").
     to_return(status: 200, body: {}, headers: {})
+end
+
+def populate_redmine_projects service, more_projects=true
+  stub_redmine_projects more_projects
+  service.receive(:installed)
+end
+
+def populate_redmine_projects_and_versions service, more_projects=true, more_versions=true
+  stub_redmine_projects_and_versions more_projects, more_versions
+  service.receive(:installed)
 end
