@@ -201,6 +201,11 @@ private
     @meta_data.projects.find {|p| p[:id] == project_id }
   end
 
+  def find_version project_id, version_id
+    project = project_id.is_a?(Hash) ? project_id : find_project(project_id)
+    project[:versions].find {|v| v[:id] == version_id }
+  end
+
   def sanitize_params params, paramlist_name
     paramlist = PARAMLISTS[paramlist_name]
     params.select {|key, value| paramlist.include? key.to_sym}
