@@ -197,6 +197,10 @@ private
 # SUPPORT
 #=======
 
+  def find_project project_id
+    @meta_data.projects.find {|p| p[:id] == project_id }
+  end
+
   def sanitize_params params, paramlist_name
     paramlist = PARAMLISTS[paramlist_name]
     params.select {|key, value| paramlist.include? key.to_sym}
