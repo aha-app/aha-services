@@ -22,30 +22,35 @@ describe AhaServices::Redmine do
       let(:json_response) { JSON.parse(raw_response) }
       let(:project) { service.meta_data.projects.find {|p| p[:id] == project_id }}
 
-      before do
-        stub_redmine_projects_without_versions
-        stub_request(:post, "#{service.data.redmine_url}/projects/#{project_id}/versions.json").
-          to_return(status: 201, body: raw_response, headers: {})
-      end
-
       it "responds to receive(:create_version)" do
         expect(service).to receive(:receive_create_version)
         service.receive(:create_version)
       end
 
       context 'no other versions previously installed' do
+        before do
+          stub_redmine_projects_without_versions
+          stub_request(:post, "#{service.data.redmine_url}/projects/#{project_id}/versions.json").
+            to_return(status: 201, body: raw_response, headers: {})
+        end
+
         let(:new_version) { project[:versions].last }
 
         it "handles receive_create_version event" do
           service.receive(:create_version)
-
           expect(project[:versions].size).to eq 1
           expect(new_version[:name]).to eq version_name
           expect(new_version[:id]).to eq json_response['version']['id']
         end
       end
 
-      context 'no other versions previously installed' do
+      context 'some other versions previously installed' do
+        before do
+          stub_redmine_projects_with_versions
+          stub_request(:post, "#{service.data.redmine_url}/projects/#{project_id}/versions.json").
+            to_return(status: 201, body: raw_response, headers: {})
+        end
+
         let(:new_version) { project[:versions].find {|v| v[:id] == json_response['version']['id'] }}
 
         it "handles receive_create_version event" do
