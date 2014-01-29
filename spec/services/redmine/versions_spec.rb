@@ -62,4 +62,40 @@ describe AhaServices::Redmine do
 
     end
   end
+
+  context 'version update' do
+    let(:project_id) { 2 }
+    let(:project) { service.meta_data.projects.find {|p| p[:id]==project_id }}
+    let(:version_id) { 1 }
+    let(:version) { project[:versions].find {|v| v[:id]==version_id }}
+    let(:new_version_name) { 'New Awesome Version Name' }
+    let(:service) do
+      described_class.new(
+        { redmine_url: 'http://localhost:4000', api_key: '123456' },
+        { project_id: project_id,
+          version_id: version_id,
+          version_name: new_version_name
+        })
+    end
+
+    before do
+      stub_redmine_projects_with_versions
+      stub_request(:put, "#{service.data.redmine_url}/projects/#{project_id}/versions/#{version_id}.json").
+        to_return(status: 200, body: '{}', headers: {})
+      service.receive(:installed)
+    end
+
+    it 'responds to receive(:update_version)' do
+      expect(service).to receive(:receive_update_version)
+      service.receive(:update_version)
+    end
+
+    context 'installed version' do
+      it 'updates the version`s name' do
+        service.receive(:update_version)
+
+        expect(version[:name]).to eq new_version_name
+      end
+    end
+  end
 end
