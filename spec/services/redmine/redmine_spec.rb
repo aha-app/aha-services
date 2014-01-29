@@ -68,8 +68,7 @@ describe AhaServices::Redmine do
 
       context 'adding installations' do
         before do
-          stub_redmine_projects_and_versions false, false
-          service.receive(:installed)
+          populate_redmine_projects_and_versions service, false, false
           stub_redmine_projects_and_versions
         end
 
@@ -92,8 +91,7 @@ describe AhaServices::Redmine do
 
       context 'reducing installations' do
         before do
-          stub_redmine_projects_and_versions
-          service.receive(:installed)
+          populate_redmine_projects_and_versions service
           stub_redmine_projects_and_versions false, false
         end
 
