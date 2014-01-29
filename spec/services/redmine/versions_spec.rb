@@ -144,5 +144,20 @@ describe AhaServices::Redmine do
         expect(project[:versions].size).to eq(old_version_count - 1)
       end
     end
+
+    context 'not installed version' do
+      before do
+        stub_redmine_projects_without_versions
+        stub_request(:delete, "#{service.data.redmine_url}/projects/#{project_id}/versions/#{version_id}.json").
+          to_return(status: 200, body: '{}', headers: {})
+        service.receive(:installed)
+        stub_redmine_projects_with_versions
+      end
+
+      it 'reinstalls projects with versions' do
+        expect(service).to receive(:install_projects)
+        service.receive(:delete_version)
+      end
+    end
   end
 end
