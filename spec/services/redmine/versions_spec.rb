@@ -83,10 +83,9 @@ describe AhaServices::Redmine do
 
     context 'installed version' do
       before do
-        stub_redmine_projects_and_versions
+        populate_redmine_projects_and_versions service
         stub_request(:put, "#{service.data.redmine_url}/projects/#{project_id}/versions/#{version_id}.json").
           to_return(status: 200, body: '{}', headers: {})
-        service.receive(:installed)
       end
 
       it 'updates the version`s name' do
@@ -97,10 +96,9 @@ describe AhaServices::Redmine do
 
     context 'not installed version' do
       before do
-        stub_redmine_projects
+        populate_redmine_projects service
         stub_request(:put, "#{service.data.redmine_url}/projects/#{project_id}/versions/#{version_id}.json").
           to_return(status: 200, body: '{}', headers: {})
-        service.receive(:installed)
         stub_redmine_projects_and_versions
       end
 
@@ -131,11 +129,9 @@ describe AhaServices::Redmine do
 
     context 'installed version' do
       before do
-        stub_redmine_projects_and_versions
-        service.receive(:installed)
+        populate_redmine_projects_and_versions service
         stub_request(:delete, "#{service.data.redmine_url}/projects/#{project_id}/versions/#{version_id}.json").
           to_return(status: 200, body: '{}', headers: {})
-
       end
 
       it 'deletes version' do
@@ -148,10 +144,9 @@ describe AhaServices::Redmine do
 
     context 'not installed version' do
       before do
-        stub_redmine_projects
+        populate_redmine_projects service
         stub_request(:delete, "#{service.data.redmine_url}/projects/#{project_id}/versions/#{version_id}.json").
           to_return(status: 200, body: '{}', headers: {})
-        service.receive(:installed)
         stub_redmine_projects_and_versions
       end
 
