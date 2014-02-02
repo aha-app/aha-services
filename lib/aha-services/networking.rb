@@ -116,6 +116,11 @@ module Networking
     block = Proc.new if block_given?
     http_method :put, url, body, headers, &block
   end
+
+  def http_patch(url = nil, body = nil, headers = nil)
+    block = Proc.new if block_given?
+    http_method :patch, url, body, headers, &block
+  end
   
   # Public: Makes an HTTP call.
   #

@@ -21,6 +21,14 @@ class GithubMilestoneResource < GithubResource
     end
   end
 
+  def update(number, updated_milestone)
+    prepare_request
+    response = http_patch "#{github_milestones_path}/#{number}"
+    process_response(response, 200) do |milestone|
+      return milestone
+    end
+  end
+
 private
 
   def github_milestones_path

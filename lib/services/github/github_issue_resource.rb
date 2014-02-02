@@ -14,6 +14,14 @@ class GithubIssueResource < GithubResource
     end
   end
 
+  def update(number, updated_issue)
+    prepare_request
+    response = http_patch "#{github_issues_path}/#{number}", updated_issue.to_json
+    process_response(response, 200) do |issue|
+      return issue
+    end
+  end
+
 private
 
   def github_issues_path

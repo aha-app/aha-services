@@ -66,4 +66,14 @@ describe GithubMilestoneResource do
         .to eq JSON.parse(mock_milestone)
     end
   end
+
+  describe "#update" do
+    it "updates the milestone" do
+      number = 42
+      stub_request(:patch, "#{base_request_url}/#{number}")
+        .to_return(status: 200, body: mock_milestone)
+      expect(milestone_resource.update(number, title: "Updated milestone"))
+        .to eq JSON.parse(mock_milestone)
+    end
+  end
 end

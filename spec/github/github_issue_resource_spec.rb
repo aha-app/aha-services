@@ -60,4 +60,14 @@ describe GithubIssueResource do
         .to eq JSON.parse(mock_issue_with_milestone)
     end
   end
+
+  describe "#update" do
+    it "updates the issue" do
+      number = 42
+      stub_request(:patch, "#{base_request_url}/#{number}")
+        .to_return(status: 200, body: mock_issue_with_milestone)
+      expect(issue_resource.update(number, title: "Updated issue"))
+        .to eq JSON.parse(mock_issue_with_milestone)
+    end
+  end
 end
