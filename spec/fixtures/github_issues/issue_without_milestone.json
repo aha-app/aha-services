@@ -1,0 +1,46 @@
+{
+  "url": "https://api.github.com/repos/pomerantsev2/first_project/issues/5",
+  "labels_url": "https://api.github.com/repos/pomerantsev2/first_project/issues/5/labels{/name}",
+  "comments_url": "https://api.github.com/repos/pomerantsev2/first_project/issues/5/comments",
+  "events_url": "https://api.github.com/repos/pomerantsev2/first_project/issues/5/events",
+  "html_url": "https://github.com/pomerantsev2/first_project/issues/5",
+  "id": 26758057,
+  "number": 5,
+  "title": "Blah-blah",
+  "user": {
+    "login": "pomerantsev2",
+    "id": 6008414,
+    "avatar_url": "https://gravatar.com/avatar/718ce4412e729b64bb31abf354aef104?d=https%3A%2F%2Fidenticons.github.com%2F2a15a5ad5ab4f82d98d8e1f52ffe4bc6.png&r=x",
+    "gravatar_id": "718ce4412e729b64bb31abf354aef104",
+    "url": "https://api.github.com/users/pomerantsev2",
+    "html_url": "https://github.com/pomerantsev2",
+    "followers_url": "https://api.github.com/users/pomerantsev2/followers",
+    "following_url": "https://api.github.com/users/pomerantsev2/following{/other_user}",
+    "gists_url": "https://api.github.com/users/pomerantsev2/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/pomerantsev2/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/pomerantsev2/subscriptions",
+    "organizations_url": "https://api.github.com/users/pomerantsev2/orgs",
+    "repos_url": "https://api.github.com/users/pomerantsev2/repos",
+    "events_url": "https://api.github.com/users/pomerantsev2/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/pomerantsev2/received_events",
+    "type": "User",
+    "site_admin": false
+  },
+  "labels": [
+
+  ],
+  "state": "open",
+  "assignee": null,
+  "milestone": null,
+  "comments": 1,
+  "created_at": "2014-02-02T09:46:33Z",
+  "updated_at": "2014-02-02T09:47:03Z",
+  "closed_at": null,
+  "pull_request": {
+    "html_url": null,
+    "diff_url": null,
+    "patch_url": null
+  },
+  "body": "An initial comment to blah-blah.",
+  "closed_by": null
+}

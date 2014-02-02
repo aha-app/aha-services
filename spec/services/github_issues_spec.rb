@@ -11,13 +11,16 @@ describe AhaServices::GithubIssues do
                                   'username' => username, 'password' => password
   end
   let(:release) { Hashie::Mash.new(name: 'First release') }
+  let(:feature) { Hashie::Mash.new(name: 'First feature', release: release) }
 
   let(:repo_resource) { double }
   let(:milestone_resource) { double }
+  let(:issue_resource) { double }
 
   before do
     service.stub(:repo_resource).and_return(repo_resource)
     service.stub(:milestone_resource).and_return(milestone_resource)
+    service.stub(:issue_resource).and_return(issue_resource)
   end
 
   context "can be installed" do
@@ -28,6 +31,20 @@ describe AhaServices::GithubIssues do
       expect(service.meta_data.repos.first)
         .to eq Hashie::Mash.new(mock_repos.first)
     end
+  end
+
+  it "handles the 'create feature' event" do
+    mock_payload = Hashie::Mash.new(feature: feature)
+    mock_milestone = { number: 1 }
+    service.stub(:payload).and_return(mock_payload)
+    service.stub(:find_or_attach_github_milestone)
+      .and_return(mock_milestone)
+    service.stub(:find_or_attach_github_issue)
+    service.should_receive(:find_or_attach_github_milestone)
+      .with(mock_payload.feature.release)
+    service.should_receive(:find_or_attach_github_issue)
+      .with(mock_payload.feature, mock_milestone)
+    service.receive(:create_feature)
   end
 
   it "handles the 'create release' event" do
@@ -124,6 +141,72 @@ describe AhaServices::GithubIssues do
     end
     it "returns the newly created milestone" do
       expect(service.create_milestone_for(release)).to eq mock_milestone
+    end
+  end
+
+  describe "#find_or_attach_github_issue" do
+    let(:mock_milestone) { { number: 1 } }
+    context "when there is an existing issue integrated with the feature" do
+      it "returns the issue" do
+        mock_issue = { title: "First issue" }
+        service.stub(:existing_issue_integrated_with)
+          .and_return(mock_issue)
+        expect(service.find_or_attach_github_issue(feature, mock_milestone))
+          .to eq mock_issue
+      end
+    end
+    context "when no existing milestone is integrated with the release" do
+      it "attaches a milestone to the release" do
+        service.stub(:existing_issue_integrated_with)
+          .and_return(nil)
+        service.should_receive(:attach_issue_to).with(feature, mock_milestone)
+        service.find_or_attach_github_issue(feature, mock_milestone)
+      end
+    end
+  end
+
+  describe "#existing_issue_integrated_with" do
+    let(:mock_milestone) { { number: 1 } }
+    context "when the feature has a 'number' integration field" do
+      it "returns the result of 'issue_resource.find_by_number_and_milestone'" do
+        issue_number = 42
+        mock_issue = { number: issue_number }
+        service.stub(:get_integration_field).and_return(issue_number)
+        issue_resource.stub(:find_by_number_and_milestone)
+          .and_return(mock_issue)
+        expect(service.existing_issue_integrated_with(feature, mock_milestone))
+          .to eq mock_issue
+      end
+    end
+    context "when the feature doesn't have a 'number' integration field" do
+      it "returns nil" do
+        service.stub(:get_integration_field).and_return(nil)
+        expect(service.existing_issue_integrated_with(feature, mock_milestone))
+          .to be_nil
+      end
+    end
+  end
+
+  describe "#attach_milestone_to" do
+    let(:mock_milestone) { { number: 1 } }
+    let(:mock_issue) { { number: 42 } }
+
+    before do
+      service.stub(:integrate_feature_with_github_issue)
+      service.stub(:create_issue_for).and_return(mock_issue)
+    end
+
+    it "creates a new issue" do
+      service.should_receive(:create_issue_for).with(feature, mock_milestone)
+      service.attach_issue_to(feature, mock_milestone)
+    end
+    it "integrates the issue with the feature" do
+      service.should_receive(:integrate_feature_with_github_issue)
+        .with(feature, mock_issue)
+      service.attach_issue_to(feature, mock_milestone)
+    end
+    it "returns the issue" do
+      expect(service.attach_issue_to(feature, mock_milestone)).to eq mock_issue
     end
   end
 end
