@@ -11,7 +11,9 @@ describe AhaServices::GithubIssues do
                                   'username' => username, 'password' => password
   end
   let(:release) { Hashie::Mash.new(name: 'First release') }
-  let(:feature) { Hashie::Mash.new(name: 'First feature', release: release) }
+  let(:feature) { Hashie::Mash.new name: 'First feature',
+                                   description: { body: 'First feature description' },
+                                   release: release }
 
   let(:repo_resource) { double }
   let(:milestone_resource) { double }
@@ -187,12 +189,12 @@ describe AhaServices::GithubIssues do
     end
   end
 
-  describe "#attach_milestone_to" do
+  describe "#attach_issue_to" do
     let(:mock_milestone) { { number: 1 } }
     let(:mock_issue) { { number: 42 } }
 
     before do
-      service.stub(:integrate_feature_with_github_issue)
+      service.stub(:integrate_resource_with_github_issue)
       service.stub(:create_issue_for).and_return(mock_issue)
     end
 
@@ -201,12 +203,21 @@ describe AhaServices::GithubIssues do
       service.attach_issue_to(feature, mock_milestone)
     end
     it "integrates the issue with the feature" do
-      service.should_receive(:integrate_feature_with_github_issue)
+      service.should_receive(:integrate_resource_with_github_issue)
         .with(feature, mock_issue)
       service.attach_issue_to(feature, mock_milestone)
     end
     it "returns the issue" do
       expect(service.attach_issue_to(feature, mock_milestone)).to eq mock_issue
+    end
+  end
+
+  describe "#create_issue_for" do
+    it "returns the newly created milestone" do
+      mock_issue = { title: 'First issue' }
+      mock_milestone = { number: 1 }
+      issue_resource.should_receive(:create).and_return(mock_issue)
+      expect(service.create_issue_for(feature, mock_milestone)).to eq mock_issue
     end
   end
 end

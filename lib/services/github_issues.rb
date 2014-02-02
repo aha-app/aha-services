@@ -41,29 +41,29 @@ class AhaServices::GithubIssues < AhaService
                               state: release.released ? "closed" : "open"
   end
 
-  def find_or_attach_github_issue(feature, milestone)
-    if issue = existing_issue_integrated_with(feature, milestone)
+  def find_or_attach_github_issue(resource, milestone)
+    if issue = existing_issue_integrated_with(resource, milestone)
       issue
     else
-      attach_issue_to(feature, milestone)
+      attach_issue_to(resource, milestone)
     end
   end
 
-  def existing_issue_integrated_with(feature, milestone)
-    if issue_number = get_integration_field(feature.integration_fields, 'number')
+  def existing_issue_integrated_with(resource, milestone)
+    if issue_number = get_integration_field(resource.integration_fields, 'number')
       issue_resource.find_by_number_and_milestone(issue_number, milestone)
     end
   end
 
-  def attach_issue_to(feature, milestone)
-    issue = create_issue_for(feature, milestone)
-    integrate_feature_with_github_issue(feature, issue)
+  def attach_issue_to(resource, milestone)
+    issue = create_issue_for(resource, milestone)
+    integrate_resource_with_github_issue(resource, issue)
     issue
   end
 
-  def create_issue_for(feature, milestone)
-    issue_resource.create title: feature.name,
-                          body: feature.description.body,
+  def create_issue_for(resource, milestone)
+    issue_resource.create title: resource.name,
+                          body: resource.description.body,
                           milestone: milestone['number']
   end
 
@@ -85,8 +85,8 @@ protected
     api.create_integration_field(release.reference_num, self.class.service_name, :number, milestone['number'])
   end
 
-  def integrate_feature_with_github_issue(feature, issue)
-    api.create_integration_field(feature.reference_num, self.class.service_name, :number, issue['number'])
+  def integrate_resource_with_github_issue(resource, issue)
+    api.create_integration_field(resource.reference_num, self.class.service_name, :number, issue['number'])
   end
 
   def get_integration_field(integration_fields, field_name)
