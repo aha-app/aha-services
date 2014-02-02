@@ -59,6 +59,29 @@ describe AhaServices::GithubIssues do
     service.receive(:create_release)
   end
 
+  it "handles the 'update feature' event" do
+    mock_payload = Hashie::Mash.new(feature: feature)
+    mock_milestone = { number: 1 }
+    service.stub(:payload).and_return(mock_payload)
+    service.stub(:find_or_attach_github_milestone)
+      .and_return(mock_milestone)
+    service.stub(:update_or_attach_github_issue)
+    service.should_receive(:find_or_attach_github_milestone)
+      .with(mock_payload.feature.release)
+    service.should_receive(:update_or_attach_github_issue)
+      .with(mock_payload.feature, mock_milestone)
+    service.receive(:update_feature)
+  end
+
+  it "handles the 'update release' event" do
+    mock_payload = Hashie::Mash.new(release: release)
+    service.stub(:payload).and_return(mock_payload)
+    service.stub(:update_or_attach_github_milestone)
+    service.should_receive(:update_or_attach_github_milestone)
+      .with(mock_payload.release)
+    service.receive(:update_release)
+  end
+
   describe "#find_or_attach_github_milestone" do
     context "when there is an existing milestone integrated with the release" do
       it "returns the milestone" do
@@ -75,6 +98,35 @@ describe AhaServices::GithubIssues do
           .and_return(nil)
         service.should_receive(:attach_milestone_to).with(release)
         service.find_or_attach_github_milestone(release)
+      end
+    end
+  end
+
+  describe "#update_or_attach_github_milestone" do
+    let(:mock_milestone) { { number: 42 } }
+    context "when the release is integrated with a github milestone" do
+      let(:milestone_number) { 42 }
+      before do
+        service.stub(:get_integration_field).and_return(milestone_number)
+        service.stub(:update_milestone).and_return(mock_milestone)
+      end
+      it "calls the 'update_milestone' method" do
+        service.should_receive(:update_milestone)
+          .with(milestone_number, release)
+        service.update_or_attach_github_milestone(release)
+      end
+      it "returns the newly updated milestone" do
+        expect(service.update_or_attach_github_milestone(release))
+          .to eq mock_milestone
+      end
+    end
+
+    context "when the release is not integrated with a github milestone" do
+      it "attaches a milestone to the release" do
+        service.stub(:existing_milestone_integrated_with)
+          .and_return(nil)
+        service.should_receive(:attach_milestone_to).with(release)
+        service.update_or_attach_github_milestone(release)
       end
     end
   end
@@ -146,6 +198,15 @@ describe AhaServices::GithubIssues do
     end
   end
 
+  describe "#update_milestone" do
+    it "returns the updated milestone" do
+      mock_milestone = { number: 42, title: 'Another milestone' }
+      milestone_resource.should_receive(:update).and_return(mock_milestone)
+      expect(service.update_milestone(42, release))
+        .to eq mock_milestone
+    end
+  end
+
   describe "#find_or_attach_github_issue" do
     let(:mock_milestone) { { number: 1 } }
     context "when there is an existing issue integrated with the feature" do
@@ -157,12 +218,42 @@ describe AhaServices::GithubIssues do
           .to eq mock_issue
       end
     end
-    context "when no existing milestone is integrated with the release" do
-      it "attaches a milestone to the release" do
+    context "when no existing issue is integrated with the feature" do
+      it "attaches an issue to the feature" do
         service.stub(:existing_issue_integrated_with)
           .and_return(nil)
         service.should_receive(:attach_issue_to).with(feature, mock_milestone)
         service.find_or_attach_github_issue(feature, mock_milestone)
+      end
+    end
+  end
+
+  describe "#update_or_attach_github_issue" do
+    let(:mock_milestone) { { number: 1 } }
+    let(:mock_issue) { { number: 42 } }
+    context "when the resource is integrated with a github issue" do
+      let(:issue_number) { 42 }
+      before do
+        service.stub(:get_integration_field).and_return(issue_number)
+        service.stub(:update_issue).and_return(mock_issue)
+      end
+      it "calls update_issue method" do
+        service.should_receive(:update_issue)
+          .with(issue_number, feature)
+        service.update_or_attach_github_issue(feature, mock_milestone)
+      end
+      it "returns the updated issue" do
+        expect(service.update_or_attach_github_issue(feature, mock_milestone))
+          .to eq mock_issue
+      end
+    end
+
+    context "when the resource is not integrated with a github issue" do
+      it "attaches an issue to the feature" do
+        service.stub(:existing_issue_integrated_with)
+          .and_return(nil)
+        service.should_receive(:attach_issue_to).with(feature, mock_milestone)
+        service.update_or_attach_github_issue(feature, mock_milestone)
       end
     end
   end
@@ -213,11 +304,19 @@ describe AhaServices::GithubIssues do
   end
 
   describe "#create_issue_for" do
-    it "returns the newly created milestone" do
+    it "returns the newly created issue" do
       mock_issue = { title: 'First issue' }
       mock_milestone = { number: 1 }
       issue_resource.should_receive(:create).and_return(mock_issue)
       expect(service.create_issue_for(feature, mock_milestone)).to eq mock_issue
+    end
+  end
+
+  describe "#update_issue" do
+    it "returns the updated issue" do
+      mock_issue = { number: 42, title: 'Another issue' }
+      issue_resource.should_receive(:update).and_return(mock_issue)
+      expect(service.update_issue(42, feature)).to eq mock_issue
     end
   end
 end

@@ -12,9 +12,26 @@ class AhaServices::GithubIssues < AhaService
     find_or_attach_github_milestone(payload.release)
   end
 
+  def receive_update_feature
+    milestone = find_or_attach_github_milestone(payload.feature.release)
+    update_or_attach_github_issue(payload.feature, milestone)
+  end
+
+  def receive_update_release
+    update_or_attach_github_milestone(payload.release)
+  end
+
   def find_or_attach_github_milestone(release)
     if milestone = existing_milestone_integrated_with(release)
       milestone
+    else
+      attach_milestone_to(release)
+    end
+  end
+
+  def update_or_attach_github_milestone(release)
+    if milestone_number = get_integration_field(release.integration_fields, 'number')
+      update_milestone(milestone_number, release)
     else
       attach_milestone_to(release)
     end
@@ -41,9 +58,23 @@ class AhaServices::GithubIssues < AhaService
                               state: release.released ? "closed" : "open"
   end
 
+  def update_milestone(number, release)
+    milestone_resource.update number, title: release.name,
+                                      due_on: release.release_date,
+                                      state: release.released ? "closed" : "open"
+  end
+
   def find_or_attach_github_issue(resource, milestone)
     if issue = existing_issue_integrated_with(resource, milestone)
       issue
+    else
+      attach_issue_to(resource, milestone)
+    end
+  end
+
+  def update_or_attach_github_issue(resource, milestone)
+    if issue_number = get_integration_field(resource.integration_fields, 'number')
+      update_issue(issue_number, resource)
     else
       attach_issue_to(resource, milestone)
     end
@@ -65,6 +96,11 @@ class AhaServices::GithubIssues < AhaService
     issue_resource.create title: resource.name,
                           body: resource.description.body,
                           milestone: milestone['number']
+  end
+
+  def update_issue(number, resource)
+    issue_resource.update number, title: resource.name,
+                                  body: resource.description.body
   end
 
 protected
