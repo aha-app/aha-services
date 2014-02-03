@@ -23,7 +23,6 @@ describe AhaServices::Redmine do
     context 'authenticated' do
       context 'not versioned' do
         before { populate_redmine_projects service }
-
         context 'available tracker' do
           let(:issue_create_raw) { raw_fixture 'redmine/issues/create.json' }
           before do
@@ -42,15 +41,14 @@ describe AhaServices::Redmine do
             service.receive(:create_feature)
           end
         end
-        context 'unavailable tracker' do
-          let(:tracker_id) { 4 }
+        context 'unavailable tracker / project / other 404 generating errors' do
           before do
             stub_request(:post, "#{service.data.redmine_url}/projects/#{project_id}/issues.json").
-              to_return(status: 201, body: issue_create_raw, headers: {})
+              to_return(status: 404, body: '', headers: {})
           end
           it "returns error" do
             expect(service.api).not_to receive(:create_integration_field)
-            service.receive(:create_feature)
+            expect { service.receive(:create_feature) }.to raise_error(AhaService::RemoteError)
           end
         end
       end
