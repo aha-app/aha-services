@@ -162,18 +162,24 @@ private
       issue: {
         tracker_id: opts[:tracker_id] || 2, # feature tracker
         subject: resource.name
-      }
-    })
+    }})
     params[:issue].merge!({parent_issue_id: opts[:perent_id]}) if opts.has_key?(:parent_id)
+
+    release = resource.release
 
     prepare_request
     response = http_post "#{data.redmine_url}/projects/#{project_id}/issues.json", params.to_json
     process_response response, 201 do |body|
-      api.create_integration_field(resource.reference_num, self.class.service_name, :id, body.issue.id)
-      api.create_integration_field(resource.reference_num, self.class.service_name, :name, body.issue.subject)
-      api.create_integration_field(
-        resource.reference_num, self.class.service_name, :url, "#{data.redmine_url}/projects/#{project_id}/issues/#{body.issue.id}"
-      )
+      create_integrations resource.reference_num,
+        id: body.issue.id,
+        name: body.issue.subject,
+        url: "#{data.redmine_url}/projects/#{project_id}/issues/#{body.issue.id}"
+      if release && body.issue.fixed_version
+        create_integrations release.reference_num,
+          id: body.issue.fixed_version.id,
+          name: body.issue.fixed_version.name,
+          url: "#{data.redmine_url}/version/#{body.issue.fixed_version.id}"
+      end
       return body
     end
   end
@@ -273,15 +279,9 @@ private
     end
   end
 
-  def get_service_id(integration_fields)
-    return nil if integration_fields.nil?
-    field = integration_fields.detect do |f|
-      f.service_name == self.class.service_name and f.name == "id"
-    end
-    if field
-      field.value
-    else
-      nil
+  def create_integrations reference, **fields
+    fields.each do |field, value|
+      api.create_integration_field(reference, self.class.service_name, field, value)
     end
   end
 
