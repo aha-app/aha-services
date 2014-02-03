@@ -41,6 +41,14 @@ class AhaServices::Redmine < AhaService
     create_version project_id, version_name
   end
 
+  def receive_create_feature
+    project_id = data.project_id
+    response_body = create_issue(project_id, payload.feature)
+    payload.feature.requirements.each do |requirement|
+      create_issue project_id, requirement, parent_id: response_body[:issue][:id]
+    end
+  end
+
   def receive_update_project
     id = payload['id']
     new_name = payload['project_name']
@@ -134,7 +142,7 @@ private
 
     prepare_request
     params = { version: { name: version_name }}
-    response = http_post("#{data.redmine_url}/projects/#{project_id}/versions.json", params.to_json)
+    response = http_post "#{data.redmine_url}/projects/#{project_id}/versions.json", params.to_json
     process_response(response, 201) do |body|
       body.deep_symbolize_keys!
       project[:versions] << {
@@ -147,13 +155,36 @@ private
     end
   end
 
+  def create_issue project_id, resource, opts={}
+    @meta_data.projects ||= []
+
+    params = Hashie::Mash.new({
+      issue: {
+        tracker_id: opts[:tracker_id] || 2, # feature tracker
+        subject: resource.name
+      }
+    })
+    params[:issue].merge!({parent_issue_id: opts[:perent_id]}) if opts.has_key?(:parent_id)
+
+    prepare_request
+    response = http_post "#{data.redmine_url}/projects/#{project_id}/issues.json", params.to_json
+    process_response response, 201 do |body|
+      api.create_integration_field(resource.reference_num, self.class.service_name, :id, body.issue.id)
+      api.create_integration_field(resource.reference_num, self.class.service_name, :name, body.issue.subject)
+      api.create_integration_field(
+        resource.reference_num, self.class.service_name, :url, "#{data.redmine_url}/projects/#{project_id}/issues/#{body.issue.id}"
+      )
+      return body
+    end
+  end
+
   def update_project id, new_name
     @meta_data.projects ||= []
     project = find_project id
 
     prepare_request
     params = { project:{ name: new_name }}
-    response = http_put("#{data.redmine_url}/projects/#{id}.json", params.to_json)
+    response = http_put "#{data.redmine_url}/projects/#{id}.json", params.to_json
     process_response(response, 200) do
       if project
         project[:name] = new_name
@@ -238,7 +269,19 @@ private
     if body.nil? or body.length < 2
       {}
     else
-      JSON.parse(body)
+      Hashie::Mash.new JSON.parse(body)
+    end
+  end
+
+  def get_service_id(integration_fields)
+    return nil if integration_fields.nil?
+    field = integration_fields.detect do |f|
+      f.service_name == self.class.service_name and f.name == "id"
+    end
+    if field
+      field.value
+    else
+      nil
     end
   end
 
@@ -258,6 +301,17 @@ private
   def sanitize_params params, paramlist_name
     paramlist = PARAMLISTS[paramlist_name]
     params.select {|key, value| paramlist.include? key.to_sym}
+  end
+
+  def kind_to_tracker_id kind
+    case kind
+    when "bug_fix"
+      1 # bug tracker
+    when "research"
+      3 # support tracker
+    else
+      2 # feature tracker
+    end
   end
 
 end
