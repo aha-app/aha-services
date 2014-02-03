@@ -1,3 +1,8 @@
+def stub_aha_api_posts
+  stub_request(:post, /https\:\/\/a\.aha\.io\/api\/v1\/(features|requirements)\/[\w\d\-]*\/integrations\/[\w\d\-_]*\/fields/).
+    to_return(:status => 200, :body => "", :headers => {})
+end
+
 def stub_download_feature_attachments
   # Download attachments.
   stub_request(:get, "https://attachments.s3.amazonaws.com/attachments/6cce987f6283d15c080e53bba15b1072a7ab5b07/original.png?1370457053").
