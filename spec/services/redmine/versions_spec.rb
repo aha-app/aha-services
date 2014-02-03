@@ -10,11 +10,7 @@ describe AhaServices::Redmine do
     let(:service) do
       described_class.new(
         { redmine_url: 'http://localhost:4000', api_key: '123456' },
-        {
-          project_id: project_id,
-          version_name: version_name
-        }
-      )
+        { project_id: project_id, version_name: version_name })
     end
 
     context 'authenticated' do
