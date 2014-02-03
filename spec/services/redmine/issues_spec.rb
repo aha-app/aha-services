@@ -7,8 +7,7 @@ describe AhaServices::Redmine do
     let(:service) do
       described_class.new(
         { redmine_url: 'http://localhost:4000', project_id: project_id, api_key: '123456' },
-        json_fixture('create_feature_event.json')
-      )
+        json_fixture('create_feature_event.json'))
     end
 
     before do
@@ -29,6 +28,7 @@ describe AhaServices::Redmine do
             stub_request(:post, "#{service.data.redmine_url}/projects/#{project_id}/issues.json").
               to_return(status: 201, body: issue_create_raw, headers: {})
           end
+
           it "sends one integration messages for issue and for requirement" do
             # integration messages for the issue
             expect(service.api).to receive(:create_integration_field).with("PROD-2", "redmine_issues", :id, anything).once
@@ -40,16 +40,19 @@ describe AhaServices::Redmine do
             expect(service.api).to receive(:create_integration_field).with("PROD-2-1", "redmine_issues", :name, anything).once
             service.receive(:create_feature)
           end
+
         end
         context 'unavailable tracker / project / other 404 generating errors' do
           before do
             stub_request(:post, "#{service.data.redmine_url}/projects/#{project_id}/issues.json").
               to_return(status: 404, body: '', headers: {})
           end
+
           it "raises error" do
             expect(service.api).not_to receive(:create_integration_field)
             expect { service.receive(:create_feature) }.to raise_error(AhaService::RemoteError)
           end
+
         end
       end
 
@@ -61,6 +64,7 @@ describe AhaServices::Redmine do
             stub_request(:post, "#{service.data.redmine_url}/projects/#{project_id}/issues.json").
               to_return(status: 201, body: issue_create_raw, headers: {})
           end
+
           it "sends one integration messages for issue and for requirement" do
             # integration messages for the issue
             expect(service.api).to receive(:create_integration_field).with("PROD-2", "redmine_issues", :id, anything).once
@@ -70,8 +74,13 @@ describe AhaServices::Redmine do
             expect(service.api).to receive(:create_integration_field).with("PROD-2-1", "redmine_issues", :id, anything).once
             expect(service.api).to receive(:create_integration_field).with("PROD-2-1", "redmine_issues", :url, anything).once
             expect(service.api).to receive(:create_integration_field).with("PROD-2-1", "redmine_issues", :name, anything).once
+            # integration messages for issue's release
+            expect(service.api).to receive(:create_integration_field).with("PROD-R-1", "redmine_issues", :id, anything).once
+            expect(service.api).to receive(:create_integration_field).with("PROD-R-1", "redmine_issues", :url, anything).once
+            expect(service.api).to receive(:create_integration_field).with("PROD-R-1", "redmine_issues", :name, anything).once
             service.receive(:create_feature)
           end
+
         end
       end
     end
