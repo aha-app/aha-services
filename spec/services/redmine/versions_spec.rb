@@ -57,7 +57,6 @@ describe AhaServices::Redmine do
           expect(new_version[:name]).to eq version_name
         end
       end
-
     end
   end
 
