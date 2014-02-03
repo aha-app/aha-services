@@ -1,1 +1,1 @@
-curl -v -H "X-Redmine-API-Key: 123456" -H "Accept: application/json" -H "Content-type: application/json" -d '{"issue":{"project_id":"2","subject":"dupa","tracker_id":"4"}}' http://localhost:4000/issues.json
+curl -v -H "X-Redmine-API-Key: 123456" -H "Accept: application/json" -H "Content-type: application/json" -d '{"issue":{"project_id":"2","subject":"dupa","tracker_id":"4","fixed_version_id":"2"}}' http://localhost:4000/issues.json
