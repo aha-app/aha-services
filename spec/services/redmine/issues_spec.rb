@@ -46,7 +46,7 @@ describe AhaServices::Redmine do
             stub_request(:post, "#{service.data.redmine_url}/projects/#{project_id}/issues.json").
               to_return(status: 404, body: '', headers: {})
           end
-          it "returns error" do
+          it "raises error" do
             expect(service.api).not_to receive(:create_integration_field)
             expect { service.receive(:create_feature) }.to raise_error(AhaService::RemoteError)
           end
@@ -56,9 +56,22 @@ describe AhaServices::Redmine do
       context 'versioned' do
         before { populate_redmine_projects_and_versions service }
         context 'available tracker' do
-        end
-        context 'unavailable tracker' do
-          let(:tracker_id) { 4 }
+          let(:issue_create_raw) { raw_fixture 'redmine/issues/create_with_version.json' }
+          before do
+            stub_request(:post, "#{service.data.redmine_url}/projects/#{project_id}/issues.json").
+              to_return(status: 201, body: issue_create_raw, headers: {})
+          end
+          it "sends one integration messages for issue and for requirement" do
+            # integration messages for the issue
+            expect(service.api).to receive(:create_integration_field).with("PROD-2", "redmine_issues", :id, anything).once
+            expect(service.api).to receive(:create_integration_field).with("PROD-2", "redmine_issues", :url, anything).once
+            expect(service.api).to receive(:create_integration_field).with("PROD-2", "redmine_issues", :name, anything).once
+            # integration messages for issue's requirement
+            expect(service.api).to receive(:create_integration_field).with("PROD-2-1", "redmine_issues", :id, anything).once
+            expect(service.api).to receive(:create_integration_field).with("PROD-2-1", "redmine_issues", :url, anything).once
+            expect(service.api).to receive(:create_integration_field).with("PROD-2-1", "redmine_issues", :name, anything).once
+            service.receive(:create_feature)
+          end
         end
       end
     end
