@@ -3,7 +3,7 @@ class AhaServices::GithubIssues < AhaService
   password :password
   install_button
   select :repo, collection: -> (meta_data, data) do
-    meta_data.repos.sort_by(&:name).collect { |repo| [repo.name, repo.id] }
+    meta_data.repos.sort_by(&:name).collect { |repo| [repo.name, repo.name] }
   end
 
   def receive_installed
@@ -169,10 +169,12 @@ protected
 
   def integrate_release_with_github_milestone(release, milestone)
     api.create_integration_field(release.reference_num, self.class.service_name, :number, milestone['number'])
+    api.create_integration_field(resource.reference_num, self.class.service_name, :url, "https://github.com/#{data.username}/#{data.repo}/issues?milestone=#{milestone['number']}")
   end
 
   def integrate_resource_with_github_issue(resource, issue)
     api.create_integration_field(resource.reference_num, self.class.service_name, :number, issue['number'])
+    api.create_integration_field(resource.reference_num, self.class.service_name, :url, "https://github.com/#{data.username}/#{data.repo}/issues/#{issue['number']}")
   end
 
   def get_integration_field(integration_fields, field_name)
