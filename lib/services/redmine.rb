@@ -134,7 +134,7 @@ private
         tracker_id: opts[:tracker_id] || 2, # feature tracker
         subject: resource.name
     }})
-    params[:issue].merge!({parent_issue_id: opts[:perent_id]}) if opts.has_key?(:parent_id)
+    params[:issue].merge!({parent_issue_id: opts[:parent_id]}) if opts.has_key?(:parent_id)
 
     release = resource.release
 
