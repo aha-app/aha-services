@@ -1,4 +1,11 @@
 class AhaServices::GithubIssues < AhaService
+  string :username
+  string :password
+  install_button
+  select :repo, collection: -> (meta_data) do
+    meta_data.repos.collect { |repo| [repo.name, repo.id] }
+  end
+
   def receive_installed
     meta_data.repos = repo_resource.all
   end
