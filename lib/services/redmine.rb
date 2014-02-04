@@ -34,7 +34,7 @@ class AhaServices::Redmine < AhaService
     create_project project_name, project_identifier
   end
 
-  def receive_create_version
+  def receive_create_release
     project_id = payload.project_id
     version_name = payload.version_name
 
