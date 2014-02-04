@@ -33,28 +33,12 @@ describe AhaServices::Redmine do
           stub_request(:post, "#{service.data.redmine_url}/projects/#{project_id}/versions.json").
             to_return(status: 201, body: raw_response, headers: {})
         end
-        let(:new_version) { project[:versions].last }
 
-        it "handles receive_create_release event" do
+        it 'sends integration messages for release' do
+          expect(service.api).to receive(:create_integration_field).with('OPS-R-1', 'redmine_issues', :id, anything).once
+          expect(service.api).to receive(:create_integration_field).with('OPS-R-1', 'redmine_issues', :url, anything).once
+          expect(service.api).to receive(:create_integration_field).with('OPS-R-1', 'redmine_issues', :name, anything).once
           service.receive(:create_release)
-          expect(project[:versions].size).to eq 1
-          expect(new_version[:name]).to eq version_name
-          expect(new_version[:id]).to eq json_response['version']['id']
-        end
-      end
-
-      context 'some other versions previously installed' do
-        before do
-          stub_redmine_projects_and_versions
-          stub_request(:post, "#{service.data.redmine_url}/projects/#{project_id}/versions.json").
-            to_return(status: 201, body: raw_response, headers: {})
-        end
-        let(:new_version) { project[:versions].find {|v| v[:id] == json_response['version']['id'] }}
-
-        it "handles receive_create_release event" do
-          service.receive(:create_release)
-          expect(project[:versions].size).to eq 1
-          expect(new_version[:name]).to eq version_name
         end
       end
     end

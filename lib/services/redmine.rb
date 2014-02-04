@@ -105,24 +105,21 @@ private
     end
   end
 
-  def create_version project_id, version_name
+  def create_version project_id, resource, opts={}
     @meta_data.projects ||= []
     install_projects if @meta_data.projects.empty?
-    project = find_project project_id
-    project[:versions] ||= []
+    params = Hashie::Mash.new({
+      version: {
+        name: resource.name
+    }})
 
     prepare_request
-    params = { version: { name: version_name }}
     response = http_post "#{data.redmine_url}/projects/#{project_id}/versions.json", params.to_json
     process_response(response, 201) do |body|
-      body.deep_symbolize_keys!
-      project[:versions] << {
-        id: body[:version][:id],
-        name: body[:version][:name],
-        description: body[:version][:description],
-        status: body[:version][:status],
-        sharing: body[:version][:sharing]
-      }
+      create_integrations resource.reference_num,
+        id: body.version.id,
+        name: body.version.name,
+        url: "#{data.redmine_url}/versions/#{body.version.id}"
     end
   end
 
