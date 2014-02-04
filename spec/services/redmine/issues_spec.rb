@@ -29,15 +29,18 @@ describe AhaServices::Redmine do
               to_return(status: 201, body: issue_create_raw, headers: {})
           end
 
-          it "sends one integration messages for issue and for requirement" do
-            # integration messages for the issue
+          it 'sends integration messages for issue' do
             expect(service.api).to receive(:create_integration_field).with("PROD-2", "redmine_issues", :id, anything).once
             expect(service.api).to receive(:create_integration_field).with("PROD-2", "redmine_issues", :url, anything).once
             expect(service.api).to receive(:create_integration_field).with("PROD-2", "redmine_issues", :name, anything).once
-            # integration messages for issue's requirement
+            expect(service.api).to receive(:create_integration_field).exactly(3)
+            service.receive(:create_feature)
+          end
+          it 'sends integration messages for requirement' do
             expect(service.api).to receive(:create_integration_field).with("PROD-2-1", "redmine_issues", :id, anything).once
             expect(service.api).to receive(:create_integration_field).with("PROD-2-1", "redmine_issues", :url, anything).once
             expect(service.api).to receive(:create_integration_field).with("PROD-2-1", "redmine_issues", :name, anything).once
+            expect(service.api).to receive(:create_integration_field).exactly(3)
             service.receive(:create_feature)
           end
 
@@ -65,22 +68,27 @@ describe AhaServices::Redmine do
               to_return(status: 201, body: issue_create_raw, headers: {})
           end
 
-          it "sends one integration messages for issue and for requirement" do
-            # integration messages for the issue
-            expect(service.api).to receive(:create_integration_field).with("PROD-2", "redmine_issues", :id, anything).once
-            expect(service.api).to receive(:create_integration_field).with("PROD-2", "redmine_issues", :url, anything).once
-            expect(service.api).to receive(:create_integration_field).with("PROD-2", "redmine_issues", :name, anything).once
-            # integration messages for issue's requirement
-            expect(service.api).to receive(:create_integration_field).with("PROD-2-1", "redmine_issues", :id, anything).once
-            expect(service.api).to receive(:create_integration_field).with("PROD-2-1", "redmine_issues", :url, anything).once
-            expect(service.api).to receive(:create_integration_field).with("PROD-2-1", "redmine_issues", :name, anything).once
-            # integration messages for issue's release
-            expect(service.api).to receive(:create_integration_field).with("PROD-R-1", "redmine_issues", :id, anything).once
-            expect(service.api).to receive(:create_integration_field).with("PROD-R-1", "redmine_issues", :url, anything).once
-            expect(service.api).to receive(:create_integration_field).with("PROD-R-1", "redmine_issues", :name, anything).once
+          it 'sends integration messages for issue' do
+            expect(service.api).to receive(:create_integration_field).with('PROD-2', 'redmine_issues', :id, anything).once
+            expect(service.api).to receive(:create_integration_field).with('PROD-2', 'redmine_issues', :url, anything).once
+            expect(service.api).to receive(:create_integration_field).with('PROD-2', 'redmine_issues', :name, anything).once
+            expect(service.api).to receive(:create_integration_field).exactly(6)
             service.receive(:create_feature)
           end
-
+          it 'sends integration messages for release' do
+            expect(service.api).to receive(:create_integration_field).with('PROD-R-1', 'redmine_issues', :id, anything).once
+            expect(service.api).to receive(:create_integration_field).with('PROD-R-1', 'redmine_issues', :url, anything).once
+            expect(service.api).to receive(:create_integration_field).with('PROD-R-1', 'redmine_issues', :name, anything).once
+            expect(service.api).to receive(:create_integration_field).exactly(6)
+            service.receive(:create_feature)
+          end
+          it 'sends integration messages for requirement' do
+            expect(service.api).to receive(:create_integration_field).with('PROD-2-1', 'redmine_issues', :id, anything).once
+            expect(service.api).to receive(:create_integration_field).with('PROD-2-1', 'redmine_issues', :url, anything).once
+            expect(service.api).to receive(:create_integration_field).with('PROD-2-1', 'redmine_issues', :name, anything).once
+            expect(service.api).to receive(:create_integration_field).exactly(6)
+            service.receive(:create_feature)
+          end
         end
       end
     end
