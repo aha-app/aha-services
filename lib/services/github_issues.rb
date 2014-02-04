@@ -1,6 +1,6 @@
 class AhaServices::GithubIssues < AhaService
   string :username
-  string :password
+  password :password
   install_button
   select :repo, collection: -> (meta_data) do
     meta_data.repos.collect { |repo| [repo.name, repo.id] }
