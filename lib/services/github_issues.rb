@@ -93,14 +93,22 @@ class AhaServices::GithubIssues < AhaService
   end
 
   def create_issue_for(resource, milestone)
-    issue_resource.create title: resource.name,
-                          body: resource.description.body,
-                          milestone: milestone['number']
+    issue_resource
+      .create(title: resource.name,
+              body: resource.description.body,
+              milestone: milestone['number'])
+      .tap { |issue| update_labels(issue, resource) }
   end
 
   def update_issue(number, resource)
-    issue_resource.update number, title: resource.name,
-                                  body: resource.description.body
+    issue_resource
+      .update(number, title: resource.name,
+                      body: resource.description.body)
+      .tap { |issue| update_labels(issue, resource) }
+  end
+
+  def update_labels(issue, resource)
+    label_resource.update(issue['number'], resource.tags)
   end
 
 protected
@@ -115,6 +123,10 @@ protected
 
   def issue_resource
     @issue_resource ||= GithubIssueResource.new(self)
+  end
+
+  def label_resource
+    @label_resource ||= GithubLabelResource.new(self)
   end
 
   def integrate_release_with_github_milestone(release, milestone)

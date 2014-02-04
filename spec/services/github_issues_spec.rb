@@ -13,16 +13,19 @@ describe AhaServices::GithubIssues do
   let(:release) { Hashie::Mash.new(name: 'First release') }
   let(:feature) { Hashie::Mash.new name: 'First feature',
                                    description: { body: 'First feature description' },
-                                   release: release }
+                                   release: release,
+                                   tags: [ 'First', 'Second', 'Third' ] }
 
   let(:repo_resource) { double }
   let(:milestone_resource) { double }
   let(:issue_resource) { double }
+  let(:label_resource) { double }
 
   before do
     service.stub(:repo_resource).and_return(repo_resource)
     service.stub(:milestone_resource).and_return(milestone_resource)
     service.stub(:issue_resource).and_return(issue_resource)
+    service.stub(:label_resource).and_return(label_resource)
   end
 
   context "can be installed" do
@@ -307,6 +310,7 @@ describe AhaServices::GithubIssues do
     it "returns the newly created issue" do
       mock_issue = { title: 'First issue' }
       mock_milestone = { number: 1 }
+      service.stub(:update_labels)
       issue_resource.should_receive(:create).and_return(mock_issue)
       expect(service.create_issue_for(feature, mock_milestone)).to eq mock_issue
     end
@@ -315,8 +319,20 @@ describe AhaServices::GithubIssues do
   describe "#update_issue" do
     it "returns the updated issue" do
       mock_issue = { number: 42, title: 'Another issue' }
+      service.stub(:update_labels)
       issue_resource.should_receive(:update).and_return(mock_issue)
       expect(service.update_issue(42, feature)).to eq mock_issue
+    end
+  end
+
+  describe "#update_labels" do
+    it "returns the updated labels" do
+      mock_issue = { "number" => 42, "title" => "The issue" }
+      mock_labels = [{ "name" => "First label"}]
+      label_resource.should_receive(:update)
+        .with(mock_issue["number"], feature.tags)
+        .and_return(mock_labels)
+      service.update_labels(mock_issue, feature)
     end
   end
 end
