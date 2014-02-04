@@ -18,9 +18,9 @@ describe AhaServices::Redmine do
       let(:json_response) { JSON.parse(raw_response) }
       let(:project) { service.meta_data.projects.find {|p| p[:id] == project_id }}
 
-      it "responds to receive(:create_version)" do
-        expect(service).to receive(:receive_create_version)
-        service.receive(:create_version)
+      it "responds to receive(:create_release)" do
+        expect(service).to receive(:receive_create_release)
+        service.receive(:create_release)
       end
 
       context 'no other versions previously installed' do
@@ -31,8 +31,8 @@ describe AhaServices::Redmine do
         end
         let(:new_version) { project[:versions].last }
 
-        it "handles receive_create_version event" do
-          service.receive(:create_version)
+        it "handles receive_create_release event" do
+          service.receive(:create_release)
           expect(project[:versions].size).to eq 1
           expect(new_version[:name]).to eq version_name
           expect(new_version[:id]).to eq json_response['version']['id']
@@ -47,8 +47,8 @@ describe AhaServices::Redmine do
         end
         let(:new_version) { project[:versions].find {|v| v[:id] == json_response['version']['id'] }}
 
-        it "handles receive_create_version event" do
-          service.receive(:create_version)
+        it "handles receive_create_release event" do
+          service.receive(:create_release)
           expect(project[:versions].size).to eq 1
           expect(new_version[:name]).to eq version_name
         end
