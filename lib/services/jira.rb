@@ -120,7 +120,14 @@ class AhaServices::Jira < AhaService
     feature_info = create_jira_issue(payload.feature, data.project, version_id)
     payload.feature.requirements.each do |requirement|
       # TODO: don't create requirements that have been dropped.
-      create_jira_issue(requirement, data.project, version_id, feature_info)
+      requirement_id = get_jira_id(requirement.integration_fields)
+      if requirement_id
+        # Update requirement.
+        update_jira_issue(requirement_id, requirement, version_id)
+      else
+        # Create new requirement.
+        create_jira_issue(requirement, data.project, version_id, feature_info)
+      end
     end
   end
   
@@ -237,8 +244,8 @@ protected
   def create_jira_issue(resource, project_key, version_id, parent = nil)
     issue_id = nil
     issue_key = nil
-    issue_type = parent ? (data.requirement_issue_type || data.feature_issue_type): data.feature_issue_type
-    issue_type_name = issue_type_name(issue_type)
+    issue_type_id = parent ? (data.requirement_issue_type || data.feature_issue_type) : data.feature_issue_type
+    issue_type_str = issue_type_name(issue_type_id)
     summary = resource.name || description_to_title(resource.description.body)
     
     issue = {
@@ -246,7 +253,7 @@ protected
         project: {key: project_key},
         summary: summary,
         description: convert_html(resource.description.body),
-        issuetype: {id: issue_type}
+        issuetype: {id: issue_type_id}
       }
     }
     if version_id
@@ -255,7 +262,7 @@ protected
     if @meta_data.aha_reference_field
       issue[:fields][@meta_data.aha_reference_field] = resource.url
     end
-    case issue_type_name
+    case issue_type_str
     when "Epic"
       issue[:fields][@meta_data.epic_name_field] = summary
     when "Story"
@@ -283,7 +290,7 @@ protected
     end
     
     # Create links.
-    if parent and !["Epic", "Story"].include?(issue_type_name)
+    if parent and !["Epic", "Story"].include?(issue_type_str)
       link = {
         type: {
           name: "Relates"
@@ -322,6 +329,9 @@ protected
     end
     
     update_attachments(issue_id, resource)
+    
+    # TODO: Should update epic link field, or issue links if parent feature has
+    # changed for a requirement.
   end
 
   def update_attachments(issue_id, resource)
@@ -385,7 +395,8 @@ protected
   rescue AhaService::RemoteError => e
     logger.error("Failed to upload attachment to #{issue_key}: #{e.message}")
   ensure
-    http_reset 
+    http_reset
+    prepare_request
   end
   
   def parse(body)
@@ -422,7 +433,11 @@ protected
   
   def issue_type_name(issue_type_id)
     raise AhaService::RemoteError, "Integration has not been configured" if @meta_data.projects.nil?
-    @meta_data.projects.find {|project| project['key'] == data.project }.issue_types.find {|type| type.id == issue_type_id }['name']
+    project = @meta_data.projects.find {|project| project['key'] == data.project }
+    raise AhaService::RemoteError, "Integration has not been configured, can't find project '#{data.project}'" if project.nil?
+    issue_type = project.issue_types.find {|type| type.id.to_s == issue_type_id.to_s }
+    raise AhaService::RemoteError, "Integration needs to be reconfigured, issue types have changed, can't find issue type '#{issue_type_id}'" if issue_type.nil?
+    issue_type['name']
   end
   
   # Convert HTML from Aha! into Confluence-style wiki markup.

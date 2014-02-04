@@ -73,7 +73,7 @@ module Networking
   def http_get(url = nil, params = nil, headers = nil)
     check_ssl do
       http.get do |req|
-        req.url(url)                if url
+        req.url(verify_url(url))    if url
         req.params.update(params)   if params
         req.headers.update(headers) if headers
         yield req if block_given?
@@ -121,7 +121,12 @@ module Networking
     block = Proc.new if block_given?
     http_method :patch, url, body, headers, &block
   end
-  
+
+  def http_delete(url = nil, body = nil, headers = nil)
+    block = Proc.new if block_given?
+    http_method :delete, url, body, headers, &block
+  end
+
   # Public: Makes an HTTP call.
   #
   # method  - Symbol of the HTTP method.  Example: :put
@@ -154,13 +159,57 @@ module Networking
 
     check_ssl do
       http.send(method) do |req|
-        req.url(url)                if url
+        req.url(verify_url(url))    if url
         req.headers.update(headers) if headers
         req.body = body             if body
         block.call req if block
       end
     end
   end
+  
+  #
+  # Make sure that user provided URLs cannot be used to attack any internal
+  # services. We reject any that resolve to a local address.
+  #
+  def verify_url(url_to_check)
+    uri = URI.parse(url_to_check)
+    
+    if (verified = @@verified_urls[uri.host]) == false
+      raise AhaService::InvalidUrlError, "Invalid local address #{uri.host}"
+    elsif verified
+      return url_to_check
+    end
+    
+    ip_to_check = IPSocket::getaddress(uri.host)
+    @@prohibited_addresses.each do |addr|
+      if addr === ip_to_check
+        @@verified_urls[uri.host] = false
+        raise AhaService::InvalidUrlError, "Invalid local address #{uri.host}"
+      end
+    end
+    
+    @@verified_urls[uri.host] = true
+    url_to_check
+  end
+  
+  # URLs that we have already checked. Hash of address to true/false if the 
+  # URL is valid.
+  @@verified_urls = {}
+  
+  # CIDR ranges that could be the local network and are prohibited.
+  @@prohibited_addresses = [
+      "0.0.0.0/8",
+      "255.255.255.255/32",
+      "127.0.0.0/8",
+      "10.0.0.0/8",
+      "169.254.0.0/16",
+      "172.16.0.0/12",
+      "192.168.0.0/16",
+      "224.0.0.0/4",
+      "fc00::/7",
+      "fe80::/10"].collect do |a|
+      IPAddr.new(a)
+    end
   
   # Public: Checks for an SSL error, and re-raises a Services configuration error.
   #

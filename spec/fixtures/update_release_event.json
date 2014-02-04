@@ -10,13 +10,16 @@
       "id": "5811270231745426971",
       "body": "Select external Web host to support friendly Beta users",
       "attachments": [
-        
+
       ]
     },
     "url": "http://watersco.aha.io/releases/PROD-R-1",
     "resource": "http://watersco.aha.io/api/v1/releases/PROD-R-1",
     "integration_fields": [
-      {"id":"68217473","name":"id","value":"777","service_name":"jira"}
+      {"id":"68217473","name":"id","value":"777","service_name":"jira"},
+      {"id":"68217474","name":"id","value":"2","service_name":"redmine_issues"},
+      {"id":"68217475","name":"name","value":"milestone2","service_name":"redmine_issues"},
+      {"id":"68217476","name":"url","value":"http://localhost:4000/versions/2","service_name":"redmine_issues"}
     ]
   }
 }

@@ -8,6 +8,8 @@ require 'logger'
 
 require 'faraday'
 require 'faraday_middleware'
+require 'ipaddr'
+require 'socket'
 require 'hashie'
 require 'aha-api'
 

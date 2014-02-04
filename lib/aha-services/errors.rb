@@ -28,4 +28,8 @@ module Errors
   class RemoteError < Error
   end
   
+  # Raised when an invalid webhook URL is used.
+  class InvalidUrlError < Error
+  end
+  
 end

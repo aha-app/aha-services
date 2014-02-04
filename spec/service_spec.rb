@@ -33,4 +33,21 @@ describe AhaService do
     
   end
   
+  context "networking" do
+    let (:service) { SchemaService.new }
+    
+    it "rejects local addresses" do
+      expect { service.verify_url("http://127.0.0.1/") }.to raise_error(AhaService::InvalidUrlError)
+      expect { service.verify_url("http://lvh.me/") }.to raise_error(AhaService::InvalidUrlError)
+      expect { service.verify_url("http://10.0.1.2/") }.to raise_error(AhaService::InvalidUrlError)
+      expect { service.verify_url("http://192.168.2.1/") }.to raise_error(AhaService::InvalidUrlError)
+    end
+    
+    it "accepts remote addresses" do
+      service.verify_url("http://4.4.4.4/").should == "http://4.4.4.4/"
+      service.verify_url("http://www.google.com:3000/").should == "http://www.google.com:3000/"
+      service.verify_url("http://www.aha.io/").should == "http://www.aha.io/"
+    end
+  end
+  
 end
