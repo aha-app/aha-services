@@ -6,6 +6,7 @@ class AhaServices::GithubIssues < AhaService
   def receive_create_feature
     milestone = find_or_attach_github_milestone(payload.feature.release)
     find_or_attach_github_issue(payload.feature, milestone)
+    update_requirements(payload.feature.requirements, milestone)
   end
 
   def receive_create_release
@@ -15,6 +16,7 @@ class AhaServices::GithubIssues < AhaService
   def receive_update_feature
     milestone = find_or_attach_github_milestone(payload.feature.release)
     update_or_attach_github_issue(payload.feature, milestone)
+    update_requirements(payload.feature.requirements, milestone)
   end
 
   def receive_update_release
@@ -64,6 +66,14 @@ class AhaServices::GithubIssues < AhaService
                                       state: release.released ? "closed" : "open"
   end
 
+  def update_requirements(requirements, milestone)
+    if (requirements)
+      requirements.each do |requirement|
+        update_or_attach_github_issue(requirement, milestone)
+      end
+    end
+  end
+
   def find_or_attach_github_issue(resource, milestone)
     if issue = existing_issue_integrated_with(resource, milestone)
       issue
@@ -94,7 +104,7 @@ class AhaServices::GithubIssues < AhaService
 
   def create_issue_for(resource, milestone)
     issue_resource
-      .create(title: resource.name,
+      .create(title: resource_name(resource),
               body: resource.description.body,
               milestone: milestone['number'])
       .tap { |issue| update_labels(issue, resource) }
@@ -102,13 +112,19 @@ class AhaServices::GithubIssues < AhaService
 
   def update_issue(number, resource)
     issue_resource
-      .update(number, title: resource.name,
+      .update(number, title: resource_name(resource),
                       body: resource.description.body)
       .tap { |issue| update_labels(issue, resource) }
   end
 
   def update_labels(issue, resource)
     label_resource.update(issue['number'], resource.tags)
+  end
+
+  # Used for features (which are required to have a name)
+  # and for requirements (which don't have a name)
+  def resource_name(resource)
+    resource.name || "Aha! requirement"
   end
 
 protected

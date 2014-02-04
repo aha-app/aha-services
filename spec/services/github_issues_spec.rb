@@ -14,7 +14,8 @@ describe AhaServices::GithubIssues do
   let(:feature) { Hashie::Mash.new name: 'First feature',
                                    description: { body: 'First feature description' },
                                    release: release,
-                                   tags: [ 'First', 'Second', 'Third' ] }
+                                   tags: [ 'First', 'Second', 'Third' ],
+                                   requirements: [ { id: 'req_id' } ] }
 
   let(:repo_resource) { double }
   let(:milestone_resource) { double }
@@ -49,6 +50,9 @@ describe AhaServices::GithubIssues do
       .with(mock_payload.feature.release)
     service.should_receive(:find_or_attach_github_issue)
       .with(mock_payload.feature, mock_milestone)
+    service.stub(:update_requirements)
+    service.should_receive(:update_requirements)
+      .with(mock_payload.feature.requirements, mock_milestone)
     service.receive(:create_feature)
   end
 
@@ -73,6 +77,9 @@ describe AhaServices::GithubIssues do
       .with(mock_payload.feature.release)
     service.should_receive(:update_or_attach_github_issue)
       .with(mock_payload.feature, mock_milestone)
+    service.stub(:update_requirements)
+    service.should_receive(:update_requirements)
+      .with(mock_payload.feature.requirements, mock_milestone)
     service.receive(:update_feature)
   end
 
@@ -207,6 +214,32 @@ describe AhaServices::GithubIssues do
       milestone_resource.should_receive(:update).and_return(mock_milestone)
       expect(service.update_milestone(42, release))
         .to eq mock_milestone
+    end
+  end
+
+  describe "#update_requirements" do
+    shared_examples "empty 'update_requirements' method" do
+      it "does not do any api calls" do
+        service.update_requirements(requirements, mock_milestone)
+      end
+    end
+
+    let(:mock_milestone) { { title: 'First milestone' } }
+    context "when the requirements are nil" do
+      let(:requirements) { nil }
+      it_behaves_like "empty 'update_requirements' method"
+    end
+    context "when the requirements are an empty array" do
+      let(:requirements) { [] }
+      it_behaves_like "empty 'update_requirements' method"
+    end
+    context "when the requirements exist" do
+      it "calls 'update_or_attach_github_issue' for those requirements" do
+        requirements = [ { id: 'first_requirement' }, { id: 'second_requirement' } ]
+        service.stub(:update_or_attach_github_issue)
+        service.should_receive(:update_or_attach_github_issue).twice
+        service.update_requirements(requirements, mock_milestone)
+      end
     end
   end
 
