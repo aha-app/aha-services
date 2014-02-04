@@ -49,12 +49,9 @@ class AhaServices::Redmine < AhaService
     update_project id, new_name
   end
 
-  def receive_update_version
-    project_id = payload['project_id']
-    version_id = payload['version_id']
-    params = payload['version']
-
-    update_version project_id, version_id, params
+  def receive_update_release
+    project_id = data.project_id
+    update_version project_id, payload.release
   end
 
   def receive_delete_project
@@ -105,13 +102,13 @@ private
     end
   end
 
-  def create_version project_id, resource, opts={}
+  def create_version project_id, resource
     @meta_data.projects ||= []
     install_projects if @meta_data.projects.empty?
+
     params = Hashie::Mash.new({
       version: {
-        name: resource.name
-    }})
+        name: resource.name}})
 
     prepare_request
     response = http_post "#{data.redmine_url}/projects/#{project_id}/versions.json", params.to_json
@@ -171,22 +168,20 @@ private
     end
   end
 
-  def update_version project_id, version_id, **params
-    project = find_project project_id
-    version = find_version project, version_id
-    params = sanitize_params params, :version
+  def update_version project_id, resource
+    @meta_data.projects ||= []
+    install_projects if @meta_data.projects.empty?
+
+    params = Hashie::Mash.new({
+      version: {
+        name: resource.name}})
+    resource_integrations = resource.integration_fields.select {|field| field.service_name == 'redmine_issues'}
+    version_id = resource_integrations.find {|field| field.name == 'id'}.value
 
     prepare_request
-    response = http_put("#{data.redmine_url}/projects/#{project_id}/versions/#{version_id}.json", params.to_json)
-    process_response(response, 200) do
-      if project && version
-        params.deep_symbolize_keys!
-        params.each do |key, val|
-          version[key] = val
-        end
-      else
-        install_projects
-      end
+    response = http_put "#{data.redmine_url}/projects/#{project_id}/versions/#{version_id}.json", params.to_json
+    process_response response, 200 do
+      logger.info("Updated version #{version_id}")
     end
   end
 
