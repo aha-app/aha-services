@@ -9,11 +9,6 @@ class AhaServices::Redmine < AhaService
       meta_data.projects.collect { |p| [p.name, p.id] }
     end,
     description: "Redmine project that this Aha! product will integrate with."
-  select :version,
-    collection: -> (meta_data, data) do
-      meta_data.projects.find {|p| p.id.to_s == data.project_id.to_s }.versions.collect{|p| [p.name, p.id] }
-    end,
-    description: "Redmine project versions."
 
   PARAMLISTS = {
     version: [:name, :description, :sharing, :status]
@@ -35,10 +30,8 @@ class AhaServices::Redmine < AhaService
   end
 
   def receive_create_release
-    project_id = payload.project_id
-    version_name = payload.version_name
-
-    create_version project_id, version_name
+    project_id = data.project_id
+    create_version project_id, payload.release
   end
 
   def receive_create_feature
@@ -92,29 +85,7 @@ private
       body['projects'].each do |project|
         @meta_data.projects << {
           :id => project['id'],
-          :name => project['name'],
-        }
-        install_versions project['id']
-      end
-    end
-  end
-
-  def install_versions project_id
-    project = find_project project_id
-    project[:versions] = []
-
-    prepare_request
-    response = http_get("#{data.redmine_url}/projects/#{project_id}/versions.json")
-    process_response response, 200 do |body|
-      next if body.empty?
-      body.deep_symbolize_keys!
-      body[:versions].each do |version|
-        project[:versions] << {
-          id: version['id'],
-          name: version['name'],
-          description: version['description'],
-          status: version['status'],
-          sharing: version['sharing']
+          :name => project['name']
         }
       end
     end
