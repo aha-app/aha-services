@@ -46,49 +46,31 @@ describe AhaServices::Redmine do
 
   context 'version update' do
     let(:project_id) { 2 }
-    let(:version_id) { 1 }
+    let(:version_id) { 2 }
     let(:project) { service.send :find_project, project_id }
-    let(:version) { service.send :find_version, project_id, version_id }
     let(:new_version_name) { 'New Awesome Version Name' }
     let(:service) do
       described_class.new(
-        { redmine_url: 'http://localhost:4000', api_key: '123456' },
-        { project_id: project_id,
-          version_id: version_id,
-          version: {name: new_version_name}
-        })
+        { redmine_url: 'http://localhost:4000', api_key: '123456', project_id: project_id },
+        json_fixture('update_release_event.json'))
     end
 
-    it 'responds to receive(:update_version)' do
-      expect(service).to receive(:receive_update_version)
-      service.receive(:update_version)
+    it 'responds to receive(:update_release)' do
+      expect(service).to receive(:receive_update_release)
+      service.receive(:update_release)
     end
 
-    context 'installed version' do
-      before do
-        populate_redmine_projects_and_versions service
-        stub_request(:put, "#{service.data.redmine_url}/projects/#{project_id}/versions/#{version_id}.json").
-          to_return(status: 200, body: '{}', headers: {})
-      end
-
-      it 'updates the version`s name' do
-        service.receive(:update_version)
-        expect(version[:name]).to eq new_version_name
-      end
+    before do
+      populate_redmine_projects service
+      stub_request(:put, "#{service.data.redmine_url}/projects/#{project_id}/versions/#{version_id}.json").
+        to_return(status: 200, body: '{}', headers: {})
+      stub_redmine_projects_and_versions
     end
 
-    context 'not installed version' do
-      before do
-        populate_redmine_projects service
-        stub_request(:put, "#{service.data.redmine_url}/projects/#{project_id}/versions/#{version_id}.json").
-          to_return(status: 200, body: '{}', headers: {})
-        stub_redmine_projects_and_versions
-      end
-
-      it 'reinstalls projects with versions' do
-        expect(service).to receive(:install_projects)
-        service.receive(:update_version)
-      end
+    it 'reinstalls projects with versions' do
+      expect(service).not_to receive(:create_integrations)
+      expect(service).to receive(:http_put).and_call_original
+      service.receive(:update_release)
     end
   end
 
