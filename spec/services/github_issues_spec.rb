@@ -368,4 +368,62 @@ describe AhaServices::GithubIssues do
       service.update_labels(mock_issue, feature)
     end
   end
+
+  describe "#issue_body" do
+    context "when the description no attachments" do
+      context "without body" do
+        let(:description) { Hashie::Mash.new() }
+        it "returns an empty string" do
+          expect(service.issue_body(description)).to eq ""
+        end
+      end
+      context "with a body" do
+        let(:description) { Hashie::Mash.new(body: "Issue name") }
+        it "returns the body" do
+          expect(service.issue_body(description)).to eq "Issue name"
+        end
+      end
+    end
+    context "when the description attachments" do
+      let(:attachments) { [ { file_name: 'name1', download_url: 'url1' } ] }
+      before do
+        service.stub(:attachments_in_body).and_return("name1 (url1)")
+      end
+      context "without body" do
+        let(:description) { Hashie::Mash.new(attachments: attachments) }
+        it "returns the attachments string" do
+          expect(service.issue_body(description)).to eq "name1 (url1)"
+        end
+      end
+      context "with a body" do
+        let(:description) { Hashie::Mash.new(body: "Issue name", attachments: attachments) }
+        it "returns the body followed by the attachments string" do
+          expect(service.issue_body(description))
+            .to eq "Issue name\n\nname1 (url1)"
+        end
+      end
+    end
+  end
+
+  describe "#attachments_in_body" do
+    context "for zero attachments" do
+      let(:attachments) { [] }
+      it "returns an empty string" do
+        expect(service.attachments_in_body(attachments)).to eq ""
+      end
+    end
+    context "for one attachment" do
+      let(:attachments) { [ Hashie::Mash.new(file_name: 'name1', download_url: 'url1') ] }
+      it "returns a single string for the attachment" do
+        expect(service.attachments_in_body(attachments)).to eq "name1 (url1)"
+      end
+    end
+    context "for two attachments" do
+      let(:attachments) { [ Hashie::Mash.new(file_name: 'name1', download_url: 'url1'),
+                            Hashie::Mash.new(file_name: 'name2', download_url: 'url2') ] }
+      it "returns strings of attachments separated by a newline character" do
+        expect(service.attachments_in_body(attachments)).to eq "name1 (url1)\nname2 (url2)"
+      end
+    end
+  end
 end

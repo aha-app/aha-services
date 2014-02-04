@@ -105,7 +105,7 @@ class AhaServices::GithubIssues < AhaService
   def create_issue_for(resource, milestone)
     issue_resource
       .create(title: resource_name(resource),
-              body: resource.description.body,
+              body: issue_body(resource.description),
               milestone: milestone['number'])
       .tap { |issue| update_labels(issue, resource) }
   end
@@ -113,7 +113,7 @@ class AhaServices::GithubIssues < AhaService
   def update_issue(number, resource)
     issue_resource
       .update(number, title: resource_name(resource),
-                      body: resource.description.body)
+                      body: issue_body(resource.description))
       .tap { |issue| update_labels(issue, resource) }
   end
 
@@ -125,6 +125,21 @@ class AhaServices::GithubIssues < AhaService
   # and for requirements (which don't have a name)
   def resource_name(resource)
     resource.name || "Aha! requirement"
+  end
+
+  def issue_body(description)
+    issue_body_parts = []
+    issue_body_parts << description.body if description.body.present?
+    if description.attachments.present?
+      issue_body_parts << attachments_in_body(description.attachments)
+    end
+    issue_body_parts.join("\n\n")
+  end
+
+  def attachments_in_body(attachments)
+    attachments.map do |attachment|
+      "#{attachment.file_name} (#{attachment.download_url})"
+    end.join("\n")
   end
 
 protected
