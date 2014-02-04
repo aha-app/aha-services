@@ -9,8 +9,12 @@ describe AhaServices::Redmine do
     let(:version_name) { 'The Final Milestone' }
     let(:service) do
       described_class.new(
-        { redmine_url: 'http://localhost:4000', api_key: '123456' },
-        { project_id: project_id, version_name: version_name })
+        { redmine_url: 'http://localhost:4000', project_id: project_id, api_key: '123456' },
+        json_fixture('create_release_event.json'))
+    end
+
+    before do
+      stub_aha_api_posts
     end
 
     context 'authenticated' do
