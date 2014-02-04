@@ -46,8 +46,3 @@ def populate_redmine_projects service, more_projects=true
   stub_redmine_projects more_projects
   service.receive(:installed)
 end
-
-def populate_redmine_projects_and_versions service, more_projects=true, more_versions=true
-  stub_redmine_projects_and_versions more_projects, more_versions
-  service.receive(:installed)
-end
