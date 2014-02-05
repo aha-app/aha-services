@@ -131,7 +131,7 @@ class AhaServices::GithubIssues < AhaService
   # Used for features (which are required to have a name)
   # and for requirements (which don't have a name)
   def resource_name(resource)
-    resource.name || "Aha! requirement"
+    resource.name || description_to_title(resource.description.body)
   end
 
   def issue_body(description)
