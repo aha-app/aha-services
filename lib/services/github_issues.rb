@@ -7,7 +7,7 @@ class AhaServices::GithubIssues < AhaService
   end
 
   def receive_installed
-    meta_data.repos = repo_resource.all.map { |repo| { name: repo.name } }
+    meta_data.repos = repo_resource.all.map { |repo| { name: repo[:name] } }
   end
 
   def receive_create_feature

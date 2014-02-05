@@ -14,7 +14,7 @@ describe GithubRepoResource do
   describe "#all" do
     it "returns repos received from Github" do
       mock_repos = raw_fixture('github_issues/repos.json')
-      stub_request(:get, "#{base_request_url}/user/repos").
+      stub_request(:get, "#{base_request_url}/user/repos?per_page=100").
         to_return(status: 200, body: mock_repos)
       expect(repo_resource.all).to eq JSON.parse(mock_repos)
     end
