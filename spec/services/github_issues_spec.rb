@@ -31,7 +31,7 @@ describe AhaServices::GithubIssues do
 
   context "can be installed" do
     it "and handles installed event" do
-      mock_repos = [ { name: 'First repo' } ]
+      mock_repos = [ { 'name' => 'First repo' } ]
       repo_resource.stub(:all).and_return(mock_repos)
       service.receive(:installed)
       expect(service.meta_data.repos.first)

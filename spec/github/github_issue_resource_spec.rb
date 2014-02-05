@@ -12,7 +12,7 @@ describe GithubIssueResource do
   let(:service) do
     AhaServices::GithubIssues.new 'server_url' => "#{protocol}://#{domain}",
                                   'username' => username, 'password' => password,
-                                  'repo' => repo
+                                  'repository' => repo
   end
   let(:issue_resource) { GithubIssueResource.new(service) }
   let(:mock_issue_with_milestone) { raw_fixture('github_issues/issue_with_milestone.json') }

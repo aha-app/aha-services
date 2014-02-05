@@ -11,8 +11,6 @@ class GithubMilestoneResource < GithubResource
     process_response(response, 200) do |milestones|
       return milestones.find { |milestone| milestone['title'] == title }
     end
-  rescue Errors::RemoteError
-    nil
   end
 
   def create(new_milestone)
@@ -34,6 +32,6 @@ class GithubMilestoneResource < GithubResource
 private
 
   def github_milestones_path
-    "#{API_URL}/repos/#{@service.data.username}/#{@service.data.repo}/milestones"
+    "#{API_URL}/repos/#{@service.data.username}/#{@service.data.repository}/milestones"
   end
 end

@@ -12,7 +12,7 @@ describe GithubIssueResource do
   let(:service) do
     AhaServices::GithubIssues.new 'server_url' => "#{protocol}://#{domain}",
                                   'username' => username, 'password' => password,
-                                  'repo' => repo
+                                  'repository' => repo
   end
   let(:label_resource) { GithubLabelResource.new(service) }
 

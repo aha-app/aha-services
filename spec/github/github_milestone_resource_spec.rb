@@ -12,7 +12,7 @@ describe GithubMilestoneResource do
   let(:service) do
     AhaServices::GithubIssues.new 'server_url' => "#{protocol}://#{domain}",
                                   'username' => username, 'password' => password,
-                                  'repo' => repo
+                                  'repository' => repo
   end
   let(:milestone_resource) { GithubMilestoneResource.new(service) }
   let(:mock_milestone) { raw_fixture('github_issues/milestone.json') }
