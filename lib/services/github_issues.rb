@@ -2,12 +2,12 @@ class AhaServices::GithubIssues < AhaService
   string :username
   password :password
   install_button
-  select :repo, collection: -> (meta_data, data) do
+  select :repository, collection: -> (meta_data) do
     meta_data.repos.sort_by(&:name).collect { |repo| [repo.name, repo.name] }
   end
 
   def receive_installed
-    meta_data.repos = repo_resource.all
+    meta_data.repos = repo_resource.all.map { |repo| { name: repo[:name] } }
   end
 
   def receive_create_feature
@@ -131,7 +131,7 @@ class AhaServices::GithubIssues < AhaService
   # Used for features (which are required to have a name)
   # and for requirements (which don't have a name)
   def resource_name(resource)
-    resource.name || "Aha! requirement"
+    resource.name || description_to_title(resource.description.body)
   end
 
   def issue_body(description)

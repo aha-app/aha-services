@@ -28,6 +28,10 @@ class GithubResource
     http.basic_auth @service.data.username, @service.data.password
   end
 
+  def github_http_get_paginated(url)
+    http_get("#{url}?per_page=100")
+  end
+
   def process_response(response, *success_codes, &block)
     if success_codes.include?(response.status)
       yield parse(response.body)
