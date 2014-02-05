@@ -9,8 +9,11 @@ This one-way integration allows you to push your features and requirements in Ah
   the feature has requirements then each requirement will also be sent as an issue.
 * Only the description of a feature or requirement is sent. No tasks or comments are included. 
 * Attachments of a feature or requirement are also sent.
+* Tags on a feature in Aha! will becomes labels in Github.
+* Aha! releases will be created as milestones in Github.
 * When a feature is sent to Github, its status in Aha! is automatically changed to Ready to develop.
 * After a feature is first sent to Github, changes to the name, description and requirements, can also be sent to Github using the _Update Github_ item in the _Actions_ menu on the features page or by sending all features in a release to Github again. New requirements will also be created in Github, however issues that were created for an existing requirement are not deleted from Github if the requirement is deleted from Aha!. If an attachment is deleted in Aha! the corresponding attachment in Github is not deleted. 
+
 
 ## Configuration
 
