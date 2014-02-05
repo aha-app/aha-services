@@ -46,36 +46,5 @@ describe AhaServices::Redmine do
         end
       end
     end
-
-    context 'overwriting previous installation' do
-      let(:projects_index_more_raw) { raw_fixture('redmine/projects/index.json') }
-      let(:projects_index_less_raw) { raw_fixture('redmine/projects/index_2.json') }
-
-      context 'adding installations' do
-        before do
-          populate_redmine_projects service, false
-          stub_redmine_projects
-        end
-
-        it "installs new projects" do
-          expect(service.meta_data.projects.size).to eq(JSON.parse(projects_index_less_raw)['projects'].size)
-          service.receive(:installed)
-          expect(service.meta_data.projects.size).to eq(JSON.parse(projects_index_more_raw)['projects'].size)
-        end
-      end
-
-      context 'reducing installations' do
-        before do
-          populate_redmine_projects_and_versions service
-          stub_redmine_projects_and_versions false
-        end
-
-        it "installs new projects" do
-          expect(service.meta_data.projects.size).to eq(JSON.parse(projects_index_more_raw)['projects'].size)
-          service.receive(:installed)
-          expect(service.meta_data.projects.size).to eq(JSON.parse(projects_index_less_raw)['projects'].size)
-        end
-      end
-    end
   end
 end
