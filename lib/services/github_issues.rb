@@ -169,7 +169,7 @@ protected
 
   def integrate_release_with_github_milestone(release, milestone)
     api.create_integration_field(release.reference_num, self.class.service_name, :number, milestone['number'])
-    api.create_integration_field(resource.reference_num, self.class.service_name, :url, "https://github.com/#{data.username}/#{data.repo}/issues?milestone=#{milestone['number']}")
+    api.create_integration_field(release.reference_num, self.class.service_name, :url, "https://github.com/#{data.username}/#{data.repo}/issues?milestone=#{milestone['number']}")
   end
 
   def integrate_resource_with_github_issue(resource, issue)
