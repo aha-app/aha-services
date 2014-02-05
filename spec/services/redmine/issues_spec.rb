@@ -60,7 +60,7 @@ describe AhaServices::Redmine do
       end
 
       context 'versioned' do
-        before { populate_redmine_projects_and_versions service }
+        before { populate_redmine_projects service }
         context 'available tracker' do
           let(:issue_create_raw) { raw_fixture 'redmine/issues/create_with_version.json' }
           before do
