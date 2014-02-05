@@ -54,12 +54,6 @@ class AhaServices::Redmine < AhaService
     update_version project_id, payload.release
   end
 
-  def receive_delete_project
-    id = payload['id']
-
-    delete_project id
-  end
-
 private
 
 #===============
@@ -175,19 +169,6 @@ private
     response = http_put "#{data.redmine_url}/projects/#{project_id}/versions/#{version_id}.json", params.to_json
     process_response response, 200 do
       logger.info("Updated version #{version_id}")
-    end
-  end
-
-  def delete_project id
-    @meta_data.projects ||= []
-    project = find_project id
-
-    prepare_request
-    response = http_delete("#{data.redmine_url}/projects/#{id}.json")
-    process_response(response, 200) do
-      if project
-        @meta_data.projects.delete project
-      end
     end
   end
 
