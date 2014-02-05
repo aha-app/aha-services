@@ -164,7 +164,7 @@ describe AhaServices::GithubIssues do
 
   describe "#attach_milestone_to" do
     let(:mock_milestone) { { 'number' => 42 } }
-    before { service.api.stub(:create_integration_field) }
+    before { service.stub(:integrate_release_with_github_milestone) }
 
     shared_examples "attaching the milestone" do
       it "integrates the milestone with the release" do
