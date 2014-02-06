@@ -131,8 +131,8 @@ private
     install_projects if @meta_data.projects.empty?
 
     resource_integrations = resource.integration_fields.select {|field| field.service_name == 'redmine_issues'}
-    issue_id = resource_integrations.find {|field| field.name == 'version_id'}.value
-    version_id = resource_integrations.find {|field| field.name == 'version_id'}.value
+    issue_id = resource_integrations.find {|field| field.name == 'id'}.try(:value)
+    version_id = resource_integrations.find {|field| field.name == 'version_id'}.try(:value)
 
     params = Hashie::Mash.new({
       issue: {
