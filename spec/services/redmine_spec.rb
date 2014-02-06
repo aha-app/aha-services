@@ -1,6 +1,13 @@
 require 'spec_helper'
 
 describe AhaServices::Redmine do
+  let(:service) do
+    described_class.new(
+      { redmine_url: 'http://localhost:4000',
+        project_id: project_id,
+        api_key: '123456' })
+  end
+
   context 'class' do
     let(:title) { 'Redmine' }
     let(:service_name) { 'redmine_issues' }
@@ -22,16 +29,14 @@ describe AhaServices::Redmine do
     end
   end
 
-  context "installation" do
+  context 'installation' do
     let(:service) { described_class.new redmine_url: 'http://localhost:4000', api_key: '123456' }
 
     context 'fresh installation' do
       let(:projects_index_raw) { raw_fixture('redmine/projects/index.json') }
       let(:projects_index_json) { JSON.parse(projects_index_raw) }
 
-      before do
-        stub_redmine_projects
-      end
+      before { stub_redmine_projects }
 
       it "responds to receive(:installed)" do
         expect(service).to receive(:receive_installed)
