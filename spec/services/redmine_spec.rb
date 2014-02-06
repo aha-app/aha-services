@@ -127,6 +127,7 @@ describe AhaServices::Redmine do
 
       before do
         stub_aha_api_posts
+        populate_redmine_projects service
       end
 
       it "responds to receive(:create_feature)" do
@@ -134,8 +135,7 @@ describe AhaServices::Redmine do
         service.receive(:create_feature)
       end
 
-      context 'not versioned' do
-        before { populate_redmine_projects service }
+      context 'w/o version' do
         context 'available tracker' do
           let(:issue_create_raw) { raw_fixture 'redmine/issues/create.json' }
           before do
@@ -173,7 +173,7 @@ describe AhaServices::Redmine do
         end
       end
 
-      context 'versioned' do
+      context 'with version' do
         before { populate_redmine_projects service }
         context 'available tracker' do
           let(:issue_create_raw) { raw_fixture 'redmine/issues/create_with_version.json' }
@@ -204,6 +204,40 @@ describe AhaServices::Redmine do
             service.receive(:create_feature)
           end
         end
+      end
+    end
+
+    context 'update' do
+      let(:project_id) { 2 }
+      let(:payload) { json_fixture 'update_feature_event.json' }
+
+      before do
+        stub_aha_api_posts
+        populate_redmine_projects service
+      end
+
+      context 'with version' do
+        let(:params) do
+          {
+            issue: {
+              tracker_id: 2,
+              subject: "Feature with attachments (new)",
+              fixed_version_id: '2'
+            }
+          }
+        end
+        before do
+          stub_request(:put, /#{service.data.redmine_url}\/projects\/#{project_id}\/issues\/\d\.json/).
+            to_return(status: 201, body: {}, headers: {})
+        end
+
+        it 'sends PUT to redmine with proper params' do
+          expect(service).to receive(:http_put).with(anything, params.to_json).and_call_original
+          service.receive(:update_feature)
+        end
+      end
+
+      context 'w/o version' do
       end
     end
   end
