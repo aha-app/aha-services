@@ -209,26 +209,22 @@ describe AhaServices::Redmine do
 
     context 'update' do
       let(:project_id) { 2 }
-      let(:payload) { json_fixture 'update_feature_event.json' }
 
       before do
         stub_aha_api_posts
         populate_redmine_projects service
+        stub_request(:put, /#{service.data.redmine_url}\/projects\/#{project_id}\/issues\/\d\.json/).
+          to_return(status: 201, body: {}, headers: {})
       end
 
       context 'with version' do
+        let(:payload) { json_fixture 'update_feature_event.json' }
         let(:params) do
-          {
-            issue: {
+          { issue: {
               tracker_id: 2,
               subject: "Feature with attachments (new)",
               fixed_version_id: '2'
-            }
-          }
-        end
-        before do
-          stub_request(:put, /#{service.data.redmine_url}\/projects\/#{project_id}\/issues\/\d\.json/).
-            to_return(status: 201, body: {}, headers: {})
+          }}
         end
 
         it 'sends PUT to redmine with proper params' do
@@ -238,6 +234,25 @@ describe AhaServices::Redmine do
       end
 
       context 'w/o version' do
+        let(:payload) do
+          pload = json_fixture'update_feature_event.json'
+          pload['feature']['integration_fields'].reject! do |el|
+            el['service_name'] == 'redmine_issues' &&
+            el['name'] == 'version_id'
+          end
+          pload
+        end
+        let(:params) do
+          { issue: {
+              tracker_id: 2,
+              subject: "Feature with attachments (new)"
+          }}
+        end
+
+        it 'sends PUT to redmine with proper params' do
+          expect(service).to receive(:http_put).with(anything, params.to_json).and_call_original
+          service.receive(:update_feature)
+        end
       end
     end
   end
