@@ -10,10 +10,6 @@ class AhaServices::Redmine < AhaService
     end,
     description: "Redmine project that this Aha! product will integrate with."
 
-  PARAMLISTS = {
-    version: [:name, :description, :sharing, :status]
-  }
-
 #========
 # EVENTS
 #======
@@ -218,11 +214,6 @@ private
   def find_version project_id, version_id
     project = project_id.is_a?(Hash) ? project_id : find_project(project_id)
     project[:versions].find {|v| v[:id] == version_id }
-  end
-
-  def sanitize_params params, paramlist_name
-    paramlist = PARAMLISTS[paramlist_name]
-    params.select {|key, value| paramlist.include? key.to_sym}
   end
 
   def kind_to_tracker_id kind
