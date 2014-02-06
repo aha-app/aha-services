@@ -18,13 +18,6 @@ class AhaServices::Redmine < AhaService
     install_projects
   end
 
-  def receive_create_project
-    project_name = payload.project_name
-    project_identifier = project_name.downcase.squish.gsub( /\s/, '-' )
-
-    create_project project_name, project_identifier
-  end
-
   def receive_create_release
     project_id = data.project_id
     create_version project_id, payload.release
@@ -36,13 +29,6 @@ class AhaServices::Redmine < AhaService
     payload.feature.requirements.each do |requirement|
       create_issue project_id, requirement, parent_id: response_body[:issue][:id]
     end
-  end
-
-  def receive_update_project
-    id = payload['id']
-    new_name = payload['project_name']
-
-    update_project id, new_name
   end
 
   def receive_update_release
@@ -68,20 +54,6 @@ private
           :name => project['name']
         }
       end
-    end
-  end
-
-  def create_project name, identifier
-    @meta_data.projects ||= []
-
-    prepare_request
-    params = { project:{ name: name, identifier: identifier }}
-    response = http_post("#{data.redmine_url}/projects.json", params.to_json)
-    process_response(response, 200) do |body|
-      @meta_data.projects << {
-        :id => body['project']['id'],
-        :name => body['project']['name']
-      }
     end
   end
 
@@ -129,25 +101,6 @@ private
           url: "#{data.redmine_url}/version/#{body.issue.fixed_version.id}"
       end
       return body
-    end
-  end
-
-  def update_project id, new_name
-    @meta_data.projects ||= []
-    project = find_project id
-
-    prepare_request
-    params = { project:{ name: new_name }}
-    response = http_put "#{data.redmine_url}/projects/#{id}.json", params.to_json
-    process_response(response, 200) do
-      if project
-        project[:name] = new_name
-      else
-        @meta_data.projects << {
-          :id => id,
-          :name => new_name
-        }
-      end
     end
   end
 
