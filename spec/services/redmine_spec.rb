@@ -177,7 +177,7 @@ describe AhaServices::Redmine do
     end
   end
 
-  context 'version' do
+  context 'release' do
     context 'creation' do
       let(:projects_index_raw) { raw_fixture('redmine/projects/index.json') }
       let(:projects_index_json) { JSON.parse projects_index_raw }
