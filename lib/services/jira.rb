@@ -245,7 +245,7 @@ protected
     issue_id = nil
     issue_key = nil
     issue_type_id = parent ? (data.requirement_issue_type || data.feature_issue_type) : data.feature_issue_type
-    issue_type_str = issue_type_name(issue_type_id)
+    issue_type = issue_type(issue_type_id)
     summary = resource.name || description_to_title(resource.description.body)
     
     issue = {
@@ -262,11 +262,14 @@ protected
     if @meta_data.aha_reference_field
       issue[:fields][@meta_data.aha_reference_field] = resource.url
     end
-    case issue_type_str
+    case issue_type['name']
     when "Epic"
       issue[:fields][@meta_data.epic_name_field] = summary
     when "Story"
       issue[:fields][@meta_data.epic_link_field] = parent[:key] if parent
+    end
+    if parent and issue_type['subtask']
+      issue[:fields][:parent] = {key: parent[:key]}
     end
           
     prepare_request
@@ -290,7 +293,7 @@ protected
     end
     
     # Create links.
-    if parent and !["Epic", "Story"].include?(issue_type_str)
+    if parent and !issue_type['subtask'] and !["Epic", "Story"].include?(issue_type['name'])
       link = {
         type: {
           name: "Relates"
@@ -431,13 +434,13 @@ protected
     end
   end
   
-  def issue_type_name(issue_type_id)
+  def issue_type(issue_type_id)
     raise AhaService::RemoteError, "Integration has not been configured" if @meta_data.projects.nil?
     project = @meta_data.projects.find {|project| project['key'] == data.project }
     raise AhaService::RemoteError, "Integration has not been configured, can't find project '#{data.project}'" if project.nil?
     issue_type = project.issue_types.find {|type| type.id.to_s == issue_type_id.to_s }
     raise AhaService::RemoteError, "Integration needs to be reconfigured, issue types have changed, can't find issue type '#{issue_type_id}'" if issue_type.nil?
-    issue_type['name']
+    issue_type
   end
   
   # Convert HTML from Aha! into Confluence-style wiki markup.
