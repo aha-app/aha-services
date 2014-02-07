@@ -18,7 +18,8 @@ describe AhaServices::Redmine do
       [
         {type: :string, field_name: :redmine_url},
         {type: :string, field_name: :api_key},
-        {type: :select, field_name: :project}]}
+        {type: :select, field_name: :project}
+      ]}
 
     it "has required title and name" do
       expect(described_class.title).to eq title
@@ -68,12 +69,21 @@ describe AhaServices::Redmine do
         end
       end
     end
+
+    context 'redmine failsafe' do
+      before do
+        stub_request(:get, "#{service.data.redmine_url}/projects.json").
+          to_return(status: 404, body: {}, headers: {})
+      end
+
+      it 'raises AhaService::RemoteError' do
+        expect { service.receive(:installed) }.to raise_error(AhaService::RemoteError)
+      end
+    end
   end
 
   context 'release' do
     context 'creation' do
-      let(:projects_index_raw) { raw_fixture('redmine/projects/index.json') }
-      let(:projects_index_json) { JSON.parse projects_index_raw }
       let(:project_id) { projects_index_json['projects'].first['id'] }
       let(:version_name) { 'The Final Milestone' }
       let(:payload) { json_fixture 'create_release_event.json' }
