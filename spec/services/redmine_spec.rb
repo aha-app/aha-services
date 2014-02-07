@@ -8,6 +8,8 @@ describe AhaServices::Redmine do
         api_key: '123456'
       }, payload)
   end
+  let(:projects_index_raw) { raw_fixture('redmine/projects/index.json') }
+  let(:projects_index_json) { JSON.parse(projects_index_raw) }
 
   context 'class' do
     let(:title) { 'Redmine' }
@@ -33,19 +35,33 @@ describe AhaServices::Redmine do
   context 'installation' do
     let(:service) { described_class.new redmine_url: 'http://localhost:4000', api_key: '123456' }
 
-    context 'fresh installation' do
-      let(:projects_index_raw) { raw_fixture('redmine/projects/index.json') }
-      let(:projects_index_json) { JSON.parse(projects_index_raw) }
+    it "responds to receive(:installed)" do
+      expect(service).to receive(:receive_installed)
+      service.receive(:installed)
+    end
 
+    context 'fresh installation' do
       before { stub_redmine_projects }
 
-      it "responds to receive(:installed)" do
-        expect(service).to receive(:receive_installed)
+      it 'installs projects' do
         service.receive(:installed)
+        service.meta_data.projects.each_with_index do |proj, index|
+          expect(proj[:name]).to eq projects_index_json['projects'][index]['name']
+          expect(proj[:id]).to eq projects_index_json['projects'][index]['id']
+        end
+      end
+    end
+
+    context 'overwriting' do
+      before do
+        populate_redmine_projects service, false
+        stub_redmine_projects
       end
 
-      it "installs projects" do
+      it 'overwrites projects' do
+        expect(service.meta_data.projects.size).to eq 2
         service.receive(:installed)
+        expect(service.meta_data.projects.size).to eq 3
         service.meta_data.projects.each_with_index do |proj, index|
           expect(proj[:name]).to eq projects_index_json['projects'][index]['name']
           expect(proj[:id]).to eq projects_index_json['projects'][index]['id']
@@ -68,7 +84,6 @@ describe AhaServices::Redmine do
 
       context 'authenticated' do
         let(:raw_response) { raw_fixture('redmine/versions/create.json') }
-        let(:json_response) { JSON.parse(raw_response) }
         let(:project) { service.meta_data.projects.find {|p| p[:id] == project_id }}
 
         it "responds to receive(:create_release)" do
@@ -76,7 +91,7 @@ describe AhaServices::Redmine do
           service.receive(:create_release)
         end
 
-        context 'fresh install' do
+        context 'proper params' do
           before do
             stub_redmine_projects
             stub_request(:post, "#{service.data.redmine_url}/projects/#{project_id}/versions.json").
@@ -89,10 +104,6 @@ describe AhaServices::Redmine do
             expect(service.api).to receive(:create_integration_field).with('OPS-R-1', 'redmine_issues', :name, anything).once
             service.receive(:create_release)
           end
-        end
-
-        context 'overwriting install' do
-          pending
         end
 
         context 'redmine failsafe' do
