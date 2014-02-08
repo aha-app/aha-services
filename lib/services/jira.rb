@@ -23,49 +23,9 @@ class AhaServices::Jira < AhaService
   callback_url description: "URL to add to the webhooks section of JIRA. Only one hook is necessary, even if multiple products are integrated with JIRA."
   
   def receive_installed
-    prepare_request
-    response = http_get '%s/rest/api/2/issue/createmeta' % [data.server_url]
-    projects = []
-    process_response(response, 200) do |meta|      
-      meta['projects'].each do |project|
-        issue_types = []
-        
-        # Get the statuses.
-        status_response = http_get '%s/rest/api/2/project/%s/statuses' % [data.server_url, project['key']]
-        if status_response.status == 404
-          # In Jira 5.0 the status is not associated with each issue type.
-          status_response = http_get '%s/rest/api/2/status' % [data.server_url]
-          process_response(status_response, 200) do |status_meta|      
-            statuses = []
-            status_meta.each do |status|
-              statuses << {:id => status['id'], :name => status['name']}
-            end
+    @meta_data.projects = project_resource.all
 
-            project['issuetypes'].each do |issue_type|
-              issue_types << {:id => issue_type['id'], :name => issue_type['name'], 
-                :subtask => issue_type['subtask'], :statuses => statuses}
-            end
-          end
-        else
-          process_response(status_response, 200) do |status_meta|      
-            status_meta.each do |issue_type|
-              statuses = []
-              issue_type['statuses'].each do |status|
-                statuses << {:id => status['id'], :name => status['name']}
-              end
-            
-              issue_types << {:id => issue_type['id'], :name => issue_type['name'], 
-                :subtask => issue_type['subtask'], :statuses => statuses}
-            end
-          end
-        end
-        
-        projects << {:id => project['id'], :key => project['key'], 
-          :name => project['name'], :issue_types => issue_types}
-      end
-    end
-    @meta_data.projects = projects
-    
+    prepare_request
     response = http_get '%s/rest/api/2/resolution' % [data.server_url]
     resolutions = []
     process_response(response, 200) do |meta|      
@@ -181,6 +141,10 @@ class AhaServices::Jira < AhaService
   end
   
 protected
+
+  def project_resource
+    @project_resource ||= JiraProjectResource.new(self)
+  end
   
   def create_jira_version(release, project_key)
     prepare_request
