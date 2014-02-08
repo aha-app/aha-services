@@ -22,6 +22,8 @@ require 'aha-services/documentation'
 require 'aha-services/helpers'
 require 'aha-services/service'
 
+require 'services/generic_resource'
+
 require 'services/github/github_resource'
 require 'services/github/github_repo_resource'
 require 'services/github/github_milestone_resource'
