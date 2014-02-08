@@ -24,18 +24,11 @@ class AhaServices::Jira < AhaService
   
   def receive_installed
     @meta_data.projects = project_resource.all
-
-    prepare_request
-    response = http_get '%s/rest/api/2/resolution' % [data.server_url]
-    resolutions = []
-    process_response(response, 200) do |meta|      
-      meta.each do |resolution|
-        resolutions << {:id => resolution['id'], :name => resolution['name']}
-      end
-    end
-    @meta_data.resolutions = resolutions
     
+    @meta_data.resolutions = resolution_resource.all
+
     # Get custom field mappings.
+    prepare_request
     response = http_get("#{data.server_url}/rest/api/2/field")
     process_response(response, 200) do |fields|
       epic_name_field = fields.find {|field| field['schema'] && field['schema']['custom'] == "com.pyxis.greenhopper.jira:gh-epic-label"}
@@ -144,6 +137,10 @@ protected
 
   def project_resource
     @project_resource ||= JiraProjectResource.new(self)
+  end
+
+  def resolution_resource
+    @resolution_resource ||= JiraResolutionResource.new(self)
   end
   
   def create_jira_version(release, project_key)
