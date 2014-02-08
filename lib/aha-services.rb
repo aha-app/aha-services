@@ -25,7 +25,6 @@ require 'aha-services/service'
 require 'services/generic_resource'
 
 require 'services/github/github_resource'
-require 'services/github/github_repo_resource'
-require 'services/github/github_milestone_resource'
+require 'services/jira/jira_resource'
 
 Dir["#{File.dirname(__FILE__)}/services/**/*.rb"].each {|file| require file }
