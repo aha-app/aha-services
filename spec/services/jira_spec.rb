@@ -58,7 +58,7 @@ describe AhaServices::Jira do
       json_fixture('create_feature_event.json'), integration_data).receive(:create_feature)
   end
   
-  it "can upate existing features" do
+  it "can update existing features" do
     # Verify release.
     stub_request(:get, "http://u:p@foo.com/a/rest/api/2/version/777").
       to_return(:status => 200, :body => "", :headers => {})

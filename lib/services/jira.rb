@@ -54,27 +54,31 @@ class AhaServices::Jira < AhaService
   end
   
   def receive_update_feature
-    # Ensure the version is still valid.
-    version_id = create_jira_version(payload.feature.release, data.project)
-    unless version_id
-      logger.error("Version not created for release #{payload.feature.release.id}")
-    end
+    # # Ensure the version is still valid.
+    # version_id = create_jira_version(payload.feature.release, data.project)
+    # unless version_id
+    #   logger.error("Version not created for release #{payload.feature.release.id}")
+    # end
     
-    feature_id = get_jira_id(payload.feature.integration_fields)
-    feature_key = get_jira_key(payload.feature.integration_fields)
-    update_jira_issue(feature_id, payload.feature, version_id)
+    # feature_id = get_jira_id(payload.feature.integration_fields)
+    # feature_key = get_jira_key(payload.feature.integration_fields)
+    # update_jira_issue(feature_id, payload.feature, version_id)
     
-    # Create or update each requirement.
-    payload.feature.requirements.each do |requirement|
-      requirement_id = get_jira_id(requirement.integration_fields)
-      if requirement_id
-        # Update requirement.
-        update_jira_issue(requirement_id, requirement, version_id)
-      else
-        # Create new requirement.
-        create_jira_issue(requirement, data.project, version_id, {id: feature_id, key: feature_key})
-      end
-    end
+    # # Create or update each requirement.
+    # payload.feature.requirements.each do |requirement|
+    #   requirement_id = get_jira_id(requirement.integration_fields)
+    #   if requirement_id
+    #     # Update requirement.
+    #     update_jira_issue(requirement_id, requirement, version_id)
+    #   else
+    #     # Create new requirement.
+    #     create_jira_issue(requirement, data.project, version_id, {id: feature_id, key: feature_key})
+    #   end
+    # end
+
+    version = find_or_attach_jira_version(payload.feature.release)
+    update_or_attach_jira_issue(payload.feature, version)
+    update_requirements(payload.feature, version)
   end
 
   def receive_create_release
@@ -231,7 +235,7 @@ class AhaServices::Jira < AhaService
       }
     }
     issue[:fields][:summary] = resource.name if resource.name
-    if version_id
+    if version['id']
       issue[:update] ||= {}
       issue[:update][:fixVersions] = [{set: [{id: version['id']}]}]
     end
@@ -431,6 +435,7 @@ protected
     attachments = resource.attachments.dup | resource.description.attachments.dup
     
     # Get the current attachments.
+    prepare_request
     status_response = http_get '%s/rest/api/2/issue/%s?fields=attachment' % [data.server_url, issue_id]
     process_response(status_response, 200) do |issue|      
       issue["fields"]["attachment"].each do |attachment|
