@@ -21,4 +21,13 @@ class JiraVersionResource < JiraResource
       return version
     end
   end
+
+  def update(id, updated_version)
+    prepare_request
+    response = http_put "#{api_url}/version/#{id}",
+      updated_version.merge(id: id).to_json
+    process_response(response, 200) do |version|
+      return version
+    end
+  end
 end

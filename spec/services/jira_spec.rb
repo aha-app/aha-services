@@ -112,7 +112,7 @@ describe AhaServices::Jira do
   context "releases" do
     it "can be updated" do
       stub_request(:put, "http://u:p@foo.com/a/rest/api/2/version/777").
-        with(:body => "{\"id\":\"777\",\"name\":\"Production Web Hosting\",\"releaseDate\":\"2013-01-28\",\"released\":false}").
+        with(:body => "{\"name\":\"Production Web Hosting\",\"releaseDate\":\"2013-01-28\",\"released\":false,\"id\":\"777\"}").
         to_return(:status => 200, :body => "", :headers => {})
       
       AhaServices::Jira.new(
