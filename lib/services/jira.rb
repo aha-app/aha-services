@@ -1,5 +1,4 @@
 require 'html2confluence'
-require 'open-uri'
 
 class AhaServices::Jira < AhaService
   title "JIRA"
@@ -146,10 +145,10 @@ class AhaServices::Jira < AhaService
 
     # Add attachments.
     resource.description.attachments.each do |attachment|
-      upload_attachment(attachment, issue['id'])
+      attachment_resource.upload(attachment, issue['id'])
     end
     resource.attachments.each do |attachment|
-      upload_attachment(attachment, issue['id'])
+      attachment_resource.upload(attachment, issue['id'])
     end
 
     issue
@@ -270,30 +269,8 @@ protected
     
     # Create any attachments that didn't already exist.
     attachments.each do |attachment|
-      upload_attachment(attachment, issue_id)
+      attachment_resource.upload(attachment, issue_id)
     end
-  end
-  
-  def upload_attachment(attachment, issue_id)
-    open(attachment.download_url) do |downloaded_file|
-      # Reset Faraday and switch to multipart to do the file upload.
-      http_reset 
-      http(:encoding => :multipart)
-      http.headers['X-Atlassian-Token'] = 'nocheck'
-      auth_header
-      
-      file = Faraday::UploadIO.new(downloaded_file, attachment.content_type, attachment.file_name)
-      response = http_post '%s/rest/api/2/issue/%s/attachments' % [data.server_url, issue_id], {:file => file} 
-      process_response(response, 200) do
-        # Success.
-      end
-    end
-        
-  rescue AhaService::RemoteError => e
-    logger.error("Failed to upload attachment to #{issue_key}: #{e.message}")
-  ensure
-    http_reset
-    prepare_request
   end
   
   def parse(body)

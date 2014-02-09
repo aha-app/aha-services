@@ -11,7 +11,7 @@ class JiraResource < GenericResource
 
   def process_response(response, *success_codes, &block)
     if success_codes.include?(response.status)
-      yield parse(response.body)
+      yield parse(response.body) if block_given?
     elsif response.status == 401 || response.status == 403
       raise AhaService::RemoteError, "Authentication failed: #{response.status} #{response.headers['X-Authentication-Denied-Reason']}"
     elsif response.status == 400
