@@ -54,28 +54,6 @@ class AhaServices::Jira < AhaService
   end
   
   def receive_update_feature
-    # # Ensure the version is still valid.
-    # version_id = create_jira_version(payload.feature.release, data.project)
-    # unless version_id
-    #   logger.error("Version not created for release #{payload.feature.release.id}")
-    # end
-    
-    # feature_id = get_jira_id(payload.feature.integration_fields)
-    # feature_key = get_jira_key(payload.feature.integration_fields)
-    # update_jira_issue(feature_id, payload.feature, version_id)
-    
-    # # Create or update each requirement.
-    # payload.feature.requirements.each do |requirement|
-    #   requirement_id = get_jira_id(requirement.integration_fields)
-    #   if requirement_id
-    #     # Update requirement.
-    #     update_jira_issue(requirement_id, requirement, version_id)
-    #   else
-    #     # Create new requirement.
-    #     create_jira_issue(requirement, data.project, version_id, {id: feature_id, key: feature_key})
-    #   end
-    # end
-
     version = find_or_attach_jira_version(payload.feature.release)
     update_or_attach_jira_issue(payload.feature, version)
     update_requirements(payload.feature, version)
@@ -248,22 +226,6 @@ class AhaServices::Jira < AhaService
     # changed for a requirement.
   end
 
-  def get_issue(issue_id)
-    prepare_request
-    response = http_get("#{data.server_url}/rest/api/2/issue/#{issue_id}?expand=renderedFields")
-    process_response(response, 200) do |issue|
-      return issue
-    end
-  end
-  
-  def search_issues(params)
-    prepare_request
-    response = http_get("#{data.server_url}/rest/api/2/search?#{params.to_query}")
-    process_response(response, 200) do |results|
-      return results
-    end
-  end
-  
 protected
 
   def project_resource
@@ -290,146 +252,6 @@ protected
     @issue_link_resource ||= JiraIssueLinkResource.new(self)
   end
   
-  def create_jira_version(release, project_key)
-    prepare_request
-
-    # If the release is already integrated with a version, make sure it still
-    # exists.
-    if version_id = get_jira_id(release.integration_fields)
-      response = http_get "#{data.server_url}/rest/api/2/version/#{version_id}"
-      if response.status == 404
-        # Fall through so we recreate the version.
-      elsif response.status == 200
-        return version_id # The version exists already.
-      end
-    end
-    
-    # Query to see if version already exists with same name.
-    response = http_get "#{data.server_url}/rest/api/2/project/#{project_key}/versions"
-    process_response(response, 200) do |versions|      
-      version = versions.find {|version| version['name'] == release.name }
-      if version
-        logger.info("Using existing version #{version.inspect}")
-        api.create_integration_field(release.reference_num, self.class.service_name, :id, version['id'])
-        return version['id']
-      end
-    end
-    
-    version = {
-      project: project_key,
-      name: release.name,
-      description: "Created from Aha! #{release.url}",
-      releaseDate: release.release_date,
-      released: release.released
-    }
-          
-    response = http_post '%s/rest/api/2/version' % [data.server_url], version.to_json 
-    process_response(response, 201) do |new_version|
-      logger.info("Created version #{new_version.inspect}")
-      version_id = new_version["id"]
-      
-      api.create_integration_field(release.reference_num, self.class.service_name, :id, version_id)
-    end
-    
-    return version_id
-  end
-  
-  def create_jira_issue(resource, project_key, version_id, parent = nil)
-    issue_id = nil
-    issue_key = nil
-    issue_type_id = parent ? (data.requirement_issue_type || data.feature_issue_type) : data.feature_issue_type
-    issue_type = issue_type(issue_type_id)
-    summary = resource.name || description_to_title(resource.description.body)
-
-    issue = {
-      fields: {
-        project: {key: project_key},
-        summary: summary,
-        description: convert_html(resource.description.body),
-        issuetype: {id: issue_type_id}
-      }
-    }
-    if version_id
-      issue[:fields][:fixVersions] = [{id: version_id}]
-    end
-    if @meta_data.aha_reference_field
-      issue[:fields][@meta_data.aha_reference_field] = resource.url
-    end
-    case issue_type['name']
-    when "Epic"
-      issue[:fields][@meta_data.epic_name_field] = summary
-    when "Story"
-      issue[:fields][@meta_data.epic_link_field] = parent[:key] if parent
-    end
-    if parent and issue_type['subtask']
-      issue[:fields][:parent] = {key: parent[:key]}
-    end
-          
-    prepare_request
-    response = http_post '%s/rest/api/2/issue' % [data.server_url], issue.to_json 
-    process_response(response, 201) do |new_issue|
-      issue_id = new_issue["id"]
-      issue_key = new_issue["key"]
-      logger.info("Created issue #{issue_id} / #{issue_key}")
-      
-      api.create_integration_field(resource.reference_num, self.class.service_name, :id, issue_id)
-      api.create_integration_field(resource.reference_num, self.class.service_name, :key, issue_key)
-      api.create_integration_field(resource.reference_num, self.class.service_name, :url, "#{data.server_url}/browse/#{issue_key}")
-    end
-    
-    # Add attachments.
-    resource.description.attachments.each do |attachment|
-      upload_attachment(attachment, issue_id)
-    end
-    resource.attachments.each do |attachment|
-      upload_attachment(attachment, issue_id)
-    end
-    
-    # Create links.
-    if parent and !issue_type['subtask'] and !["Epic", "Story"].include?(issue_type['name'])
-      link = {
-        type: {
-          name: "Relates"
-        },
-        outwardIssue: {
-          id: issue_id
-        },
-        inwardIssue: {
-          id: parent[:id]
-        }
-      }
-      response = http_post '%s/rest/api/2/issueLink' % [data.server_url], link.to_json 
-      process_response(response, 201) do |new_link|
-      end
-    end
-    
-    {id: issue_id, key: issue_key}
-  end
-  
-  def update_jira_issue(issue_id, resource, version_id)
-    issue = {
-      fields: {
-        description: convert_html(resource.description.body),
-      }
-    }
-    issue[:fields][:summary] = resource.name if resource.name
-    if version_id
-      issue[:update] ||= {}
-      issue[:update][:fixVersions] = [{set: [{id: version_id}]}]
-    end
-          
-    prepare_request
-    response = http_put '%s/rest/api/2/issue/%s' % [data.server_url, issue_id], issue.to_json 
-    process_response(response, 204) do |updated_issue|      
-      logger.info("Updated issue #{issue_id}")
-    end
-    
-    update_attachments(issue_id, resource)
-    
-    # TODO: Should update epic link field, or issue links if parent feature has
-    # changed for a requirement.
-  end
-
   def update_attachments(issue_id, resource)
     # New list of attachments.
     attachments = resource.attachments.dup | resource.description.attachments.dup
@@ -453,27 +275,6 @@ protected
     end
   end
   
-  #
-  # Get the Jira key from an array of integration fields.
-  #
-  def get_jira_id(integration_fields)
-    get_jira_field(integration_fields, "id")
-  end
-  def get_jira_key(integration_fields)
-    get_jira_field(integration_fields, "key")
-  end
-  def get_jira_field(integration_fields, field_name)
-    return nil if integration_fields.nil?
-    field = integration_fields.detect do |f|
-      f.service_name == self.class.service_name and f.name == field_name
-    end
-    if field
-      field.value
-    else
-      nil
-    end
-  end
-
   def upload_attachment(attachment, issue_id)
     open(attachment.download_url) do |downloaded_file|
       # Reset Faraday and switch to multipart to do the file upload.
