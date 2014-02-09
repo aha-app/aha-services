@@ -251,21 +251,20 @@ protected
   def issue_link_resource
     @issue_link_resource ||= JiraIssueLinkResource.new(self)
   end
+
+  def attachment_resource
+    @attachment_resource ||= JiraAttachmentResource.new(self)
+  end
   
   def update_attachments(issue_id, resource)
     # New list of attachments.
     attachments = resource.attachments.dup | resource.description.attachments.dup
     
     # Get the current attachments.
-    prepare_request
-    status_response = http_get '%s/rest/api/2/issue/%s?fields=attachment' % [data.server_url, issue_id]
-    process_response(status_response, 200) do |issue|      
-      issue["fields"]["attachment"].each do |attachment|
-        
-        # Remove any attachments that match.
-        attachments.reject! do |a|
-          a.file_name == attachment["filename"] and a.file_size.to_i == attachment["size"].to_i
-        end
+    attachment_resource.all_for_issue(issue_id).each do |attachment|
+      # Remove any attachments that match.
+      attachments.reject! do |a|
+        a.file_name == attachment["filename"] and a.file_size.to_i == attachment["size"].to_i
       end
     end
     
