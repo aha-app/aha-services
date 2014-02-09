@@ -48,23 +48,9 @@ class AhaServices::Jira < AhaService
   end
   
   def receive_create_feature
-    version_id = create_jira_version(payload.feature.release, data.project)
-    unless version_id
-      logger.error("Version not created for release #{payload.feature.release.id}")
-    end
-    
-    feature_info = create_jira_issue(payload.feature, data.project, version_id)
-    payload.feature.requirements.each do |requirement|
-      # TODO: don't create requirements that have been dropped.
-      requirement_id = get_jira_id(requirement.integration_fields)
-      if requirement_id
-        # Update requirement.
-        update_jira_issue(requirement_id, requirement, version_id)
-      else
-        # Create new requirement.
-        create_jira_issue(requirement, data.project, version_id, feature_info)
-      end
-    end
+    version = find_or_attach_jira_version(payload.feature.release)
+    find_or_attach_jira_issue(payload.feature, version)
+    update_requirements(payload.feature, version)
   end
   
   def receive_update_feature
@@ -121,6 +107,12 @@ class AhaServices::Jira < AhaService
     end
   end
 
+  def existing_issue_integrated_with(resource, version)
+    if issue_id = get_integration_field(resource.integration_fields, 'id')
+      issue_resource.find_by_id_and_version(issue_id, version)
+    end
+  end
+
   def attach_version_to(release)
     unless version = version_resource.find_by_name(release.name)
       version = create_version_for(release)
@@ -142,6 +134,116 @@ class AhaServices::Jira < AhaService
                                 released: release.released
   end
   
+  def update_requirements(feature, version)
+    if feature.requirements
+      feature.requirements.each do |requirement|
+        update_or_attach_jira_issue(requirement, version, feature)
+      end
+    end
+  end
+
+  def find_or_attach_jira_issue(resource, version, parent = nil)
+    if issue = existing_issue_integrated_with(resource, version)
+      issue
+    else
+      attach_issue_to(resource, version, parent)
+    end
+  end
+
+  def update_or_attach_jira_issue(resource, version, parent = nil)
+    if issue_id = get_integration_field(resource.integration_fields, 'id')
+      update_issue(issue_id, resource, version)
+    else
+      attach_issue_to(resource, version, parent)
+    end
+  end
+
+  def attach_issue_to(resource, version, parent)
+    issue = create_issue_for(resource, version, parent)
+    integrate_resource_with_jira_issue(resource, issue)
+
+    # Add attachments.
+    resource.description.attachments.each do |attachment|
+      upload_attachment(attachment, issue['id'])
+    end
+    resource.attachments.each do |attachment|
+      upload_attachment(attachment, issue['id'])
+    end
+
+    issue
+  end
+
+  def create_issue_for(resource, version, parent)
+    issue_id = nil
+    issue_key = nil
+    issue_type_id = parent ? (data.requirement_issue_type || data.feature_issue_type) : data.feature_issue_type
+    issue_type = issue_type(issue_type_id)
+    summary = resource.name || description_to_title(resource.description.body)
+
+    issue = {
+      fields: {
+        summary: summary,
+        description: convert_html(resource.description.body),
+        issuetype: {id: issue_type_id}
+      }
+    }
+    if version
+      issue[:fields][:fixVersions] = [{id: version['id']}]
+    end
+    if @meta_data.aha_reference_field
+      issue[:fields][@meta_data.aha_reference_field] = resource.url
+    end
+    case issue_type['name']
+    when "Epic"
+      issue[:fields][@meta_data.epic_name_field] = summary
+    when "Story"
+      issue[:fields][@meta_data.epic_link_field] = parent[:key] if parent
+    end
+    if parent and issue_type['subtask']
+      issue[:fields][:parent] = {key: parent[:key]}
+    end
+
+    new_issue = issue_resource.create(issue)
+
+    # Create links.
+    if parent and !issue_type['subtask'] and !["Epic", "Story"].include?(issue_type['name'])
+      link = {
+        type: {
+          name: "Relates"
+        },
+        outwardIssue: {
+          id: new_issue['id']
+        },
+        inwardIssue: {
+          id: parent[:id]
+        }
+      }
+      issue_link_resource.create(link)
+    end
+
+    new_issue
+  end
+
+  def update_issue(id, resource, version)
+    issue = {
+      fields: {
+        description: convert_html(resource.description.body),
+      }
+    }
+    issue[:fields][:summary] = resource.name if resource.name
+    if version_id
+      issue[:update] ||= {}
+      issue[:update][:fixVersions] = [{set: [{id: version['id']}]}]
+    end
+
+    issue_resource.update(id, issue)
+
+    update_attachments(id, resource)
+
+    # TODO: Should update epic link field, or issue links if parent feature has
+    # changed for a requirement.
+  end
+
   def get_issue(issue_id)
     prepare_request
     response = http_get("#{data.server_url}/rest/api/2/issue/#{issue_id}?expand=renderedFields")
@@ -174,6 +276,14 @@ protected
 
   def version_resource
     @version_resource ||= JiraVersionResource.new(self)
+  end
+
+  def issue_resource
+    @issue_resource ||= JiraIssueResource.new(self)
+  end
+
+  def issue_link_resource
+    @issue_link_resource ||= JiraIssueLinkResource.new(self)
   end
   
   def create_jira_version(release, project_key)
@@ -226,7 +336,7 @@ protected
     issue_type_id = parent ? (data.requirement_issue_type || data.feature_issue_type) : data.feature_issue_type
     issue_type = issue_type(issue_type_id)
     summary = resource.name || description_to_title(resource.description.body)
-    
+
     issue = {
       fields: {
         project: {key: project_key},
@@ -431,6 +541,12 @@ protected
 
   def integrate_release_with_jira_version(release, version)
     api.create_integration_field(release.reference_num, self.class.service_name, :id, version['id'])
+  end
+
+  def integrate_resource_with_jira_issue(resource, issue)
+    api.create_integration_field(resource.reference_num, self.class.service_name, :id, issue['id'])
+    api.create_integration_field(resource.reference_num, self.class.service_name, :key, issue['key'])
+    api.create_integration_field(resource.reference_num, self.class.service_name, :url, "#{data.server_url}/browse/#{issue['key']}")
   end
   
 end

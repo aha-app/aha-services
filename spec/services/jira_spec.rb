@@ -8,7 +8,7 @@ describe AhaServices::Jira do
     stub_request(:get, "http://u:p@foo.com/a/rest/api/2/project/DEMO/versions").
       to_return(:status => 200, :body => "[]", :headers => {})
     stub_request(:post, "http://u:p@foo.com/a/rest/api/2/version").
-      with(:body => "{\"project\":\"DEMO\",\"name\":\"Summer\",\"description\":\"Created from Aha! \",\"releaseDate\":null,\"released\":null}").
+      with(:body => "{\"name\":\"Summer\",\"description\":\"Created from Aha! \",\"releaseDate\":null,\"released\":null,\"project\":\"DEMO\"}").
       to_return(:status => 201, :body => "{\"id\":\"666\"}", :headers => {})
     # Call back into Aha! for release.
     stub_request(:post, "https://a.aha.io/api/v1/releases/PROD-R-1/integrations/jira/fields").
