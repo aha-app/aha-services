@@ -28,21 +28,9 @@ class AhaServices::Jira < AhaService
     @meta_data.resolutions = resolution_resource.all
 
     # Get custom field mappings.
-    prepare_request
-    response = http_get("#{data.server_url}/rest/api/2/field")
-    process_response(response, 200) do |fields|
-      epic_name_field = fields.find {|field| field['schema'] && field['schema']['custom'] == "com.pyxis.greenhopper.jira:gh-epic-label"}
-      epic_link_field = fields.find {|field| field['schema'] && field['schema']['custom'] == "com.pyxis.greenhopper.jira:gh-epic-link"}
-      aha_reference_field = fields.find {|field| field['name'] == "Aha! Reference"}
-      
-      @meta_data.epic_name_field = epic_name_field['id'] if epic_name_field
-      @meta_data.epic_link_field = epic_link_field['id'] if epic_link_field
-      if aha_reference_field
-        @meta_data.aha_reference_field = aha_reference_field['id']
-      else
-        @meta_data.aha_reference_field = nil
-      end
-    end
+    @meta_data.epic_name_field = field_resource.epic_name_field
+    @meta_data.epic_link_field = field_resource.epic_link_field
+    @meta_data.aha_reference_field = field_resource.aha_reference_field
     
     # Create custom field for Aha! reference.
     unless @meta_data.aha_reference_field
@@ -52,15 +40,10 @@ class AhaServices::Jira < AhaService
         type: "com.atlassian.jira.plugin.system.customfieldtypes:url"
       }
 
-      response = http_post("#{data.server_url}/rest/api/2/field", field.to_json)
-      process_response(response, 201) do |new_field|
-        logger.info("Created field #{new_field.inspect}")
-        @meta_data.aha_reference_field = new_field["id"]
-      end
+      @meta_data.aha_reference_field = field_resource.create(field)
       
       # Add field to the default screen.
-      response = http_post("#{data.server_url}/rest/api/2/screens/addToDefault/#{@meta_data.aha_reference_field}")
-      # Ignore the respnse - this API is broken, it doesn't return JSON.
+      field_resource.add_to_default_screen(@meta_data.aha_reference_field)
     end
   end
   
@@ -109,12 +92,41 @@ class AhaServices::Jira < AhaService
   end
 
   def receive_create_release
-    version_id = create_jira_version(payload.release, data.project)
+    find_or_attach_jira_version(payload.release)
   end
   
   def receive_update_release
     version_id = get_jira_id(payload.release.integration_fields)
     update_jira_version(version_id, payload.release)
+  end
+
+  def find_or_attach_jira_version(release)
+    if version = existing_version_integrated_with(release)
+      version
+    else
+      attach_version_to(release)
+    end
+  end
+
+  def existing_version_integrated_with(release)
+    if version_id = get_integration_field(release.integration_fields, 'id')
+      version_resource.find_by_id(version_id)
+    end
+  end
+
+  def attach_version_to(release)
+    unless version = version_resource.find_by_name(release.name)
+      version = create_version_for(release)
+    end
+    integrate_release_with_jira_version(release, version)
+    version
+  end
+
+  def create_version_for(release)
+    version_resource.create name: release.name,
+                            description: "Created from Aha! #{release.url}",
+                            releaseDate: release.release_date,
+                            released: release.released
   end
   
   def get_issue(issue_id)
@@ -141,6 +153,14 @@ protected
 
   def resolution_resource
     @resolution_resource ||= JiraResolutionResource.new(self)
+  end
+
+  def field_resource
+    @field_resource ||= JiraFieldResource.new(self)
+  end
+
+  def version_resource
+    @version_resource ||= JiraVersionResource.new(self)
   end
   
   def create_jira_version(release, project_key)
@@ -409,6 +429,10 @@ protected
     parser = HTMLToConfluenceParser.new
     parser.feed(html)
     parser.to_wiki_markup
+  end
+
+  def integrate_release_with_jira_version(release, version)
+    api.create_integration_field(release.reference_num, self.class.service_name, :id, version['id'])
   end
   
 end

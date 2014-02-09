@@ -177,12 +177,4 @@ protected
     api.create_integration_field(resource.reference_num, self.class.service_name, :url, "https://github.com/#{data.username}/#{data.repository}/issues/#{issue['number']}")
   end
 
-  def get_integration_field(integration_fields, field_name)
-    return nil if integration_fields.nil?
-    field = integration_fields.detect do |f|
-      f.service_name == self.class.service_name and f.name == field_name
-    end
-    field && field.value
-  end
-
 end

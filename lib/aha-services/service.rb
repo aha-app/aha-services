@@ -150,4 +150,13 @@ class AhaService
     @logger.level = Logger::DEBUG
     @logger
   end
+
+  def get_integration_field(integration_fields, field_name)
+    return nil if integration_fields.nil?
+    field = integration_fields.detect do |f|
+      f.service_name == self.class.service_name and f.name == field_name
+    end
+    field && field.value
+  end
+
 end
