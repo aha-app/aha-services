@@ -27,4 +27,7 @@ require 'services/generic_resource'
 require 'services/github/github_resource'
 require 'services/jira/jira_resource'
 
+require 'services/redmine/redmine_resource'
+require 'services/redmine/redmine_project_resource'
+
 Dir["#{File.dirname(__FILE__)}/services/**/*.rb"].each {|file| require file }
