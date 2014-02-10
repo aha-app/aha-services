@@ -18,6 +18,7 @@ describe AhaServices::Redmine do
     let(:service_name) { 'redmine_issues' }
     let(:schema_fields) {
       [
+        {type: :install_button, field_name: :install_button},
         {type: :string, field_name: :redmine_url},
         {type: :string, field_name: :api_key},
         {type: :select, field_name: :project}
