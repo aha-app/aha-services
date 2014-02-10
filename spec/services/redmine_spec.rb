@@ -36,7 +36,7 @@ describe AhaServices::Redmine do
   end
 
   context 'installation' do
-    let(:service) { described_class.new redmine_url: 'http://localhost:4000', api_key: '123456' }
+    let(:service) { described_class.new redmine_url: 'http://api.my-redmine.org', api_key: '123456' }
 
     it "responds to receive(:installed)" do
       expect(service).to receive(:receive_installed)
@@ -94,37 +94,51 @@ describe AhaServices::Redmine do
         stub_aha_api_posts
       end
 
-      context 'authenticated' do
+      it "responds to receive(:create_release)" do
+        expect(service).to receive(:receive_create_release)
+        service.receive(:create_release)
+      end
+
+      context 'with proper params' do
         let(:raw_response) { raw_fixture('redmine/versions/create.json') }
         let(:project) { service.meta_data.projects.find {|p| p[:id] == project_id }}
 
-        it "responds to receive(:create_release)" do
-          expect(service).to receive(:receive_create_release)
+        before do
+          stub_redmine_projects
+          stub_request(:post, "#{service.data.redmine_url}/projects/#{project_id}/versions.json").
+            to_return(status: 201, body: raw_response, headers: {})
+        end
+
+        it 'sends integration messages for release' do
+          expect(service.api).to receive(:create_integration_field).with('OPS-R-1', 'redmine_issues', :id, anything).once
+          expect(service.api).to receive(:create_integration_field).with('OPS-R-1', 'redmine_issues', :url, anything).once
+          expect(service.api).to receive(:create_integration_field).with('OPS-R-1', 'redmine_issues', :name, anything).once
           service.receive(:create_release)
-        end
-
-        context 'proper params' do
-          before do
-            stub_redmine_projects
-            stub_request(:post, "#{service.data.redmine_url}/projects/#{project_id}/versions.json").
-              to_return(status: 201, body: raw_response, headers: {})
-          end
-
-          it 'sends integration messages for release' do
-            expect(service.api).to receive(:create_integration_field).with('OPS-R-1', 'redmine_issues', :id, anything).once
-            expect(service.api).to receive(:create_integration_field).with('OPS-R-1', 'redmine_issues', :url, anything).once
-            expect(service.api).to receive(:create_integration_field).with('OPS-R-1', 'redmine_issues', :name, anything).once
-            service.receive(:create_release)
-          end
-        end
-
-        context 'redmine failsafe' do
-          pending
         end
       end
 
-      context 'unauthenticated' do
-        pending
+      context 'auth errors' do
+        before do
+          stub_redmine_projects
+          stub_request(:post, "#{service.data.redmine_url}/projects/#{project_id}/versions.json").
+            to_return(status: 401, body: {}, headers: {})
+        end
+
+        it 'raises AhaService::RemoteError' do
+          expect { service.receive(:create_release) }.to raise_error(AhaService::RemoteError)
+        end
+      end
+
+      context 'param errors' do
+        before do
+          stub_redmine_projects
+          stub_request(:post, "#{service.data.redmine_url}/projects/#{project_id}/versions.json").
+            to_return(status: 404, body: {}, headers: {})
+        end
+
+        it 'raises AhaService::RemoteError' do
+          expect { service.receive(:create_release) }.to raise_error(AhaService::RemoteError)
+        end
       end
     end
 
@@ -140,7 +154,7 @@ describe AhaServices::Redmine do
         service.receive(:update_release)
       end
 
-      context 'authenticated' do
+      context 'with proper params' do
         before do
           populate_redmine_projects service
           stub_request(:put, "#{service.data.redmine_url}/projects/#{project_id}/versions/#{version_id}.json").
@@ -148,28 +162,40 @@ describe AhaServices::Redmine do
           stub_redmine_projects_and_versions
         end
 
-        context 'existing' do
-          pending
-        end
+        context 'existing feature' do
+          it 'updates redmine version' do
+            expect(service).to receive(:http_put).and_call_original
+            service.receive(:update_release)
+          end
 
-        context 'non-existing' do
-          pending
-        end
-
-        context 'redmine failsafe' do
-          pending
-        end
-
-        #TODO: fix this example enitrely!
-        it 'reinstalls projects with versions' do
-          expect(service).not_to receive(:create_integrations)
-          expect(service).to receive(:http_put).and_call_original
-          service.receive(:update_release)
+          it 'updates feature integration' do
+            pending
+          end
         end
       end
 
-      context 'unauthenticated' do
-        pending
+      context 'auth errors' do
+        before do
+          stub_redmine_projects
+          stub_request(:put, "#{service.data.redmine_url}/projects/#{project_id}/versions/#{version_id}.json").
+            to_return(status: 401, body: {}, headers: {})
+        end
+
+        it 'raises AhaService::RemoteError' do
+          expect { service.receive(:update_release) }.to raise_error(AhaService::RemoteError)
+        end
+      end
+
+      context 'param errors' do
+        before do
+          stub_redmine_projects
+          stub_request(:put, "#{service.data.redmine_url}/projects/#{project_id}/versions/#{version_id}.json").
+            to_return(status: 404, body: {}, headers: {})
+        end
+
+        it 'raises AhaService::RemoteError' do
+          expect { service.receive(:update_release) }.to raise_error(AhaService::RemoteError)
+        end
       end
     end
   end
