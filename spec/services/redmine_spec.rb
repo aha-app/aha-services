@@ -1,9 +1,11 @@
 require 'spec_helper'
 
 describe AhaServices::Redmine do
+  before { IPSocket.stub(:getaddress).and_return '47.239.99.158' }
+
   let(:service) do
     described_class.new(
-      { redmine_url: 'http://localhost:4000',
+      { redmine_url: 'http://api.my-redmine.org',
         project_id: project_id,
         api_key: '123456'
       }, payload)
