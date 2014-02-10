@@ -1,6 +1,7 @@
 class AhaServices::Redmine < AhaService
   title 'Redmine'
   service_name 'redmine_issues'
+  install_button
 
   string :redmine_url
   string :api_key
