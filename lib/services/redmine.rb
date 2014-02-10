@@ -49,18 +49,7 @@ private
 #=============
 
   def install_projects
-    @meta_data.projects = []
-
-    prepare_request
-    response = http_get("#{data.redmine_url}/projects.json")
-    process_response(response, 200) do |body|
-      body['projects'].each do |project|
-        @meta_data.projects << {
-          :id => project['id'],
-          :name => project['name']
-        }
-      end
-    end
+    meta_data.projects = project_resource.all.map { |project| { name: project['name'], id: project['id'] }}
   end
 
   def create_version project_id, resource
@@ -146,6 +135,13 @@ private
     process_response response, 201 do
       logger.info("Updated feature #{issue_id}")
     end
+  end
+#===========
+# RESOURCES
+#=========
+
+  def project_resource
+    @project_resource ||= RedmineProjectResource.new(self)
   end
 
 #==================
