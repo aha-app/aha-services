@@ -20,8 +20,7 @@ class AhaServices::Redmine < AhaService
   end
 
   def receive_create_release
-    project_id = data.project_id
-    create_version project_id, payload.release
+    create_version payload.release
   end
 
   def receive_create_feature
@@ -52,22 +51,10 @@ private
     meta_data.projects = project_resource.all.map { |project| { name: project['name'], id: project['id'] }}
   end
 
-  def create_version project_id, resource
+  def create_version payload_fragment
     @meta_data.projects ||= []
     install_projects if @meta_data.projects.empty?
-
-    params = Hashie::Mash.new({
-      version: {
-        name: resource.name}})
-
-    prepare_request
-    response = http_post "#{data.redmine_url}/projects/#{project_id}/versions.json", params.to_json
-    process_response(response, 201) do |body|
-      create_integrations resource.reference_num,
-        id: body.version.id,
-        name: body.version.name,
-        url: "#{data.redmine_url}/versions/#{body.version.id}"
-    end
+    version_resource.create payload_fragment
   end
 
   def create_issue project_id, resource, opts={}
@@ -142,6 +129,10 @@ private
 
   def project_resource
     @project_resource ||= RedmineProjectResource.new(self)
+  end
+
+  def version_resource
+    @version_resource ||= RedmineVersionResource.new(self)
   end
 
 #==================
