@@ -1,13 +1,5 @@
 class RedmineVersionResource < RedmineResource
 
-  def find id
-    prepare_request
-    response = http_get "#{redmine_versions_path}/#{id}.json"
-    process_response response, 200 do |body|
-      return body['versions']
-    end
-  end
-
   def create
     prepare_request
     params = parse_payload @payload.release
