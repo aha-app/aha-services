@@ -6,6 +6,7 @@ class RedmineResource
 
   def initialize(service)
     @service = service
+    @payload = @service.payload
     @logger = service.data.logger || allocate_logger
   end
 
@@ -51,5 +52,13 @@ class RedmineResource
     fields.each do |field, value|
       @service.api.create_integration_field(reference, @service.class.service_name, field, value)
     end
+  end
+
+  def get_integration_field(integration_fields, field_name)
+    return nil if integration_fields.nil?
+    field = integration_fields.detect do |f|
+      f.service_name == @service.class.service_name and f.name == field_name
+    end
+    field && field.value
   end
 end
