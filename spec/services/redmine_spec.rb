@@ -165,7 +165,7 @@ describe AhaServices::Redmine do
 
         context 'existing feature' do
           it 'updates redmine version' do
-            expect(service).to receive(:http_put).and_call_original
+            expect_any_instance_of(RedmineVersionResource).to receive(:http_put).and_call_original
             service.receive(:update_release)
           end
 
