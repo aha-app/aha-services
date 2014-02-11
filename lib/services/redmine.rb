@@ -111,6 +111,7 @@ private
       logger.info("Updated feature #{issue_id}")
     end
   end
+
 #===========
 # RESOURCES
 #=========
