@@ -8,23 +8,25 @@ class RedmineVersionResource < RedmineResource
     end
   end
 
-  def create payload_fragment
+  def create
     prepare_request
-    params = parse_payload payload_fragment
+    params = parse_payload @payload.release
     response = http_post redmine_versions_path, params
     process_response response, 201 do |body|
-      create_integrations payload_fragment.reference_num,
+      create_integrations @payload.release.reference_num,
         id: body.version.id,
         name: body.version.name,
         url: redmine_versions_path(body.version.id)
     end
   end
 
-  def update id, payload_fragment
+  def update
     prepare_request
-    response = http_put "#{redmine_versions_path}/#{id}.json"
-    process_response response, 200 do |body|
-      return body['versions']
+    params = parse_payload @payload.release
+    version_id = get_integration_field @payload.release.integration_fields, 'id'
+    response = http_put redmine_versions_path(version_id), params
+    process_response response, 200 do
+      logger.info("Updated version #{version_id}")
     end
   end
 

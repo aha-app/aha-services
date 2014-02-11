@@ -32,8 +32,7 @@ class AhaServices::Redmine < AhaService
   end
 
   def receive_update_release
-    project_id = data.project_id
-    update_version project_id, payload.release
+    update_version
   end
 
   def receive_update_feature
@@ -54,7 +53,7 @@ private
   def create_version payload_fragment
     @meta_data.projects ||= []
     install_projects if @meta_data.projects.empty?
-    version_resource.create payload_fragment
+    version_resource.create
   end
 
   def create_issue project_id, resource, opts={}
@@ -86,21 +85,10 @@ private
     end
   end
 
-  def update_version project_id, resource
+  def update_version
     @meta_data.projects ||= []
     install_projects if @meta_data.projects.empty?
-
-    params = Hashie::Mash.new({
-      version: {
-        name: resource.name}})
-    resource_integrations = resource.integration_fields.select {|field| field.service_name == 'redmine_issues'}
-    version_id = resource_integrations.find {|field| field.name == 'id'}.value
-
-    prepare_request
-    response = http_put "#{data.redmine_url}/projects/#{project_id}/versions/#{version_id}.json", params.to_json
-    process_response response, 200 do
-      logger.info("Updated version #{version_id}")
-    end
+    version_resource.update
   end
 
   def update_issue project_id, resource
@@ -168,6 +156,14 @@ private
     fields.each do |field, value|
       api.create_integration_field(reference, self.class.service_name, field, value)
     end
+  end
+
+  def get_integration_field(integration_fields, field_name)
+    return nil if integration_fields.nil?
+    field = integration_fields.detect do |f|
+      f.service_name == self.class.service_name and f.name == field_name
+    end
+    field && field.value
   end
 
 #=========
