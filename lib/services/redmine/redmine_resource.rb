@@ -24,7 +24,7 @@ class RedmineResource
 
   def process_response(response, *success_codes, &block)
     if success_codes.include?(response.status)
-      yield parse(response.body)
+      yield Hashie::Mash.new parse(response.body)
     elsif response.status.between?(400, 499)
       error = parse(response.body)
       raise RemoteError, "Error message: #{error['message']}"
@@ -45,5 +45,11 @@ class RedmineResource
     @logger = AhaLogger.new(STDOUT)
     @logger.level = Logger::DEBUG
     @logger
+  end
+
+  def create_integrations reference, **fields
+    fields.each do |field, value|
+      @service.api.create_integration_field(reference, @service.class.service_name, field, value)
+    end
   end
 end
