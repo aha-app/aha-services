@@ -35,8 +35,7 @@ class AhaServices::Redmine < AhaService
   end
 
   def receive_update_feature
-    project_id = data.project_id
-    update_issue project_id, payload.feature
+    update_issue
   end
 
 private
@@ -70,25 +69,10 @@ private
     version_resource.update
   end
 
-  def update_issue project_id, resource
+  def update_issue
     @meta_data.projects ||= []
     install_projects if @meta_data.projects.empty?
-
-    resource_integrations = resource.integration_fields.select {|field| field.service_name == 'redmine_issues'}
-    issue_id = resource_integrations.find {|field| field.name == 'id'}.try(:value)
-    version_id = resource_integrations.find {|field| field.name == 'version_id'}.try(:value)
-
-    params = Hashie::Mash.new({
-      issue: {
-        tracker_id: kind_to_tracker_id(resource.kind),
-        subject: resource.name }})
-    params[:issue].merge!({fixed_version_id: version_id}) if version_id
-
-    prepare_request
-    response = http_put "#{data.redmine_url}/projects/#{project_id}/issues/#{issue_id}.json", params.to_json
-    process_response response, 201 do
-      logger.info("Updated feature #{issue_id}")
-    end
+    issue_resource.update
   end
 
 #===========

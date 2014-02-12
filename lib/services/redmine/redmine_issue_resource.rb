@@ -3,8 +3,19 @@ class RedmineIssueResource < RedmineResource
   def create payload_fragment=nil, parent_id=nil
     params = parse_payload(payload_fragment || @payload.feature, parent_id)
     prepare_request
-    response = http_post redmine_issues_path, params
+    response = http_post redmine_issues_path, params.to_json
     parse_response response, payload_fragment
+  end
+
+  def update
+    params = parse_payload @payload.feature
+    issue_id = get_integration_field @payload.feature.integration_fields, 'id'
+
+    prepare_request
+    response = http_put redmine_issues_path(issue_id), params.to_json
+    process_response response, 201 do
+      logger.info("Updated feature #{issue_id}")
+    end
   end
 
 private
@@ -16,10 +27,12 @@ private
   end
 
   def parse_payload payload_fragment, parent_id=nil
+    version_id = get_integration_field @payload.feature.integration_fields, 'version_id'
     hashie = Hashie::Mash.new( issue: {
-      tracker_id: kind_to_tracker_id(payload_fragment.kind), # feature tracker
+      tracker_id: kind_to_tracker_id(payload_fragment.kind),
       subject: payload_fragment.name })
     hashie[:issue].merge!(parent_issue_id: parent_id) if parent_id
+    hashie[:issue].merge!(fixed_version_id: version_id) if version_id
     hashie
   end
 
@@ -30,7 +43,6 @@ private
         id: body.issue.id,
         name: body.issue.subject,
         url: redmine_issues_path(body.issue.id)
-      # binding.pry
       if payload_fragment.release && body.issue.fixed_version
         create_integrations payload_fragment.release.reference_num,
           id: body.issue.fixed_version.id,

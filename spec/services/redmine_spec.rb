@@ -311,11 +311,11 @@ describe AhaServices::Redmine do
                 tracker_id: 2,
                 subject: "Feature with attachments (new)",
                 fixed_version_id: '2'
-            }}
+            }}.to_json
           end
 
           it 'sends PUT to redmine with proper params' do
-            expect(service).to receive(:http_put).with(anything, params.to_json).and_call_original
+            expect_any_instance_of(RedmineIssueResource).to receive(:http_put).with(anything, params).and_call_original
             service.receive(:update_feature)
           end
         end
@@ -333,11 +333,11 @@ describe AhaServices::Redmine do
             { issue: {
                 tracker_id: 2,
                 subject: "Feature with attachments (new)"
-            }}
+            }}.to_json
           end
 
           it 'sends PUT to redmine with proper params' do
-            expect(service).to receive(:http_put).with(anything, params.to_json).and_call_original
+            expect_any_instance_of(RedmineIssueResource).to receive(:http_put).with(anything, params).and_call_original
             service.receive(:update_feature)
           end
         end
