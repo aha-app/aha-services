@@ -30,7 +30,7 @@ private
     str + '.json'
   end
 
-  def parse_payload payload_fragment
+  def parse_payload payload_fragment, parent_id=nil
     return Hashie::Mash.new( version: { name: payload_fragment.name })
   end
 
