@@ -8,14 +8,15 @@ class AhaServices::Jira < AhaService
   password :password
   install_button
   select :project, collection: ->(meta_data, data) { meta_data.projects.collect{|p| [p.name, p['key']] } }
+  boolean :send_initiatives, description: "Check to use feature initatives to create Epics in JIRA Agile"
   select :feature_issue_type, 
     collection: ->(meta_data, data) { 
       meta_data.projects.detect {|p| p['key'] == data.project}.issue_types.find_all{|i| !i['subtype']}.collect{|p| [p.name, p.id] } 
-    }, description: "JIRA issue type that will be used when sending features. If you are using JIRA Agile then we recommend 'Epic'."
+    }, description: "JIRA issue type that will be used when sending features. If you are using JIRA Agile then we recommend 'Story'."
   select :requirement_issue_type, 
     collection: ->(meta_data, data) { 
       meta_data.projects.detect {|p| p['key'] == data.project}.issue_types.find_all{|i| !i['subtype']}.collect{|p| [p.name, p.id] } 
-    }, description: "JIRA issue type that will be used when sending requirements. If you are using JIRA Agile then we recommend 'Story'."
+    }, description: "JIRA issue type that will be used when sending requirements. If you are using JIRA Agile then we recommend 'Sub-task'."
   internal :feature_status_mapping
   internal :resolution_mapping
   
@@ -65,6 +66,18 @@ class AhaServices::Jira < AhaService
   def receive_update_release
     update_or_attach_jira_version(payload.release)
   end
+
+  # These methods are exposed here so they can be used in the callback and
+  # import code.
+  def get_issue(issue_id)
+    issue_resource.find_by_id(issue_id, expand: "renderedFields")
+  end
+
+  def search_issues(params)
+    issue_resource.search(params)
+  end
+
+protected
 
   def find_or_attach_jira_version(release)
     if version = existing_version_integrated_with(release)
@@ -221,8 +234,6 @@ class AhaServices::Jira < AhaService
     
     issue_info
   end
-
-protected
 
   def project_resource
     @project_resource ||= JiraProjectResource.new(self)
