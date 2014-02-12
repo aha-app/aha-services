@@ -48,14 +48,14 @@ class AhaServices::Jira < AhaService
   
   def receive_create_feature
     version = find_or_attach_jira_version(payload.feature.release)
-    find_or_attach_jira_issue(payload.feature, version)
-    update_requirements(payload.feature, version)
+    issue_info = update_or_attach_jira_issue(payload.feature, version)
+    update_requirements(payload.feature, version, issue_info)
   end
   
   def receive_update_feature
     version = find_or_attach_jira_version(payload.feature.release)
-    update_or_attach_jira_issue(payload.feature, version)
-    update_requirements(payload.feature, version)
+    issue_info = update_or_attach_jira_issue(payload.feature, version)
+    update_requirements(payload.feature, version, issue_info)
   end
 
   def receive_create_release
@@ -73,7 +73,7 @@ class AhaServices::Jira < AhaService
       attach_version_to(release)
     end
   end
-
+  
   def update_or_attach_jira_version(release)
     if version_id = get_integration_field(release.integration_fields, 'id')
       update_version(version_id, release)
@@ -85,12 +85,6 @@ class AhaServices::Jira < AhaService
   def existing_version_integrated_with(release)
     if version_id = get_integration_field(release.integration_fields, 'id')
       version_resource.find_by_id(version_id)
-    end
-  end
-
-  def existing_issue_integrated_with(resource, version)
-    if issue_id = get_integration_field(resource.integration_fields, 'id')
-      issue_resource.find_by_id_and_version(issue_id, version)
     end
   end
 
@@ -115,48 +109,47 @@ class AhaServices::Jira < AhaService
                                 released: release.released
   end
   
-  def update_requirements(feature, version)
+  def update_requirements(feature, version, issue_info)
     if feature.requirements
       feature.requirements.each do |requirement|
-        update_or_attach_jira_issue(requirement, version, feature)
+        update_or_attach_jira_issue(requirement, version, issue_info)
       end
     end
   end
 
-  def find_or_attach_jira_issue(resource, version, parent = nil)
-    if issue = existing_issue_integrated_with(resource, version)
-      issue
+  def get_existing_issue_info(resource)
+    if id = get_integration_field(resource.integration_fields, 'id') and
+      key = get_integration_field(resource.integration_fields, 'key')
+      { 'id' => id, 'key' => key }
     else
-      attach_issue_to(resource, version, parent)
+      nil
     end
   end
-
+  
   def update_or_attach_jira_issue(resource, version, parent = nil)
-    if issue_id = get_integration_field(resource.integration_fields, 'id')
-      update_issue(issue_id, resource, version)
+    if issue_info = get_existing_issue_info(resource)
+      update_issue(issue_info, resource, version)
     else
       attach_issue_to(resource, version, parent)
     end
   end
 
-  def attach_issue_to(resource, version, parent)
-    issue = create_issue_for(resource, version, parent)
-    integrate_resource_with_jira_issue(resource, issue)
+  def attach_issue_to(resource, version, parent = nil)
+    issue_info = create_issue_for(resource, version, parent)
+    integrate_resource_with_jira_issue(resource, issue_info)
 
     # Add attachments.
     resource.description.attachments.each do |attachment|
-      attachment_resource.upload(attachment, issue['id'])
+      attachment_resource.upload(attachment, issue_info['id'])
     end
     resource.attachments.each do |attachment|
-      attachment_resource.upload(attachment, issue['id'])
+      attachment_resource.upload(attachment, issue_info['id'])
     end
 
-    issue
+    issue_info
   end
 
   def create_issue_for(resource, version, parent)
-    issue_id = nil
-    issue_key = nil
     issue_type_id = parent ? (data.requirement_issue_type || data.feature_issue_type) : data.feature_issue_type
     issue_type = issue_type(issue_type_id)
     summary = resource.name || description_to_title(resource.description.body)
@@ -178,10 +171,10 @@ class AhaServices::Jira < AhaService
     when "Epic"
       issue[:fields][@meta_data.epic_name_field] = summary
     when "Story"
-      issue[:fields][@meta_data.epic_link_field] = parent[:key] if parent
+      issue[:fields][@meta_data.epic_link_field] = parent['key'] if parent
     end
     if parent and issue_type['subtask']
-      issue[:fields][:parent] = {key: parent[:key]}
+      issue[:fields][:parent] = {key: parent['key']}
     end
     populate_time_tracking(issue, resource)
     
@@ -197,7 +190,7 @@ class AhaServices::Jira < AhaService
           id: new_issue['id']
         },
         inwardIssue: {
-          id: parent[:id]
+          id: parent['id']
         }
       }
       issue_link_resource.create(link)
@@ -206,7 +199,7 @@ class AhaServices::Jira < AhaService
     new_issue
   end
 
-  def update_issue(id, resource, version)
+  def update_issue(issue_info, resource, version)
     issue = {
       fields: {
         description: convert_html(resource.description.body),
@@ -219,12 +212,14 @@ class AhaServices::Jira < AhaService
     end
     populate_time_tracking(issue, resource)
 
-    issue_resource.update(id, issue)
+    issue_resource.update(issue_info['id'], issue)
 
-    update_attachments(id, resource)
+    update_attachments(issue_info['id'], resource)
 
     # TODO: Should update epic link field, or issue links if parent feature has
     # changed for a requirement.
+    
+    issue_info
   end
 
 protected
