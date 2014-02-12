@@ -49,13 +49,13 @@ class AhaServices::Jira < AhaService
   
   def receive_create_feature
     version = find_or_attach_jira_version(payload.feature.release)
-    issue_info = update_or_attach_jira_issue(payload.feature, version)
+    issue_info = update_or_attach_jira_issue(payload.feature, payload.feature.initiative, version)
     update_requirements(payload.feature, version, issue_info)
   end
   
   def receive_update_feature
     version = find_or_attach_jira_version(payload.feature.release)
-    issue_info = update_or_attach_jira_issue(payload.feature, version)
+    issue_info = update_or_attach_jira_issue(payload.feature, payload.feature.initiative, version)
     update_requirements(payload.feature, version, issue_info)
   end
 
@@ -125,7 +125,7 @@ protected
   def update_requirements(feature, version, issue_info)
     if feature.requirements
       feature.requirements.each do |requirement|
-        update_or_attach_jira_issue(requirement, version, issue_info)
+        update_or_attach_jira_issue(requirement, feature.initiative, version, issue_info)
       end
     end
   end
@@ -139,17 +139,17 @@ protected
     end
   end
   
-  def update_or_attach_jira_issue(resource, version, parent = nil)
+  def update_or_attach_jira_issue(resource, initiative, version, parent = nil)
     if issue_info = get_existing_issue_info(resource)
       update_issue(issue_info, resource, version)
     else
-      attach_issue_to(resource, version, parent)
+      attach_issue_to(resource, initiative, version, parent)
     end
   end
 
-  def attach_issue_to(resource, version, parent = nil)
-    issue_info = create_issue_for(resource, version, parent)
-    integrate_resource_with_jira_issue(resource, issue_info)
+  def attach_issue_to(resource, initiative, version, parent = nil)
+    issue_info = create_issue_for(resource, initiative, version, parent)
+    integrate_resource_with_jira_issue(reference_num_to_resource_type(resource.reference_num), resource, issue_info)
 
     # Add attachments.
     resource.description.attachments.each do |attachment|
@@ -161,8 +161,33 @@ protected
 
     issue_info
   end
-
-  def create_issue_for(resource, version, parent)
+  
+  def find_or_create_epic_from_initiative(initiative)
+    if epic_key = get_integration_field(initiative.integration_fields, 'key')
+      epic_key
+    else
+      issue = {
+        fields: {
+          :summary => initiative.name,
+          :description => convert_html(initiative.description.body),
+          :issuetype => {name: "Epic"}
+        }
+      }
+      if @meta_data.aha_reference_field
+        issue[:fields][@meta_data.aha_reference_field] = initiative.url
+      end
+      issue[:fields][@meta_data.epic_name_field] = initiative.name
+      
+      new_issue = issue_resource.create(issue)
+      initiative.description.attachments.each do |attachment|
+        attachment_resource.upload(attachment, new_issue['id'])
+      end
+      integrate_resource_with_jira_issue("initiatives", initiative, new_issue)
+      new_issue['key']
+    end
+  end
+  
+  def create_issue_for(resource, initiative, version, parent)
     issue_type_id = parent ? (data.requirement_issue_type || data.feature_issue_type) : data.feature_issue_type
     issue_type = issue_type(issue_type_id)
     summary = resource.name || description_to_title(resource.description.body)
@@ -184,7 +209,13 @@ protected
     when "Epic"
       issue[:fields][@meta_data.epic_name_field] = summary
     when "Story"
-      issue[:fields][@meta_data.epic_link_field] = parent['key'] if parent
+      if data.send_initiatives == "1"
+        if initiative
+          issue[:fields][@meta_data.epic_link_field] = find_or_create_epic_from_initiative(initiative)
+        end
+      else
+        issue[:fields][@meta_data.epic_link_field] = parent['key'] if parent
+      end
     end
     if parent and issue_type['subtask']
       issue[:fields][:parent] = {key: parent['key']}
@@ -310,10 +341,10 @@ protected
     api.create_integration_field(release.reference_num, self.class.service_name, :id, version['id'])
   end
 
-  def integrate_resource_with_jira_issue(resource, issue)
-    api.create_integration_field(resource.reference_num, self.class.service_name, :id, issue['id'])
-    api.create_integration_field(resource.reference_num, self.class.service_name, :key, issue['key'])
-    api.create_integration_field(resource.reference_num, self.class.service_name, :url, "#{data.server_url}/browse/#{issue['key']}")
+  def integrate_resource_with_jira_issue(resource_type, resource, issue)
+    api.create_integration_field(resource_type, resource.id, self.class.service_name, :id, issue['id'])
+    api.create_integration_field(resource_type, resource.id, self.class.service_name, :key, issue['key'])
+    api.create_integration_field(resource_type, resource.id, self.class.service_name, :url, "#{data.server_url}/browse/#{issue['key']}")
   end
   
 end

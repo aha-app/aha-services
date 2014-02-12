@@ -21,4 +21,13 @@ module Helpers
     converter.convert!(nil)
   end
   
+  def reference_num_to_resource_type(reference_num)
+    if reference_num =~ /-R-\d+$/ or reference_num =~ /-R-PL$/
+      "releases"
+    elsif reference_num =~ /-\d+-\d+$/
+      "requirements"
+    else
+      "features"
+    end
+  end
 end
