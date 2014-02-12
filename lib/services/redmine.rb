@@ -24,10 +24,9 @@ class AhaServices::Redmine < AhaService
   end
 
   def receive_create_feature
-    project_id = data.project_id
-    response_body = create_issue(project_id, payload.feature)
+    response_body = create_issue
     payload.feature.requirements.each do |requirement|
-      create_issue project_id, requirement, parent_id: response_body[:issue][:id]
+      create_issue requirement, response_body[:issue][:id]
     end
   end
 
@@ -56,32 +55,12 @@ private
     version_resource.create
   end
 
-  def create_issue project_id, resource, opts={}
+  def create_issue payload_fragment=nil, parent_id=nil
     @meta_data.projects ||= []
-
-    params = Hashie::Mash.new({
-      issue: {
-        tracker_id: opts[:tracker_id] || 2, # feature tracker
-        subject: resource.name
-    }})
-    params[:issue].merge!({parent_issue_id: opts[:parent_id]}) if opts.has_key?(:parent_id)
-
-    release = resource.release
-
-    prepare_request
-    response = http_post "#{data.redmine_url}/projects/#{project_id}/issues.json", params.to_json
-    process_response response, 201 do |body|
-      create_integrations resource.reference_num,
-        id: body.issue.id,
-        name: body.issue.subject,
-        url: "#{data.redmine_url}/projects/#{project_id}/issues/#{body.issue.id}"
-      if release && body.issue.fixed_version
-        create_integrations release.reference_num,
-          id: body.issue.fixed_version.id,
-          name: body.issue.fixed_version.name,
-          url: "#{data.redmine_url}/version/#{body.issue.fixed_version.id}"
-      end
-      return body
+    unless payload_fragment && parent_id
+      issue_resource.create
+    else
+      issue_resource.create payload_fragment, parent_id
     end
   end
 
@@ -124,6 +103,10 @@ private
     @version_resource ||= RedmineVersionResource.new(self)
   end
 
+  def issue_resource
+    @issue_resource ||= RedmineIssueResource.new(self)
+  end
+
 #==================
 # REQUEST HANDLING
 #================
@@ -157,14 +140,6 @@ private
     fields.each do |field, value|
       api.create_integration_field(reference, self.class.service_name, field, value)
     end
-  end
-
-  def get_integration_field(integration_fields, field_name)
-    return nil if integration_fields.nil?
-    field = integration_fields.detect do |f|
-      f.service_name == self.class.service_name and f.name == field_name
-    end
-    field && field.value
   end
 
 #=========
