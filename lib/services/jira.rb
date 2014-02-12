@@ -183,7 +183,8 @@ class AhaServices::Jira < AhaService
     if parent and issue_type['subtask']
       issue[:fields][:parent] = {key: parent[:key]}
     end
-
+    populate_time_tracking(issue, resource)
+    
     new_issue = issue_resource.create(issue)
 
     # Create links.
@@ -216,6 +217,7 @@ class AhaServices::Jira < AhaService
       issue[:update] ||= {}
       issue[:update][:fixVersions] = [{set: [{id: version['id']}]}]
     end
+    populate_time_tracking(issue, resource)
 
     issue_resource.update(id, issue)
 
@@ -270,6 +272,15 @@ protected
     # Create any attachments that didn't already exist.
     attachments.each do |attachment|
       attachment_resource.upload(attachment, issue_id)
+    end
+  end
+  
+  def populate_time_tracking(issue, resource)
+    if resource.work_units == 10 # Units are minutes.
+      issue[:fields][:timetracking] = {
+        originalEstimate: resource.original_estimate,
+        remainingEstimate: resource.remaining_estimate
+      }
     end
   end
   
