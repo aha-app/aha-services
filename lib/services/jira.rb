@@ -141,7 +141,7 @@ protected
   
   def update_or_attach_jira_issue(resource, initiative, version, parent = nil)
     if issue_info = get_existing_issue_info(resource)
-      update_issue(issue_info, resource, version)
+      update_issue(issue_info, resource, initiative, version, parent)
     else
       attach_issue_to(resource, initiative, version, parent)
     end
@@ -162,6 +162,8 @@ protected
     issue_info
   end
   
+  # Create an epic from an initiative, or find an existing epic for the 
+  # initiative.
   def find_or_create_epic_from_initiative(initiative)
     if epic_key = get_integration_field(initiative.integration_fields, 'key')
       epic_key
@@ -205,21 +207,7 @@ protected
     if @meta_data.aha_reference_field
       issue[:fields][@meta_data.aha_reference_field] = resource.url
     end
-    case issue_type['name']
-    when "Epic"
-      issue[:fields][@meta_data.epic_name_field] = summary
-    when "Story"
-      if data.send_initiatives == "1"
-        if initiative
-          issue[:fields][@meta_data.epic_link_field] = find_or_create_epic_from_initiative(initiative)
-        end
-      else
-        issue[:fields][@meta_data.epic_link_field] = parent['key'] if parent
-      end
-    end
-    if parent and issue_type['subtask']
-      issue[:fields][:parent] = {key: parent['key']}
-    end
+    populate_relationship_fields(issue, parent, initiative)
     populate_time_tracking(issue, resource)
     
     new_issue = issue_resource.create(issue)
@@ -243,7 +231,7 @@ protected
     new_issue
   end
 
-  def update_issue(issue_info, resource, version)
+  def update_issue(issue_info, resource, initiative, version, parent)
     issue = {
       fields: {
         description: convert_html(resource.description.body),
@@ -254,14 +242,13 @@ protected
       issue[:update] ||= {}
       issue[:update][:fixVersions] = [{set: [{id: version['id']}]}]
     end
+    # Disabled until https://jira.atlassian.com/browse/GHS-10333 is fixed.
+    #populate_relationship_fields(issue, parent, initiative)
     populate_time_tracking(issue, resource)
 
     issue_resource.update(issue_info['id'], issue)
 
     update_attachments(issue_info['id'], resource)
-
-    # TODO: Should update epic link field, or issue links if parent feature has
-    # changed for a requirement.
     
     issue_info
   end
@@ -318,6 +305,27 @@ protected
         originalEstimate: resource.original_estimate,
         remainingEstimate: resource.remaining_estimate
       }
+    end
+  end
+  
+  def populate_relationship_fields(issue, parent, initiative)
+    issue_type_id = parent ? (data.requirement_issue_type || data.feature_issue_type) : data.feature_issue_type
+    issue_type = issue_type(issue_type_id)
+    
+    case issue_type['name']
+    when "Epic"
+      issue[:fields][@meta_data.epic_name_field] = issue[:fields][:summary]
+    when "Story"
+      if data.send_initiatives == "1"
+        if initiative
+          issue[:fields][@meta_data.epic_link_field] = find_or_create_epic_from_initiative(initiative)
+        end
+      else
+        issue[:fields][@meta_data.epic_link_field] = parent['key'] if parent
+      end
+    end
+    if parent and issue_type['subtask']
+      issue[:fields][:parent] = {key: parent['key']}
     end
   end
   
