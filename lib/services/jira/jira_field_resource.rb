@@ -32,6 +32,12 @@ class JiraFieldResource < JiraResource
       field['name'] == "Aha! Reference"
     end
   end
+  
+  def story_points_field
+    find_in_fields do |field|
+      field['name'] == "Story Points"
+    end
+  end
 
   def add_to_default_screen(field_id)
     prepare_request

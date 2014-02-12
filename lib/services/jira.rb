@@ -30,6 +30,7 @@ class AhaServices::Jira < AhaService
     # Get custom field mappings.
     @meta_data.epic_name_field = field_resource.epic_name_field
     @meta_data.epic_link_field = field_resource.epic_link_field
+    @meta_data.story_points_field = field_resource.story_points_field
     @meta_data.aha_reference_field = field_resource.aha_reference_field
     
     # Create custom field for Aha! reference.
@@ -305,6 +306,8 @@ protected
         originalEstimate: resource.original_estimate,
         remainingEstimate: resource.remaining_estimate
       }
+    elsif resource.work_units == 20 and @meta_data.story_points_field # Units are points.
+      issue[:fields][@meta_data.story_points_field] = resource.remaining_estimate
     end
   end
   
@@ -346,7 +349,7 @@ protected
   end
 
   def integrate_release_with_jira_version(release, version)
-    api.create_integration_field(release.reference_num, self.class.service_name, :id, version['id'])
+    api.create_integration_field("releases", release.reference_num, self.class.service_name, :id, version['id'])
   end
 
   def integrate_resource_with_jira_issue(resource_type, resource, issue)
