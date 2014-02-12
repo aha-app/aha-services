@@ -20,7 +20,7 @@ class AhaServices::Redmine < AhaService
   end
 
   def receive_create_release
-    create_version payload.release
+    create_version
   end
 
   def receive_create_feature
@@ -49,7 +49,7 @@ private
     meta_data.projects = project_resource.all.map { |project| { name: project['name'], id: project['id'] }}
   end
 
-  def create_version payload_fragment
+  def create_version
     @meta_data.projects ||= []
     install_projects if @meta_data.projects.empty?
     version_resource.create
