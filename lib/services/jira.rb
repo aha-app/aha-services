@@ -185,7 +185,13 @@ protected
       initiative.description.attachments.each do |attachment|
         attachment_resource.upload(attachment, new_issue['id'])
       end
-      integrate_resource_with_jira_issue("initiatives", initiative, new_issue)
+      begin
+        integrate_resource_with_jira_issue("initiatives", initiative, new_issue)
+      rescue AhaApi::BadRequest
+        # Failure was probably due to initiative from another product, convert
+        # to a more user friendly message.
+        raise AhaService::RemoteError, "Initiative '#{initiative.name}' is from a product without a JIRA integration. Add a JIRA integration for the product the initiative belongs to."
+      end
       new_issue['key']
     end
   end
