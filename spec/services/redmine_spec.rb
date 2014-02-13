@@ -1,7 +1,10 @@
 require 'spec_helper'
 
 describe AhaServices::Redmine do
-  before { IPSocket.stub(:getaddress).and_return '47.239.99.158' }
+  before do
+    IPSocket.stub(:getaddress).and_return '47.239.99.158'
+    stub_download_feature_attachments
+  end
 
   let(:service) do
     described_class.new(
@@ -222,40 +225,54 @@ describe AhaServices::Redmine do
 
       context 'authenticated' do
         context 'w/o version' do
-          context 'available tracker' do
-            let(:issue_create_raw) { raw_fixture 'redmine/issues/create.json' }
-            before do
-              stub_request(:post, "#{service.data.redmine_url}/projects/#{project_id}/issues.json").
-                to_return(status: 201, body: issue_create_raw, headers: {})
-            end
-
-            it 'sends integration messages for issue' do
-              expect(service.api).to receive(:create_integration_field).with("PROD-2", "redmine_issues", :id, anything).once
-              expect(service.api).to receive(:create_integration_field).with("PROD-2", "redmine_issues", :url, anything).once
-              expect(service.api).to receive(:create_integration_field).with("PROD-2", "redmine_issues", :name, anything).once
-              expect(service.api).to receive(:create_integration_field).exactly(3)
-              service.receive(:create_feature)
-            end
-            it 'sends integration messages for requirement' do
-              expect(service.api).to receive(:create_integration_field).with("PROD-2-1", "redmine_issues", :id, anything).once
-              expect(service.api).to receive(:create_integration_field).with("PROD-2-1", "redmine_issues", :url, anything).once
-              expect(service.api).to receive(:create_integration_field).with("PROD-2-1", "redmine_issues", :name, anything).once
-              expect(service.api).to receive(:create_integration_field).exactly(3)
-              service.receive(:create_feature)
-            end
-
+          context 'w/o attachments' do
           end
-          context 'unavailable tracker / project / other 404 generating errors' do
-            before do
-              stub_request(:post, "#{service.data.redmine_url}/projects/#{project_id}/issues.json").
-                to_return(status: 404, body: '', headers: {})
-            end
+          context 'with attachments' do
+            context 'proper params' do
+              let(:issue_create_raw) { raw_fixture 'redmine/issues/create.json' }
+              before do
+                stub_request(:post, "#{service.data.redmine_url}/projects/#{project_id}/issues.json").
+                  to_return(status: 201, body: issue_create_raw, headers: {})
+                stub_request(:post, "#{service.data.redmine_url}/uploads.json").
+                  to_return(status: 201, body: raw_fixture('redmine/uploads/create.json'), headers: {})
+              end
 
-            it "raises error" do
-              expect(service.api).not_to receive(:create_integration_field)
-              expect { service.receive(:create_feature) }.to raise_error(AhaService::RemoteError)
-            end
+              it 'posts attachment files for each attachment' do
+                expect(service.api).to receive(:create_integration_field).exactly(6)
+                expect_any_instance_of(RedmineUploadResource).to receive(:upload_attachment).twice.and_call_original
+                expect_any_instance_of(RedmineUploadResource).to receive(:http_post).with('http://api.my-redmine.org/uploads.json', {file: anything}).twice.and_call_original
+                service.receive(:create_feature)
+              end
+              it 'sends integration messages for issue' do
+                expect(service.api).to receive(:create_integration_field).with("PROD-2", "redmine_issues", :id, anything).once
+                expect(service.api).to receive(:create_integration_field).with("PROD-2", "redmine_issues", :url, anything).once
+                expect(service.api).to receive(:create_integration_field).with("PROD-2", "redmine_issues", :name, anything).once
+                expect(service.api).to receive(:create_integration_field).exactly(3)
+                service.receive(:create_feature)
+              end
+              it 'sends integration messages for requirement' do
+                expect(service.api).to receive(:create_integration_field).with("PROD-2-1", "redmine_issues", :id, anything).once
+                expect(service.api).to receive(:create_integration_field).with("PROD-2-1", "redmine_issues", :url, anything).once
+                expect(service.api).to receive(:create_integration_field).with("PROD-2-1", "redmine_issues", :name, anything).once
+                expect(service.api).to receive(:create_integration_field).exactly(3)
+                service.receive(:create_feature)
+              end
 
+            end
+            context 'unavailable tracker / project / other 404 generating errors' do
+              before do
+                stub_request(:post, "#{service.data.redmine_url}/projects/#{project_id}/issues.json").
+                  to_return(status: 404, body: '', headers: {})
+                stub_request(:post, "#{service.data.redmine_url}/uploads.json").
+                  to_return(status: 204, body: raw_fixture('redmine/uploads/create.json'), headers: {})
+              end
+
+              it "raises error" do
+                expect(service.api).not_to receive(:create_integration_field)
+                expect { service.receive(:create_feature) }.to raise_error(AhaService::RemoteError)
+              end
+
+            end
           end
         end
 
@@ -266,6 +283,8 @@ describe AhaServices::Redmine do
             before do
               stub_request(:post, "#{service.data.redmine_url}/projects/#{project_id}/issues.json").
                 to_return(status: 201, body: issue_create_raw, headers: {})
+              stub_request(:post, "#{service.data.redmine_url}/uploads.json").
+                to_return(status: 201, body: raw_fixture('redmine/uploads/create.json'), headers: {})
             end
 
             it 'sends integration messages for issue' do
@@ -297,6 +316,8 @@ describe AhaServices::Redmine do
         before do
           stub_request(:post, "#{service.data.redmine_url}/projects/#{project_id}/issues.json").
             to_return(status: 401, body: {}, headers: {})
+          stub_request(:post, "#{service.data.redmine_url}/uploads.json").
+            to_return(status: 401, body: raw_fixture('redmine/uploads/create.json'), headers: {})
         end
         it 'rasies error' do
           expect { service.receive(:create_feature) }.to raise_error(AhaService::RemoteError)

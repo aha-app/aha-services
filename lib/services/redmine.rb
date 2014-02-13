@@ -16,15 +16,23 @@ class AhaServices::Redmine < AhaService
 #======
 
   def receive_installed; install_projects; end
-  def receive_create_release; create_version; end
+
+  def receive_create_release
+    create_version
+  end
+
   def receive_update_release; update_version; end
-  def receive_update_feature; update_issue; end
+
   def receive_create_feature
-    response_body = create_issue
+    attachments = check_attachments payload.feature
+    #TODO: support attachments callback
+    response_body = create_issue #attachments
     payload.feature.requirements.each do |requirement|
       create_issue requirement, response_body[:issue][:id]
     end
   end
+
+  def receive_update_feature; update_issue; end
 
 private
 
@@ -71,6 +79,10 @@ private
     @issue_resource ||= RedmineIssueResource.new(self)
   end
 
+  def attachment_resource
+    @attachment_resource ||= RedmineUploadResource.new(self)
+  end
+
 #=========
 # SUPPORT
 #=======
@@ -78,6 +90,12 @@ private
   def check_projects
     @meta_data.projects ||= []
     install_projects if @meta_data.projects.empty?
+  end
+
+  def check_attachments payload_fragment
+    payload_fragment.description.attachments.map do |attachment|
+      attachment.merge(token: attachment_resource.upload_attachment(attachment))
+    end
   end
 
 end
