@@ -354,7 +354,14 @@ describe AhaServices::Redmine do
       end
 
       context 'unauthenticated' do
-        pending
+        let(:payload) { json_fixture 'update_feature_event.json' }
+        before do
+          stub_request(:put, /#{service.data.redmine_url}\/projects\/#{project_id}\/issues\/\d\.json/).
+            to_return(status: 401, body: {}, headers: {})
+        end
+        it 'rasies error' do
+          expect { service.receive(:update_feature) }.to raise_error(AhaService::RemoteError)
+        end
       end
     end
   end
