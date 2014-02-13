@@ -11,11 +11,7 @@ class RedmineResource
   end
 
   def parse(body)
-    if body.nil? or body.length < 2
-      {}
-    else
-      JSON.parse(body)
-    end
+    return (body.nil? or body.length < 2) ? {} : JSON.parse(body)
   end
 
   def prepare_request
@@ -54,7 +50,7 @@ class RedmineResource
     end
   end
 
-  def get_integration_field(integration_fields, field_name)
+  def get_integration_field integration_fields, field_name
     return nil if integration_fields.nil?
     field = integration_fields.detect do |f|
       f.service_name == @service.class.service_name and f.name == field_name
