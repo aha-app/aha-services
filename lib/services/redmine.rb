@@ -49,7 +49,6 @@ private
   end
 
   def create_version
-
     version_resource.create
   end
 
@@ -91,26 +90,6 @@ private
   def check_projects
     @meta_data.projects ||= []
     install_projects if @meta_data.projects.empty?
-  end
-
-  def find_project project_id
-    @meta_data.projects.find {|p| p[:id] == project_id }
-  end
-
-  def find_version project_id, version_id
-    project = project_id.is_a?(Hash) ? project_id : find_project(project_id)
-    project[:versions].find {|v| v[:id] == version_id }
-  end
-
-  def kind_to_tracker_id kind
-    case kind
-    when "bug_fix"
-      1 # bug tracker
-    when "research"
-      3 # support tracker
-    else
-      2 # feature tracker
-    end
   end
 
 end
