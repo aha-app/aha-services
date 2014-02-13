@@ -18,16 +18,20 @@ From Aha! to JIRA
 * All features in a release (that have not already been implemented or sent to JIRA previously) can be sent to JIRA using the _Send to JIRA_ item in the _Actions_ menu on the release page.
 * When a feature is copied to JIRA one issue will be created for the feature. If 
   the feature has requirements then each requirement will also be sent as a 
-  linked issue of the feature issue (or a story under an epic if you choose the Epic and Story issue types).
+  linked issue of the feature issue (or a story under an epic if you choose the Epic and Story issue types). Read more about the options for mapping features to issues [here](http://support.aha.io/entries/40730567).
 * Only the description of a feature or requirement is sent. No tasks or comments are included. 
 * Attachments of a feature or requirement are also sent.
 * When a feature is sent to JIRA, its status in Aha! is automatically changed to Ready to develop.
-* After a feature is first sent to JIRA, changes to the name, description, requirements or attachments, can also be sent to JIRA using the _Update JIRA_ item in the _Actions_ menu on the features page or by sending all features in a release to JIRA again. New requirements will also be created in JIRA, however issues that were created for an existing requirement are not deleted from JIRA if the requirement is deleted from Aha!. If an attachment is deleted in Aha! the corresponding attachment in JIRA is not deleted. 
+* After a feature is first sent to JIRA, changes to the name, description, requirements or attachments, can also be sent to JIRA using the _Update JIRA_ item in the _Actions_ menu on the features page or by sending all features in a release to JIRA again. New requirements will also be created in JIRA, however issues that were created for an existing requirement are not deleted from JIRA if the requirement is deleted from Aha!. If an attachment is deleted in Aha! the corresponding attachment in JIRA is not deleted.
+* If you have capacity planning enabled and you are using time for estimation on the release then estimates on a feature or requirement will be synced with JIRA.
+* If you are using points for estimation and JIRA Agile is enabled in your JIRA account then the point estimates will be synced with JIRA Agile. For this
+to work you may need to add the Story Points custom field in JIRA to the default screen so that Aha! can update it.
 
 From JIRA to Aha!
 
 * Any comments that are added to the JIRA issue will also be automatically added to the Aha! item that the issue was created from.
 * Changes to the status, name or description of a JIRA issue will be reflected in the Aha! item the issue was created from. Any other changes will cause a comment to be added to the Aha! item describing the change.
+* Changes to the remaining time estimate, and logged work will be reflected in Aha! if you have capacity planning enabled.
 
 The integration will also create a version in JIRA when you send a release from Aha!
 
@@ -51,7 +55,7 @@ Please carefully follow these instructions to ensure that the integration is pro
 6. Click on the _Create integration_ button below.
 7. Click the _Test connection_ button to verify that the add-on was installed correctly and load the configuration from JIRA.
 8. After a short delay, you will be able to choose the Project the issues will be created in.
-9. Map how you want new features to show up in JIRA and how the JIRA status fields should map to Aha! 
+9. Map how you want new features to show up in JIRA and how the JIRA status fields should map to Aha! You should read about mapping features [here](http://support.aha.io/entries/40730567) before configuring mapping.
 10. Enable the integration.
 11. Test the integration by going to one of your features in Aha! and using the _Send to JIRA_ item in the _Actions_ menu on the features page. You should then look at your project in JIRA and see that the feature (and any requirements) were properly copied. 
 

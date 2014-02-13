@@ -8,7 +8,7 @@ describe AhaServices::Jira do
     stub_request(:get, "http://u:p@foo.com/a/rest/api/2/project/DEMO/versions").
       to_return(:status => 200, :body => "[]", :headers => {})
     stub_request(:post, "http://u:p@foo.com/a/rest/api/2/version").
-      with(:body => "{\"project\":\"DEMO\",\"name\":\"Summer\",\"description\":\"Created from Aha! \",\"releaseDate\":null,\"released\":null}").
+      with(:body => "{\"name\":\"Summer\",\"description\":\"Created from Aha! \",\"releaseDate\":null,\"released\":null,\"project\":\"DEMO\"}").
       to_return(:status => 201, :body => "{\"id\":\"666\"}", :headers => {})
     # Call back into Aha! for release.
     stub_request(:post, "https://a.aha.io/api/v1/releases/PROD-R-1/integrations/jira/fields").
@@ -58,7 +58,7 @@ describe AhaServices::Jira do
       json_fixture('create_feature_event.json'), integration_data).receive(:create_feature)
   end
   
-  it "can upate existing features" do
+  it "can update existing features" do
     # Verify release.
     stub_request(:get, "http://u:p@foo.com/a/rest/api/2/version/777").
       to_return(:status => 200, :body => "", :headers => {})
@@ -112,7 +112,7 @@ describe AhaServices::Jira do
   context "releases" do
     it "can be updated" do
       stub_request(:put, "http://u:p@foo.com/a/rest/api/2/version/777").
-        with(:body => "{\"id\":\"777\",\"name\":\"Production Web Hosting\",\"releaseDate\":\"2013-01-28\",\"released\":false}").
+        with(:body => "{\"name\":\"Production Web Hosting\",\"releaseDate\":\"2013-01-28\",\"released\":false,\"id\":\"777\"}").
         to_return(:status => 200, :body => "", :headers => {})
       
       AhaServices::Jira.new(

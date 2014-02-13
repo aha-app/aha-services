@@ -168,21 +168,13 @@ protected
   end
 
   def integrate_release_with_github_milestone(release, milestone)
-    api.create_integration_field(release.reference_num, self.class.service_name, :number, milestone['number'])
-    api.create_integration_field(release.reference_num, self.class.service_name, :url, "https://github.com/#{data.username}/#{data.repository}/issues?milestone=#{milestone['number']}")
+    api.create_integration_field("releases", release.reference_num, self.class.service_name, :number, milestone['number'])
+    api.create_integration_field("releases", release.reference_num, self.class.service_name, :url, "https://github.com/#{data.username}/#{data.repository}/issues?milestone=#{milestone['number']}")
   end
 
   def integrate_resource_with_github_issue(resource, issue)
-    api.create_integration_field(resource.reference_num, self.class.service_name, :number, issue['number'])
-    api.create_integration_field(resource.reference_num, self.class.service_name, :url, "https://github.com/#{data.username}/#{data.repository}/issues/#{issue['number']}")
-  end
-
-  def get_integration_field(integration_fields, field_name)
-    return nil if integration_fields.nil?
-    field = integration_fields.detect do |f|
-      f.service_name == self.class.service_name and f.name == field_name
-    end
-    field && field.value
+    api.create_integration_field(reference_num_to_resource_type(resource.reference_num), resource.reference_num, self.class.service_name, :number, issue['number'])
+    api.create_integration_field(reference_num_to_resource_type(resource.reference_num), resource.reference_num, self.class.service_name, :url, "https://github.com/#{data.username}/#{data.repository}/issues/#{issue['number']}")
   end
 
 end

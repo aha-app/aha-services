@@ -22,7 +22,7 @@ protected
     record_type = ref_num =~ /-[0-9]+-/ ? "requirements" : "features"
     
     message = <<-EOF
-      <p>#{commit.committer.name} (#{commit.committer.email}) committed to <a href="#{commit_payload.repository.url}">#{commit_payload.repository.name}</a>:</p>
+      <p>#{commit.committer.try(:name)} (#{commit.committer.try(:email)}) committed to <a href="#{commit_payload.repository.url}">#{commit_payload.repository.name}</a>:</p>
       <blockquote><pre>#{commit.message}</pre></blockquote>
       <p>Commit: <a href="#{commit.url}">#{commit.url}</a></p>
     EOF
