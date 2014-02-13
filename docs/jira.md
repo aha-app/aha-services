@@ -22,7 +22,7 @@ From Aha! to JIRA
 * Only the description of a feature or requirement is sent. No tasks or comments are included. 
 * Attachments of a feature or requirement are also sent.
 * When a feature is sent to JIRA, its status in Aha! is automatically changed to Ready to develop.
-* After a feature is first sent to JIRA, changes to the name, description, requirements or attachments, can also be sent to JIRA using the _Update JIRA_ item in the _Actions_ menu on the features page or by sending all features in a release to JIRA again. New requirements will also be created in JIRA, however issues that were created for an existing requirement are not deleted from JIRA if the requirement is deleted from Aha!. If an attachment is deleted in Aha! the corresponding attachment in JIRA is not deleted.
+* After a feature is first sent to JIRA, changes to the name, description, tags, requirements or attachments, can also be sent to JIRA using the _Update JIRA_ item in the _Actions_ menu on the features page or by sending all features in a release to JIRA again. New requirements will also be created in JIRA, however issues that were created for an existing requirement are not deleted from JIRA if the requirement is deleted from Aha!. If an attachment is deleted in Aha! the corresponding attachment in JIRA is not deleted.
 * If you have capacity planning enabled and you are using time for estimation on the release then estimates on a feature or requirement will be synced with JIRA.
 * If you are using points for estimation and JIRA Agile is enabled in your JIRA account then the point estimates will be synced with JIRA Agile. For this
 to work you may need to add the Story Points custom field in JIRA to the default screen so that Aha! can update it.
@@ -30,7 +30,7 @@ to work you may need to add the Story Points custom field in JIRA to the default
 From JIRA to Aha!
 
 * Any comments that are added to the JIRA issue will also be automatically added to the Aha! item that the issue was created from.
-* Changes to the status, name or description of a JIRA issue will be reflected in the Aha! item the issue was created from. Any other changes will cause a comment to be added to the Aha! item describing the change.
+* Changes to the status, name, labels or description of a JIRA issue will be reflected in the Aha! item the issue was created from. Any other changes will cause a comment to be added to the Aha! item describing the change.
 * Changes to the remaining time estimate, and logged work will be reflected in Aha! if you have capacity planning enabled.
 
 The integration will also create a version in JIRA when you send a release from Aha!

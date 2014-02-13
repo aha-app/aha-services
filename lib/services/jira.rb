@@ -205,6 +205,10 @@ protected
     if version
       issue[:fields][:fixVersions] = [{id: version['id']}]
     end
+    if resource.tags
+      issue[:fields][:labels] = resource.tags
+    end
+      
     if @meta_data.aha_reference_field
       issue[:fields][@meta_data.aha_reference_field] = resource.url
     end
@@ -243,6 +247,10 @@ protected
       issue[:update] ||= {}
       issue[:update][:fixVersions] = [{set: [{id: version['id']}]}]
     end
+    if resource.tags
+      issue[:fields][:labels] = resource.tags
+    end
+    
     # Disabled until https://jira.atlassian.com/browse/GHS-10333 is fixed.
     #populate_relationship_fields(issue, parent, initiative)
     populate_time_tracking(issue, resource)
