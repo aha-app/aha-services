@@ -4,7 +4,6 @@ ActiveSupport::JSON
 require 'net/http'
 require 'net/https'
 require 'pp'
-require 'logger'
 
 require 'faraday'
 require 'faraday_middleware'
@@ -21,9 +20,13 @@ require 'aha-services/api'
 require 'aha-services/documentation'
 require 'aha-services/helpers'
 require 'aha-services/service'
+require 'aha-services/logger'
 
 require 'services/github/github_resource'
 require 'services/github/github_repo_resource'
 require 'services/github/github_milestone_resource'
+
+require 'services/redmine/redmine_resource'
+require 'services/redmine/redmine_project_resource'
 
 Dir["#{File.dirname(__FILE__)}/services/**/*.rb"].each {|file| require file }

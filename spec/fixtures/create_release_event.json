@@ -1,5 +1,5 @@
 {
-  "event": "update_release",
+  "event": "create_release",
   "release": {
     "id": "5811270231731728292",
     "reference_num": "OPS-R-1",
@@ -9,11 +9,10 @@
     "theme": {
       "id": "5811270231745426971",
       "body": "Select external Web host to support friendly Beta users",
-      "attachments": [
-        
-      ]
+      "attachments": [ ]
     },
     "url": "http://watersco.aha.io/releases/PROD-R-1",
-    "resource": "http://watersco.aha.io/api/v1/releases/PROD-R-1"
+    "resource": "http://watersco.aha.io/api/v1/releases/PROD-R-1",
+    "integration_fields": []
   }
 }

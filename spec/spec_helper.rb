@@ -1,3 +1,4 @@
+$TEST_ENV = true
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 
@@ -10,6 +11,7 @@ Bundler.require(:default)
 require 'rspec'
 require 'webmock/rspec'
 require 'aha-services'
+require 'pry'
 require 'services/github/github_resource'
 require 'services/github/github_repo_resource'
 require 'services/github/github_milestone_resource'
@@ -18,3 +20,4 @@ Dir[File.expand_path(File.join(File.dirname(__FILE__),'support','**','*.rb'))].e
 
 RSpec.configure do |config|
 end
+
