@@ -165,12 +165,16 @@ describe AhaServices::Redmine do
 
         context 'existing feature' do
           it 'updates redmine version' do
+            expect(service.api).to receive(:create_integration_field).exactly(3)
             expect_any_instance_of(RedmineVersionResource).to receive(:http_put).and_call_original
             service.receive(:update_release)
           end
 
           it 'updates feature integration' do
-            pending
+            expect(service.api).to receive(:create_integration_field).with('OPS-R-1', 'redmine_issues', :id, anything).once
+            expect(service.api).to receive(:create_integration_field).with('OPS-R-1', 'redmine_issues', :url, anything).once
+            expect(service.api).to receive(:create_integration_field).with('OPS-R-1', 'redmine_issues', :name, anything).once
+            service.receive(:update_release)
           end
         end
       end
