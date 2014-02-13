@@ -15,27 +15,15 @@ class AhaServices::Redmine < AhaService
 # EVENTS
 #======
 
-  def receive_installed
-    install_projects
-  end
-
-  def receive_create_release
-    create_version
-  end
-
+  def receive_installed; install_projects; end
+  def receive_create_release; create_version; end
+  def receive_update_release; update_version; end
+  def receive_update_feature; update_issue; end
   def receive_create_feature
     response_body = create_issue
     payload.feature.requirements.each do |requirement|
       create_issue requirement, response_body[:issue][:id]
     end
-  end
-
-  def receive_update_release
-    update_version
-  end
-
-  def receive_update_feature
-    update_issue
   end
 
 private
