@@ -1,0 +1,51 @@
+{
+  "event": "create_feature",
+  "feature": {
+    "name": "Feature with attachments",
+    "reference_num": "PROD-2",
+    "position": 2,
+    "score": 0,
+    "created_at": "2013-06-05T18:29:16Z",
+    "updated_at": "2013-06-05T18:49:06Z",
+    "id": "5886067808745625353",
+    "kind": "new",
+    "status": "under_consideration",
+    "description": {
+      "body": "",
+      "id": "5886067808747078641",
+      "attachments": []
+    },
+    "attachments": [],
+    "url": "http://watersco.aha.io/features/PROD-2",
+    "resource": "http://watersco.aha.io/api/v1/features/PROD-2",
+    "release": {
+      "reference_num": "PROD-R-1",
+      "name": "Summer",
+      "id": "5886060481533761060"
+    },
+    "created_by_user": {
+      "name": "Chris Waters",
+      "email": "watersco@gmail.com",
+      "id": "5886060318329899366"
+    },
+    "requirements": [
+      {
+        "status": 0,
+        "reference_num": "PROD-2-1",
+        "created_at": "2013-06-05T18:48:44Z",
+        "updated_at": "2013-06-05T18:49:06Z",
+        "id": "5886072825272941795",
+        "url": "http://watersco.aha.io/requirements/PROD-2-1",
+        "resource": "http://watersco.aha.io/api/v1/requirements/PROD-2-1",
+        "attachments": [],
+        "description": {
+          "body": "<p>First requirement<br></p>",
+          "id": "5886072825267650900",
+          "attachments": [ ]
+        },
+        "comments_count": 0
+      }
+    ],
+    "comments_count": 1
+  }
+}
