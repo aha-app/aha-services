@@ -19,6 +19,7 @@ class AhaServices::Jira < AhaService
     }, description: "JIRA issue type that will be used when sending requirements. If you are using JIRA Agile then we recommend 'Sub-task'."
   internal :feature_status_mapping
   internal :resolution_mapping
+  boolean :send_tags, description: "Check to synchronize Aha! tags and JIRA labels. We recommend enabling this for new integrations. Enabling this option once features are synced to JIRA may cause tags in Aha! or labels in JIRA to be removed from a feature if the corresponding label or tag doesn't exist in the other system."
   
   callback_url description: "URL to add to the webhooks section of JIRA. Only one hook is necessary, even if multiple products are integrated with JIRA."
   
@@ -211,7 +212,7 @@ protected
     if version
       issue[:fields][:fixVersions] = [{id: version['id']}]
     end
-    if resource.tags
+    if data.send_tags == "1" and resource.tags
       issue[:fields][:labels] = resource.tags
     end
       
@@ -253,7 +254,7 @@ protected
       issue[:update] ||= {}
       issue[:update][:fixVersions] = [{set: [{id: version['id']}]}]
     end
-    if resource.tags
+    if data.send_tags == "1" and resource.tags
       issue[:fields][:labels] = resource.tags
     end
     
