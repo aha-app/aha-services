@@ -458,4 +458,21 @@ describe AhaServices::Jira do
     end
   end
 
+  describe "#version_update_fields" do
+    context "when a version exists" do
+      it "returns a specific hash" do
+        version = Hashie::Mash.new(id: '1001')
+        expect(service.send(:version_update_fields, version))
+          .to eq(update: { fixVersions: [ { set: [ { id: version.id } ] } ] })
+      end
+    end
+
+    context "when there is no version" do
+      it "returns an empty hash" do
+        expect(service.send(:version_update_fields, nil))
+          .to eq Hash.new
+      end
+    end
+  end
+
 end
