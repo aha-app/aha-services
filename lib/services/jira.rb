@@ -199,10 +199,11 @@ protected
   
   def create_issue_for(resource, initiative, version, parent)
     issue_type = issue_type_by_parent(parent)
+    summary = resource_name(resource)
 
     issue = Hashie::Mash.new(
       fields: {
-        summary: resource_name(resource),
+        summary: summary,
         description: convert_html(resource.description.body),
         issuetype: {id: issue_type.id}
       }
@@ -211,7 +212,8 @@ protected
       .merge!(version_fields(version))
       .merge!(label_fields(resource))
       .merge!(aha_reference_fields(resource))
-      .merge!(relationship_fields(issue, parent, initiative))
+      .merge!(issue_type_fields(issue_type.name, summary, parent, initiative))
+      .merge!(subtask_fields(issue_type.subtask, parent))
       .merge!(time_tracking_fields(resource))
     
     new_issue = issue_resource.create(issue)
@@ -236,12 +238,13 @@ protected
   end
 
   def update_issue(issue_info, resource, initiative, version, parent)
+    summary = resource_name(resource)
     issue = {
       fields: {
         description: convert_html(resource.description.body),
       }
     }
-    issue[:fields][:summary] = resource_name(resource)
+    issue[:fields][:summary] = summary
     if version.id
       issue[:update] ||= {}
       issue[:update][:fixVersions] = [{set: [{id: version.id}]}]
@@ -251,7 +254,10 @@ protected
     end
     
     # Disabled until https://jira.atlassian.com/browse/GHS-10333 is fixed.
-    # issue[:fields].merge!(relationship_fields(issue, parent, initiative))
+    # issue_type = issue_type_by_parent(parent)
+    # issue[:fields]
+    #   .merge!(issue_type_fields(issue_type.name, summary, parent, initiative))
+    #   .merge!(subtask_fields(issue_type.subtask, parent))
     issue[:fields].merge!(time_tracking_fields(resource))
 
     issue_resource.update(issue_info.id, issue)
@@ -346,15 +352,9 @@ protected
     end
   end
   
-  def relationship_fields(issue, parent, initiative)
-    issue_type = issue_type_by_parent(parent)
-    issue_type_fields(issue_type.name, issue, parent, initiative)
-      .merge(subtask_fields(issue_type.subtask, parent))
-  end
-
-  def issue_type_fields(issue_type_name, issue, parent, initiative)
+  def issue_type_fields(issue_type_name, summary, parent, initiative)
     if issue_type_name == 'Epic'
-      { meta_data.epic_name_field => issue[:fields][:summary] }
+      { meta_data.epic_name_field => summary }
     elsif issue_type_name == 'Story' && data.send_initiatives == '1' && initiative
       { meta_data.epic_link_field => find_or_create_epic_from_initiative(initiative) }
     elsif issue_type_name == 'Story' && parent

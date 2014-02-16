@@ -240,11 +240,11 @@ describe AhaServices::Jira do
   end
 
   describe "#issue_type_fields" do
-    let(:issue) { nil }
+    let(:summary) { nil }
     let(:parent) { nil }
     let(:initiative) { nil }
     let(:issue_type_fields) do
-      service.send(:issue_type_fields, issue_type_name, issue, parent, initiative)
+      service.send(:issue_type_fields, issue_type_name, summary, parent, initiative)
     end
 
     shared_examples "empty" do
@@ -255,12 +255,12 @@ describe AhaServices::Jira do
 
     context "for an epic" do
       let(:issue_type_name) { 'Epic' }
-      let(:issue) { { fields: { summary: "An issue's summary" } } }
+      let(:summary) { "An issue's summary" }
       it "returns a hash with the field meta_data.epic_name_field" do
         service.stub(:meta_data)
           .and_return(Hashie::Mash.new({ epic_name_field: 'epic_name' }))
         expect(issue_type_fields)
-          .to eq({ 'epic_name' => issue[:fields][:summary] })
+          .to eq('epic_name' => summary)
       end
     end
 
