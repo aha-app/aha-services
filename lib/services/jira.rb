@@ -312,7 +312,7 @@ protected
   end
 
   def version_fields(version)
-    if version
+    if version && version.id
       { fixVersions: [{ id: version.id }] }
     else
       Hash.new
