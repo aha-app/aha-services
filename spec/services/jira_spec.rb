@@ -186,6 +186,47 @@ describe AhaServices::Jira do
     
   end
 
+  before do
+    service.stub(:issue_resource).and_return(double)
+  end
+
+  let(:issue_resource) { service.send(:issue_resource) }
+
+  describe "#create_issue_for" do
+    let(:resource) do
+      Hashie::Mash.new(name: 'Resource name',
+                       description: { body: 'Resource body' })
+    end
+
+    it "calls issue_resource.create and create_links_for_issue,\
+        and then returns the newly created issue" do
+      service.stub(:issue_type_by_parent)
+        .and_return(Hashie::Mash.new(name: 'Story', subtask: false))
+      issue_resource.should_receive(:create).and_return('New issue')
+      service.should_receive(:create_links_for_issue).and_return(nil)
+      expect(service.send(:create_issue_for, resource, nil, nil, nil))
+        .to eq 'New issue'
+    end
+  end
+
+  describe "#update_issue" do
+    let(:issue_info) do
+      Hashie::Mash.new(id: '1001')
+    end
+    let(:resource) do
+      Hashie::Mash.new(name: 'Resource name',
+                       description: { body: 'Resource body' })
+    end
+
+    it "calls issue_resource.update and update_attachments,\
+        and then returns the issue_info object" do
+      issue_resource.should_receive(:update)
+      service.should_receive(:update_attachments).and_return(nil)
+      expect(service.send(:update_issue, issue_info, resource, nil, nil, nil))
+        .to eq issue_info
+    end
+  end
+
   describe "#time_tracking_fields" do
     let(:time_tracking_fields) { service.send(:time_tracking_fields, resource) }
     context "when units are minutes" do
