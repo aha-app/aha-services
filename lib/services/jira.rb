@@ -323,8 +323,8 @@ protected
           remainingEstimate: resource.remaining_estimate
         }
       }
-    elsif resource.work_units == 20 and @meta_data.story_points_field # Units are points.
-      { @meta_data.story_points_field => resource.remaining_estimate }
+    elsif resource.work_units == 20 and meta_data.story_points_field # Units are points.
+      { meta_data.story_points_field => resource.remaining_estimate }
     else
       Hash.new
     end

@@ -187,29 +187,54 @@ describe AhaServices::Jira do
   end
 
   describe "#time_tracking" do
+    let(:time_tracking) { service.send(:time_tracking, resource) }
     context "when units are minutes" do
+      let(:resource) do
+        Hashie::Mash.new({ work_units: 10,
+                           original_estimate: 20,
+                           remaining_estimate: 30 })
+      end
       it "returns a hash with a timetracking field" do
-
+        expect(time_tracking).to eq(
+          {
+            timetracking: {
+              originalEstimate: resource.original_estimate,
+              remainingEstimate: resource.remaining_estimate
+            }
+          }
+        )
       end
     end
 
     context "when units are points" do
+      let(:resource) do
+        Hashie::Mash.new({ work_units: 20,
+                           remaining_estimate: 100 })
+      end
       context "when a story points field exists in the Jira resource" do
-        it "returns a hash with the field @meta_data.story_points_field" do
-
+        it "returns a hash with the field meta_data.story_points_field" do
+          service.stub(:meta_data)
+            .and_return(Hashie::Mash.new({ story_points_field: 'story_points' }))
+          expect(time_tracking).to eq(
+            {
+              service.meta_data.story_points_field => resource.remaining_estimate
+            }
+          )
         end
       end
 
       context "when a story points field doesn't exist in the Jira resource" do
         it "returns an empty hash" do
-
+          service.stub(:meta_data).and_return(Hashie::Mash.new)
+          expect(time_tracking).to eq Hash.new
         end
       end
     end
 
     context "when units are neither minutes nor points" do
+      let(:resource) { Hashie::Mash.new({ work_units: 30 }) }
       it "returns an empty hash" do
-
+        expect(time_tracking).to eq Hash.new
       end
     end
   end
