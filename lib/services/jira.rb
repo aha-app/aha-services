@@ -207,17 +207,10 @@ protected
         issuetype: {id: issue_type.id}
       }
     )
-    if version
-      issue.fields.fixVersions = [{id: version.id}]
-    end
-    if data.send_tags == "1" and resource.tags
-      issue.fields.labels = resource.tags
-    end
-      
-    if @meta_data.aha_reference_field
-      issue.fields[@meta_data.aha_reference_field] = resource.url
-    end
     issue.fields
+      .merge!(version_fields(version))
+      .merge!(label_fields(resource))
+      .merge!(aha_reference_fields(resource))
       .merge!(relationship_fields(issue, parent, initiative))
       .merge!(time_tracking_fields(resource))
     
@@ -311,6 +304,30 @@ protected
     # Create any attachments that didn't already exist.
     attachments.each do |attachment|
       attachment_resource.upload(attachment, issue_id)
+    end
+  end
+
+  def version_fields(version)
+    if version
+      { fixVersions: [{ id: version.id }] }
+    else
+      Hash.new
+    end
+  end
+
+  def label_fields(resource)
+    if data.send_tags == "1" and resource.tags
+      { labels: resource.tags }
+    else
+      Hash.new
+    end
+  end
+
+  def aha_reference_fields(resource)
+    if meta_data.aha_reference_field
+      { meta_data.aha_reference_field => resource.url }
+    else
+      Hash.new
     end
   end
   
