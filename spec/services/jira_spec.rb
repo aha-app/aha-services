@@ -227,6 +227,27 @@ describe AhaServices::Jira do
     end
   end
 
+  describe "#aha_reference_fields" do
+    let(:resource) { Hashie::Mash.new(url: 'http://example.com') }
+    context "when aha reference field is set" do
+      it "returns a specific hash" do
+        service.stub(:meta_data)
+          .and_return(Hashie::Mash.new(aha_reference_field: 'ref'))
+        expect(service.send(:aha_reference_fields, resource))
+          .to eq('ref' => resource.url)
+      end
+    end
+
+    context "when aha reference field is not set" do
+      it "returns an empty hash" do
+        service.stub(:meta_data)
+          .and_return(Hashie::Mash.new)
+        expect(service.send(:aha_reference_fields, resource))
+          .to eq Hash.new
+      end
+    end
+  end
+
   describe "#time_tracking_fields" do
     let(:time_tracking_fields) { service.send(:time_tracking_fields, resource) }
     context "when units are minutes" do
@@ -288,7 +309,7 @@ describe AhaServices::Jira do
       service.send(:issue_type_fields, issue_type_name, summary, parent, initiative)
     end
 
-    shared_examples "empty" do
+    shared_examples "empty issue type fields" do
       it "returns an empty hash" do
         expect(issue_type_fields).to eq Hash.new
       end
@@ -329,7 +350,7 @@ describe AhaServices::Jira do
         end
 
         context "when initiative is not supplied" do
-          it_behaves_like "empty"
+          it_behaves_like "empty issue type fields"
         end
       end
 
@@ -347,7 +368,7 @@ describe AhaServices::Jira do
         end
 
         context "when parent is not supplied" do
-          it_behaves_like "empty"
+          it_behaves_like "empty issue type fields"
         end
       end
     end
