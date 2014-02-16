@@ -298,10 +298,10 @@ describe AhaServices::Jira do
         end
 
         context "when a parent is supplied" do
-          let(:parent) { { 'key' => "Issue's parent" } }
+          let(:parent) { { key: "Issue's parent" } }
           it "returns a hash with the field meta_data.epic_link_field set to parent['key']" do
             expect(issue_type_fields)
-              .to eq(epic_link_field => "Issue's parent")
+              .to eq(epic_link_field => parent[:key])
           end
         end
 
@@ -331,10 +331,10 @@ describe AhaServices::Jira do
     context "when the issue is a subtask" do
       let(:is_subtask) { true }
       context "when a parent is supplied" do
-        let(:parent) { { 'key' => "Issue's parent" } }
+        let(:parent) { { key: "Issue's parent" } }
         it "returns a specific hash" do
           expect(subtask_fields)
-            .to eq(parent: { key: parent['key'] })
+            .to eq(parent: { key: parent[:key] })
         end
       end
 

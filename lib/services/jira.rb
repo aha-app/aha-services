@@ -7,15 +7,15 @@ class AhaServices::Jira < AhaService
   string :username, description: "Use your JIRA username from the JIRA profile page, not your email address."
   password :password
   install_button
-  select :project, collection: ->(meta_data, data) { meta_data.projects.collect{|p| [p.name, p['key']] } }
+  select :project, collection: ->(meta_data, data) { meta_data.projects.collect{|p| [p.name, p[:key]] } }
   boolean :send_initiatives, description: "Check to use feature initatives to create Epics in JIRA Agile"
   select :feature_issue_type, 
     collection: ->(meta_data, data) { 
-      meta_data.projects.detect {|p| p['key'] == data.project}.issue_types.find_all{|i| !i['subtype']}.collect{|p| [p.name, p.id] } 
+      meta_data.projects.detect {|p| p[:key] == data.project}.issue_types.find_all{|i| !i.subtype}.collect{|p| [p.name, p.id] }
     }, description: "JIRA issue type that will be used when sending features. If you are using JIRA Agile then we recommend 'Story'."
   select :requirement_issue_type, 
     collection: ->(meta_data, data) { 
-      meta_data.projects.detect {|p| p['key'] == data.project}.issue_types.find_all{|i| !i['subtype']}.collect{|p| [p.name, p.id] } 
+      meta_data.projects.detect {|p| p[:key] == data.project}.issue_types.find_all{|i| !i.subtype}.collect{|p| [p.name, p.id] }
     }, description: "JIRA issue type that will be used when sending requirements. If you are using JIRA Agile then we recommend 'Sub-task'."
   internal :feature_status_mapping
   internal :resolution_mapping
@@ -135,7 +135,7 @@ protected
   def get_existing_issue_info(resource)
     if id = get_integration_field(resource.integration_fields, 'id') and
       key = get_integration_field(resource.integration_fields, 'key')
-      { 'id' => id, 'key' => key }
+      Hashie::Mash.new(id: id, key: key)
     else
       nil
     end
@@ -155,10 +155,10 @@ protected
 
     # Add attachments.
     resource.description.attachments.each do |attachment|
-      attachment_resource.upload(attachment, issue_info['id'])
+      attachment_resource.upload(attachment, issue_info.id)
     end
     resource.attachments.each do |attachment|
-      attachment_resource.upload(attachment, issue_info['id'])
+      attachment_resource.upload(attachment, issue_info.id)
     end
 
     issue_info
@@ -184,7 +184,7 @@ protected
       
       new_issue = issue_resource.create(issue)
       initiative.description.attachments.each do |attachment|
-        attachment_resource.upload(attachment, new_issue['id'])
+        attachment_resource.upload(attachment, new_issue.id)
       end
       begin
         integrate_resource_with_jira_issue("initiatives", initiative, new_issue)
@@ -193,7 +193,7 @@ protected
         # to a more user friendly message.
         raise AhaService::RemoteError, "Initiative '#{initiative.name}' is from a product without a JIRA integration. Add a JIRA integration for the product the initiative belongs to."
       end
-      new_issue['key']
+      new_issue[:key]
     end
   end
   
@@ -208,7 +208,7 @@ protected
       }
     }
     if version
-      issue[:fields][:fixVersions] = [{id: version['id']}]
+      issue[:fields][:fixVersions] = [{id: version.id}]
     end
     if data.send_tags == "1" and resource.tags
       issue[:fields][:labels] = resource.tags
@@ -230,10 +230,10 @@ protected
           name: "Relates"
         },
         outwardIssue: {
-          id: new_issue['id']
+          id: new_issue.id
         },
         inwardIssue: {
-          id: parent['id']
+          id: parent.id
         }
       }
       issue_link_resource.create(link)
@@ -249,9 +249,9 @@ protected
       }
     }
     issue[:fields][:summary] = resource_name(resource)
-    if version['id']
+    if version.id
       issue[:update] ||= {}
-      issue[:update][:fixVersions] = [{set: [{id: version['id']}]}]
+      issue[:update][:fixVersions] = [{set: [{id: version.id}]}]
     end
     if data.send_tags == "1" and resource.tags
       issue[:fields][:labels] = resource.tags
@@ -261,9 +261,9 @@ protected
     # issue[:fields].merge!(relationship_fields(issue, parent, initiative))
     issue[:fields].merge!(time_tracking_fields(resource))
 
-    issue_resource.update(issue_info['id'], issue)
+    issue_resource.update(issue_info.id, issue)
 
-    update_attachments(issue_info['id'], resource)
+    update_attachments(issue_info.id, resource)
     
     issue_info
   end
@@ -304,7 +304,7 @@ protected
     attachment_resource.all_for_issue(issue_id).each do |attachment|
       # Remove any attachments that match.
       attachments.reject! do |a|
-        a.file_name == attachment["filename"] and a.file_size.to_i == attachment["size"].to_i
+        a.file_name == attachment.filename and a.file_size.to_i == attachment[:size].to_i
       end
     end
     
@@ -341,7 +341,7 @@ protected
     elsif issue_type_name == 'Story' && data.send_initiatives == '1' && initiative
       { meta_data.epic_link_field => find_or_create_epic_from_initiative(initiative) }
     elsif issue_type_name == 'Story' && parent
-      { meta_data.epic_link_field => parent['key'] }
+      { meta_data.epic_link_field => parent[:key] }
     else
       Hash.new
     end
@@ -349,7 +349,7 @@ protected
 
   def subtask_fields(is_subtask, parent)
     if parent and is_subtask
-      { parent: { key: parent['key'] } }
+      { parent: { key: parent[:key] } }
     else
       Hash.new
     end
@@ -377,13 +377,13 @@ protected
   end
 
   def integrate_release_with_jira_version(release, version)
-    api.create_integration_field("releases", release.reference_num, self.class.service_name, :id, version['id'])
+    api.create_integration_field("releases", release.reference_num, self.class.service_name, :id, version.id)
   end
 
   def integrate_resource_with_jira_issue(resource_type, resource, issue)
-    api.create_integration_field(resource_type, resource.id, self.class.service_name, :id, issue['id'])
-    api.create_integration_field(resource_type, resource.id, self.class.service_name, :key, issue['key'])
-    api.create_integration_field(resource_type, resource.id, self.class.service_name, :url, "#{data.server_url}/browse/#{issue['key']}")
+    api.create_integration_field(resource_type, resource.id, self.class.service_name, :id, issue.id)
+    api.create_integration_field(resource_type, resource.id, self.class.service_name, :key, issue[:key])
+    api.create_integration_field(resource_type, resource.id, self.class.service_name, :url, "#{data.server_url}/browse/#{issue[:key]}")
   end
   
 end
