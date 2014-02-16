@@ -224,7 +224,7 @@ protected
     new_issue = issue_resource.create(issue)
 
     # Create links.
-    if parent and !issue_type['subtask'] and !["Epic", "Story"].include?(issue_type['name'])
+    if parent and !issue_type.subtask and !["Epic", "Story"].include?(issue_type.name)
       link = {
         type: {
           name: "Relates"
@@ -331,8 +331,8 @@ protected
   
   def relationship_fields(issue, parent, initiative)
     issue_type = issue_type_by_parent(parent)
-    issue_type_fields(issue_type['name'], issue, parent, initiative)
-      .merge(subtask_fields(issue_type['subtask'], parent))
+    issue_type_fields(issue_type.name, issue, parent, initiative)
+      .merge(subtask_fields(issue_type.subtask, parent))
   end
 
   def issue_type_fields(issue_type_name, issue, parent, initiative)
