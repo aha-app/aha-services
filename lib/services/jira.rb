@@ -200,24 +200,24 @@ protected
   def create_issue_for(resource, initiative, version, parent)
     issue_type = issue_type_by_parent(parent)
 
-    issue = {
+    issue = Hashie::Mash.new(
       fields: {
         summary: resource_name(resource),
         description: convert_html(resource.description.body),
         issuetype: {id: issue_type.id}
       }
-    }
+    )
     if version
-      issue[:fields][:fixVersions] = [{id: version.id}]
+      issue.fields.fixVersions = [{id: version.id}]
     end
     if data.send_tags == "1" and resource.tags
-      issue[:fields][:labels] = resource.tags
+      issue.fields.labels = resource.tags
     end
       
     if @meta_data.aha_reference_field
-      issue[:fields][@meta_data.aha_reference_field] = resource.url
+      issue.fields[@meta_data.aha_reference_field] = resource.url
     end
-    issue[:fields]
+    issue.fields
       .merge!(relationship_fields(issue, parent, initiative))
       .merge!(time_tracking_fields(resource))
     
