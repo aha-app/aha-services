@@ -2,7 +2,7 @@ class GithubIssueResource < GithubResource
   def find_by_number_and_milestone(number, milestone)
     prepare_request
     response = http_get "#{github_issues_path}/#{number}"
-    issue = (response.status == 200 ? parse(response.body) : nil)
+    issue = found_resource(response)
     issue if issue && issue['milestone'] && (issue['milestone']['number'] == milestone['number'])
   end
 

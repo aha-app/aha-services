@@ -2,14 +2,14 @@ class JiraVersionResource < JiraResource
   def find_by_id(id)
     prepare_request
     response = http_get "#{api_url}/version/#{id}"
-    response.status == 200 ? parse(response.body) : nil
+    found_resource(response)
   end
 
   def find_by_name(name)
     prepare_request
     response = http_get "#{api_url}/project/#{@service.data.project}/versions"
     process_response(response, 200) do |versions|
-      return versions.find { |version| version['name'] == name }
+      return versions.find { |version| version.name == name }
     end
   end
 

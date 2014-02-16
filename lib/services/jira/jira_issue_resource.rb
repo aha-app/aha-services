@@ -2,7 +2,7 @@ class JiraIssueResource < JiraResource
   def find_by_id(id, params = {})
     prepare_request
     response = http_get "#{api_url}/issue/#{id}?#{params.to_query}"
-    issue = (response.status == 200 ? parse(response.body) : nil)
+    issue = found_resource(response)
     issue
   end
   
