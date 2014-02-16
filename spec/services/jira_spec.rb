@@ -227,6 +227,36 @@ describe AhaServices::Jira do
     end
   end
 
+  describe "#label_fields" do
+    shared_examples "empty label fields" do
+      it "returns an empty hash" do
+        expect(service.send(:label_fields, resource))
+          .to eq Hash.new
+      end
+    end
+
+    context "when the resource has tags" do
+      let(:resource) { Hashie::Mash.new(tags: [ {tag1: 'Tag name'} ]) }
+      context "when tags are set to be synchronized" do
+        it "returns a specific hash" do
+          service.stub(:data).and_return(Hashie::Mash.new(send_tags: "1"))
+          expect(service.send(:label_fields, resource))
+            .to eq(labels: resource.tags)
+        end
+      end
+
+      context "when tags are not set to be synchronized" do
+        before { service.stub(:data).and_return(Hashie::Mash.new) }
+        it_behaves_like "empty label fields"
+      end
+    end
+
+    context "when the resource doesn't have tags" do
+      let(:resource) { Hashie::Mash.new }
+      it_behaves_like "empty label fields"
+    end
+  end
+
   describe "#aha_reference_fields" do
     let(:resource) { Hashie::Mash.new(url: 'http://example.com') }
     context "when aha reference field is set" do
