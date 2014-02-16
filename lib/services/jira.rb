@@ -172,7 +172,7 @@ protected
     else
       issue = {
         fields: {
-          :summary => initiative.name,
+          :summary => resource_name(initiative),
           :description => convert_html(initiative.description.body),
           :issuetype => {name: "Epic"}
         }
