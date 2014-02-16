@@ -198,15 +198,14 @@ protected
   end
   
   def create_issue_for(resource, initiative, version, parent)
-    issue_type_id = parent ? (data.requirement_issue_type || data.feature_issue_type) : data.feature_issue_type
-    issue_type = issue_type(issue_type_id)
+    issue_type = issue_type_by_parent(parent)
     summary = resource.name || description_to_title(resource.description.body)
 
     issue = {
       fields: {
         summary: summary,
         description: convert_html(resource.description.body),
-        issuetype: {id: issue_type_id}
+        issuetype: {id: issue_type.id}
       }
     }
     if version
