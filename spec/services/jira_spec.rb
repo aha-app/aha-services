@@ -168,5 +168,33 @@ describe AhaServices::Jira do
     end
     
   end
-  
+
+  describe "#time_tracking" do
+    context "when units are minutes" do
+      it "returns a hash with a timetracking field" do
+
+      end
+    end
+
+    context "when units are points" do
+      context "when a story points field exists in the Jira resource" do
+        it "returns a hash with the field @meta_data.story_points_field" do
+
+        end
+      end
+
+      context "when a story points field doesn't exist in the Jira resource" do
+        it "returns an empty hash" do
+
+        end
+      end
+    end
+
+    context "when units are neither minutes nor points" do
+      it "returns an empty hash" do
+
+      end
+    end
+  end
+
 end

@@ -220,7 +220,7 @@ protected
       issue[:fields][@meta_data.aha_reference_field] = resource.url
     end
     populate_relationship_fields(issue, parent, initiative)
-    populate_time_tracking(issue, resource)
+    issue[:fields].merge!(time_tracking(resource))
     
     new_issue = issue_resource.create(issue)
 
@@ -260,7 +260,7 @@ protected
     
     # Disabled until https://jira.atlassian.com/browse/GHS-10333 is fixed.
     #populate_relationship_fields(issue, parent, initiative)
-    populate_time_tracking(issue, resource)
+    issue[:fields].merge!(time_tracking(resource))
 
     issue_resource.update(issue_info['id'], issue)
 
@@ -315,14 +315,18 @@ protected
     end
   end
   
-  def populate_time_tracking(issue, resource)
+  def time_tracking(resource)
     if resource.work_units == 10 # Units are minutes.
-      issue[:fields][:timetracking] = {
-        originalEstimate: resource.original_estimate,
-        remainingEstimate: resource.remaining_estimate
+      {
+        timetracking: {
+          originalEstimate: resource.original_estimate,
+          remainingEstimate: resource.remaining_estimate
+        }
       }
     elsif resource.work_units == 20 and @meta_data.story_points_field # Units are points.
-      issue[:fields][@meta_data.story_points_field] = resource.remaining_estimate
+      { @meta_data.story_points_field => resource.remaining_estimate }
+    else
+      Hash.new
     end
   end
   
