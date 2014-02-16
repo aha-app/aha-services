@@ -218,14 +218,44 @@ protected
     
     new_issue = issue_resource.create(issue)
 
-    # Create links.
+    create_links_for_issue(new_issue, issue_type, parent)
+
+    new_issue
+  end
+
+  def update_issue(issue_info, resource, initiative, version, parent)
+    summary = resource_name(resource)
+    issue = Hashie::Mash.new(
+      fields: {
+        summary: summary,
+        description: convert_html(resource.description.body)
+      }
+    )
+    # Disabled until https://jira.atlassian.com/browse/GHS-10333 is fixed.
+    # issue_type = issue_type_by_parent(parent)
+    # issue.fields
+    #   .merge!(issue_type_fields(issue_type.name, summary, parent, initiative))
+    #   .merge!(subtask_fields(issue_type.subtask, parent))
+    issue.fields
+      .merge!(label_fields(resource))
+      .merge!(time_tracking_fields(resource))
+    issue.merge!(version_update_fields(version))
+
+    issue_resource.update(issue_info.id, issue)
+
+    update_attachments(issue_info.id, resource)
+    
+    issue_info
+  end
+
+  def create_links_for_issue(issue, issue_type, parent)
     if parent and !issue_type.subtask and !["Epic", "Story"].include?(issue_type.name)
       link = {
         type: {
           name: "Relates"
         },
         outwardIssue: {
-          id: new_issue.id
+          id: issue.id
         },
         inwardIssue: {
           id: parent.id
@@ -233,38 +263,6 @@ protected
       }
       issue_link_resource.create(link)
     end
-
-    new_issue
-  end
-
-  def update_issue(issue_info, resource, initiative, version, parent)
-    summary = resource_name(resource)
-    issue = {
-      fields: {
-        description: convert_html(resource.description.body),
-      }
-    }
-    issue[:fields][:summary] = summary
-    if version.id
-      issue[:update] ||= {}
-      issue[:update][:fixVersions] = [{set: [{id: version.id}]}]
-    end
-    if data.send_tags == "1" and resource.tags
-      issue[:fields][:labels] = resource.tags
-    end
-    
-    # Disabled until https://jira.atlassian.com/browse/GHS-10333 is fixed.
-    # issue_type = issue_type_by_parent(parent)
-    # issue[:fields]
-    #   .merge!(issue_type_fields(issue_type.name, summary, parent, initiative))
-    #   .merge!(subtask_fields(issue_type.subtask, parent))
-    issue[:fields].merge!(time_tracking_fields(resource))
-
-    issue_resource.update(issue_info.id, issue)
-
-    update_attachments(issue_info.id, resource)
-    
-    issue_info
   end
 
   def project_resource
@@ -367,6 +365,14 @@ protected
   def subtask_fields(is_subtask, parent)
     if parent and is_subtask
       { parent: { key: parent[:key] } }
+    else
+      Hash.new
+    end
+  end
+
+  def version_update_fields(version)
+    if version
+      { update: { fixVersions: [ { set: [ { id: version.id } ] } ] } }
     else
       Hash.new
     end
