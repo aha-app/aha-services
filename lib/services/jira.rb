@@ -199,11 +199,10 @@ protected
   
   def create_issue_for(resource, initiative, version, parent)
     issue_type = issue_type_by_parent(parent)
-    summary = resource.name || description_to_title(resource.description.body)
 
     issue = {
       fields: {
-        summary: summary,
+        summary: resource_name(resource),
         description: convert_html(resource.description.body),
         issuetype: {id: issue_type.id}
       }
@@ -249,7 +248,7 @@ protected
         description: convert_html(resource.description.body),
       }
     }
-    issue[:fields][:summary] = resource.name if resource.name
+    issue[:fields][:summary] = resource_name(resource)
     if version['id']
       issue[:update] ||= {}
       issue[:update][:fixVersions] = [{set: [{id: version['id']}]}]
