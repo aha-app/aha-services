@@ -220,7 +220,7 @@ protected
       issue[:fields][@meta_data.aha_reference_field] = resource.url
     end
     populate_relationship_fields(issue, parent, initiative)
-    issue[:fields].merge!(time_tracking(resource))
+    issue[:fields].merge!(time_tracking_fields(resource))
     
     new_issue = issue_resource.create(issue)
 
@@ -260,7 +260,7 @@ protected
     
     # Disabled until https://jira.atlassian.com/browse/GHS-10333 is fixed.
     #populate_relationship_fields(issue, parent, initiative)
-    issue[:fields].merge!(time_tracking(resource))
+    issue[:fields].merge!(time_tracking_fields(resource))
 
     issue_resource.update(issue_info['id'], issue)
 
@@ -315,7 +315,7 @@ protected
     end
   end
   
-  def time_tracking(resource)
+  def time_tracking_fields(resource)
     if resource.work_units == 10 # Units are minutes.
       {
         timetracking: {
