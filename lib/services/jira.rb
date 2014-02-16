@@ -357,15 +357,15 @@ protected
 
   def issue_type_by_parent(parent)
     issue_type_id = parent ? (data.requirement_issue_type || data.feature_issue_type) : data.feature_issue_type
-    issue_type(issue_type_id)
+    issue_type_by_id(issue_type_id)
   end
   
-  def issue_type(issue_type_id)
+  def issue_type_by_id(id)
     raise AhaService::RemoteError, "Integration has not been configured" if @meta_data.projects.nil?
     project = @meta_data.projects.find {|project| project['key'] == data.project }
     raise AhaService::RemoteError, "Integration has not been configured, can't find project '#{data.project}'" if project.nil?
-    issue_type = project.issue_types.find {|type| type.id.to_s == issue_type_id.to_s }
-    raise AhaService::RemoteError, "Integration needs to be reconfigured, issue types have changed, can't find issue type '#{issue_type_id}'" if issue_type.nil?
+    issue_type = project.issue_types.find {|type| type.id.to_s == id.to_s }
+    raise AhaService::RemoteError, "Integration needs to be reconfigured, issue types have changed, can't find issue type '#{id}'" if issue_type.nil?
     issue_type
   end
   
