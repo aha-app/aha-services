@@ -239,6 +239,114 @@ describe AhaServices::Jira do
     end
   end
 
+  describe "#issue_type_fields" do
+    let(:issue) { nil }
+    let(:parent) { nil }
+    let(:initiative) { nil }
+    let(:issue_type_fields) do
+      service.send(:issue_type_fields, issue_type_name, issue, parent, initiative)
+    end
 
+    shared_examples "empty" do
+      it "returns an empty hash" do
+        expect(issue_type_fields).to eq Hash.new
+      end
+    end
+
+    context "for an epic" do
+      let(:issue_type_name) { 'Epic' }
+      let(:issue) { { fields: { summary: "An issue's summary" } } }
+      it "returns a hash with the field meta_data.epic_name_field" do
+        service.stub(:meta_data)
+          .and_return(Hashie::Mash.new({ epic_name_field: 'epic_name' }))
+        expect(issue_type_fields)
+          .to eq({ 'epic_name' => issue[:fields][:summary] })
+      end
+    end
+
+    context "for a story" do
+      let(:issue_type_name) { 'Story' }
+      let(:epic_link_field) { 'epic_link' }
+      before do
+        service.stub(:meta_data)
+          .and_return(Hashie::Mash.new(epic_link_field: epic_link_field))
+      end
+      context "when sending initiatives is on" do
+        before do
+          service.stub(:data).and_return(Hashie::Mash.new(send_initiatives: "1"))
+        end
+
+        context "when an initiative is supplied" do
+          let(:initiative) { 'An initiative' }
+          it "returns a hash with the field meta_data.epic_link_field\
+              set to the result of find_or_create_epic_from_initiative" do
+            service.should_receive(:find_or_create_epic_from_initiative)
+              .with(initiative).and_return('Epic from initiative')
+            expect(issue_type_fields)
+              .to eq(epic_link_field => 'Epic from initiative')
+          end
+        end
+
+        context "when initiative is not supplied" do
+          it_behaves_like "empty"
+        end
+      end
+
+      context "when sending initiatives is off" do
+        before do
+          service.stub(:data).and_return(Hashie::Mash.new(send_initiatives: "0"))
+        end
+
+        context "when a parent is supplied" do
+          let(:parent) { { 'key' => "Issue's parent" } }
+          it "returns a hash with the field meta_data.epic_link_field set to parent['key']" do
+            expect(issue_type_fields)
+              .to eq(epic_link_field => "Issue's parent")
+          end
+        end
+
+        context "when parent is not supplied" do
+          it_behaves_like "empty"
+        end
+      end
+    end
+
+    context "for another issue type" do
+      let(:issue_type_name) { 'Another type' }
+      it "returns an empty hash" do
+        expect(issue_type_fields).to eq Hash.new
+      end
+    end
+  end
+
+  describe "#subtask_fields" do
+    let(:parent) { nil }
+    let(:subtask_fields) { service.send(:subtask_fields, is_subtask, parent) }
+    shared_examples "empty subtask fields" do
+      it "returns an empty hash" do
+        expect(subtask_fields).to eq Hash.new
+      end
+    end
+
+    context "when the issue is a subtask" do
+      let(:is_subtask) { true }
+      context "when a parent is supplied" do
+        let(:parent) { { 'key' => "Issue's parent" } }
+        it "returns a specific hash" do
+          expect(subtask_fields)
+            .to eq(parent: { key: parent['key'] })
+        end
+      end
+
+      context "when a parent is not supplied" do
+        it_behaves_like "empty subtask fields"
+      end
+    end
+
+    context "when the issue is not a subtask" do
+      let(:is_subtask) { false }
+      it_behaves_like "empty subtask fields"
+    end
+  end
 
 end

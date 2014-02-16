@@ -219,8 +219,9 @@ protected
     if @meta_data.aha_reference_field
       issue[:fields][@meta_data.aha_reference_field] = resource.url
     end
-    populate_relationship_fields(issue, parent, initiative)
-    issue[:fields].merge!(time_tracking_fields(resource))
+    issue[:fields]
+      .merge!(relationship_fields(issue, parent, initiative))
+      .merge!(time_tracking_fields(resource))
     
     new_issue = issue_resource.create(issue)
 
@@ -259,7 +260,7 @@ protected
     end
     
     # Disabled until https://jira.atlassian.com/browse/GHS-10333 is fixed.
-    #populate_relationship_fields(issue, parent, initiative)
+    # issue[:fields].merge!(relationship_fields(issue, parent, initiative))
     issue[:fields].merge!(time_tracking_fields(resource))
 
     issue_resource.update(issue_info['id'], issue)
@@ -330,25 +331,35 @@ protected
     end
   end
   
-  def populate_relationship_fields(issue, parent, initiative)
+  def relationship_fields(issue, parent, initiative)
+    issue_type = issue_type_by_parent(parent)
+    issue_type_fields(issue_type['name'], issue, parent, initiative)
+      .merge(subtask_fields(issue_type['subtask'], parent))
+  end
+
+  def issue_type_fields(issue_type_name, issue, parent, initiative)
+    if issue_type_name == 'Epic'
+      { meta_data.epic_name_field => issue[:fields][:summary] }
+    elsif issue_type_name == 'Story' && data.send_initiatives == '1' && initiative
+      { meta_data.epic_link_field => find_or_create_epic_from_initiative(initiative) }
+    elsif issue_type_name == 'Story' && parent
+      { meta_data.epic_link_field => parent['key'] }
+    else
+      Hash.new
+    end
+  end
+
+  def subtask_fields(is_subtask, parent)
+    if parent and is_subtask
+      { parent: { key: parent['key'] } }
+    else
+      Hash.new
+    end
+  end
+
+  def issue_type_by_parent(parent)
     issue_type_id = parent ? (data.requirement_issue_type || data.feature_issue_type) : data.feature_issue_type
-    issue_type = issue_type(issue_type_id)
-    
-    case issue_type['name']
-    when "Epic"
-      issue[:fields][@meta_data.epic_name_field] = issue[:fields][:summary]
-    when "Story"
-      if data.send_initiatives == "1"
-        if initiative
-          issue[:fields][@meta_data.epic_link_field] = find_or_create_epic_from_initiative(initiative)
-        end
-      else
-        issue[:fields][@meta_data.epic_link_field] = parent['key'] if parent
-      end
-    end
-    if parent and issue_type['subtask']
-      issue[:fields][:parent] = {key: parent['key']}
-    end
+    issue_type(issue_type_id)
   end
   
   def issue_type(issue_type_id)
