@@ -4,7 +4,7 @@ class RedmineIssueResource < RedmineResource
     params = parse_payload(payload_fragment || @payload.feature, parent_id)
     prepare_request
     response = http_post redmine_issues_path, params.to_json
-    parse_response response, payload_fragment
+    parse_response response, payload_fragment, parent_id
   end
 
   def update
@@ -36,15 +36,16 @@ private
     hashie
   end
 
-  def parse_response response, payload_fragment=nil
+  def parse_response response, payload_fragment=nil, requirement=false
     payload_fragment ||= @payload.feature
+    resource = requirement ? 'requirement' : 'feature'
     process_response response, 201 do |body|
-      create_integrations 'feature', payload_fragment.reference_num,
+      create_integrations resource, payload_fragment.reference_num,
         id: body.issue.id,
         name: body.issue.subject,
         url: redmine_issues_path(body.issue.id)
       if payload_fragment.release && body.issue.fixed_version
-        create_integrations 'requirement', payload_fragment.release.reference_num,
+        create_integrations 'release', payload_fragment.release.reference_num,
           id: body.issue.fixed_version.id,
           name: body.issue.fixed_version.name,
           url: "#{@service.data.redmine_url}/version/#{body.issue.fixed_version.id}"
