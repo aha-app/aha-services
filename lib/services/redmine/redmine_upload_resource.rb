@@ -3,7 +3,7 @@ class RedmineUploadResource < RedmineResource
     open attachment.download_url do |downloaded_file|
       # Reset Faraday and switch to multipart to do the file upload.
       http_reset
-      http(:encoding => :multipart)
+      http encoding: :multipart
 
       file = Faraday::UploadIO.new downloaded_file, attachment.content_type, attachment.file_name
       response = http_post redmine_upload_path, file: file
