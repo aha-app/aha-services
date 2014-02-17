@@ -44,9 +44,9 @@ class RedmineResource
     @logger
   end
 
-  def create_integrations reference, **fields
+  def create_integrations resource, reference, **fields
     fields.each do |field, value|
-      @service.api.create_integration_field(reference, @service.class.service_name, field, value)
+      @service.api.create_integration_field(resource, reference, @service.class.service_name, field, value)
     end
   end
 
