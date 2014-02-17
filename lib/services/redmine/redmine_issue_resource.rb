@@ -1,14 +1,17 @@
 class RedmineIssueResource < RedmineResource
 
-  def create payload_fragment=nil, parent_id=nil
-    params = parse_payload(payload_fragment || @payload.feature, parent_id)
+  def create(payload_fragment: nil, parent_id: nil, attachments: nil)
+    params = parse_payload \
+      payload_fragment: payload_fragment,
+      parent_id: parent_id,
+      attachments: attachments
     prepare_request
     response = http_post redmine_issues_path, params.to_json
     parse_response response, payload_fragment, parent_id
   end
 
   def update
-    params = parse_payload @payload.feature
+    params = parse_payload
     issue_id = get_integration_field @payload.feature.integration_fields, 'id'
 
     prepare_request
@@ -26,14 +29,16 @@ private
     str + '.json'
   end
 
-  def parse_payload payload_fragment, parent_id=nil
+  def parse_payload(payload_fragment: nil, parent_id: nil, attachments: nil)
+    payload_fragment ||= @payload.feature
     version_id = get_integration_field @payload.feature.integration_fields, 'version_id'
     hashie = Hashie::Mash.new( issue: {
       tracker_id: kind_to_tracker_id(payload_fragment.kind),
-      subject: payload_fragment.name })
-    hashie[:issue].merge!(parent_issue_id: parent_id) if parent_id
-    hashie[:issue].merge!(fixed_version_id: version_id) if version_id
-    hashie
+      subject: payload_fragment.name,
+      parent_issue_id: parent_id,
+      fixed_version_id: version_id,
+      attachments: attachments
+      }.reject {|k,v| v.nil?} )
   end
 
   def parse_response response, payload_fragment=nil, requirement=false

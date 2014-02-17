@@ -25,10 +25,9 @@ class AhaServices::Redmine < AhaService
 
   def receive_create_feature
     attachments = check_attachments payload.feature
-    #TODO: support attachments callback
-    response_body = create_issue #attachments
+    response_body = create_issue attachments: attachments
     payload.feature.requirements.each do |requirement|
-      create_issue requirement, response_body[:issue][:id]
+      create_issue payload_fragment: requirement, parent_id: response_body[:issue][:id]
     end
   end
 
@@ -48,9 +47,9 @@ private
     version_resource.create
   end
 
-  def create_issue payload_fragment=nil, parent_id=nil
+  def create_issue **options
     check_projects
-    issue_resource.create payload_fragment, parent_id
+    issue_resource.create options
   end
 
   def update_version
