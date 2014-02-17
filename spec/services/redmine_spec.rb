@@ -250,7 +250,12 @@ describe AhaServices::Redmine do
                   issue_json = JSON.parse(params)['issue']
                   expect(issue_json).to have_key('tracker_id')
                   expect(issue_json).to have_key('subject')
-                  expect(issue_json).to have_key('attachments')
+                  expect(issue_json).to have_key('uploads')
+                  issue_json['uploads'].each do |upload|
+                    expect(upload).to have_key('token')
+                    expect(upload).to have_key('filename')
+                    expect(upload).to have_key('content_type')
+                  end
                   double(status: 201, body: issue_create_raw)
                 end.once
                 expect_any_instance_of(RedmineIssueResource).to receive(:http_post) do |url, params|
