@@ -230,6 +230,7 @@ describe AhaServices::Redmine do
           context 'with attachments' do
             context 'proper params' do
               let(:issue_create_raw) { raw_fixture 'redmine/issues/create.json' }
+              let(:upload_post_params) { ['http://api.my-redmine.org/uploads.json', {file: anything}] }
               before do
                 stub_request(:post, "#{service.data.redmine_url}/projects/#{project_id}/issues.json").
                   to_return(status: 201, body: issue_create_raw, headers: {})
@@ -240,7 +241,25 @@ describe AhaServices::Redmine do
               it 'posts attachment files for each attachment' do
                 expect(service.api).to receive(:create_integration_field).exactly(6)
                 expect_any_instance_of(RedmineUploadResource).to receive(:upload_attachment).twice.and_call_original
-                expect_any_instance_of(RedmineUploadResource).to receive(:http_post).with('http://api.my-redmine.org/uploads.json', {file: anything}).twice.and_call_original
+                expect_any_instance_of(RedmineUploadResource).to receive(:http_post).with(*upload_post_params).twice.and_call_original
+                service.receive(:create_feature)
+              end
+              it 'sends attachment params while creating issue' do
+                expect_any_instance_of(RedmineIssueResource).to receive(:http_post) do |url, params|
+                  expect(url).to match(/http:\/\/api.my-redmine.org\/projects\/\d*\/issues.json/)
+                  issue_json = JSON.parse(params)['issue']
+                  expect(issue_json).to have_key('tracker_id')
+                  expect(issue_json).to have_key('subject')
+                  expect(issue_json).to have_key('attachments')
+                  double(status: 201, body: issue_create_raw)
+                end.once
+                expect_any_instance_of(RedmineIssueResource).to receive(:http_post) do |url, params|
+                  expect(url).to match(/http:\/\/api.my-redmine.org\/projects\/\d*\/issues.json/)
+                  issue_json = JSON.parse(params)['issue']
+                  expect(issue_json).to have_key('tracker_id')
+                  double(status: 201, body: issue_create_raw)
+                end.once
+                expect(service.api).to receive(:create_integration_field).exactly(6)
                 service.receive(:create_feature)
               end
               it 'sends integration messages for issue' do
