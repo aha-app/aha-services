@@ -36,9 +36,15 @@ private
       tracker_id: kind_to_tracker_id(payload_fragment.kind),
       subject: payload_fragment.name,
       parent_issue_id: parent_id,
-      fixed_version_id: version_id,
-      attachments: attachments
+      fixed_version_id: version_id
       }.reject {|k,v| v.nil?} )
+    hashie.issue.merge!({ uploads: attachments.map {|a|
+      {
+        token: a.token,
+        filename: a.file_name,
+        content_type: a.content_type
+      }}}) if attachments
+    hashie
   end
 
   def parse_response response, payload_fragment=nil, requirement=false
