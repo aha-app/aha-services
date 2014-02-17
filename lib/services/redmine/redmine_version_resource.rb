@@ -5,7 +5,7 @@ class RedmineVersionResource < RedmineResource
     params = parse_payload @payload.release
     response = http_post redmine_versions_path, params
     process_response response, 201 do |body|
-      create_integrations @payload.release.reference_num,
+      create_integrations 'release', @payload.release.reference_num,
         id: body.version.id,
         name: body.version.name,
         url: redmine_versions_path(body.version.id)
@@ -18,7 +18,7 @@ class RedmineVersionResource < RedmineResource
     version_id = get_integration_field @payload.release.integration_fields, 'id'
     response = http_put redmine_versions_path(version_id), params
     process_response response, 200 do
-      create_integrations @payload.release.reference_num,
+      create_integrations 'release', @payload.release.reference_num,
         id: version_id,
         name: params.version.name,
         url: redmine_versions_path(version_id)
