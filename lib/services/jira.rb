@@ -163,35 +163,34 @@ protected
   
   # Create an epic from an initiative, or find an existing epic for the 
   # initiative.
-  def find_or_create_epic_from_initiative(initiative)
+  def epic_key_for_initiative(initiative)
     if epic_key = get_integration_field(initiative.integration_fields, 'key')
       epic_key
     else
-      issue = {
-        fields: {
-          :summary => resource_name(initiative),
-          :description => convert_html(initiative.description.body),
-          :issuetype => {name: "Epic"}
-        }
-      }
-      if @meta_data.aha_reference_field
-        issue[:fields][@meta_data.aha_reference_field] = initiative.url
-      end
-      issue[:fields][@meta_data.epic_name_field] = initiative.name
-      
-      new_issue = issue_resource.create(issue)
-      upload_attachments(initiative.description.attachments, new_issue.id)
-      begin
-        integrate_resource_with_jira_issue("initiatives", initiative, new_issue)
-      rescue AhaApi::BadRequest
-        # Failure was probably due to initiative from another product, convert
-        # to a more user friendly message.
-        raise AhaService::RemoteError, "Initiative '#{initiative.name}' is from a product without a JIRA integration. Add a JIRA integration for the product the initiative belongs to."
-      end
-      new_issue[:key]
+      create_issue_for_initiative(initiative)[:key]
     end
   end
   
+  def create_issue_for_initiative(initiative)
+    issue = {
+      fields: {
+        :summary => resource_name(initiative),
+        :description => convert_html(initiative.description.body),
+        :issuetype => {name: "Epic"}
+      }
+    }
+    if @meta_data.aha_reference_field
+      issue[:fields][@meta_data.aha_reference_field] = initiative.url
+    end
+    issue[:fields][@meta_data.epic_name_field] = initiative.name
+
+    new_issue = issue_resource.create(issue)
+    upload_attachments(initiative.description.attachments, new_issue.id)
+    integrate_initiative_with_jira_issue(initiative, new_issue)
+
+    new_issue
+  end
+
   def create_issue_for(resource, initiative, version, parent)
     issue_type = issue_type_by_parent(parent)
     summary = resource_name(resource)
@@ -353,7 +352,7 @@ protected
     if issue_type_name == 'Epic'
       { meta_data.epic_name_field => summary }
     elsif issue_type_name == 'Story' && data.send_initiatives == '1' && initiative
-      { meta_data.epic_link_field => find_or_create_epic_from_initiative(initiative) }
+      { meta_data.epic_link_field => epic_key_for_initiative(initiative) }
     elsif issue_type_name == 'Story' && parent
       { meta_data.epic_link_field => parent[:key] }
     else
@@ -406,6 +405,17 @@ protected
     api.create_integration_field(resource_type, resource.id, self.class.service_name, :id, issue.id)
     api.create_integration_field(resource_type, resource.id, self.class.service_name, :key, issue[:key])
     api.create_integration_field(resource_type, resource.id, self.class.service_name, :url, "#{data.server_url}/browse/#{issue[:key]}")
+  end
+
+  def integrate_initiative_with_jira_issue(initiative, issue)
+    integrate_resource_with_jira_issue("initiatives", initiative, issue)
+  rescue AhaApi::BadRequest
+    # Failure was probably due to initiative from another product, convert
+    # to a more user friendly message.
+    raise AhaService::RemoteError,
+          "Initiative '#{initiative.name}' is from a product\
+           without a JIRA integration. Add a JIRA integration\
+           for the product the initiative belongs to."
   end
   
 end

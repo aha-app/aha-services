@@ -303,6 +303,16 @@ describe AhaServices::Jira do
 
   end
 
+  describe "#epic_key_for_initiative" do
+    context "when an integration exists for the initiative" do
+
+    end
+
+    context "when an integration doesn't exist for the initiative" do
+
+    end
+  end
+
   describe "#create_issue_for" do
     let(:resource) do
       Hashie::Mash.new(name: 'Resource name',
@@ -529,8 +539,8 @@ describe AhaServices::Jira do
         context "when an initiative is supplied" do
           let(:initiative) { 'An initiative' }
           it "returns a hash with the field meta_data.epic_link_field\
-              set to the result of find_or_create_epic_from_initiative" do
-            service.should_receive(:find_or_create_epic_from_initiative)
+              set to the result of epic_key_for_initiative" do
+            service.should_receive(:epic_key_for_initiative)
               .with(initiative).and_return('Epic from initiative')
             expect(issue_type_fields)
               .to eq(epic_link_field => 'Epic from initiative')
