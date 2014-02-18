@@ -43,7 +43,7 @@ private
         token: a.token,
         filename: a.file_name,
         content_type: a.content_type
-      }}}) if attachments
+      }}}) if attachments.present?
     hashie
   end
 
