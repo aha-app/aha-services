@@ -220,7 +220,7 @@ protected
       issue[:fields][@meta_data.aha_reference_field] = resource.url
     end
     populate_relationship_fields(issue, parent, initiative)
-    populate_time_tracking(issue, resource)
+    populate_time_tracking(issue, resource, parent)
     
     new_issue = issue_resource.create(issue)
 
@@ -244,6 +244,9 @@ protected
   end
 
   def update_issue(issue_info, resource, initiative, version, parent)
+    issue_type_id = parent ? (data.requirement_issue_type || data.feature_issue_type) : data.feature_issue_type
+    issue_type = issue_type(issue_type_id)
+    
     issue = {
       fields: {
         description: convert_html(resource.description.body),
@@ -260,7 +263,7 @@ protected
     
     # Disabled until https://jira.atlassian.com/browse/GHS-10333 is fixed.
     #populate_relationship_fields(issue, parent, initiative)
-    populate_time_tracking(issue, resource)
+    populate_time_tracking(issue, resource, parent)
 
     issue_resource.update(issue_info['id'], issue)
 
@@ -315,14 +318,20 @@ protected
     end
   end
   
-  def populate_time_tracking(issue, resource)
+  def populate_time_tracking(issue, resource, parent)
+    issue_type_id = parent ? (data.requirement_issue_type || data.feature_issue_type) : data.feature_issue_type
+    issue_type = issue_type(issue_type_id)
+
     if resource.work_units == 10 # Units are minutes.
       issue[:fields][:timetracking] = {
         originalEstimate: resource.original_estimate,
         remainingEstimate: resource.remaining_estimate
       }
     elsif resource.work_units == 20 and @meta_data.story_points_field # Units are points.
-      issue[:fields][@meta_data.story_points_field] = resource.remaining_estimate
+      # We can only do this if the issue is a story.
+      if issue_type['name'] == "Story"
+        issue[:fields][@meta_data.story_points_field] = resource.remaining_estimate
+      end
     end
   end
   
