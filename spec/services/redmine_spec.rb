@@ -248,22 +248,13 @@ describe AhaServices::Redmine do
                 expect_any_instance_of(RedmineIssueResource).to receive(:http_post) do |url, params|
                   expect(url).to match(/http:\/\/api.my-redmine.org\/projects\/\d*\/issues.json/)
                   issue_json = JSON.parse(params)['issue']
-                  expect(issue_json).to have_key('tracker_id')
-                  expect(issue_json).to have_key('subject')
-                  expect(issue_json).to have_key('uploads')
+                  expect(issue_json.keys).to include('tracker_id','subject', 'uploads')
                   issue_json['uploads'].each do |upload|
-                    expect(upload).to have_key('token')
-                    expect(upload).to have_key('filename')
-                    expect(upload).to have_key('content_type')
+                    expect(upload.keys).to include('token','filename', 'content_type')
                   end
                   double(status: 201, body: issue_create_raw)
                 end.once
-                expect_any_instance_of(RedmineIssueResource).to receive(:http_post) do |url, params|
-                  expect(url).to match(/http:\/\/api.my-redmine.org\/projects\/\d*\/issues.json/)
-                  issue_json = JSON.parse(params)['issue']
-                  expect(issue_json).to have_key('tracker_id')
-                  double(status: 201, body: issue_create_raw)
-                end.once
+                expect_any_instance_of(RedmineIssueResource).to receive(:http_post).once.and_call_original
                 expect(service.api).to receive(:create_integration_field).exactly(6)
                 service.receive(:create_feature)
               end
