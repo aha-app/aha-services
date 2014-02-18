@@ -151,18 +151,14 @@ protected
   end
 
   def attach_issue_to(resource, initiative, version, parent = nil)
-    issue_info = create_issue_for(resource, initiative, version, parent)
-    integrate_resource_with_jira_issue(reference_num_to_resource_type(resource.reference_num), resource, issue_info)
+    issue = create_issue_for(resource, initiative, version, parent)
+    integrate_resource_with_jira_issue(reference_num_to_resource_type(resource.reference_num), resource, issue)
 
     # Add attachments.
-    resource.description.attachments.each do |attachment|
-      attachment_resource.upload(attachment, issue_info.id)
-    end
-    resource.attachments.each do |attachment|
-      attachment_resource.upload(attachment, issue_info.id)
-    end
+    upload_attachments(resource.description.attachments, issue.id)
+    upload_attachments(resource.attachments, issue.id)
 
-    issue_info
+    issue
   end
   
   # Create an epic from an initiative, or find an existing epic for the 
@@ -184,9 +180,7 @@ protected
       issue[:fields][@meta_data.epic_name_field] = initiative.name
       
       new_issue = issue_resource.create(issue)
-      initiative.description.attachments.each do |attachment|
-        attachment_resource.upload(attachment, new_issue.id)
-      end
+      upload_attachments(initiative.description.attachments, new_issue.id)
       begin
         integrate_resource_with_jira_issue("initiatives", initiative, new_issue)
       rescue AhaApi::BadRequest
@@ -307,6 +301,10 @@ protected
     end
     
     # Create any attachments that didn't already exist.
+    upload_attachments(attachments, issue_id)
+  end
+
+  def upload_attachments(attachments, issue_id)
     attachments.each do |attachment|
       attachment_resource.upload(attachment, issue_id)
     end
