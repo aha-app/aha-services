@@ -24,29 +24,13 @@ class AhaServices::Jira < AhaService
   callback_url description: "URL to add to the webhooks section of JIRA. Only one hook is necessary, even if multiple products are integrated with JIRA."
   
   def receive_installed
-    @meta_data.projects = project_resource.all
-    
-    @meta_data.resolutions = resolution_resource.all
-
-    # Get custom field mappings.
-    @meta_data.epic_name_field = field_resource.epic_name_field
-    @meta_data.epic_link_field = field_resource.epic_link_field
-    @meta_data.story_points_field = field_resource.story_points_field
-    @meta_data.aha_reference_field = field_resource.aha_reference_field
-    
-    # Create custom field for Aha! reference.
-    unless @meta_data.aha_reference_field
-      field = {
-        name: "Aha! Reference",
-        description: "Link to the Aha! item this issue is related to.",
-        type: "com.atlassian.jira.plugin.system.customfieldtypes:url"
-      }
-
-      @meta_data.aha_reference_field = field_resource.create(field)
-      
-      # Add field to the default screen.
-      field_resource.add_to_default_screen(@meta_data.aha_reference_field)
-    end
+    meta_data.merge! projects: project_resource.all,
+                     resolutions: resolution_resource.all,
+                     # Get custom field mappings.
+                     epic_name_field: field_resource.epic_name_field,
+                     epic_link_field: field_resource.epic_link_field,
+                     story_points_field: field_resource.story_points_field,
+                     aha_reference_field: new_or_existing_aha_reference_field
   end
   
   def receive_create_feature
@@ -76,6 +60,21 @@ class AhaServices::Jira < AhaService
   end
 
 protected
+
+  def new_or_existing_aha_reference_field
+    # Create custom field for Aha! reference.
+    unless field = field_resource.aha_reference_field
+      field = field_resource.create(
+        name: "Aha! Reference",
+        description: "Link to the Aha! item this issue is related to.",
+        type: "com.atlassian.jira.plugin.system.customfieldtypes:url"
+      ).tap do |new_field|
+        # Add field to the default screen.
+        field_resource.add_to_default_screen(new_field)
+      end
+    end
+    field
+  end
 
   def integrate_or_update_feature(feature)
     version = find_or_attach_jira_version(feature.release)

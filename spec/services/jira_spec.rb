@@ -188,9 +188,42 @@ describe AhaServices::Jira do
 
   before do
     service.stub(:issue_resource).and_return(double)
+    service.stub(:field_resource).and_return(double)
   end
 
   let(:issue_resource) { service.send(:issue_resource) }
+  let(:field_resource) { service.send(:field_resource) }
+
+  describe "#new_or_existing_aha_reference_field" do
+    context "when a reference field exists" do
+      it "returns the existing field" do
+        field_resource.stub(:aha_reference_field)
+          .and_return('ref_field')
+        expect(service.send(:new_or_existing_aha_reference_field))
+          .to eq 'ref_field'
+      end
+    end
+
+    context "when a reference field doesn't exist" do
+      let(:new_field) { 'new_ref_field' }
+      before do
+        field_resource.stub(:aha_reference_field)
+          .and_return(nil)
+        field_resource.stub(:create).and_return(new_field)
+        field_resource.stub(:add_to_default_screen)
+      end
+      it "creates a new field and returns it" do
+        field_resource.should_receive(:create)
+        expect(service.send(:new_or_existing_aha_reference_field))
+          .to eq new_field
+      end
+
+      it "it adds the field to the default screen" do
+        field_resource.should_receive(:add_to_default_screen)
+        service.send(:new_or_existing_aha_reference_field)
+      end
+    end
+  end
 
   describe "#create_issue_for" do
     let(:resource) do
