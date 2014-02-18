@@ -17,9 +17,7 @@ class AhaServices::Redmine < AhaService
 
   def receive_installed; install_projects; end
 
-  def receive_create_release
-    create_version
-  end
+  def receive_create_release; create_version; end
 
   def receive_update_release; update_version; end
 
