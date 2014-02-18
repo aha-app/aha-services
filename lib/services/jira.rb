@@ -50,15 +50,11 @@ class AhaServices::Jira < AhaService
   end
   
   def receive_create_feature
-    version = find_or_attach_jira_version(payload.feature.release)
-    issue_info = update_or_attach_jira_issue(payload.feature, payload.feature.initiative, version)
-    update_requirements(payload.feature, version, issue_info)
+    integrate_or_update_feature(payload.feature)
   end
   
   def receive_update_feature
-    version = find_or_attach_jira_version(payload.feature.release)
-    issue_info = update_or_attach_jira_issue(payload.feature, payload.feature.initiative, version)
-    update_requirements(payload.feature, version, issue_info)
+    integrate_or_update_feature(payload.feature)
   end
 
   def receive_create_release
@@ -80,6 +76,12 @@ class AhaServices::Jira < AhaService
   end
 
 protected
+
+  def integrate_or_update_feature(feature)
+    version = find_or_attach_jira_version(feature.release)
+    issue_info = update_or_attach_jira_issue(feature, feature.initiative, version)
+    update_requirements(feature, version, issue_info)
+  end
 
   def find_or_attach_jira_version(release)
     if version = existing_version_integrated_with(release)
