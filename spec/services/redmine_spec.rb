@@ -16,12 +16,12 @@ describe AhaServices::Redmine do
   let(:projects_index_raw) { raw_fixture('redmine/projects/index.json') }
   let(:projects_index_json) { JSON.parse(projects_index_raw) }
 
-  shared_context 'sends proper integration fields' do |resource, ref_num, service_name, field_names, event|
+  shared_context 'sends proper integration fields' do |resource, ref_num, service_name, field_names, other_calls, event|
     it 'sends integration messages for given field_names' do
       field_names.each do |field_name|
         expect(service.api).to receive(:create_integration_field).with(resource, ref_num, service_name, field_name, anything).once
       end
-      expect(service.api).to receive(:create_integration_field).at_least(field_names.size)
+      expect(service.api).to receive(:create_integration_field).exactly(other_calls)
       service.receive(event)
     end
   end
@@ -103,53 +103,40 @@ describe AhaServices::Redmine do
       let(:project_id) { projects_index_json['projects'].first['id'] }
       let(:version_name) { 'The Final Milestone' }
       let(:payload) { json_fixture 'create_release_event.json' }
-
       before do
         stub_aha_api_posts
       end
-
       it "responds to receive(:create_release)" do
         expect(service).to receive(:receive_create_release)
         service.receive(:create_release)
       end
-
       context 'with proper params' do
         let(:raw_response) { raw_fixture('redmine/versions/create.json') }
         let(:project) { service.meta_data.projects.find {|p| p[:id] == project_id }}
-
         before do
           stub_redmine_projects
           stub_request(:post, "#{service.data.redmine_url}/projects/#{project_id}/versions.json").
             to_return(status: 201, body: raw_response, headers: {})
         end
-
-        it 'sends integration messages for release' do
-          expect(service.api).to receive(:create_integration_field).with('release', 'OPS-R-1', 'redmine_issues', :id, anything).once
-          expect(service.api).to receive(:create_integration_field).with('release', 'OPS-R-1', 'redmine_issues', :url, anything).once
-          expect(service.api).to receive(:create_integration_field).with('release', 'OPS-R-1', 'redmine_issues', :name, anything).once
-          service.receive(:create_release)
-        end
+        it_behaves_like 'sends proper integration fields',\
+          'release', 'OPS-R-1', 'redmine_issues', [:id, :url, :name], 0, :create_release
       end
-
       context 'auth errors' do
         before do
           stub_redmine_projects
           stub_request(:post, "#{service.data.redmine_url}/projects/#{project_id}/versions.json").
             to_return(status: 401, body: {}, headers: {})
         end
-
         it 'raises AhaService::RemoteError' do
           expect { service.receive(:create_release) }.to raise_error(AhaService::RemoteError)
         end
       end
-
       context 'param errors' do
         before do
           stub_redmine_projects
           stub_request(:post, "#{service.data.redmine_url}/projects/#{project_id}/versions.json").
             to_return(status: 404, body: {}, headers: {})
         end
-
         it 'raises AhaService::RemoteError' do
           expect { service.receive(:create_release) }.to raise_error(AhaService::RemoteError)
         end
@@ -162,12 +149,10 @@ describe AhaServices::Redmine do
       let(:project) { service.send :find_project, project_id }
       let(:new_version_name) { 'New Awesome Version Name' }
       let(:payload) { json_fixture 'update_release_event.json' }
-
       it 'responds to receive(:update_release)' do
         expect(service).to receive(:receive_update_release)
         service.receive(:update_release)
       end
-
       context 'with proper params' do
         before do
           populate_redmine_projects service
@@ -175,42 +160,32 @@ describe AhaServices::Redmine do
             to_return(status: 200, body: '{}', headers: {})
           stub_redmine_projects_and_versions
         end
-
         context 'existing feature' do
           it 'updates redmine version' do
             expect(service.api).to receive(:create_integration_field).exactly(3)
             expect_any_instance_of(RedmineVersionResource).to receive(:http_put).and_call_original
             service.receive(:update_release)
           end
-
-          it 'updates feature integration' do
-            expect(service.api).to receive(:create_integration_field).with('release', 'OPS-R-1', 'redmine_issues', :id, anything).once
-            expect(service.api).to receive(:create_integration_field).with('release', 'OPS-R-1', 'redmine_issues', :url, anything).once
-            expect(service.api).to receive(:create_integration_field).with('release', 'OPS-R-1', 'redmine_issues', :name, anything).once
-            service.receive(:update_release)
-          end
+          it_behaves_like 'sends proper integration fields',\
+            'release', 'OPS-R-1', 'redmine_issues', [:id, :url, :name], 0, :update_release
         end
       end
-
       context 'auth errors' do
         before do
           stub_redmine_projects
           stub_request(:put, "#{service.data.redmine_url}/projects/#{project_id}/versions/#{version_id}.json").
             to_return(status: 401, body: {}, headers: {})
         end
-
         it 'raises AhaService::RemoteError' do
           expect { service.receive(:update_release) }.to raise_error(AhaService::RemoteError)
         end
       end
-
       context 'param errors' do
         before do
           stub_redmine_projects
           stub_request(:put, "#{service.data.redmine_url}/projects/#{project_id}/versions/#{version_id}.json").
             to_return(status: 404, body: {}, headers: {})
         end
-
         it 'raises AhaService::RemoteError' do
           expect { service.receive(:update_release) }.to raise_error(AhaService::RemoteError)
         end
@@ -258,9 +233,9 @@ describe AhaServices::Redmine do
               service.receive(:create_feature)
             end
             it_behaves_like 'sends proper integration fields',\
-              'feature', "PROD-2", "redmine_issues", [:id, :url, :name], :create_feature
+              'feature', "PROD-2", "redmine_issues", [:id, :url, :name], 3, :create_feature
             it_behaves_like 'sends proper integration fields',\
-              'requirement', "PROD-2-1", "redmine_issues", [:id, :url, :name], :create_feature
+              'requirement', "PROD-2-1", "redmine_issues", [:id, :url, :name], 3, :create_feature
           end
           context 'with attachments' do
             context 'proper params' do
@@ -289,8 +264,10 @@ describe AhaServices::Redmine do
                 expect(service.api).to receive(:create_integration_field).exactly(6)
                 service.receive(:create_feature)
               end
-              it_behaves_like 'sends proper integration fields', 'feature', "PROD-2", "redmine_issues", [:id, :url, :name], :create_feature
-              it_behaves_like 'sends proper integration fields', 'requirement', "PROD-2-1", "redmine_issues", [:id, :url, :name], :create_feature
+              it_behaves_like 'sends proper integration fields',\
+                'feature', "PROD-2", "redmine_issues", [:id, :url, :name], 3, :create_feature
+              it_behaves_like 'sends proper integration fields',\
+                'requirement', "PROD-2-1", "redmine_issues", [:id, :url, :name], 3, :create_feature
             end
             context 'unavailable tracker / project / other 404 generating errors' do
               before do
@@ -299,16 +276,13 @@ describe AhaServices::Redmine do
                 stub_request(:post, "#{service.data.redmine_url}/uploads.json").
                   to_return(status: 204, body: raw_fixture('redmine/uploads/create.json'), headers: {})
               end
-
               it "raises error" do
                 expect(service.api).not_to receive(:create_integration_field)
                 expect { service.receive(:create_feature) }.to raise_error(AhaService::RemoteError)
               end
-
             end
           end
         end
-
         context 'with version' do
           before { populate_redmine_projects service }
           context 'available tracker' do
@@ -319,32 +293,15 @@ describe AhaServices::Redmine do
               stub_request(:post, "#{service.data.redmine_url}/uploads.json").
                 to_return(status: 201, body: raw_fixture('redmine/uploads/create.json'), headers: {})
             end
-
-            it 'sends integration messages for issue' do
-              expect(service.api).to receive(:create_integration_field).with('feature', 'PROD-2', 'redmine_issues', :id, anything).once
-              expect(service.api).to receive(:create_integration_field).with('feature', 'PROD-2', 'redmine_issues', :url, anything).once
-              expect(service.api).to receive(:create_integration_field).with('feature', 'PROD-2', 'redmine_issues', :name, anything).once
-              expect(service.api).to receive(:create_integration_field).exactly(6)
-              service.receive(:create_feature)
-            end
-            it 'sends integration messages for release' do
-              expect(service.api).to receive(:create_integration_field).with('release', 'PROD-R-1', 'redmine_issues', :id, anything).once
-              expect(service.api).to receive(:create_integration_field).with('release', 'PROD-R-1', 'redmine_issues', :url, anything).once
-              expect(service.api).to receive(:create_integration_field).with('release', 'PROD-R-1', 'redmine_issues', :name, anything).once
-              expect(service.api).to receive(:create_integration_field).exactly(6)
-              service.receive(:create_feature)
-            end
-            it 'sends integration messages for requirement' do
-              expect(service.api).to receive(:create_integration_field).with('requirement', 'PROD-2-1', 'redmine_issues', :id, anything).once
-              expect(service.api).to receive(:create_integration_field).with('requirement', 'PROD-2-1', 'redmine_issues', :url, anything).once
-              expect(service.api).to receive(:create_integration_field).with('requirement', 'PROD-2-1', 'redmine_issues', :name, anything).once
-              expect(service.api).to receive(:create_integration_field).exactly(6)
-              service.receive(:create_feature)
-            end
+            it_behaves_like 'sends proper integration fields',\
+              'feature', 'PROD-2', 'redmine_issues', [:id, :url, :name], 6, :create_feature
+            it_behaves_like 'sends proper integration fields',\
+              'release', 'PROD-R-1', 'redmine_issues', [:id, :url, :name], 6, :create_feature
+            it_behaves_like 'sends proper integration fields',\
+              'requirement', 'PROD-2-1', 'redmine_issues', [:id, :url, :name], 6, :create_feature
           end
         end
       end
-
       context 'unauthenticated' do
         before do
           stub_request(:post, "#{service.data.redmine_url}/projects/#{project_id}/issues.json").
@@ -366,7 +323,6 @@ describe AhaServices::Redmine do
         stub_request(:put, /#{service.data.redmine_url}\/projects\/#{project_id}\/issues\/\d\.json/).
           to_return(status: 201, body: {}, headers: {})
       end
-
       context 'authenticated' do
         context 'with version' do
           let(:payload) { json_fixture 'update_feature_event.json' }
@@ -377,13 +333,11 @@ describe AhaServices::Redmine do
                 fixed_version_id: '2'
             }}.to_json
           end
-
           it 'sends PUT to redmine with proper params' do
             expect_any_instance_of(RedmineIssueResource).to receive(:http_put).with(anything, params).and_call_original
             service.receive(:update_feature)
           end
         end
-
         context 'w/o version' do
           let(:payload) do
             pload = json_fixture'update_feature_event.json'
@@ -399,14 +353,12 @@ describe AhaServices::Redmine do
                 subject: "Feature with attachments (new)"
             }}.to_json
           end
-
           it 'sends PUT to redmine with proper params' do
             expect_any_instance_of(RedmineIssueResource).to receive(:http_put).with(anything, params).and_call_original
             service.receive(:update_feature)
           end
         end
       end
-
       context 'unauthenticated' do
         let(:payload) { json_fixture 'update_feature_event.json' }
         before do
