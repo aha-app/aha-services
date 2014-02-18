@@ -212,32 +212,66 @@ describe AhaServices::Redmine do
     context 'creation' do
       let(:project_id) { 2 }
       let(:payload) { json_fixture 'create_feature_event.json' }
-
       before do
         stub_aha_api_posts
         populate_redmine_projects service
       end
-
       it "responds to receive(:create_feature)" do
         expect(service).to receive(:receive_create_feature)
         service.receive(:create_feature)
       end
-
       context 'authenticated' do
+        shared_context 'sends proper integration fields' do
+          it 'sends integration messages for issue' do
+            expect(service.api).to receive(:create_integration_field).with('feature', "PROD-2", "redmine_issues", :id, anything).once
+            expect(service.api).to receive(:create_integration_field).with('feature', "PROD-2", "redmine_issues", :url, anything).once
+            expect(service.api).to receive(:create_integration_field).with('feature', "PROD-2", "redmine_issues", :name, anything).once
+            expect(service.api).to receive(:create_integration_field).exactly(3)
+            service.receive(:create_feature)
+          end
+          it 'sends integration messages for requirement' do
+            expect(service.api).to receive(:create_integration_field).with('requirement', "PROD-2-1", "redmine_issues", :id, anything).once
+            expect(service.api).to receive(:create_integration_field).with('requirement', "PROD-2-1", "redmine_issues", :url, anything).once
+            expect(service.api).to receive(:create_integration_field).with('requirement', "PROD-2-1", "redmine_issues", :name, anything).once
+            expect(service.api).to receive(:create_integration_field).exactly(3)
+            service.receive(:create_feature)
+          end
+        end
         context 'w/o version' do
+          let(:issue_create_raw) { raw_fixture 'redmine/issues/create.json' }
+          before do
+            stub_request(:post, "#{service.data.redmine_url}/projects/#{project_id}/issues.json").
+              to_return(status: 201, body: issue_create_raw, headers: {})
+          end
           context 'w/o attachments' do
+            let(:payload) { json_fixture 'create_feature_event_no_attach.json' }
+            it 'posts attachment files for each attachment' do
+              expect(service.api).to receive(:create_integration_field).exactly(6)
+              expect_any_instance_of(RedmineUploadResource).not_to receive(:upload_attachment)
+              expect_any_instance_of(RedmineUploadResource).not_to receive(:http_post)
+              service.receive(:create_feature)
+            end
+            it 'sends attachment params while creating issue' do
+              expect_any_instance_of(RedmineIssueResource).to receive(:http_post) do |url, params|
+                expect(url).to match(/http:\/\/api.my-redmine.org\/projects\/\d*\/issues.json/)
+                issue_json = JSON.parse(params)['issue']
+                expect(issue_json.keys).to include('tracker_id','subject')
+                expect(issue_json.keys).not_to include('uploads')
+                double(status: 201, body: issue_create_raw)
+              end.once
+              expect_any_instance_of(RedmineIssueResource).to receive(:http_post).once.and_call_original
+              expect(service.api).to receive(:create_integration_field).exactly(6)
+              service.receive(:create_feature)
+            end
+            it_behaves_like 'sends proper integration fields'
           end
           context 'with attachments' do
             context 'proper params' do
-              let(:issue_create_raw) { raw_fixture 'redmine/issues/create.json' }
               let(:upload_post_params) { ['http://api.my-redmine.org/uploads.json', {file: anything}] }
               before do
-                stub_request(:post, "#{service.data.redmine_url}/projects/#{project_id}/issues.json").
-                  to_return(status: 201, body: issue_create_raw, headers: {})
                 stub_request(:post, "#{service.data.redmine_url}/uploads.json").
                   to_return(status: 201, body: raw_fixture('redmine/uploads/create.json'), headers: {})
               end
-
               it 'posts attachment files for each attachment' do
                 expect(service.api).to receive(:create_integration_field).exactly(6)
                 expect_any_instance_of(RedmineUploadResource).to receive(:upload_attachment).twice.and_call_original
@@ -258,21 +292,7 @@ describe AhaServices::Redmine do
                 expect(service.api).to receive(:create_integration_field).exactly(6)
                 service.receive(:create_feature)
               end
-              it 'sends integration messages for issue' do
-                expect(service.api).to receive(:create_integration_field).with('feature', "PROD-2", "redmine_issues", :id, anything).once
-                expect(service.api).to receive(:create_integration_field).with('feature', "PROD-2", "redmine_issues", :url, anything).once
-                expect(service.api).to receive(:create_integration_field).with('feature', "PROD-2", "redmine_issues", :name, anything).once
-                expect(service.api).to receive(:create_integration_field).exactly(3)
-                service.receive(:create_feature)
-              end
-              it 'sends integration messages for requirement' do
-                expect(service.api).to receive(:create_integration_field).with('requirement', "PROD-2-1", "redmine_issues", :id, anything).once
-                expect(service.api).to receive(:create_integration_field).with('requirement', "PROD-2-1", "redmine_issues", :url, anything).once
-                expect(service.api).to receive(:create_integration_field).with('requirement', "PROD-2-1", "redmine_issues", :name, anything).once
-                expect(service.api).to receive(:create_integration_field).exactly(3)
-                service.receive(:create_feature)
-              end
-
+              it_behaves_like 'sends proper integration fields'
             end
             context 'unavailable tracker / project / other 404 generating errors' do
               before do
