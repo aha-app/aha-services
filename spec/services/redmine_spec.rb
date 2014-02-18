@@ -16,6 +16,16 @@ describe AhaServices::Redmine do
   let(:projects_index_raw) { raw_fixture('redmine/projects/index.json') }
   let(:projects_index_json) { JSON.parse(projects_index_raw) }
 
+  shared_context 'sends proper integration fields' do |resource, ref_num, service_name, field_names, event|
+    it 'sends integration messages for given field_names' do
+      field_names.each do |field_name|
+        expect(service.api).to receive(:create_integration_field).with(resource, ref_num, service_name, field_name, anything).once
+      end
+      expect(service.api).to receive(:create_integration_field).at_least(field_names.size)
+      service.receive(event)
+    end
+  end
+
   context 'class' do
     let(:title) { 'Redmine' }
     let(:service_name) { 'redmine_issues' }
@@ -221,22 +231,6 @@ describe AhaServices::Redmine do
         service.receive(:create_feature)
       end
       context 'authenticated' do
-        shared_context 'sends proper integration fields' do
-          it 'sends integration messages for issue' do
-            expect(service.api).to receive(:create_integration_field).with('feature', "PROD-2", "redmine_issues", :id, anything).once
-            expect(service.api).to receive(:create_integration_field).with('feature', "PROD-2", "redmine_issues", :url, anything).once
-            expect(service.api).to receive(:create_integration_field).with('feature', "PROD-2", "redmine_issues", :name, anything).once
-            expect(service.api).to receive(:create_integration_field).exactly(3)
-            service.receive(:create_feature)
-          end
-          it 'sends integration messages for requirement' do
-            expect(service.api).to receive(:create_integration_field).with('requirement', "PROD-2-1", "redmine_issues", :id, anything).once
-            expect(service.api).to receive(:create_integration_field).with('requirement', "PROD-2-1", "redmine_issues", :url, anything).once
-            expect(service.api).to receive(:create_integration_field).with('requirement', "PROD-2-1", "redmine_issues", :name, anything).once
-            expect(service.api).to receive(:create_integration_field).exactly(3)
-            service.receive(:create_feature)
-          end
-        end
         context 'w/o version' do
           let(:issue_create_raw) { raw_fixture 'redmine/issues/create.json' }
           before do
@@ -263,7 +257,10 @@ describe AhaServices::Redmine do
               expect(service.api).to receive(:create_integration_field).exactly(6)
               service.receive(:create_feature)
             end
-            it_behaves_like 'sends proper integration fields'
+            it_behaves_like 'sends proper integration fields',\
+              'feature', "PROD-2", "redmine_issues", [:id, :url, :name], :create_feature
+            it_behaves_like 'sends proper integration fields',\
+              'requirement', "PROD-2-1", "redmine_issues", [:id, :url, :name], :create_feature
           end
           context 'with attachments' do
             context 'proper params' do
@@ -292,7 +289,8 @@ describe AhaServices::Redmine do
                 expect(service.api).to receive(:create_integration_field).exactly(6)
                 service.receive(:create_feature)
               end
-              it_behaves_like 'sends proper integration fields'
+              it_behaves_like 'sends proper integration fields', 'feature', "PROD-2", "redmine_issues", [:id, :url, :name], :create_feature
+              it_behaves_like 'sends proper integration fields', 'requirement', "PROD-2-1", "redmine_issues", [:id, :url, :name], :create_feature
             end
             context 'unavailable tracker / project / other 404 generating errors' do
               before do
