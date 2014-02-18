@@ -225,18 +225,96 @@ describe AhaServices::Jira do
     end
   end
 
+  describe "#find_or_attach_jira_version" do
+    context "when an existing version is integrated" do
+
+    end
+
+    context "when a version is not integrated or doesn't exist" do
+
+    end
+  end
+
+  describe "#update_or_attach_jira_version" do
+    context "when a version is integrated" do
+
+    end
+
+    context "when a version is not integrated" do
+
+    end
+  end
+
+  describe "#existing_version_integrated_with" do
+    context "when a version is integrated" do
+
+    end
+
+    context "when a version is not integrated" do
+
+    end
+  end
+
+  describe "#attach_version_to" do
+    context "when a version with the same name exists in Jira" do
+
+    end
+
+    context "when there is no version with such name in Jira" do
+
+    end
+  end
+
+  describe "#update_requirements" do
+    context "when the feature has requirements" do
+
+    end
+
+    context "when the feature doesn't have requirements" do
+
+    end
+  end
+
+  describe "#get_existing_issue_info" do
+    context "when the resource has needed integration fields" do
+
+    end
+
+    context "when the resource doesn't have an 'id' integration field" do
+
+    end
+
+    context "when the resource doesn't have a 'key' integration field" do
+
+    end
+  end
+
+  describe "#update_or_attach_jira_issue" do
+    context "when issue info exists" do
+
+    end
+
+    context "when issue info doesn't exist" do
+
+    end
+  end
+
+  describe "#attach_issue_to" do
+
+  end
+
   describe "#create_issue_for" do
     let(:resource) do
       Hashie::Mash.new(name: 'Resource name',
                        description: { body: 'Resource body' })
     end
 
-    it "calls issue_resource.create and create_links_for_issue,\
+    it "calls issue_resource.create and create_link_for_issue,\
         and then returns the newly created issue" do
       service.stub(:issue_type_by_parent)
         .and_return(Hashie::Mash.new(name: 'Story', subtask: false))
       issue_resource.should_receive(:create).and_return('New issue')
-      service.should_receive(:create_links_for_issue).and_return(nil)
+      service.should_receive(:create_link_for_issue).and_return(nil)
       expect(service.send(:create_issue_for, resource, nil, nil, nil))
         .to eq 'New issue'
     end
@@ -258,6 +336,36 @@ describe AhaServices::Jira do
       expect(service.send(:update_issue, issue_info, resource, nil, nil, nil))
         .to eq issue_info
     end
+  end
+
+  describe "#create_link_for_issue" do
+    context "when the issue has a parent" do
+      context "when the issue is a subtask" do
+
+      end
+
+      context "when the issue is not a subtask" do
+        context "when the issue is an Epic" do
+
+        end
+
+        context "when the issue is a Story" do
+
+        end
+
+        context "when the issue is neither an Epic nor a Story" do
+
+        end
+      end
+    end
+
+    context "when the issue doesn't have a parent" do
+
+    end
+  end
+
+  describe "#update_attachments" do
+
   end
 
   describe "#version_fields" do
@@ -507,5 +615,4 @@ describe AhaServices::Jira do
       end
     end
   end
-
 end

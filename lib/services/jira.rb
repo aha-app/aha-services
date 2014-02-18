@@ -219,7 +219,7 @@ protected
     
     new_issue = issue_resource.create(issue)
 
-    create_links_for_issue(new_issue, issue_type, parent)
+    create_link_for_issue(new_issue, issue_type, parent)
 
     new_issue
   end
@@ -249,7 +249,7 @@ protected
     issue_info
   end
 
-  def create_links_for_issue(issue, issue_type, parent)
+  def create_link_for_issue(issue, issue_type, parent)
     if parent and !issue_type.subtask and !["Epic", "Story"].include?(issue_type.name)
       link = {
         type: {
@@ -383,7 +383,7 @@ protected
     issue_type_id = parent ? (data.requirement_issue_type || data.feature_issue_type) : data.feature_issue_type
     issue_type_by_id(issue_type_id)
   end
-  
+
   def issue_type_by_id(id)
     raise AhaService::RemoteError, "Integration has not been configured" if @meta_data.projects.nil?
     project = @meta_data.projects.find {|project| project['key'] == data.project }
