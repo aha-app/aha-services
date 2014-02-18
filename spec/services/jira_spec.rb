@@ -313,6 +313,10 @@ describe AhaServices::Jira do
     end
   end
 
+  describe "#create_issue_for_initiative" do
+
+  end
+
   describe "#create_issue_for" do
     let(:resource) do
       Hashie::Mash.new(name: 'Resource name',

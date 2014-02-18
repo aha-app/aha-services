@@ -172,17 +172,15 @@ protected
   end
   
   def create_issue_for_initiative(initiative)
-    issue = {
+    issue = Hashie::Mash.new(
       fields: {
-        :summary => resource_name(initiative),
-        :description => convert_html(initiative.description.body),
-        :issuetype => {name: "Epic"}
+        summary: resource_name(initiative),
+        description: convert_html(initiative.description.body),
+        issuetype: { name: "Epic" },
+        meta_data.epic_name_field => initiative.name
       }
-    }
-    if @meta_data.aha_reference_field
-      issue[:fields][@meta_data.aha_reference_field] = initiative.url
-    end
-    issue[:fields][@meta_data.epic_name_field] = initiative.name
+    )
+    issue.fields.merge!(aha_reference_fields(initiative))
 
     new_issue = issue_resource.create(issue)
     upload_attachments(initiative.description.attachments, new_issue.id)
