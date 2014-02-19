@@ -189,10 +189,12 @@ describe AhaServices::Jira do
   before do
     service.stub(:issue_resource).and_return(double)
     service.stub(:field_resource).and_return(double)
+    service.stub(:version_resource).and_return(double)
   end
 
   let(:issue_resource) { service.send(:issue_resource) }
   let(:field_resource) { service.send(:field_resource) }
+  let(:version_resource) { service.send(:version_resource) }
 
   describe "#new_or_existing_aha_reference_field" do
     context "when a reference field exists" do
@@ -272,12 +274,25 @@ describe AhaServices::Jira do
   end
 
   describe "#existing_version_integrated_with" do
+    let(:release) { Hashie::Mash.new(name: 'First release') }
+    let(:version_id) { 1001 }
     context "when a version is integrated" do
-
+      it "searches the version by id and returns it" do
+        found_version = { name: 'Existing version' }
+        service.stub(:get_integration_field).and_return(version_id)
+        version_resource.should_receive(:find_by_id).with(version_id)
+          .and_return(found_version)
+        expect(service.send(:existing_version_integrated_with, release))
+          .to eq found_version
+      end
     end
 
     context "when a version is not integrated" do
-
+      it "does nothing" do
+        service.stub(:get_integration_field).and_return(nil)
+        expect(service.send(:existing_version_integrated_with, release))
+          .to be_nil
+      end
     end
   end
 
