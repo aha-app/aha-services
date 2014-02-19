@@ -191,12 +191,14 @@ describe AhaServices::Jira do
     service.stub(:field_resource).and_return(double)
     service.stub(:version_resource).and_return(double)
     service.stub(:issue_link_resource).and_return(double)
+    service.stub(:attachment_resource).and_return(double)
   end
 
   let(:issue_resource) { service.send(:issue_resource) }
   let(:field_resource) { service.send(:field_resource) }
   let(:version_resource) { service.send(:version_resource) }
   let(:issue_link_resource) { service.send(:issue_link_resource) }
+  let(:attachment_resource) { service.send(:attachment_resource) }
 
   describe "#new_or_existing_aha_reference_field" do
     context "when a reference field exists" do
@@ -537,7 +539,46 @@ describe AhaServices::Jira do
   end
 
   describe "#update_attachments" do
+    it "uploads new attachments from the combined resource.attachments\
+        and resource.description.attachments array" do
+      issue_id = 1001
+      resource = Hashie::Mash.new(attachments: [1, 2, 3],
+                                  description: { attachments: [3, 4] })
+      service.should_receive(:new_aha_attachments).with([1, 2, 3, 4], issue_id)
+      service.should_receive(:upload_attachments)
+      service.send(:update_attachments, issue_id, resource)
+    end
+  end
 
+  describe "#new_aha_attachments" do
+    let(:issue_id) { 1001 }
+    let(:result) { service.send(:new_aha_attachments, aha_attachments, issue_id) }
+    before do
+      service.stub(:attachments_match) { |arg1, arg2| arg1 == arg2 }
+    end
+    context "when all attachments match" do
+      let(:aha_attachments) { [1, 2, 3] }
+      it "returns an empty array" do
+        attachment_resource.stub(:all_for_issue).and_return([1, 2, 3])
+        expect(result).to eq []
+      end
+    end
+
+    context "when there are new attachments in Jira" do
+      let(:aha_attachments) { [1, 2, 3]}
+      it "returns an empty array" do
+        attachment_resource.stub(:all_for_issue).and_return([1, 2, 3, 4, 5])
+        expect(result).to eq []
+      end
+    end
+
+    context "when there are new attachments in Aha" do
+      let(:aha_attachments) { [1, 2, 3, 4, 5] }
+      it "returns the array with new attachments" do
+        attachment_resource.stub(:all_for_issue).and_return([1, 2, 3])
+        expect(result).to eq [4, 5]
+      end
+    end
   end
 
   describe "#version_fields" do

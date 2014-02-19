@@ -286,19 +286,26 @@ protected
   end
   
   def update_attachments(issue_id, resource)
-    # New list of attachments.
-    attachments = resource.attachments.dup | resource.description.attachments.dup
-    
-    # Get the current attachments.
-    attachment_resource.all_for_issue(issue_id).each do |attachment|
+    aha_attachments = resource.attachments.dup | resource.description.attachments.dup
+
+    # Create any attachments that didn't already exist.
+    upload_attachments(new_aha_attachments(aha_attachments, issue_id), issue_id)
+  end
+
+  def new_aha_attachments(aha_attachments, issue_id)
+    attachment_resource.all_for_issue(issue_id).each do |jira_attachment|
       # Remove any attachments that match.
-      attachments.reject! do |a|
-        a.file_name == attachment.filename and a.file_size.to_i == attachment[:size].to_i
+      aha_attachments.reject! do |aha_attachment|
+        attachments_match(aha_attachment, jira_attachment)
       end
     end
-    
-    # Create any attachments that didn't already exist.
-    upload_attachments(attachments, issue_id)
+
+    aha_attachments
+  end
+
+  def attachments_match(aha_attachment, jira_attachment)
+    aha_attachment.file_name == jira_attachment.filename and
+      aha_attachment.file_size.to_i == jira_attachment[:size].to_i
   end
 
   def upload_attachments(attachments, issue_id)
