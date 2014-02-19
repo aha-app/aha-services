@@ -59,10 +59,6 @@ describe AhaServices::Redmine do
 
   context 'installation' do
     let(:service) { described_class.new redmine_url: 'http://api.my-redmine.org', api_key: '123456' }
-    it "responds to receive(:installed)" do
-      expect(service).to receive(:receive_installed)
-      service.receive(:installed)
-    end
     context 'fresh installation' do
       before { stub_redmine_projects }
       it 'installs projects' do
@@ -125,10 +121,6 @@ describe AhaServices::Redmine do
       let(:new_version_name) { 'New Awesome Version Name' }
       let(:payload) { json_fixture 'update_release_event.json' }
       before { stub_redmine_projects }
-      it 'responds to receive(:update_release)' do
-        expect(service).to receive(:receive_update_release)
-        service.receive(:update_release)
-      end
       context 'with proper params' do
         before do
           populate_redmine_projects service
@@ -169,10 +161,6 @@ describe AhaServices::Redmine do
       before do
         stub_aha_api_posts
         populate_redmine_projects service
-      end
-      it "responds to receive(:create_feature)" do
-        expect(service).to receive(:receive_create_feature)
-        service.receive(:create_feature)
       end
       context 'authenticated' do
         context 'w/o version' do
