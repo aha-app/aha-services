@@ -356,16 +356,30 @@ describe AhaServices::Jira do
   end
 
   describe "#get_existing_issue_info" do
-    context "when the resource has needed integration fields" do
-
+    let(:resource) { Hashie::Mash.new(name: 'My resource') }
+    let(:result) { service.send(:get_existing_issue_info, resource) }
+    context "when the resource has the needed integration fields" do
+      it "returns a new hashie" do
+        service.stub(:get_integration_field).with(nil, 'id').and_return('id')
+        service.stub(:get_integration_field).with(nil, 'key').and_return('key')
+        expect(result).to eq Hashie::Mash.new(id: 'id', key: 'key')
+      end
     end
 
     context "when the resource doesn't have an 'id' integration field" do
-
+      it "returns nil" do
+        service.stub(:get_integration_field).with(nil, 'id').and_return(nil)
+        service.stub(:get_integration_field).with(nil, 'key').and_return('key')
+        expect(result).to be_nil
+      end
     end
 
     context "when the resource doesn't have a 'key' integration field" do
-
+      it "returns nil" do
+        service.stub(:get_integration_field).with(nil, 'id').and_return('id')
+        service.stub(:get_integration_field).with(nil, 'key').and_return(nil)
+        expect(result).to be_nil
+      end
     end
   end
 
