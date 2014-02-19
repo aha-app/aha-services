@@ -404,7 +404,15 @@ describe AhaServices::Jira do
   end
 
   describe "#attach_issue_to" do
-
+    it "executes a sequence of methods and return the new issue" do
+      resource = Hashie::Mash.new(description: {})
+      new_issue = Hashie::Mash.new(id: 1001)
+      service.should_receive(:create_issue_for).and_return(new_issue)
+      service.should_receive(:integrate_resource_with_jira_issue)
+      service.should_receive(:upload_attachments).twice
+      expect(service.send(:attach_issue_to, resource, nil, nil))
+        .to eq new_issue
+    end
   end
 
   describe "#epic_key_for_initiative" do
