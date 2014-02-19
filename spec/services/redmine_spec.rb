@@ -18,7 +18,7 @@ describe AhaServices::Redmine do
   let(:project_id) { 2 }
   let(:version_id) { 2 }
 
-  shared_context 'sends proper integration fields' do |resource, ref_num, service_name, field_names, other_calls|
+  shared_context 'integration field sender' do |resource, ref_num, service_name, field_names, other_calls|
     it 'sends integration messages for given field_names' do
       field_names.each do |field_name|
         expect(service.api).to receive(:create_integration_field).with(resource, ref_num, service_name, field_name, anything).once
@@ -105,7 +105,7 @@ describe AhaServices::Redmine do
       context 'with proper params' do
         before { stub_redmine_versions method: :post, status: 201, body: raw_fixture('redmine/versions/create.json') }
         after {service.receive(:create_release)}
-        it_behaves_like 'sends proper integration fields',\
+        it_behaves_like 'integration field sender',\
           'release', 'OPS-R-1', 'redmine_issues', [:id, :url, :name], 0
       end
       context 'auth errors' do
@@ -142,7 +142,7 @@ describe AhaServices::Redmine do
             expect(service.api).to receive(:create_integration_field).exactly(3)
             expect_any_instance_of(RedmineVersionResource).to receive(:http_put).and_call_original
           end
-          it_behaves_like 'sends proper integration fields',\
+          it_behaves_like 'integration field sender',\
             'release', 'OPS-R-1', 'redmine_issues', [:id, :url, :name], 0
         end
       end
@@ -200,9 +200,9 @@ describe AhaServices::Redmine do
               expect_any_instance_of(RedmineIssueResource).to receive(:http_post).once.and_call_original
               expect(service.api).to receive(:create_integration_field).exactly(6)
             end
-            it_behaves_like 'sends proper integration fields',\
+            it_behaves_like 'integration field sender',\
               'feature', "PROD-2", "redmine_issues", [:id, :url, :name], 3, :create_feature
-            it_behaves_like 'sends proper integration fields',\
+            it_behaves_like 'integration field sender',\
               'requirement', "PROD-2-1", "redmine_issues", [:id, :url, :name], 3, :create_feature
           end
           context 'with attachments' do
@@ -231,9 +231,9 @@ describe AhaServices::Redmine do
                 expect_any_instance_of(RedmineIssueResource).to receive(:http_post).once.and_call_original
                 expect(service.api).to receive(:create_integration_field).exactly(6)
               end
-              it_behaves_like 'sends proper integration fields',\
+              it_behaves_like 'integration field sender',\
                 'feature', "PROD-2", "redmine_issues", [:id, :url, :name], 3, :create_feature
-              it_behaves_like 'sends proper integration fields',\
+              it_behaves_like 'integration field sender',\
                 'requirement', "PROD-2-1", "redmine_issues", [:id, :url, :name], 3, :create_feature
             end
             context 'unavailable tracker / project / other 404 generating errors' do
@@ -258,11 +258,11 @@ describe AhaServices::Redmine do
                 to_return(status: 201, body: raw_fixture('redmine/uploads/create.json'), headers: {})
             end
             after { service.receive(:create_feature) }
-            it_behaves_like 'sends proper integration fields',\
+            it_behaves_like 'integration field sender',\
               'feature', 'PROD-2', 'redmine_issues', [:id, :url, :name], 6, :create_feature
-            it_behaves_like 'sends proper integration fields',\
+            it_behaves_like 'integration field sender',\
               'release', 'PROD-R-1', 'redmine_issues', [:id, :url, :name], 6, :create_feature
-            it_behaves_like 'sends proper integration fields',\
+            it_behaves_like 'integration field sender',\
               'requirement', 'PROD-2-1', 'redmine_issues', [:id, :url, :name], 6, :create_feature
           end
         end
