@@ -15,6 +15,8 @@ describe AhaServices::Redmine do
   end
   let(:projects_index_raw) { raw_fixture('redmine/projects/index.json') }
   let(:projects_index_json) { JSON.parse(projects_index_raw) }
+  let(:project_id) { 2 }
+  let(:version_id) { 2 }
 
   shared_context 'sends proper integration fields' do |resource, ref_num, service_name, field_names, other_calls|
     it 'sends integration messages for given field_names' do
@@ -22,6 +24,12 @@ describe AhaServices::Redmine do
         expect(service.api).to receive(:create_integration_field).with(resource, ref_num, service_name, field_name, anything).once
       end
       expect(service.api).to receive(:create_integration_field).exactly(other_calls)
+    end
+  end
+
+  shared_context 'RemoteError raiser' do |event|
+    it "raises AhaService::RemoteError for #{event} event." do
+      expect { service.receive(event) }.to raise_error(AhaService::RemoteError)
     end
   end
 
@@ -85,15 +93,12 @@ describe AhaServices::Redmine do
         stub_request(:get, "#{service.data.redmine_url}/projects.json").
           to_return(status: 404, body: {}, headers: {})
       end
-      it 'raises AhaService::RemoteError' do
-        expect { service.receive(:installed) }.to raise_error(AhaService::RemoteError)
-      end
+      it_behaves_like 'RemoteError raiser', :installed
     end
   end
 
   context 'release' do
     context 'creation' do
-      let(:project_id) { projects_index_json['projects'].first['id'] }
       let(:version_name) { 'The Final Milestone' }
       let(:payload) { json_fixture 'create_release_event.json' }
       before { stub_aha_api_posts; stub_redmine_projects }
@@ -105,25 +110,18 @@ describe AhaServices::Redmine do
       end
       context 'auth errors' do
         before { stub_redmine_versions method: :post, status: 401, body: {} }
-        it 'raises AhaService::RemoteError' do
-          expect { service.receive(:create_release) }.to raise_error(AhaService::RemoteError)
-        end
+        it_behaves_like 'RemoteError raiser', :create_release
       end
       context 'param errors' do
         before do
           stub_request(:post, "#{service.data.redmine_url}/projects/#{project_id}/versions.json").
             to_return(status: 404, body: {}, headers: {})
         end
-        it 'raises AhaService::RemoteError' do
-          expect { service.receive(:create_release) }.to raise_error(AhaService::RemoteError)
-        end
+        it_behaves_like 'RemoteError raiser', :create_release
       end
     end
 
     context 'update' do
-      let(:project_id) { 2 }
-      let(:version_id) { 2 }
-      let(:project) { service.send :find_project, project_id }
       let(:new_version_name) { 'New Awesome Version Name' }
       let(:payload) { json_fixture 'update_release_event.json' }
       before { stub_redmine_projects }
@@ -153,25 +151,20 @@ describe AhaServices::Redmine do
           stub_request(:put, "#{service.data.redmine_url}/projects/#{project_id}/versions/#{version_id}.json").
             to_return(status: 401, body: {}, headers: {})
         end
-        it 'raises AhaService::RemoteError' do
-          expect { service.receive(:update_release) }.to raise_error(AhaService::RemoteError)
-        end
+        it_behaves_like 'RemoteError raiser', :update_release
       end
       context 'param errors' do
         before do
           stub_request(:put, "#{service.data.redmine_url}/projects/#{project_id}/versions/#{version_id}.json").
             to_return(status: 404, body: {}, headers: {})
         end
-        it 'raises AhaService::RemoteError' do
-          expect { service.receive(:update_release) }.to raise_error(AhaService::RemoteError)
-        end
+        it_behaves_like 'RemoteError raiser', :update_release
       end
     end
   end
 
   context 'feature' do
     context 'creation' do
-      let(:project_id) { 2 }
       let(:payload) { json_fixture 'create_feature_event.json' }
       before do
         stub_aha_api_posts
@@ -250,10 +243,7 @@ describe AhaServices::Redmine do
                 stub_request(:post, "#{service.data.redmine_url}/uploads.json").
                   to_return(status: 204, body: raw_fixture('redmine/uploads/create.json'), headers: {})
               end
-              it "raises error" do
-                expect(service.api).not_to receive(:create_integration_field)
-                expect { service.receive(:create_feature) }.to raise_error(AhaService::RemoteError)
-              end
+              it_behaves_like 'RemoteError raiser', :create_feature
             end
           end
         end
@@ -284,14 +274,11 @@ describe AhaServices::Redmine do
           stub_request(:post, "#{service.data.redmine_url}/uploads.json").
             to_return(status: 401, body: raw_fixture('redmine/uploads/create.json'), headers: {})
         end
-        it 'rasies error' do
-          expect { service.receive(:create_feature) }.to raise_error(AhaService::RemoteError)
-        end
+        it_behaves_like 'RemoteError raiser', :create_feature
       end
     end
 
     context 'update' do
-      let(:project_id) { 2 }
       before do
         stub_aha_api_posts
         populate_redmine_projects service
@@ -340,9 +327,7 @@ describe AhaServices::Redmine do
           stub_request(:put, /#{service.data.redmine_url}\/projects\/#{project_id}\/issues\/\d\.json/).
             to_return(status: 401, body: {}, headers: {})
         end
-        it 'rasies error' do
-          expect { service.receive(:update_feature) }.to raise_error(AhaService::RemoteError)
-        end
+        it_behaves_like 'RemoteError raiser', :update_feature
       end
     end
   end
