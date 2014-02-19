@@ -416,12 +416,23 @@ describe AhaServices::Jira do
   end
 
   describe "#epic_key_for_initiative" do
+    let(:initiative) { Hashie::Mash.new }
+    let(:result) { service.send(:epic_key_for_initiative, initiative) }
     context "when an integration exists for the initiative" do
-
+      it "returns the integrated issue's key" do
+        service.stub(:get_integration_field).and_return('some_key')
+        expect(result).to eq 'some_key'
+      end
     end
 
     context "when an integration doesn't exist for the initiative" do
-
+      it "creates a new issue and returns its key" do
+        created_issue = Hashie::Mash.new(key: 'new_key')
+        service.stub(:get_integration_field).and_return(nil)
+        service.should_receive(:create_issue_for_initiative)
+          .and_return(created_issue)
+        expect(result).to eq 'new_key'
+      end
     end
   end
 
