@@ -251,12 +251,23 @@ describe AhaServices::Jira do
   end
 
   describe "#update_or_attach_jira_version" do
+    let(:release) { Hashie::Mash.new(name: 'First release') }
+    let(:version_id) { 1001 }
     context "when a version is integrated" do
-
+      it "updates the version" do
+        service.stub(:get_integration_field).and_return(version_id)
+        service.should_receive(:update_version)
+          .with(version_id, release)
+        service.send(:update_or_attach_jira_version, release)
+      end
     end
 
     context "when a version is not integrated" do
-
+      it "attaches a version to the release" do
+        service.stub(:get_integration_field).and_return(nil)
+        service.should_receive(:attach_version_to).with(release)
+        service.send(:update_or_attach_jira_version, release)
+      end
     end
   end
 
