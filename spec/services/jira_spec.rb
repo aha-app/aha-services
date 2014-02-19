@@ -437,7 +437,18 @@ describe AhaServices::Jira do
   end
 
   describe "#create_issue_for_initiative" do
-
+    let(:initiative) do
+      Hashie::Mash.new(name: 'Initiative name',
+                       description: { body: 'Initiative body' })
+    end
+    let(:new_issue) { Hashie::Mash.new(id: 1001) }
+    it "performs certain operations and returns the new issue" do
+      issue_resource.should_receive(:create).and_return(new_issue)
+      service.should_receive(:upload_attachments)
+      service.should_receive(:integrate_initiative_with_jira_issue)
+      expect(service.send(:create_issue_for_initiative, initiative))
+        .to eq new_issue
+    end
   end
 
   describe "#create_issue_for" do
