@@ -190,11 +190,13 @@ describe AhaServices::Jira do
     service.stub(:issue_resource).and_return(double)
     service.stub(:field_resource).and_return(double)
     service.stub(:version_resource).and_return(double)
+    service.stub(:issue_link_resource).and_return(double)
   end
 
   let(:issue_resource) { service.send(:issue_resource) }
   let(:field_resource) { service.send(:field_resource) }
   let(:version_resource) { service.send(:version_resource) }
+  let(:issue_link_resource) { service.send(:issue_link_resource) }
 
   describe "#new_or_existing_aha_reference_field" do
     context "when a reference field exists" do
@@ -487,28 +489,50 @@ describe AhaServices::Jira do
   end
 
   describe "#create_link_for_issue" do
-    context "when the issue has a parent" do
-      context "when the issue is a subtask" do
+    shared_examples "empty create_link_for_issue method" do
+      it "does not call issue_link_resource.create" do
+        issue_link_resource.should_not_receive(:create)
+        result
+      end
+    end
 
+    let(:issue) { Hashie::Mash.new }
+    let(:result) do
+      service.send(:create_link_for_issue, issue, issue_type, parent)
+    end
+    context "when the issue has a parent" do
+      let(:parent) { Hashie::Mash.new }
+      context "when the issue is a subtask" do
+        let(:issue_type) { Hashie::Mash.new(subtask: true, name: 'Issue') }
+        it_behaves_like "empty create_link_for_issue method"
       end
 
       context "when the issue is not a subtask" do
+        let(:is_subtask) { false }
         context "when the issue is an Epic" do
-
+          let(:issue_type) { Hashie::Mash.new(subtask: is_subtask, name: 'Epic') }
+          it_behaves_like "empty create_link_for_issue method"
         end
 
         context "when the issue is a Story" do
-
+          let(:issue_type) { Hashie::Mash.new(subtask: is_subtask, name: 'Story') }
+          it_behaves_like "empty create_link_for_issue method"
         end
 
         context "when the issue is neither an Epic nor a Story" do
-
+          let(:issue_type) { Hashie::Mash.new(subtask: is_subtask, name: 'Issue') }
+          it "calls issue_link_resource.create" do
+            issue_link_resource.should_receive(:create)
+            result
+          end
         end
       end
     end
 
     context "when the issue doesn't have a parent" do
-
+      let(:parent) { nil }
+      let(:issue_type) { Hashie::Mash.new(subtask: false, name: 'Issue')}
+      it_behaves_like "empty create_link_for_issue method"
     end
   end
 
