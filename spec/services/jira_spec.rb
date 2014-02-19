@@ -385,11 +385,21 @@ describe AhaServices::Jira do
 
   describe "#update_or_attach_jira_issue" do
     context "when issue info exists" do
-
+      it "calls update_issue" do
+        service.stub(:get_existing_issue_info)
+          .and_return(:existing_issue)
+        service.should_receive(:update_issue)
+        service.send(:update_or_attach_jira_issue, nil, nil, nil)
+      end
     end
 
     context "when issue info doesn't exist" do
-
+      it "calls attach_issue_to" do
+        service.stub(:get_existing_issue_info)
+          .and_return(nil)
+        service.should_receive(:attach_issue_to)
+        service.send(:update_or_attach_jira_issue, nil, nil, nil)
+      end
     end
   end
 
