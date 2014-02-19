@@ -244,9 +244,6 @@ protected
   end
 
   def update_issue(issue_info, resource, initiative, version, parent)
-    issue_type_id = parent ? (data.requirement_issue_type || data.feature_issue_type) : data.feature_issue_type
-    issue_type = issue_type(issue_type_id)
-    
     issue = {
       fields: {
         description: convert_html(resource.description.body),
@@ -328,6 +325,7 @@ protected
         remainingEstimate: resource.remaining_estimate
       }
     elsif resource.work_units == 20 and @meta_data.story_points_field # Units are points.
+      logger.debug("ISSUE TYPE: #{issue_type.inspect} #{issue_type['name']}")
       # We can only do this if the issue is a story.
       if issue_type['name'] == "Story"
         issue[:fields][@meta_data.story_points_field] = resource.remaining_estimate

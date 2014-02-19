@@ -5,34 +5,35 @@ class JiraProjectResource < JiraResource
     projects = []
     process_response(response, 200) do |meta|
       meta['projects'].each do |project|
-        issue_types = []
+        issue_types = project['issuetypes'].collect do |issue_type|
+          {id: issue_type['id'], name: issue_type['name'], 
+            subtask: issue_type['subtask']}
+        end
         
         # Get the statuses.
         status_response = http_get "#{api_url}/project/#{project['key']}/statuses"
         if status_response.status == 404
           # In Jira 5.0 the status is not associated with each issue type.
+          statuses = []
           status_response = http_get "#{api_url}/status"
           process_response(status_response, 200) do |status_meta|      
-            statuses = []
             status_meta.each do |status|
               statuses << {id: status['id'], name: status['name']}
             end
-
-            project['issuetypes'].each do |issue_type|
-              issue_types << {id: issue_type['id'], name: issue_type['name'], 
-                subtask: issue_type['subtask'], statuses: statuses}
-            end
+          end
+          issue_types.each do |issue_type|
+            issue_type[:statuses] = statuses
           end
         else
           process_response(status_response, 200) do |status_meta|      
-            status_meta.each do |issue_type|
+            status_meta.each do |status_issue_type|
               statuses = []
-              issue_type['statuses'].each do |status|
+              status_issue_type['statuses'].each do |status|
                 statuses << {id: status['id'], name: status['name']}
               end
-            
-              issue_types << {id: issue_type['id'], name: issue_type['name'], 
-                subtask: issue_type['subtask'], statuses: statuses}
+              
+              issue_type = issue_types.find {|i| i[:id] == status_issue_type['id']}
+              issue_type[:statuses] = statuses if issue_type
             end
           end
         end
