@@ -226,12 +226,27 @@ describe AhaServices::Jira do
   end
 
   describe "#find_or_attach_jira_version" do
+    let(:release) { { name: 'First release' } }
     context "when an existing version is integrated" do
-
+      let(:version) { { name: 'Existing version' } }
+      it "returns this version" do
+        service.stub(:existing_version_integrated_with)
+          .and_return(version)
+        expect(service.send(:find_or_attach_jira_version, release))
+          .to eq version
+      end
     end
 
     context "when a version is not integrated or doesn't exist" do
-
+      let(:version) { { name: 'Newly attached version' } }
+      it "calls attach_version_to with release and returns its result" do
+        service.stub(:existing_version_integrated_with)
+          .and_return(nil)
+        service.should_receive(:attach_version_to).with(release)
+          .and_return(version)
+        expect(service.send(:find_or_attach_jira_version, release))
+          .to eq version
+      end
     end
   end
 
