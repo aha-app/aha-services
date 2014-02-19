@@ -297,12 +297,38 @@ describe AhaServices::Jira do
   end
 
   describe "#attach_version_to" do
+    let(:version) { { name: 'Some version' } }
+    let(:release) { Hashie::Mash.new(name: 'Some release') }
+    before do
+      service.stub(:integrate_release_with_jira_version)
+    end
+    shared_examples "after searching for existing version" do
+      it "integrates the release with the version and returns it" do
+        service.should_receive(:integrate_release_with_jira_version)
+          .with(release, version)
+        expect(service.send(:attach_version_to, release))
+          .to eq version
+      end
+    end
     context "when a version with the same name exists in Jira" do
+      before do
+        version_resource.stub(:find_by_name).and_return(version)
+      end
 
+      it_behaves_like "after searching for existing version"
     end
 
     context "when there is no version with such name in Jira" do
+      before do
+        version_resource.stub(:find_by_name).and_return(nil)
+        service.stub(:create_version_for).and_return(version)
+      end
+      it "creates a new version for the release" do
+        service.should_receive(:create_version_for)
+        service.send(:attach_version_to, release)
+      end
 
+      it_behaves_like "after searching for existing version"
     end
   end
 
