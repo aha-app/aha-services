@@ -24,15 +24,15 @@ class AhaServices::Jira < AhaService
   callback_url description: "URL to add to the webhooks section of JIRA. Only one hook is necessary, even if multiple products are integrated with JIRA."
   
   def receive_installed
-    @meta_data.projects = project_resource.all
-    
-    @meta_data.resolutions = resolution_resource.all
-
     # Get custom field mappings.
     @meta_data.epic_name_field = field_resource.epic_name_field
     @meta_data.epic_link_field = field_resource.epic_link_field
     @meta_data.story_points_field = field_resource.story_points_field
     @meta_data.aha_reference_field = field_resource.aha_reference_field
+
+    @meta_data.projects = project_resource.all(@meta_data)
+    
+    @meta_data.resolutions = resolution_resource.all
     
     # Create custom field for Aha! reference.
     unless @meta_data.aha_reference_field
@@ -170,14 +170,16 @@ protected
     if epic_key = get_integration_field(initiative.integration_fields, 'key')
       epic_key
     else
+      return unless issue_type = find_epic_issue_type
+      
       issue = {
         fields: {
           :summary => initiative.name,
           :description => convert_html(initiative.description.body),
-          :issuetype => {name: "Epic"}
+          :issuetype => {id: issue_type.id}
         }
       }
-      if @meta_data.aha_reference_field
+      if issue_type.has_field_aha_reference
         issue[:fields][@meta_data.aha_reference_field] = initiative.url
       end
       issue[:fields][@meta_data.epic_name_field] = initiative.name
@@ -209,23 +211,23 @@ protected
         issuetype: {id: issue_type_id}
       }
     }
-    if version
+    if version and issue_type.has_field_fix_versions
       issue[:fields][:fixVersions] = [{id: version['id']}]
     end
-    if data.send_tags == "1" and resource.tags
+    if data.send_tags == "1" and resource.tags and issue_type.has_field_labels
       issue[:fields][:labels] = resource.tags
     end
       
-    if @meta_data.aha_reference_field
+    if @meta_data.aha_reference_field and issue_type.has_field_aha_reference
       issue[:fields][@meta_data.aha_reference_field] = resource.url
     end
-    populate_relationship_fields(issue, parent, initiative)
-    populate_time_tracking(issue, resource, parent)
+    populate_relationship_fields(issue, parent, initiative, issue_type)
+    populate_time_tracking(issue, resource, issue_type)
     
     new_issue = issue_resource.create(issue)
 
     # Create links.
-    if parent and !issue_type['subtask'] and !["Epic", "Story"].include?(issue_type['name'])
+    if parent and !issue_type.subtask and !(issue_type.has_field_epic_link || issue_type.has_field_epic_name)
       link = {
         type: {
           name: "Relates"
@@ -244,23 +246,26 @@ protected
   end
 
   def update_issue(issue_info, resource, initiative, version, parent)
+    issue_type_id = parent ? (data.requirement_issue_type || data.feature_issue_type) : data.feature_issue_type
+    issue_type = issue_type(issue_type_id)
+
     issue = {
       fields: {
         description: convert_html(resource.description.body),
       }
     }
     issue[:fields][:summary] = resource.name if resource.name
-    if version['id']
+    if version['id'] and issue_type.has_field_fix_versions
       issue[:update] ||= {}
       issue[:update][:fixVersions] = [{set: [{id: version['id']}]}]
     end
-    if data.send_tags == "1" and resource.tags
+    if data.send_tags == "1" and resource.tags and issue_type.has_field_labels
       issue[:fields][:labels] = resource.tags
     end
     
     # Disabled until https://jira.atlassian.com/browse/GHS-10333 is fixed.
     #populate_relationship_fields(issue, parent, initiative)
-    populate_time_tracking(issue, resource, parent)
+    populate_time_tracking(issue, resource, issue_type)
 
     issue_resource.update(issue_info['id'], issue)
 
@@ -315,40 +320,37 @@ protected
     end
   end
   
-  def populate_time_tracking(issue, resource, parent)
-    issue_type_id = parent ? (data.requirement_issue_type || data.feature_issue_type) : data.feature_issue_type
-    issue_type = issue_type(issue_type_id)
-
-    if resource.work_units == 10 # Units are minutes.
+  def populate_time_tracking(issue, resource, issue_type)
+    if resource.work_units == 10 and issue_type.has_time_tracking # Units are minutes.
       issue[:fields][:timetracking] = {
         originalEstimate: resource.original_estimate,
         remainingEstimate: resource.remaining_estimate
       }
-    elsif resource.work_units == 20 and @meta_data.story_points_field # Units are points.
-      logger.debug("ISSUE TYPE: #{issue_type.inspect} #{issue_type['name']}")
-      # We can only do this if the issue is a story.
-      if issue_type['name'] == "Story"
-        issue[:fields][@meta_data.story_points_field] = resource.remaining_estimate
-      end
+    elsif resource.work_units == 20 and issue_type.has_story_points # Units are points.
+      issue[:fields][@meta_data.story_points_field] = resource.remaining_estimate
     end
   end
   
-  def populate_relationship_fields(issue, parent, initiative)
-    issue_type_id = parent ? (data.requirement_issue_type || data.feature_issue_type) : data.feature_issue_type
-    issue_type = issue_type(issue_type_id)
-    
-    case issue_type['name']
-    when "Epic"
+  def populate_relationship_fields(issue, parent, initiative, issue_type)
+    if issue_type.has_field_epic_name
       issue[:fields][@meta_data.epic_name_field] = issue[:fields][:summary]
-    when "Story"
-      if data.send_initiatives == "1"
-        if initiative
+    end
+
+    if data.send_initiatives == "1"
+      if initiative
+        if issue_type.has_field_epic_link
           issue[:fields][@meta_data.epic_link_field] = find_or_create_epic_from_initiative(initiative)
         end
-      else
-        issue[:fields][@meta_data.epic_link_field] = parent['key'] if parent
+      end
+    else
+      if parent and issue_type.has_field_epic_link
+        # Check that the parent is actually an epic.
+        if issue_type(data.feature_issue_type).has_field_epic_name
+          issue[:fields][@meta_data.epic_link_field] = parent['key']
+        end
       end
     end
+
     if parent and issue_type['subtask']
       issue[:fields][:parent] = {key: parent['key']}
     end
@@ -361,6 +363,13 @@ protected
     issue_type = project.issue_types.find {|type| type.id.to_s == issue_type_id.to_s }
     raise AhaService::RemoteError, "Integration needs to be reconfigured, issue types have changed, can't find issue type '#{issue_type_id}'" if issue_type.nil?
     issue_type
+  end
+  
+  def find_epic_issue_type
+    raise AhaService::RemoteError, "Integration has not been configured" if @meta_data.projects.nil?
+    project = @meta_data.projects.find {|project| project['key'] == data.project }
+    raise AhaService::RemoteError, "Integration has not been configured, can't find project '#{data.project}'" if project.nil?
+    project.issue_types.find {|type| type.has_field_epic_name == true }
   end
   
   # Convert HTML from Aha! into Confluence-style wiki markup.

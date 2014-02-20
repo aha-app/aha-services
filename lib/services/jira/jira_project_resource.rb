@@ -1,13 +1,12 @@
 class JiraProjectResource < JiraResource
-  def all
+  def all(meta_data)
     prepare_request
-    response = http_get("#{api_url}/issue/createmeta")
+    response = http_get("#{api_url}/issue/createmeta?expand=projects.issuetypes.fields")
     projects = []
     process_response(response, 200) do |meta|
       meta['projects'].each do |project|
         issue_types = project['issuetypes'].collect do |issue_type|
-          {id: issue_type['id'], name: issue_type['name'], 
-            subtask: issue_type['subtask']}
+          {id: issue_type['id'], name: issue_type['name']}.merge(issue_field_capabilities(meta_data, issue_type))
         end
         
         # Get the statuses.
@@ -54,4 +53,24 @@ class JiraProjectResource < JiraResource
 
     end
   end
+  
+protected
+
+  def issue_field_capabilities(meta_data, issue_type)
+    capabilities = {}
+    
+    capabilities[:subtask] = issue_type['subtask']
+    
+    # Check for fields that we use.
+    capabilities[:has_field_fix_versions] = issue_type['fields']['fixVersions'].present?
+    capabilities[:has_field_aha_reference] = issue_type['fields'][meta_data.aha_reference_field].present?
+    capabilities[:has_field_story_points] = issue_type['fields'][meta_data.story_points_field].present?
+    capabilities[:has_field_epic_name] = issue_type['fields'][meta_data.epic_name_field].present?
+    capabilities[:has_field_epic_link] = issue_type['fields'][meta_data.epic_link_field].present?
+    capabilities[:has_field_labels] = issue_type['fields']['labels'].present?
+    capabilities[:has_field_time_tracking] = issue_type['fields']['timetracking'].present?
+    
+    capabilities
+  end
+  
 end
