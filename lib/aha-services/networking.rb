@@ -232,8 +232,12 @@ module Networking
     end
 
     def on_complete(env)
-      #@service.receive_http(@service.reportable_http_env(env, @time))
-      @service.logger.debug @service.reportable_http_env(env, @time)
+      # Log non-200 responses as info messages.
+      if status = env[:status] and status.to_i >= 200 and status.to_i < 300
+        @service.logger.debug @service.reportable_http_env(env, @time)
+      else
+        @service.logger.info @service.reportable_http_env(env, @time)
+      end
     end
   end
 end

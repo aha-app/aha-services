@@ -128,12 +128,6 @@ class AhaServices::GithubIssues < AhaService
     label_resource.update(issue['number'], resource.tags)
   end
 
-  # Used for features (which are required to have a name)
-  # and for requirements (which don't have a name)
-  def resource_name(resource)
-    resource.name || description_to_title(resource.description.body)
-  end
-
   def issue_body(description)
     issue_body_parts = []
     issue_body_parts << description.body if description.body.present?

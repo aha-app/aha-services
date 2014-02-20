@@ -4,7 +4,7 @@ describe AhaServices::JiraConnect do
   context "can be installed" do
     
     it "handles installed event" do
-      stub_request(:get, "http://foo.com/a/rest/api/2/issue/createmeta?user_id=chris").
+      stub_request(:get, "http://foo.com/a/rest/api/2/issue/createmeta?expand=projects.issuetypes.fields&user_id=chris").
         to_return(:status => 200, :body => raw_fixture('jira/jira_createmeta.json'), :headers => {})
       stub_request(:get, "http://foo.com/a/rest/api/2/project/APPJ/statuses?user_id=chris").
         to_return(:status => 200, :body => raw_fixture('jira/jira_project_statuses.json'), :headers => {})
