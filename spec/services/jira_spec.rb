@@ -476,10 +476,10 @@ describe AhaServices::Jira do
         and then returns the newly created issue" do
       service.stub(:issue_type_by_parent)
         .and_return(Hashie::Mash.new(name: 'Story', subtask: false))
-      issue_resource.should_receive(:create).and_return('New issue')
+      issue_resource.should_receive(:create).and_return({key: 'New issue', id: 1})
       service.should_receive(:create_link_for_issue).and_return(nil)
       expect(service.send(:create_issue_for, resource, nil, nil, nil))
-        .to eq 'New issue'
+        .to eq({key: 'New issue', id: 1})
     end
   end
 
