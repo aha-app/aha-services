@@ -113,6 +113,7 @@ protected
   end
 
   def create_version_for(release)
+    logger.info("Creating version for #{release.reference_num}")
     version_resource.create name: release.name,
                             description: "Created from Aha! #{release.url}",
                             releaseDate: release.release_date,
@@ -120,6 +121,7 @@ protected
   end
 
   def update_version(id, release)
+    logger.info("Updating version for #{release.reference_num}")
     version_resource.update id, name: release.name,
                                 releaseDate: release.release_date,
                                 released: release.released
@@ -172,6 +174,8 @@ protected
   end
   
   def create_issue_for_initiative(initiative, issue_type)
+    logger.info("Creating issue for initiative #{initiative.id}")
+    
     issue = Hashie::Mash.new(
       fields: {
         summary: resource_name(initiative),
@@ -186,13 +190,17 @@ protected
     upload_attachments(initiative.description.attachments, new_issue.id)
     integrate_initiative_with_jira_issue(initiative, new_issue)
 
+    logger.info("Created issue #{new_issue[:key]}")
+
     new_issue
   end
 
   def create_issue_for(resource, initiative, version, parent)
     issue_type = issue_type_by_parent(parent)
     summary = resource_name(resource)
-
+    
+    logger.info("Creating issue for #{resource.reference_num}")
+    
     issue = Hashie::Mash.new(
       fields: {
         summary: summary,
@@ -212,12 +220,16 @@ protected
     new_issue = issue_resource.create(issue)
 
     create_link_for_issue(new_issue, issue_type, parent)
-
+    
+    logger.info("Created issue #{new_issue[:key]}")
+    
     new_issue
   end
 
   def update_issue(issue_info, resource, initiative, version, parent)
     issue_type = issue_type_by_parent(parent)
+
+    logger.info("Updating issue #{issue_info[:key]} with #{resource.reference_num}")
 
     summary = resource_name(resource)
     issue = Hashie::Mash.new(

@@ -27,7 +27,6 @@ class JiraIssueResource < JiraResource
     prepare_request
     response = http_put "#{api_url}/issue/#{id}", updated_issue.to_json
     process_response(response, 204) do |issue|
-      logger.info("Updated issue #{id}")
       return issue
     end
   end

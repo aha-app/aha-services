@@ -10,6 +10,8 @@ class JiraAttachmentResource < JiraResource
   end
 
   def upload(attachment, issue_id)
+    logger.info("Uploading attachment #{attachment.file_name}")
+    
     open(attachment.download_url) do |downloaded_file|
       # Reset Faraday and switch to multipart to do the file upload.
       http_reset
