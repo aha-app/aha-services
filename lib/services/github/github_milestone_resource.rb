@@ -2,7 +2,7 @@ class GithubMilestoneResource < GithubResource
   def find_by_number(number)
     prepare_request
     response = http_get "#{github_milestones_path}/#{number}"
-    response.status == 200 ? parse(response.body) : nil
+    found_resource(response)
   end
 
   def find_by_title(title)

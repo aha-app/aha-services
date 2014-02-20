@@ -81,7 +81,7 @@ class AhaServices::PivotalTracker < AhaService
     end
     
     story = {
-      name: resource.name || description_to_title(resource.description.body),
+      name: resource_name(resource),
       description: append_link(html_to_plain(resource.description.body), parent_id),
       story_type: kind_to_story_type(resource.kind || parent_resource.kind),
       created_at: resource.created_at,
@@ -109,7 +109,7 @@ class AhaServices::PivotalTracker < AhaService
 
   def update_story(project_id, story_id, resource, parent_id = nil)
     story = {
-      name: resource.name || description_to_title(resource.description.body),
+      name: resource_name(resource),
       description: append_link(html_to_plain(resource.description.body), parent_id),
     }
 
