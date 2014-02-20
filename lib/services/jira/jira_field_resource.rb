@@ -15,7 +15,7 @@ class JiraFieldResource < JiraResource
     response = http_post field_url, field.to_json
     process_response(response, 201) do |new_field|
       logger.info("Created field #{new_field.inspect}")
-      return new_field['id']
+      return new_field.id
     end
   end
 
@@ -29,13 +29,13 @@ class JiraFieldResource < JiraResource
 
   def aha_reference_field
     find_in_fields do |field|
-      field['name'] == "Aha! Reference"
+      field.name == "Aha! Reference"
     end
   end
-  
+
   def story_points_field
     find_in_fields do |field|
-      field['name'] == "Story Points"
+      field.name == "Story Points"
     end
   end
 
@@ -49,13 +49,13 @@ private
 
   def custom_schema_field(schema)
     find_in_fields do |field|
-      field['schema'] && field['schema']['custom'] == schema
+      field.schema && field.schema.custom == schema
     end
   end
 
   def find_in_fields
     field = all.find { |field| yield(field) }
-    field && field['id']
+    field && field.id
   end
 
   def field_url

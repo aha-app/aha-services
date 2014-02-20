@@ -18,6 +18,19 @@ class GenericResource
     end
   end
 
+  def hashie_or_array_of_hashies(response_body)
+    parsed_response_body = parse(response_body)
+    if parsed_response_body.is_a? Array
+      parsed_response_body.collect { |element| Hashie::Mash.new(element) }
+    else
+      Hashie::Mash.new(parsed_response_body)
+    end
+  end
+
+  def found_resource(response)
+    hashie_or_array_of_hashies(response.body) if response.status == 200
+  end
+
   def prepare_request
     http.headers['Content-Type'] = 'application/json'
   end
