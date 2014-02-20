@@ -16,62 +16,7 @@
       "attachments": []
     },
     "attachments": [],
-    "integration_fields": [
-      {
-        "name": "id",
-        "value": "10009",
-        "id": "5885756848818779835",
-        "service_name": "jira"
-      },
-      {
-        "name": "key",
-        "value": "APP-1",
-        "id": "5885756848825590120",
-        "service_name": "jira"
-      },
-      {
-        "name": "url",
-        "value": "https://watersco.atlassian.net/browse/APP-1",
-        "id": "5885756848816972095",
-        "service_name": "jira"
-      },
-      {
-        "name": "url",
-        "value": "http://www.pivotal_tracker.com/story/show/60958942",
-        "id": "5885756848816972096",
-        "service_name": "pivotal_tracker"
-      },
-      {
-        "name": "id",
-        "value": "61280364",
-        "id": "5885756848816972097",
-        "service_name": "pivotal_tracker"
-      },
-      {
-        "id": "61280365",
-        "name": "id",
-        "value": "2",
-        "service_name": "redmine_issues"
-      },
-      {
-        "id": "61280366",
-        "name": "version_id",
-        "value": "2",
-        "service_name": "redmine_issues"
-      },
-      {
-        "id": "61280367",
-        "name": "name",
-        "value": "milestone2",
-        "service_name":"redmine_issues"
-      },
-      {
-        "id": "61280368",
-        "name": "url",
-        "value": "http://localhost:4000/versions/2",
-        "service_name": "redmine_issues"
-      }
-    ],
+    "integration_fields": [],
     "url": "http://watersco.aha.io/features/PROD-2",
     "resource": "http://watersco.aha.io/api/v1/features/PROD-2",
     "release": {

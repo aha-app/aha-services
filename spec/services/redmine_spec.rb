@@ -40,7 +40,7 @@ describe AhaServices::Redmine do
 
   context 'class' do
     let(:title) { 'Redmine' }
-    let(:service_name) { 'redmine_issues' }
+    let(:service_name) { 'redmine' }
     let(:schema_fields) {[
       {type: :install_button, field_name: :install_button},
       {type: :string, field_name: :redmine_url},
@@ -102,7 +102,7 @@ describe AhaServices::Redmine do
         before { stub_redmine_versions method: :post, status: 201, body: raw_fixture('redmine/versions/create.json') }
         after {service.receive(:create_release)}
         it_behaves_like 'integration field sender',\
-          'release', 'OPS-R-1', 'redmine_issues', [:id, :url, :name], 0
+          'release', 'OPS-R-1', 'redmine', [:id, :url, :name], 0
       end
       context 'auth errors' do
         before { stub_redmine_versions method: :post, status: 401, body: {} }
@@ -135,7 +135,7 @@ describe AhaServices::Redmine do
             expect_any_instance_of(RedmineVersionResource).to receive(:http_put).and_call_original
           end
           it_behaves_like 'integration field sender',\
-            'release', 'OPS-R-1', 'redmine_issues', [:id, :url, :name], 0
+            'release', 'OPS-R-1', 'redmine', [:id, :url, :name], 0
         end
       end
       context 'auth errors' do
@@ -189,9 +189,9 @@ describe AhaServices::Redmine do
               expect(service.api).to receive(:create_integration_field).exactly(6)
             end
             it_behaves_like 'integration field sender',\
-              'feature', "PROD-2", "redmine_issues", [:id, :url, :name], 3, :create_feature
+              'feature', "PROD-2", "redmine", [:id, :url, :name], 3, :create_feature
             it_behaves_like 'integration field sender',\
-              'requirement', "PROD-2-1", "redmine_issues", [:id, :url, :name], 3, :create_feature
+              'requirement', "PROD-2-1", "redmine", [:id, :url, :name], 3, :create_feature
           end
           context 'with attachments' do
             context 'proper params' do
@@ -220,9 +220,9 @@ describe AhaServices::Redmine do
                 expect(service.api).to receive(:create_integration_field).exactly(6)
               end
               it_behaves_like 'integration field sender',\
-                'feature', "PROD-2", "redmine_issues", [:id, :url, :name], 3, :create_feature
+                'feature', "PROD-2", "redmine", [:id, :url, :name], 3, :create_feature
               it_behaves_like 'integration field sender',\
-                'requirement', "PROD-2-1", "redmine_issues", [:id, :url, :name], 3, :create_feature
+                'requirement', "PROD-2-1", "redmine", [:id, :url, :name], 3, :create_feature
             end
             context 'unavailable tracker / project / other 404 generating errors' do
               before do
@@ -295,9 +295,9 @@ describe AhaServices::Redmine do
                 expect(service.api).to receive(:create_integration_field).exactly(9)
               end
               it_behaves_like 'integration field sender',\
-                'feature', "PROD-2", "redmine_issues", [:id, :url, :name], 6, :create_feature
+                'feature', "PROD-2", "redmine", [:id, :url, :name], 6, :create_feature
               it_behaves_like 'integration field sender',\
-                'requirement', "PROD-2-1", "redmine_issues", [:id, :url, :name], 6, :create_feature
+                'requirement', "PROD-2-1", "redmine", [:id, :url, :name], 6, :create_feature
             end
             context 'unavailable tracker / project / other 404 generating errors' do
               before do
@@ -348,7 +348,7 @@ describe AhaServices::Redmine do
           let(:payload) do
             pload = json_fixture'update_feature_event.json'
             pload['feature']['integration_fields'].reject! do |el|
-              el['service_name'] == 'redmine_issues' &&
+              el['service_name'] == 'redmine' &&
               el['name'] == 'version_id'
             end
             pload
