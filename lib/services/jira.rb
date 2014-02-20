@@ -321,12 +321,12 @@ protected
   end
   
   def populate_time_tracking(issue, resource, issue_type)
-    if resource.work_units == 10 and issue_type.has_time_tracking # Units are minutes.
+    if resource.work_units == 10 and issue_type.has_field_time_tracking # Units are minutes.
       issue[:fields][:timetracking] = {
         originalEstimate: resource.original_estimate,
         remainingEstimate: resource.remaining_estimate
       }
-    elsif resource.work_units == 20 and issue_type.has_story_points # Units are points.
+    elsif resource.work_units == 20 and issue_type.has_field_story_points # Units are points.
       issue[:fields][@meta_data.story_points_field] = resource.remaining_estimate
     end
   end
