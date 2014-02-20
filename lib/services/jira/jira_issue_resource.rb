@@ -5,15 +5,15 @@ class JiraIssueResource < JiraResource
     issue = found_resource(response)
     issue
   end
-  
+
   def search(params = {})
     prepare_request
-    response = http_get "#{api_url}/search?#{params.to_query}" 
+    response = http_get "#{api_url}/search?#{params.to_query}"
     process_response(response, 200) do |results|
       return results
     end
   end
-  
+
   def create(new_issue)
     new_issue[:fields].merge!(project: { key: @service.data.project })
     prepare_request

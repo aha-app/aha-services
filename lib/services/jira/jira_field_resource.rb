@@ -32,7 +32,7 @@ class JiraFieldResource < JiraResource
       field.name == "Aha! Reference"
     end
   end
-  
+
   def story_points_field
     find_in_fields do |field|
       field.name == "Story Points"

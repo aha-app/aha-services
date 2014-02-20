@@ -43,10 +43,10 @@ describe AhaServices::Jira do
     stub_request(:post, "#{base_url}/issue/10009/attachments").
       to_return(:status => 200)
     # Link to requirement.
-    stub_request(:post, "http://foo.com/a/rest/api/2/issueLink").
-      with(:body => {"{\"type\":{\"name\":\"Relates\"},\"outwardIssue\":{\"id\":\"10009\"},\"inwardIssue\":{\"id\":\"10009\"}}"=>true}).
+    stub_request(:post, "#{base_url}/issueLink").
+      with(:body => "{\"type\":{\"name\":\"Relates\"},\"outwardIssue\":{\"id\":\"10009\"},\"inwardIssue\":{\"id\":\"10009\"}}").
       to_return(:status => 201)
-      
+
     # Call back into Aha! for feature
     stub_request(:post, "https://a.aha.io/api/v1/features/5886067808745625353/integrations/jira/fields").
       with(:body => {:integration_field => {:name => "id", :value => "10009"}}).
@@ -149,7 +149,7 @@ describe AhaServices::Jira do
   context "can be installed" do
     
     it "handles installed event" do
-      stub_request(:get, "#{base_url}/issue/createmeta").
+      stub_request(:get, "#{base_url}/issue/createmeta?expand=projects.issuetypes.fields").
         to_return(:status => 200, :body => raw_fixture('jira/jira_createmeta.json'), :headers => {})
       stub_request(:get, "#{base_url}/project/APPJ/statuses").
         to_return(:status => 200, :body => raw_fixture('jira/jira_project_statuses.json'), :headers => {})
@@ -166,7 +166,7 @@ describe AhaServices::Jira do
     end
     
     it "handles installed event for Jira 5.0" do
-      stub_request(:get, "#{base_url}/issue/createmeta").
+      stub_request(:get, "#{base_url}/issue/createmeta?expand=projects.issuetypes.fields").
         to_return(:status => 200, :body => raw_fixture('jira/jira_createmeta.json'), :headers => {})
       stub_request(:get, "#{base_url}/project/APPJ/statuses").
         to_return(:status => 404, :headers => {})
@@ -430,12 +430,22 @@ describe AhaServices::Jira do
     end
 
     context "when an integration doesn't exist for the initiative" do
-      it "creates a new issue and returns its key" do
-        created_issue = Hashie::Mash.new(key: 'new_key')
-        service.stub(:get_integration_field).and_return(nil)
-        service.should_receive(:create_issue_for_initiative)
-          .and_return(created_issue)
-        expect(result).to eq 'new_key'
+      before { service.stub(:get_integration_field).and_return(nil) }
+      context "when an issue type exists for epics" do
+        it "creates a new issue and returns its key" do
+          service.stub(:epic_issue_type).and_return('Epic')
+          created_issue = Hashie::Mash.new(key: 'new_key')
+          service.should_receive(:create_issue_for_initiative)
+            .and_return(created_issue)
+          expect(result).to eq 'new_key'
+        end
+      end
+
+      context "when there's no issue type for epics" do
+        it "returns nil" do
+          service.stub(:epic_issue_type).and_return(nil)
+          expect(result).to be_nil
+        end
       end
     end
   end
@@ -445,12 +455,13 @@ describe AhaServices::Jira do
       Hashie::Mash.new(name: 'Initiative name',
                        description: { body: 'Initiative body' })
     end
+    let(:issue_type) { Hashie::Mash.new(id: 42) }
     let(:new_issue) { Hashie::Mash.new(id: 1001) }
     it "performs certain operations and returns the new issue" do
       issue_resource.should_receive(:create).and_return(new_issue)
       service.should_receive(:upload_attachments)
       service.should_receive(:integrate_initiative_with_jira_issue)
-      expect(service.send(:create_issue_for_initiative, initiative))
+      expect(service.send(:create_issue_for_initiative, initiative, issue_type))
         .to eq new_issue
     end
   end
@@ -483,6 +494,8 @@ describe AhaServices::Jira do
 
     it "calls issue_resource.update and update_attachments,\
         and then returns the issue_info object" do
+      service.stub(:issue_type_by_parent)
+        .and_return(Hashie::Mash.new(name: 'Story', subtask: false))
       issue_resource.should_receive(:update)
       service.should_receive(:update_attachments).and_return(nil)
       expect(service.send(:update_issue, issue_info, resource, nil, nil, nil))
@@ -511,18 +524,18 @@ describe AhaServices::Jira do
 
       context "when the issue is not a subtask" do
         let(:is_subtask) { false }
-        context "when the issue is an Epic" do
-          let(:issue_type) { Hashie::Mash.new(subtask: is_subtask, name: 'Epic') }
+        context "when the issue type has an epic link field" do
+          let(:issue_type) { Hashie::Mash.new(subtask: is_subtask, has_field_epic_link: true) }
           it_behaves_like "empty create_link_for_issue method"
         end
 
-        context "when the issue is a Story" do
-          let(:issue_type) { Hashie::Mash.new(subtask: is_subtask, name: 'Story') }
+        context "when the issue type has an epic name field" do
+          let(:issue_type) { Hashie::Mash.new(subtask: is_subtask, has_field_epic_name: true) }
           it_behaves_like "empty create_link_for_issue method"
         end
 
         context "when the issue is neither an Epic nor a Story" do
-          let(:issue_type) { Hashie::Mash.new(subtask: is_subtask, name: 'Issue') }
+          let(:issue_type) { Hashie::Mash.new(subtask: is_subtask) }
           it "calls issue_link_resource.create" do
             issue_link_resource.should_receive(:create)
             result
@@ -582,26 +595,38 @@ describe AhaServices::Jira do
   end
 
   describe "#version_fields" do
+    let(:version_fields) { service.send(:version_fields, version, issue_type) }
     context "when a version exists" do
-      it "returns a specific hash" do
-        version = Hashie::Mash.new(id: '1001')
-        expect(service.send(:version_fields, version))
-          .to eq(fixVersions: [{ id: version.id }])
+      let(:version) { Hashie::Mash.new(id: '1001') }
+      context "when issue type has fix versions field" do
+        let(:issue_type) { Hashie::Mash.new(has_field_fix_versions: true) }
+        it "returns a specific hash" do
+          expect(version_fields).to eq(fixVersions: [{ id: version.id }])
+        end
+      end
+
+      context "when issue type doesn't have fix versions field" do
+        let(:issue_type) { Hashie::Mash.new }
+        it "returns an empty hash" do
+          expect(version_fields).to eq Hash.new
+        end
       end
     end
 
     context "when there is no version" do
+      let(:version) { nil }
+      let(:issue_type) { Hashie::Mash.new(has_field_fix_versions: true) }
       it "returns an empty hash" do
-        expect(service.send(:version_fields, nil))
-          .to eq Hash.new
+        expect(version_fields).to eq Hash.new
       end
     end
   end
 
   describe "#label_fields" do
+    let(:label_fields) { service.send(:label_fields, resource, issue_type) }
     shared_examples "empty label fields" do
       it "returns an empty hash" do
-        expect(service.send(:label_fields, resource))
+        expect(label_fields)
           .to eq Hash.new
       end
     end
@@ -609,63 +634,89 @@ describe AhaServices::Jira do
     context "when the resource has tags" do
       let(:resource) { Hashie::Mash.new(tags: [ {tag1: 'Tag name'} ]) }
       context "when tags are set to be synchronized" do
-        it "returns a specific hash" do
+        before do
           service.stub(:data).and_return(Hashie::Mash.new(send_tags: "1"))
-          expect(service.send(:label_fields, resource))
-            .to eq(labels: resource.tags)
+        end
+        context "when issue type has labels field" do
+          let(:issue_type) { Hashie::Mash.new(has_field_labels: true) }
+          it "returns a specific hash" do
+            expect(label_fields)
+              .to eq(labels: resource.tags)
+          end
+        end
+
+        context "when issue type doesn't have labels field" do
+          let(:issue_type) { Hashie::Mash.new }
+          it_behaves_like "empty label fields"
         end
       end
 
       context "when tags are not set to be synchronized" do
+        let(:issue_type) { Hashie::Mash.new(has_field_labels: true) }
         before { service.stub(:data).and_return(Hashie::Mash.new) }
         it_behaves_like "empty label fields"
       end
     end
 
     context "when the resource doesn't have tags" do
+      let(:issue_type) { Hashie::Mash.new(has_field_labels: true) }
       let(:resource) { Hashie::Mash.new }
       it_behaves_like "empty label fields"
     end
   end
 
   describe "#aha_reference_fields" do
+    let(:aha_reference_fields) do
+      service.send(:aha_reference_fields, resource, issue_type)
+    end
     let(:resource) { Hashie::Mash.new(url: 'http://example.com') }
-    context "when aha reference field is set" do
+    context "when issue type has aha reference field" do
+      let(:issue_type) { Hashie::Mash.new(has_field_aha_reference: true) }
       it "returns a specific hash" do
         service.stub(:meta_data)
           .and_return(Hashie::Mash.new(aha_reference_field: 'ref'))
-        expect(service.send(:aha_reference_fields, resource))
+        expect(aha_reference_fields)
           .to eq('ref' => resource.url)
       end
     end
 
-    context "when aha reference field is not set" do
+    context "when issue type doesn't have aha reference field" do
+      let(:issue_type) { Hashie::Mash.new }
       it "returns an empty hash" do
-        service.stub(:meta_data)
-          .and_return(Hashie::Mash.new)
-        expect(service.send(:aha_reference_fields, resource))
+        expect(aha_reference_fields)
           .to eq Hash.new
       end
     end
   end
 
   describe "#time_tracking_fields" do
-    let(:time_tracking_fields) { service.send(:time_tracking_fields, resource) }
+    let(:time_tracking_fields) do
+      service.send(:time_tracking_fields, resource, issue_type)
+    end
     context "when units are minutes" do
       let(:resource) do
         Hashie::Mash.new({ work_units: 10,
                            original_estimate: 20,
                            remaining_estimate: 30 })
       end
-      it "returns a hash with a timetracking field" do
-        expect(time_tracking_fields).to eq(
-          {
-            timetracking: {
-              originalEstimate: resource.original_estimate,
-              remainingEstimate: resource.remaining_estimate
+      context "when issue type has time tracking field" do
+        let(:issue_type) { Hashie::Mash.new(has_field_time_tracking: true) }
+        it "returns a hash with a timetracking field" do
+          expect(time_tracking_fields).to eq(
+            {
+              timetracking: {
+                originalEstimate: resource.original_estimate,
+                remainingEstimate: resource.remaining_estimate
+              }
             }
-          }
-        )
+          )
+        end
+      end
+      context "when issue type doesn't have a time tracking field" do
+        let(:issue_type) { Hashie::Mash.new }
+        it "returns an empty hash" do
+          expect(time_tracking_fields).to eq Hash.new
+        end
       end
     end
 
@@ -674,21 +725,20 @@ describe AhaServices::Jira do
         Hashie::Mash.new({ work_units: 20,
                            remaining_estimate: 100 })
       end
-      context "when a story points field exists in the Jira resource" do
+      context "when issue type has a story points field" do
+        let(:issue_type) { Hashie::Mash.new(has_field_story_points: true) }
         it "returns a hash with the field meta_data.story_points_field" do
           service.stub(:meta_data)
             .and_return(Hashie::Mash.new({ story_points_field: 'story_points' }))
           expect(time_tracking_fields).to eq(
-            {
-              service.meta_data.story_points_field => resource.remaining_estimate
-            }
+            service.meta_data.story_points_field => resource.remaining_estimate
           )
         end
       end
 
-      context "when a story points field doesn't exist in the Jira resource" do
+      context "when issue type doesn't have a story points field" do
+        let(:issue_type) { Hashie::Mash.new }
         it "returns an empty hash" do
-          service.stub(:meta_data).and_return(Hashie::Mash.new)
           expect(time_tracking_fields).to eq Hash.new
         end
       end
@@ -696,88 +746,84 @@ describe AhaServices::Jira do
 
     context "when units are neither minutes nor points" do
       let(:resource) { Hashie::Mash.new({ work_units: 30 }) }
+      let(:issue_type) { Hashie::Mash.new }
       it "returns an empty hash" do
         expect(time_tracking_fields).to eq Hash.new
       end
     end
   end
 
-  describe "#issue_type_fields" do
-    let(:summary) { nil }
+  describe "#issue_epic_name_field" do
+    let(:summary) { 'Issue summary' }
+    let(:result) { service.send(:issue_epic_name_field, issue_type, summary) }
+    context "when issue type has epic name field" do
+      let(:issue_type) { Hashie::Mash.new(has_field_epic_name: true) }
+      it "returns a specific hash" do
+        service.stub(:meta_data).and_return(Hashie::Mash.new(epic_name_field: 'Some field'))
+        expect(result).to eq(service.meta_data.epic_name_field => summary)
+      end
+    end
+
+    context "when issue type doesn't have an epic name field" do
+      let(:issue_type) { Hashie::Mash.new }
+      it "returns an empty hash" do
+        expect(result).to eq Hash.new
+      end
+    end
+  end
+
+  describe "#issue_epic_link_field" do
+    let(:result) { service.send(:issue_epic_link_field, issue_type, parent, initiative) }
     let(:parent) { nil }
-    let(:initiative) { nil }
-    let(:issue_type_fields) do
-      service.send(:issue_type_fields, issue_type_name, summary, parent, initiative)
+    before do
+      service.stub(:meta_data).and_return(Hashie::Mash.new(epic_link_field: 'Epic link'))
     end
-
-    shared_examples "empty issue type fields" do
-      it "returns an empty hash" do
-        expect(issue_type_fields).to eq Hash.new
-      end
-    end
-
-    context "for an epic" do
-      let(:issue_type_name) { 'Epic' }
-      let(:summary) { "An issue's summary" }
-      it "returns a hash with the field meta_data.epic_name_field" do
-        service.stub(:meta_data)
-          .and_return(Hashie::Mash.new({ epic_name_field: 'epic_name' }))
-        expect(issue_type_fields)
-          .to eq('epic_name' => summary)
-      end
-    end
-
-    context "for a story" do
-      let(:issue_type_name) { 'Story' }
-      let(:epic_link_field) { 'epic_link' }
+    context "when send_initiatives is set to true" do
       before do
-        service.stub(:meta_data)
-          .and_return(Hashie::Mash.new(epic_link_field: epic_link_field))
+        service.stub(:data).and_return(Hashie::Mash.new(send_initiatives: true))
       end
-      context "when sending initiatives is on" do
-        before do
-          service.stub(:data).and_return(Hashie::Mash.new(send_initiatives: "1"))
-        end
-
-        context "when an initiative is supplied" do
-          let(:initiative) { 'An initiative' }
-          it "returns a hash with the field meta_data.epic_link_field\
-              set to the result of epic_key_for_initiative" do
-            service.should_receive(:epic_key_for_initiative)
-              .with(initiative).and_return('Epic from initiative')
-            expect(issue_type_fields)
-              .to eq(epic_link_field => 'Epic from initiative')
-          end
-        end
-
-        context "when initiative is not supplied" do
-          it_behaves_like "empty issue type fields"
+      context "when an initiative is present and issue type has an epic link field" do
+        let(:initiative) { 'Some initiative' }
+        let(:issue_type) { Hashie::Mash.new(has_field_epic_link: true) }
+        it "returns a specific hash" do
+          service.stub(:epic_key_for_initiative).and_return('New key')
+          expect(result).to eq(service.meta_data.epic_link_field => 'New key')
         end
       end
 
-      context "when sending initiatives is off" do
-        before do
-          service.stub(:data).and_return(Hashie::Mash.new(send_initiatives: "0"))
-        end
-
-        context "when a parent is supplied" do
-          let(:parent) { { key: "Issue's parent" } }
-          it "returns a hash with the field meta_data.epic_link_field set to parent['key']" do
-            expect(issue_type_fields)
-              .to eq(epic_link_field => parent[:key])
-          end
-        end
-
-        context "when parent is not supplied" do
-          it_behaves_like "empty issue type fields"
+      context "when the initiative and parent are not present" do
+        let(:initiative) { nil }
+        let(:issue_type) { Hashie::Mash.new }
+        it "returns an empty hash" do
+          expect(result).to eq Hash.new
         end
       end
     end
 
-    context "for another issue type" do
-      let(:issue_type_name) { 'Another type' }
-      it "returns an empty hash" do
-        expect(issue_type_fields).to eq Hash.new
+    context "when send_initiatives is not set to true" do
+      let(:initiative) { 'Some initiative' }
+      before do
+        service.stub(:data).and_return(Hashie::Mash.new)
+      end
+      context "when parent is present and issue type has several fields" do
+        let(:parent) { Hashie::Mash.new(key: 'Parent key') }
+        let(:issue_type) { Hashie::Mash.new(has_field_epic_link: true) }
+        let(:returned_issue_type) { Hashie::Mash.new(has_field_epic_name: true) }
+        before do
+          service.stub(:data).and_return(Hashie::Mash.new(feature_issue_type: 'Some type'))
+          service.stub(:issue_type_by_id).and_return(returned_issue_type)
+        end
+        it "returns a specific hash" do
+          expect(result).to eq(service.meta_data.epic_link_field => parent[:key])
+        end
+      end
+
+      context "when parent is not present" do
+        let(:parent) { nil }
+        let(:issue_type) { Hashie::Mash.new }
+        it "returns an empty hash" do
+          expect(result).to eq Hash.new
+        end
       end
     end
   end
@@ -814,16 +860,26 @@ describe AhaServices::Jira do
 
   describe "#version_update_fields" do
     context "when a version exists" do
-      it "returns a specific hash" do
-        version = Hashie::Mash.new(id: '1001')
-        expect(service.send(:version_update_fields, version))
-          .to eq(update: { fixVersions: [ { set: [ { id: version.id } ] } ] })
+      let(:version) { Hashie::Mash.new(id: '1001') }
+      context "when the issue type has field fix versions" do
+        it "returns a specific hash" do
+          issue_type = Hashie::Mash.new(has_field_fix_versions: true)
+          expect(service.send(:version_update_fields, version, issue_type))
+            .to eq(update: { fixVersions: [ { set: [ { id: version.id } ] } ] })
+        end
+      end
+      context "when the issue type doesn't have field fix versions" do
+        it "returns an empty hash" do
+          issue_type = Hashie::Mash.new
+          expect(service.send(:version_update_fields, nil, issue_type))
+          .to eq Hash.new
+        end
       end
     end
 
     context "when there is no version" do
       it "returns an empty hash" do
-        expect(service.send(:version_update_fields, nil))
+        expect(service.send(:version_update_fields, nil, Hashie::Mash.new))
           .to eq Hash.new
       end
     end

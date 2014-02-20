@@ -24,13 +24,13 @@ class AhaServices::Jira < AhaService
   callback_url description: "URL to add to the webhooks section of JIRA. Only one hook is necessary, even if multiple products are integrated with JIRA."
   
   def receive_installed
-    meta_data.merge! projects: project_resource.all,
-                     resolutions: resolution_resource.all,
-                     # Get custom field mappings.
-                     epic_name_field: field_resource.epic_name_field,
+    # Get custom field mappings.
+    meta_data.merge! epic_name_field: field_resource.epic_name_field,
                      epic_link_field: field_resource.epic_link_field,
                      story_points_field: field_resource.story_points_field,
                      aha_reference_field: new_or_existing_aha_reference_field
+    meta_data.projects = project_resource.all(meta_data)
+    meta_data.resolutions = resolution_resource.all
   end
   
   def receive_create_feature
@@ -166,21 +166,21 @@ protected
   def epic_key_for_initiative(initiative)
     if epic_key = get_integration_field(initiative.integration_fields, 'key')
       epic_key
-    else
-      create_issue_for_initiative(initiative)[:key]
+    elsif issue_type = epic_issue_type
+      create_issue_for_initiative(initiative, issue_type)[:key]
     end
   end
   
-  def create_issue_for_initiative(initiative)
+  def create_issue_for_initiative(initiative, issue_type)
     issue = Hashie::Mash.new(
       fields: {
         summary: resource_name(initiative),
         description: convert_html(initiative.description.body),
-        issuetype: { name: "Epic" },
+        issuetype: { id: issue_type.id },
         meta_data.epic_name_field => initiative.name
       }
     )
-    issue.fields.merge!(aha_reference_fields(initiative))
+    issue.fields.merge!(aha_reference_fields(initiative, issue_type))
 
     new_issue = issue_resource.create(issue)
     upload_attachments(initiative.description.attachments, new_issue.id)
@@ -201,12 +201,13 @@ protected
       }
     )
     issue.fields
-      .merge!(version_fields(version))
-      .merge!(label_fields(resource))
-      .merge!(aha_reference_fields(resource))
-      .merge!(issue_type_fields(issue_type.name, summary, parent, initiative))
+      .merge!(version_fields(version, issue_type))
+      .merge!(label_fields(resource, issue_type))
+      .merge!(aha_reference_fields(resource, issue_type))
+      .merge!(issue_epic_name_field(issue_type, summary))
+      .merge!(issue_epic_link_field(issue_type, parent, initiative))
       .merge!(subtask_fields(issue_type.subtask, parent))
-      .merge!(time_tracking_fields(resource))
+      .merge!(time_tracking_fields(resource, issue_type))
     
     new_issue = issue_resource.create(issue)
 
@@ -216,6 +217,8 @@ protected
   end
 
   def update_issue(issue_info, resource, initiative, version, parent)
+    issue_type = issue_type_by_parent(parent)
+
     summary = resource_name(resource)
     issue = Hashie::Mash.new(
       fields: {
@@ -224,14 +227,14 @@ protected
       }
     )
     # Disabled until https://jira.atlassian.com/browse/GHS-10333 is fixed.
-    # issue_type = issue_type_by_parent(parent)
     # issue.fields
-    #   .merge!(issue_type_fields(issue_type.name, summary, parent, initiative))
+    #   .merge!(issue_epic_name_field(issue_type, summary))
+    #   .merge!(issue_epic_link_field(issue_type, parent, initiative))
     #   .merge!(subtask_fields(issue_type.subtask, parent))
     issue.fields
-      .merge!(label_fields(resource))
-      .merge!(time_tracking_fields(resource))
-    issue.merge!(version_update_fields(version))
+      .merge!(label_fields(resource, issue_type))
+      .merge!(time_tracking_fields(resource, issue_type))
+    issue.merge!(version_update_fields(version, issue_type))
 
     issue_resource.update(issue_info.id, issue)
 
@@ -241,7 +244,7 @@ protected
   end
 
   def create_link_for_issue(issue, issue_type, parent)
-    if parent and !issue_type.subtask and !["Epic", "Story"].include?(issue_type.name)
+    if parent and !issue_type.subtask and !(issue_type.has_field_epic_link || issue_type.has_field_epic_name)
       link = {
         type: {
           name: "Relates"
@@ -314,51 +317,58 @@ protected
     end
   end
 
-  def version_fields(version)
-    if version && version.id
+  def version_fields(version, issue_type)
+    if version && version.id && issue_type.has_field_fix_versions
       { fixVersions: [{ id: version.id }] }
     else
       Hash.new
     end
   end
 
-  def label_fields(resource)
-    if data.send_tags == "1" and resource.tags
+  def label_fields(resource, issue_type)
+    if data.send_tags == "1" and resource.tags and issue_type.has_field_labels
       { labels: resource.tags }
     else
       Hash.new
     end
   end
 
-  def aha_reference_fields(resource)
-    if meta_data.aha_reference_field
+  def aha_reference_fields(resource, issue_type)
+    if issue_type.has_field_aha_reference
       { meta_data.aha_reference_field => resource.url }
     else
       Hash.new
     end
   end
-  
-  def time_tracking_fields(resource)
-    if resource.work_units == 10 # Units are minutes.
+
+  def time_tracking_fields(resource, issue_type)
+    if resource.work_units == 10 and issue_type.has_field_time_tracking # Units are minutes.
       {
         timetracking: {
           originalEstimate: resource.original_estimate,
           remainingEstimate: resource.remaining_estimate
         }
       }
-    elsif resource.work_units == 20 and meta_data.story_points_field # Units are points.
+    elsif resource.work_units == 20 and issue_type.has_field_story_points # Units are points.
       { meta_data.story_points_field => resource.remaining_estimate }
     else
       Hash.new
     end
   end
   
-  def issue_type_fields(issue_type_name, summary, parent, initiative)
-    if issue_type_name == 'Epic'
+  def issue_epic_name_field(issue_type, summary)
+    if issue_type.has_field_epic_name
       { meta_data.epic_name_field => summary }
-    elsif issue_type_name == 'Story' && data.send_initiatives == '1' && initiative
+    else
+      Hash.new
+    end
+  end
+
+  def issue_epic_link_field(issue_type, parent, initiative)
+    if data.send_initiatives && initiative && issue_type.has_field_epic_link
       { meta_data.epic_link_field => epic_key_for_initiative(initiative) }
-    elsif issue_type_name == 'Story' && parent
+    # Check if parent exists and that it is actually an epic.
+    elsif parent && issue_type.has_field_epic_link && issue_type_by_id(data.feature_issue_type).has_field_epic_name
       { meta_data.epic_link_field => parent[:key] }
     else
       Hash.new
@@ -373,8 +383,8 @@ protected
     end
   end
 
-  def version_update_fields(version)
-    if version
+  def version_update_fields(version, issue_type)
+    if version && version.id && issue_type.has_field_fix_versions
       { update: { fixVersions: [ { set: [ { id: version.id } ] } ] } }
     else
       Hash.new
@@ -387,12 +397,19 @@ protected
   end
 
   def issue_type_by_id(id)
-    raise AhaService::RemoteError, "Integration has not been configured" if @meta_data.projects.nil?
-    project = @meta_data.projects.find {|project| project['key'] == data.project }
+    raise AhaService::RemoteError, "Integration has not been configured" if meta_data.projects.nil?
+    project = meta_data.projects.find {|project| project[:key] == data.project }
     raise AhaService::RemoteError, "Integration has not been configured, can't find project '#{data.project}'" if project.nil?
     issue_type = project.issue_types.find {|type| type.id.to_s == id.to_s }
     raise AhaService::RemoteError, "Integration needs to be reconfigured, issue types have changed, can't find issue type '#{id}'" if issue_type.nil?
     issue_type
+  end
+
+  def epic_issue_type
+    raise AhaService::RemoteError, "Integration has not been configured" if meta_data.projects.nil?
+    project = meta_data.projects.find {|project| project[:key] == data.project }
+    raise AhaService::RemoteError, "Integration has not been configured, can't find project '#{data.project}'" if project.nil?
+    project.issue_types.find {|type| type.has_field_epic_name == true }
   end
   
   # Convert HTML from Aha! into Confluence-style wiki markup.
