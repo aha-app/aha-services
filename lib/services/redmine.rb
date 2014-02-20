@@ -1,10 +1,9 @@
 class AhaServices::Redmine < AhaService
   title 'Redmine'
-  service_name 'redmine_issues'
-  install_button
 
   string :redmine_url
   string :api_key
+  install_button
   select :project,
     collection: -> (meta_data, data) do
       meta_data.projects.collect { |p| [p.name, p.id] }
@@ -13,7 +12,7 @@ class AhaServices::Redmine < AhaService
 
 #========
 # EVENTS
-#======
+#=======
 
   def receive_installed; install_projects; end
 
