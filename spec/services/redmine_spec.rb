@@ -268,6 +268,47 @@ describe AhaServices::Redmine do
               end
             end
           end
+          context 'with attachments' do
+            context 'proper params' do
+              let(:upload_post_params) { ['http://api.my-redmine.org/uploads.json', {file: anything}] }
+              before do
+                stub_request(:post, "#{service.data.redmine_url}/uploads.json").
+                  to_return(status: 201, body: raw_fixture('redmine/uploads/create.json'), headers: {})
+              end
+              after { service.receive(:create_feature) }
+              it 'posts attachment files for each attachment' do
+                expect(service.api).to receive(:create_integration_field).exactly(9)
+                expect_any_instance_of(RedmineUploadResource).to receive(:upload_attachment).twice.and_call_original
+                expect_any_instance_of(RedmineUploadResource).to receive(:http_post).with(*upload_post_params).twice.and_call_original
+              end
+              it 'sends attachment params while creating issue' do
+                expect_any_instance_of(RedmineIssueResource).to receive(:http_post) do |url, params|
+                  expect(url).to match(/http:\/\/api.my-redmine.org\/projects\/\d*\/issues.json/)
+                  issue_json = JSON.parse(params)['issue']
+                  expect(issue_json.keys).to include('tracker_id','subject', 'uploads', 'fixed_version_id')
+                  issue_json['uploads'].each do |upload|
+                    expect(upload.keys).to include('token','filename', 'content_type')
+                  end
+                  double(status: 201, body: issue_create_raw)
+                end.once
+                expect_any_instance_of(RedmineIssueResource).to receive(:http_post).once.and_call_original
+                expect(service.api).to receive(:create_integration_field).exactly(9)
+              end
+              it_behaves_like 'integration field sender',\
+                'feature', "PROD-2", "redmine_issues", [:id, :url, :name], 6, :create_feature
+              it_behaves_like 'integration field sender',\
+                'requirement', "PROD-2-1", "redmine_issues", [:id, :url, :name], 6, :create_feature
+            end
+            context 'unavailable tracker / project / other 404 generating errors' do
+              before do
+                stub_request(:post, "#{service.data.redmine_url}/projects/#{project_id}/issues.json").
+                  to_return(status: 404, body: '', headers: {})
+                stub_request(:post, "#{service.data.redmine_url}/uploads.json").
+                  to_return(status: 204, body: raw_fixture('redmine/uploads/create.json'), headers: {})
+              end
+              it_behaves_like 'RemoteError raiser', :create_feature
+            end
+          end
         end
       end
       context 'unauthenticated' do
