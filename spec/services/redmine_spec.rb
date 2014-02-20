@@ -236,22 +236,37 @@ describe AhaServices::Redmine do
           end
         end
         context 'with version' do
-          before { populate_redmine_projects service }
-          context 'available tracker' do
-            let(:issue_create_raw) { raw_fixture 'redmine/issues/create_with_version.json' }
-            before do
-              stub_request(:post, "#{service.data.redmine_url}/projects/#{project_id}/issues.json").
-                to_return(status: 201, body: issue_create_raw, headers: {})
-              stub_request(:post, "#{service.data.redmine_url}/uploads.json").
-                to_return(status: 201, body: raw_fixture('redmine/uploads/create.json'), headers: {})
-            end
+          let(:issue_create_raw) { raw_fixture 'redmine/issues/create_with_version.json' }
+          before do
+            stub_request(:post, "#{service.data.redmine_url}/projects/#{project_id}/issues.json").
+              to_return(status: 201, body: issue_create_raw, headers: {})
+          end
+          context 'w/o attachments' do
+            let(:payload) { json_fixture 'create_feature_event_no_attach.json' }
             after { service.receive(:create_feature) }
-            it_behaves_like 'integration field sender',\
-              'feature', 'PROD-2', 'redmine_issues', [:id, :url, :name], 6, :create_feature
-            it_behaves_like 'integration field sender',\
-              'release', 'PROD-R-1', 'redmine_issues', [:id, :url, :name], 6, :create_feature
-            it_behaves_like 'integration field sender',\
-              'requirement', 'PROD-2-1', 'redmine_issues', [:id, :url, :name], 6, :create_feature
+            context 'proper params' do
+              before do
+                stub_request(:post, "#{service.data.redmine_url}/uploads.json").
+                to_return(status: 201, body: raw_fixture('redmine/uploads/create.json'), headers: {})
+              end
+              let(:upload_post_params) { ['http://api.my-redmine.org/uploads.json', {file: anything}] }
+              it 'posts attachment files for each attachment' do
+                expect(service.api).to receive(:create_integration_field).exactly(9)
+                expect_any_instance_of(RedmineUploadResource).not_to receive(:upload_attachment)
+                expect_any_instance_of(RedmineUploadResource).not_to receive(:http_post)
+              end
+              it 'sends attachment params while creating issue' do
+                expect_any_instance_of(RedmineIssueResource).to receive(:http_post) do |url, params|
+                  expect(url).to match(/http:\/\/api.my-redmine.org\/projects\/\d*\/issues.json/)
+                  issue_json = JSON.parse(params)['issue']
+                  expect(issue_json.keys).to include('tracker_id','subject', 'fixed_version_id')
+                  expect(issue_json.keys).not_to include('uploads')
+                  double(status: 201, body: issue_create_raw)
+                end.once
+                expect_any_instance_of(RedmineIssueResource).to receive(:http_post).once.and_call_original
+                expect(service.api).to receive(:create_integration_field).exactly(9)
+              end
+            end
           end
         end
       end
