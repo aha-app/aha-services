@@ -165,6 +165,11 @@ protected
   
   # Create an epic from an initiative, or find an existing epic for the 
   # initiative.
+  #
+  # Note there is a possible race condition - if multiple features with the
+  # same initiative are being created in parallel then duplicate initiatives
+  # can be created. We avoid this by creating multiple features synchronously 
+  # in the application. 
   def epic_key_for_initiative(initiative)
     if epic_key = get_integration_field(initiative.integration_fields, 'key')
       epic_key
