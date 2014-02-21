@@ -6,6 +6,7 @@ class RedmineIssueResource < RedmineResource
       parent_id: parent_id,
       attachments: attachments
     prepare_request
+    logger.debug("PARAMS: #{params.to_json}")
     response = http_post redmine_issues_path, params.to_json
     parse_response response, payload_fragment, parent_id
   end
@@ -24,7 +25,7 @@ class RedmineIssueResource < RedmineResource
 private
 
   def redmine_issues_path *concat
-    str = "#{@service.data.redmine_url}/projects/#{@service.data.project_id}/issues"
+    str = "#{@service.data.redmine_url}/projects/#{@service.data.project}/issues"
     str = str + '/' + concat.join('/') unless concat.empty?
     str + '.json'
   end

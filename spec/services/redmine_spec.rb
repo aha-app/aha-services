@@ -9,7 +9,7 @@ describe AhaServices::Redmine do
   let(:service) do
     described_class.new(
       { redmine_url: 'http://api.my-redmine.org',
-        project_id: project_id,
+        project: project_id,
         api_key: '123456'
       }, payload)
   end

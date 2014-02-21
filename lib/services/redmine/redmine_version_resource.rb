@@ -29,7 +29,7 @@ class RedmineVersionResource < RedmineResource
 private
 
   def redmine_versions_path *concat
-    str = "#{@service.data.redmine_url}/projects/#{@service.data.project_id}/versions"
+    str = "#{@service.data.redmine_url}/projects/#{@service.data.project}/versions"
     str = str + '/' + concat.join('/') unless concat.empty?
     str + '.json'
   end
