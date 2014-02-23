@@ -37,7 +37,10 @@
     "release": {
       "reference_num": "PROD-R-1",
       "name": "Summer",
-      "id": "5886060481533761060"
+      "id": "5886060481533761060",
+      "integration_fields": [
+        {"id":"68217473","name":"id","value":"777","service_name":"jira"}
+      ]
     },
     "created_by_user": {
       "name": "Chris Waters",
