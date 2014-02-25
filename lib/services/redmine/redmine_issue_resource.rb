@@ -32,7 +32,7 @@ private
 
   def parse_payload(payload_fragment: nil, parent_id: nil, attachments: nil)
     payload_fragment ||= @payload.feature
-    version_id = get_integration_field payload_fragment.integration_fields, 'version_id'
+    version_id = get_integration_field payload_fragment.release.try(:integration_fields), 'id'
     hashie = Hashie::Mash.new( issue: {
       tracker_id: kind_to_tracker_id(payload_fragment.kind),
       subject: payload_fragment.name,
