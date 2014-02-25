@@ -347,9 +347,9 @@ describe AhaServices::Redmine do
         context 'w/o version' do
           let(:payload) do
             pload = json_fixture'update_feature_event.json'
-            pload['feature']['integration_fields'].reject! do |el|
+            pload['feature']['release']['integration_fields'].reject! do |el|
               el['service_name'] == 'redmine' &&
-              el['name'] == 'version_id'
+              el['name'] == 'id'
             end
             pload
           end
