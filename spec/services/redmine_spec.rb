@@ -42,9 +42,9 @@ describe AhaServices::Redmine do
     let(:title) { 'Redmine' }
     let(:service_name) { 'redmine' }
     let(:schema_fields) {[
-      {type: :install_button, field_name: :install_button},
       {type: :string, field_name: :redmine_url},
       {type: :string, field_name: :api_key},
+      {type: :install_button, field_name: :install_button},
       {type: :select, field_name: :project} ]}
 
     it "has required title and name" do
