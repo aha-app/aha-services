@@ -13,22 +13,7 @@
     "description": {
       "body": "",
       "id": "5886067808747078641",
-      "attachments": [
-        {
-          "id": "5886068229656194500",
-          "download_url": "https://attachments.s3.amazonaws.com/attachments/6cce987f6283d15c080e53bba15b1072a7ab5b07/original.png?1370457053",
-          "content_type": "image/png",
-          "file_name": "Austria.png",
-          "file_size": 29129
-        },
-        {
-          "id": "5886068238246802292",
-          "download_url": "https://attachments.s3.amazonaws.com/attachments/d1cb788065a70dad7ba481c973e19dcd379eb202/original.png?1370457055",
-          "content_type": "image/png",
-          "file_name": "Belgium.png",
-          "file_size": 28228
-        }
-      ]
+      "attachments": []
     },
     "attachments": [],
     "integration_fields": [],
@@ -63,22 +48,7 @@
         "description": {
           "body": "<p>First requirement<br></p>",
           "id": "5886072825267650900",
-          "attachments": [
-            {
-              "id": "5886072906885445907",
-              "download_url": "https://attachments.s3.amazonaws.com/attachments/80641a3d3141ce853ea8642bb6324534fafef5b3/original.png?1370458143",
-              "content_type": "image/png",
-              "file_name": "Finland.png",
-              "file_size": 28265
-            },
-            {
-              "id": "5886072915469817488",
-              "download_url": "https://attachments.s3.amazonaws.com/attachments/6fad2068e2aa0e031643d289367263d3721c8683/original.png?1370458145",
-              "content_type": "image/png",
-              "file_name": "France.png",
-              "file_size": 30193
-            }
-          ]
+          "attachments": [ ]
         },
         "comments_count": 0
       }
