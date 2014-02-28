@@ -135,7 +135,7 @@ class AhaServices::PivotalTracker < AhaService
     end
         
   rescue AhaService::RemoteError => e
-    logger.error("Failed to upload attachment to #{issue_key}: #{e.message}")
+    logger.error("Failed to upload attachment to #{data.project}: #{e.message}")
   ensure
     http_reset 
   end
