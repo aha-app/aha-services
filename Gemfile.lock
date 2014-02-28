@@ -19,9 +19,9 @@ GIT
 
 GIT
   remote: https://github.com/k1w1/html2confluence.git
-  revision: 98518db6a5ced4f63990277bbd7265e9bb20b68a
+  revision: 14621f6b887fe60196b6f28c54c524c88f1e90da
   specs:
-    html2confluence (1.0.1)
+    html2confluence (1.0.3)
 
 PATH
   remote: .
