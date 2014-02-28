@@ -251,6 +251,7 @@ protected
     issue.fields
       .merge!(label_fields(resource, issue_type))
       .merge!(time_tracking_fields(resource, issue_type))
+      .merge!(aha_reference_fields(resource, issue_type))
     issue.merge!(version_update_fields(version, issue_type))
 
     issue_resource.update(issue_info.id, issue)
