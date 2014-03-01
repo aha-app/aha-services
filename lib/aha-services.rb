@@ -26,5 +26,6 @@ require 'services/generic_resource'
 
 require 'services/github/github_resource'
 require 'services/jira/jira_resource'
+require 'services/pivotal_tracker/pivotal_tracker_resource'
 
 Dir["#{File.dirname(__FILE__)}/services/**/*.rb"].each {|file| require file }

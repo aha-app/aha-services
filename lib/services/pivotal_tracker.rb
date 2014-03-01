@@ -70,15 +70,6 @@ class AhaServices::PivotalTracker < AhaService
 
   def add_story(project_id, resource, parent_id = nil, parent_resource = nil)
     story_id = nil
-
-    # Upload attachments and collect information.
-    attachments = []
-    resource.description.attachments.each do |attachment|
-      attachments << upload_attachment(attachment)
-    end
-    resource.attachments.each do |attachment|
-      attachments << upload_attachment(attachment)
-    end
     
     story = {
       name: resource_name(resource),
@@ -88,8 +79,9 @@ class AhaServices::PivotalTracker < AhaService
       external_id: parent_id ? parent_resource.reference_num : resource.reference_num,
       integration_id: data.integration.to_i,
     }
-    if attachments.any?
-      story[:comments] = [{file_attachments: attachments}]
+    file_attachments = upload_attachments(resource.description.attachments | resource.attachments)
+    if file_attachments.any?
+      story[:comments] = [{file_attachments: file_attachments}]
     end
 
     prepare_request
@@ -112,33 +104,58 @@ class AhaServices::PivotalTracker < AhaService
       name: resource_name(resource),
       description: append_link(html_to_plain(resource.description.body), parent_id),
     }
-
+    
     prepare_request
     response = http_put("#{@@api_url}/projects/#{project_id}/stories/#{story_id}", story.to_json)
     process_response(response, 200) do |updated_story|
       logger.info("Updated story #{story_id}")
     end
-  end
-
-  def upload_attachment(attachment)
-    open(attachment.download_url) do |downloaded_file|
-      # Reset Faraday and switch to multipart to do the file upload.
-      http_reset 
-      http(:encoding => :multipart)
-      http.headers['X-TrackerToken'] = data.api_token
-      
-      file = Faraday::UploadIO.new(downloaded_file, attachment.content_type, attachment.file_name)
-      response = http_post("#{@@api_url}/projects/#{data.project}/uploads", {:file => file})
-      process_response(response, 200) do |file_attachment|
-        return file_attachment
+    
+    # Add the new attachments.
+    new_attachments = update_attachments(project_id, story_id, resource)
+    if new_attachments.any?
+      response = http_post("#{@@api_url}/projects/#{project_id}/stories/#{story_id}/comments", {file_attachments: new_attachments}.to_json)
+      process_response(response, 200) do |updated_story|
+        logger.info("Updated story #{story_id}")
       end
     end
-        
-  rescue AhaService::RemoteError => e
-    logger.error("Failed to upload attachment to #{data.project}: #{e.message}")
-  ensure
-    http_reset 
   end
+  
+  def update_attachments(project_id, story_id, resource)
+    aha_attachments = resource.attachments.dup | resource.description.attachments.dup
+
+    # Create any attachments that didn't already exist.
+    upload_attachments(new_aha_attachments(project_id, story_id, aha_attachments))
+  end
+
+  def new_aha_attachments(project_id, story_id, aha_attachments)
+    attachment_resource.all_for_story(project_id, story_id).each do |pivotal_attachment|
+      # Remove any attachments that match.
+      aha_attachments.reject! do |aha_attachment|
+        attachments_match(aha_attachment, pivotal_attachment)
+      end
+    end
+
+    aha_attachments
+  end
+
+  def attachments_match(aha_attachment, pivotal_attachment)
+    logger.debug("MATCHING: #{aha_attachment.file_name} #{pivotal_attachment.filename} #{aha_attachment.file_size.to_i} #{pivotal_attachment['size'].to_i}")
+    aha_attachment.file_name == pivotal_attachment.filename and
+      aha_attachment.file_size.to_i == pivotal_attachment['size'].to_i
+  end
+
+  def upload_attachments(attachments)
+    attachments.collect do |attachment|
+      attachment_resource.upload(attachment)
+    end
+  end
+  
+  
+  def attachment_resource
+    @attachment_resource ||= PivotalTrackerAttachmentResource.new(self)
+  end
+  
   
   # add token to header
   def prepare_request
