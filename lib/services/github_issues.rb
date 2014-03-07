@@ -3,11 +3,11 @@ class AhaServices::GithubIssues < AhaService
   password :password
   install_button
   select :repository, collection: -> (meta_data, data) do
-    meta_data.repos.sort_by(&:name).collect { |repo| [repo.name, repo.name] }
+    meta_data.repos.sort_by(&:name).collect { |repo| [repo.full_name, repo.full_name] }
   end
 
   def receive_installed
-    meta_data.repos = repo_resource.all.map { |repo| { name: repo['name'] } }
+    meta_data.repos = repo_resource.all.map { |repo| { full_name: repo['full_name'] } }
   end
 
   def receive_create_feature
