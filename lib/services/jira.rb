@@ -383,7 +383,7 @@ protected
   end
 
   def issue_epic_link_field(issue_type, parent, initiative)
-    if data.send_initiatives && initiative && issue_type.has_field_epic_link
+    if data.send_initiatives == "1" && initiative && issue_type.has_field_epic_link
       { meta_data.epic_link_field => epic_key_for_initiative(initiative) }
     # Check if parent exists and that it is actually an epic.
     elsif parent && issue_type.has_field_epic_link && issue_type_by_id(data.feature_issue_type).has_field_epic_name
