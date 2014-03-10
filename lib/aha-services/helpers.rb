@@ -12,7 +12,6 @@ module Helpers
   end
   
   def reference_num_to_resource_type(reference_num)
-    puts "REF: #{reference_num}"
     if reference_num =~ /-R-\d+$/ or reference_num =~ /-R-PL$/
       "releases"
     elsif reference_num =~ /-\d+-\d+$/
