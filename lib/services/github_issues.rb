@@ -3,11 +3,11 @@ class AhaServices::GithubIssues < AhaService
   password :password
   install_button
   select :repository, collection: -> (meta_data, data) do
-    meta_data.repos.sort_by(&:name).collect { |repo| [repo.name, repo.name] }
+    meta_data.repos.sort_by(&:name).collect { |repo| [repo.full_name, repo.full_name] }
   end
 
   def receive_installed
-    meta_data.repos = repo_resource.all.map { |repo| { name: repo['name'] } }
+    meta_data.repos = repo_resource.all.map { |repo| { full_name: repo['full_name'] } }
   end
 
   def receive_create_feature
@@ -163,12 +163,12 @@ protected
 
   def integrate_release_with_github_milestone(release, milestone)
     api.create_integration_field("releases", release.reference_num, self.class.service_name, :number, milestone['number'])
-    api.create_integration_field("releases", release.reference_num, self.class.service_name, :url, "https://github.com/#{data.username}/#{data.repository}/issues?milestone=#{milestone['number']}")
+    api.create_integration_field("releases", release.reference_num, self.class.service_name, :url, "https://github.com/#{data.repository}/issues?milestone=#{milestone['number']}")
   end
 
   def integrate_resource_with_github_issue(resource, issue)
     api.create_integration_field(reference_num_to_resource_type(resource.reference_num), resource.reference_num, self.class.service_name, :number, issue['number'])
-    api.create_integration_field(reference_num_to_resource_type(resource.reference_num), resource.reference_num, self.class.service_name, :url, "https://github.com/#{data.username}/#{data.repository}/issues/#{issue['number']}")
+    api.create_integration_field(reference_num_to_resource_type(resource.reference_num), resource.reference_num, self.class.service_name, :url, "https://github.com/#{data.repository}/issues/#{issue['number']}")
   end
 
 end
