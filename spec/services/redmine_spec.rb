@@ -87,7 +87,7 @@ describe AhaServices::Redmine do
     context 'redmine failsafe' do
       before do
         stub_request(:get, "#{service.data.redmine_url}/projects.json").
-          to_return(status: 404, body: {}, headers: {})
+          to_return(status: 404, body: '{"errors": ["Error 1", "Error 2"]}', headers: {})
       end
       it_behaves_like 'RemoteError raiser', :installed
     end
@@ -105,13 +105,13 @@ describe AhaServices::Redmine do
           'release', 'OPS-R-1', 'redmine', [:id, :url, :name], 0
       end
       context 'auth errors' do
-        before { stub_redmine_versions method: :post, status: 401, body: {} }
+        before { stub_redmine_versions method: :post, status: 401, body: '{"errors": ["Error 1", "Error 2"]}' }
         it_behaves_like 'RemoteError raiser', :create_release
       end
       context 'param errors' do
         before do
           stub_request(:post, "#{service.data.redmine_url}/projects/#{project_id}/versions.json").
-            to_return(status: 404, body: {}, headers: {})
+            to_return(status: 404, body: '{"errors": ["Error 1", "Error 2"]}', headers: {})
         end
         it_behaves_like 'RemoteError raiser', :create_release
       end
@@ -141,14 +141,14 @@ describe AhaServices::Redmine do
       context 'auth errors' do
         before do
           stub_request(:put, "#{service.data.redmine_url}/projects/#{project_id}/versions/#{version_id}.json").
-            to_return(status: 401, body: {}, headers: {})
+            to_return(status: 401, body: '{"errors": ["Error 1", "Error 2"]}', headers: {})
         end
         it_behaves_like 'RemoteError raiser', :update_release
       end
       context 'param errors' do
         before do
           stub_request(:put, "#{service.data.redmine_url}/projects/#{project_id}/versions/#{version_id}.json").
-            to_return(status: 404, body: {}, headers: {})
+            to_return(status: 404, body: '{"errors": ["Error 1", "Error 2"]}', headers: {})
         end
         it_behaves_like 'RemoteError raiser', :update_release
       end
@@ -227,7 +227,7 @@ describe AhaServices::Redmine do
             context 'unavailable tracker / project / other 404 generating errors' do
               before do
                 stub_request(:post, "#{service.data.redmine_url}/projects/#{project_id}/issues.json").
-                  to_return(status: 404, body: '', headers: {})
+                  to_return(status: 404, body: '{"errors": ["Error 1", "Error 2"]}', headers: {})
                 stub_request(:post, "#{service.data.redmine_url}/uploads.json").
                   to_return(status: 204, body: raw_fixture('redmine/uploads/create.json'), headers: {})
               end
@@ -302,7 +302,7 @@ describe AhaServices::Redmine do
             context 'unavailable tracker / project / other 404 generating errors' do
               before do
                 stub_request(:post, "#{service.data.redmine_url}/projects/#{project_id}/issues.json").
-                  to_return(status: 404, body: '', headers: {})
+                  to_return(status: 404, body: '{"errors": ["Error 1", "Error 2"]}', headers: {})
                 stub_request(:post, "#{service.data.redmine_url}/uploads.json").
                   to_return(status: 204, body: raw_fixture('redmine/uploads/create.json'), headers: {})
               end
@@ -314,9 +314,9 @@ describe AhaServices::Redmine do
       context 'unauthenticated' do
         before do
           stub_request(:post, "#{service.data.redmine_url}/projects/#{project_id}/issues.json").
-            to_return(status: 401, body: {}, headers: {})
+            to_return(status: 401, body: '{"errors": ["Error 1", "Error 2"]}', headers: {})
           stub_request(:post, "#{service.data.redmine_url}/uploads.json").
-            to_return(status: 401, body: raw_fixture('redmine/uploads/create.json'), headers: {})
+            to_return(status: 401, body: '{"errors": ["Error 1", "Error 2"]}', headers: {})
         end
         it_behaves_like 'RemoteError raiser', :create_feature
       end
@@ -369,7 +369,7 @@ describe AhaServices::Redmine do
         let(:payload) { json_fixture 'update_feature_event.json' }
         before do
           stub_request(:put, /#{service.data.redmine_url}\/projects\/#{project_id}\/issues\/\d\.json/).
-            to_return(status: 401, body: {}, headers: {})
+            to_return(status: 401, body: '{"errors": ["Error 1", "Error 2"]}', headers: {})
         end
         it_behaves_like 'RemoteError raiser', :update_feature
       end

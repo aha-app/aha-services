@@ -9,6 +9,16 @@ class AhaServices::Redmine < AhaService
       meta_data.projects.collect { |p| [p.name, p.id] }
     end,
     description: "Redmine project that this Aha! product will integrate with."
+  select :tracker,
+    collection: -> (meta_data, data) do
+      meta_data.trackers.collect { |p| [p.name, p.id] }
+    end,
+    description: "Redmine tracker that new issues should use."
+  select :issue_priority,
+    collection: -> (meta_data, data) do
+      meta_data.issue_priorities.collect { |p| [p.name, p.id] }
+    end,
+    description: "Default issue priority."
 
 #========
 # EVENTS
@@ -38,6 +48,8 @@ private
 
   def install_projects
     meta_data.projects = project_resource.all.map { |project| { name: project['name'], id: project['id'] }}
+    meta_data.trackers = tracker_resource.all.map { |tracker| { name: tracker['name'], id: tracker['id'] }}
+    meta_data.issue_priorities = priority_resource.all.map { |priority| { name: priority['name'], id: priority['id'] }}
   end
 
   def create_version
@@ -65,6 +77,14 @@ private
 
   def project_resource
     @project_resource ||= RedmineProjectResource.new(self)
+  end
+  
+  def tracker_resource
+    @tracker_resource ||= RedmineTrackerResource.new(self)
+  end
+
+  def priority_resource
+    @priority_resource ||= RedminePriorityResource.new(self)
   end
 
   def version_resource
