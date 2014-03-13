@@ -55,23 +55,11 @@ describe AhaServices::Jira do
 
     # Call back into Aha! for feature
     stub_request(:post, "https://a.aha.io/api/v1/features/5886067808745625353/integrations/jira/fields").
-      with(:body => {:integration_field => {:name => "id", :value => "10009"}}).
-      to_return(:status => 201, :body => "", :headers => {})
-    stub_request(:post, "https://a.aha.io/api/v1/features/5886067808745625353/integrations/jira/fields").
-      with(:body => {:integration_field => {:name => "key", :value => "DEMO-10"}}).
-      to_return(:status => 201, :body => "", :headers => {})
-    stub_request(:post, "https://a.aha.io/api/v1/features/5886067808745625353/integrations/jira/fields").
-      with(:body => {:integration_field => {:name => "url", :value => "http://foo.com/a/browse/DEMO-10"}}).
+      with(:body => {:integration_fields => [{:name => "url", :value => "http://foo.com/a/browse/DEMO-10"}, {:name => "id", :value => "10009"}, {:name => "key", :value => "DEMO-10"}]}).
       to_return(:status => 201, :body => "", :headers => {})
     # Call back into Aha! for requirement
     stub_request(:post, "https://a.aha.io/api/v1/requirements/5886072825272941795/integrations/jira/fields").
-      with(:body => {:integration_field => {:name => "id", :value => "10009"}}).
-      to_return(:status => 201, :body => "", :headers => {})
-    stub_request(:post, "https://a.aha.io/api/v1/requirements/5886072825272941795/integrations/jira/fields").
-      with(:body => {:integration_field => {:name => "key", :value => "DEMO-10"}}).
-      to_return(:status => 201, :body => "", :headers => {})
-    stub_request(:post, "https://a.aha.io/api/v1/requirements/5886072825272941795/integrations/jira/fields").
-      with(:body => {:integration_field => {:name => "url", :value => "http://foo.com/a/browse/DEMO-10"}}).
+      with(:body => {:integration_fields => [{:name => "url", :value => "http://foo.com/a/browse/DEMO-10"}, {:name => "id", :value => "10009"}, {:name => "key", :value => "DEMO-10"}]}).
       to_return(:status => 201, :body => "", :headers => {})
     
     stub_download_feature_attachments

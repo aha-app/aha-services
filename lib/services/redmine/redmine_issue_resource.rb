@@ -55,8 +55,7 @@ private
     resource = requirement ? 'requirements' : 'features'
     process_response response, 201 do |body|
       create_integrations resource, payload_fragment.reference_num,
-        id: body.issue.id,
-        url: "#{@service.data.redmine_url}/issues/#{body.issue.id}"
+        {id: body.issue.id, url: "#{@service.data.redmine_url}/issues/#{body.issue.id}"}
       return body
     end
   end

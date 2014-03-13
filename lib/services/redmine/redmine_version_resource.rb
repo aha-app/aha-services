@@ -7,9 +7,7 @@ class RedmineVersionResource < RedmineResource
     response = http_post redmine_versions_path, params.to_json
     process_response response, 201 do |body|
       create_integrations 'releases', @payload.release.reference_num,
-        id: body.version.id,
-        name: body.version.name,
-        url: redmine_versions_path(body.version.id)
+        {id: body.version.id, name: body.version.name, url: redmine_versions_path(body.version.id)}
     end
   end
 

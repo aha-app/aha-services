@@ -92,8 +92,7 @@ class AhaServices::PivotalTracker < AhaService
       story_url = new_story['url']
       logger.info("Created story #{story_id}")
 
-      api.create_integration_field(reference_num_to_resource_type(resource.reference_num), resource.reference_num, self.class.service_name, :id, story_id)
-      api.create_integration_field(reference_num_to_resource_type(resource.reference_num), resource.reference_num, self.class.service_name, :url, story_url)
+      api.create_integration_fields(reference_num_to_resource_type(resource.reference_num), resource.reference_num, self.class.service_name, {id: story_id, url: story_url})
     end
     
     story_id

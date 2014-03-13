@@ -442,9 +442,8 @@ protected
   end
 
   def integrate_resource_with_jira_issue(resource_type, resource, issue)
-    api.create_integration_field(resource_type, resource.id, self.class.service_name, :url, "#{data.server_url}/browse/#{issue[:key]}")
-    api.create_integration_field(resource_type, resource.id, self.class.service_name, :id, issue.id)
-    api.create_integration_field(resource_type, resource.id, self.class.service_name, :key, issue[:key])
+    api.create_integration_fields(resource_type, resource.id, self.class.service_name,
+      {url: "#{data.server_url}/browse/#{issue[:key]}", id: issue.id, key: issue[:key]})
   end
 
   def integrate_initiative_with_jira_issue(initiative, issue)

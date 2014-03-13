@@ -43,18 +43,12 @@ describe AhaServices::PivotalTracker do
 
     # Call back into Aha! for feature
     stub_request(:post, "https://a.aha.io/api/v1/features/PROD-2/integrations/pivotal_tracker/fields").
-      with(:body => {:integration_field => {:name => "id", :value => "#{@pivot_data[:story_id]}"}}).
-      to_return(:status => 201, :body => "", :headers => {})
-    stub_request(:post, "https://a.aha.io/api/v1/features/PROD-2/integrations/pivotal_tracker/fields").
-      with(:body => {:integration_field => {:name => "url", :value => "#{@pivot_data[:story_url]}"}}).
+      with(:body => {:integration_fields => [{:name => "id", :value => "#{@pivot_data[:story_id]}"}, {:name => "url", :value => "#{@pivot_data[:story_url]}"}]}).
       to_return(:status => 201, :body => "", :headers => {})
 
     # Call back into Aha! for requirement
     stub_request(:post, "https://a.aha.io/api/v1/requirements/PROD-2-1/integrations/pivotal_tracker/fields").
-      with(:body => "{\"integration_field\":{\"name\":\"id\",\"value\":\"61280364\"}}").
-      to_return(:status => 201, :body => "", :headers => {})
-    stub_request(:post, "https://a.aha.io/api/v1/requirements/PROD-2-1/integrations/pivotal_tracker/fields").
-      with(:body => "{\"integration_field\":{\"name\":\"url\",\"value\":\"http://www.pivotaltracker.com/story/show/61017898\"}}").
+      with(:body => "{\"integration_fields\":[{\"name\":\"id\",\"value\":\"61280364\"},{\"name\":\"url\",\"value\":\"http://www.pivotaltracker.com/story/show/61017898\"}]}").
       to_return(:status => 201, :body => "", :headers => {})
       
     # run service
