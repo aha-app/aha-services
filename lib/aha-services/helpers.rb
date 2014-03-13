@@ -2,7 +2,11 @@
 module Helpers
   
   def resource_name(resource)
-    resource.name || description_to_title(resource.description.body)
+    if resource.name.present?
+      resource.name
+    else
+      description_to_title(resource.description.body)
+    end
   end
 
   # Convert HTML to formatted plain text.
