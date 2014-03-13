@@ -21,6 +21,9 @@ describe AhaServices::Jira do
   end
 
   def stub_creating_version
+    # Verify release.
+    stub_request(:get, "#{base_url}/version/777").
+      to_return(:status => 200, :body => "", :headers => {})
     # Create version.
     stub_request(:get, "#{base_url}/project/DEMO/versions").
       to_return(:status => 200, :body => "[]", :headers => {})
@@ -36,6 +39,9 @@ describe AhaServices::Jira do
   it "can receive new features" do
     stub_creating_version
     
+    # Verify release.
+    stub_request(:get, "#{base_url}/version/777").
+      to_return(:status => 200, :body => "", :headers => {})
     # Call to Jira
     stub_request(:post, "#{base_url}/issue").
       to_return(:status => 201, :body => "{\"id\":\"10009\",\"key\":\"DEMO-10\",\"self\":\"https://myhost.atlassian.net/rest/api/2/issue/10009\"}", :headers => {})
