@@ -5,9 +5,9 @@ describe GithubIssueResource do
   let(:domain) { 'api.github.com' }
   let(:username) { 'user' }
   let(:password) { 'secret' }
-  let(:repo) { 'my_repo' }
+  let(:repo) { 'user/my_repo' }
   let(:base_request_url) do
-    "#{protocol}://#{username}:#{password}@#{domain}/repos/#{username}/#{repo}/issues"
+    "#{protocol}://#{username}:#{password}@#{domain}/repos/#{repo}/issues"
   end
   let(:service) do
     AhaServices::GithubIssues.new 'server_url' => "#{protocol}://#{domain}",

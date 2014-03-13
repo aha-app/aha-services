@@ -64,7 +64,9 @@ describe AhaServices::PivotalTracker do
   end
 
   it "can update existing features" do
-
+    stub_download_feature_attachments
+    stub_pivotal_attachment_uploads
+    
     # Call to PivotalTracker
     stub_request(:put, 'https://www.pivotaltracker.com/services/v5/projects/202020/stories/18669866').
       to_return(:status => 200, :body => "{}", :headers => {})
@@ -72,6 +74,12 @@ describe AhaServices::PivotalTracker do
       to_return(:status => 200, :body => "{}", :headers => {})
     stub_request(:get, "https://www.pivotaltracker.com/services/v5/projects/202020/stories/61280364/comments?fields=file_attachments").
       to_return(:status => 200, :body => "{}", :headers => [])
+    stub_request(:get, "https://www.pivotaltracker.com/services/v5/projects/202020/stories/18669866/comments?fields=file_attachments").
+      to_return(:status => 200, :body => "", :headers => {})
+    stub_request(:post, "https://www.pivotaltracker.com/services/v5/projects/202020/stories/18669866/comments").
+      to_return(:status => 200, :body => "", :headers => {})
+    stub_request(:post, "https://www.pivotaltracker.com/services/v5/projects/202020/stories/61280364/comments").
+      to_return(:status => 200, :body => "", :headers => {})
     AhaServices::PivotalTracker.new(
       {'api_token' => @api_token, 'project' => @project_id, 'api_version' => 'a'},
       json_fixture('update_feature_event.json')).receive(:update_feature)

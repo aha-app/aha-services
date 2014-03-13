@@ -780,7 +780,7 @@ describe AhaServices::Jira do
     end
     context "when send_initiatives is set to true" do
       before do
-        service.stub(:data).and_return(Hashie::Mash.new(send_initiatives: true))
+        service.stub(:data).and_return(Hashie::Mash.new(send_initiatives: "1"))
       end
       context "when an initiative is present and issue type has an epic link field" do
         let(:initiative) { 'Some initiative' }
