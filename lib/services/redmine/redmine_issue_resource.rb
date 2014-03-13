@@ -35,7 +35,7 @@ private
     version_id = get_integration_field payload_fragment.release.try(:integration_fields), 'id'
     hashie = Hashie::Mash.new( issue: {
       tracker_id: kind_to_tracker_id(payload_fragment.kind),
-      subject: payload_fragment.name,
+      subject: resource_name(payload_fragment),
       parent_issue_id: parent_id,
       fixed_version_id: version_id
       }.reject {|k,v| v.nil?} )
