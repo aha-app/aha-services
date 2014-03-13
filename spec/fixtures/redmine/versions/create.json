@@ -1,0 +1,15 @@
+{
+  "version": {
+    "id": 3,
+    "project": {
+      "id": 2,
+      "name": "Test Project 2"
+    },
+    "name": "The Final Milestone",
+    "description": "",
+    "status": "open",
+    "sharing": "none",
+    "created_on": "2014-01-28T14:36:46Z",
+    "updated_on": "2014-01-28T14:36:46Z"
+  }
+}

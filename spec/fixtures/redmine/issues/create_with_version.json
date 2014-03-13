@@ -1,0 +1,36 @@
+{
+  "issue":
+  {
+    "id":6,
+    "project":{
+      "id":2,
+      "name":"Test Project 2"
+    },
+    "tracker":{
+      "id":2,
+      "name":"Feature"
+    },
+    "status":{
+      "id":1,
+      "name":"New"
+    },
+    "priority":{
+      "id":2,
+      "name":"Normal"
+    },
+    "author":{
+      "id":3,
+      "name":"RSspec"
+    },
+    "fixed_version":{
+      "id":2,
+      "name":"milestone2"
+    },
+    "subject":"example issue",
+    "start_date":"2014-02-03",
+    "done_ratio":0,
+    "spent_hours":0.0,
+    "created_on":"2014-02-03T15:53:14Z",
+    "updated_on":"2014-02-03T15:53:14Z"
+  }
+}
