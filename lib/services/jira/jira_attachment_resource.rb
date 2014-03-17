@@ -25,7 +25,7 @@ class JiraAttachmentResource < JiraResource
     end
 
   rescue AhaService::RemoteError => e
-    logger.error("Failed to upload attachment to #{issue_key}: #{e.message}")
+    logger.error("Failed to upload attachment to #{issue_id}: #{e.message}")
   ensure
     http_reset
     prepare_request
