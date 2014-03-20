@@ -254,8 +254,8 @@ protected
   def pivotal_to_aha_status(status)
     case status
       when "accepted" then "shipped"
-      when "delivered" then "shipped"
-      when "finished" then "ready_to_ship"
+      when "delivered" then "ready_to_ship"
+      when "finished" then "in_progress"
       when "started" then "in_progress"
       when "rejected" then "in_progress"
       when "unstarted" then "scheduled"
