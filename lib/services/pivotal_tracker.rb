@@ -7,6 +7,8 @@ class AhaServices::PivotalTracker < AhaService
     collection: ->(meta_data, data) { meta_data.projects.detect {|p| p.id.to_s == data.project.to_s }.integrations.collect{|p| [p.name, p.id] } },
     description: "Pivotal integration that you added for Aha!"
 
+  callback_url description: "URL to add to the Activity Web Hook section in Pivotal Tracker using v5."
+
   @@api_url = 'https://www.pivotaltracker.com/services/v5'
 
   def receive_installed
@@ -67,6 +69,38 @@ class AhaServices::PivotalTracker < AhaService
     end
 
   end
+  
+  def receive_webhook
+    payload.changes.each do |change|
+      next unless change.kind == "story"
+    
+      begin
+        result = api.search_integration_fields(data.integration_id, "id", change.id)
+      rescue AhaApi::NotFound
+        return # Ignore stories that we don't have Aha! features for.
+      end
+    
+      if result.feature
+        resource = result.feature
+        resource_type = "feature"
+      elsif result.requirement
+        resource = result.requirement
+        resource_type = "requirement"
+      else
+        logger.info("Unhandled resource type")
+        next
+      end
+    
+      if new_state = change.new_values.current_state
+        # Update the status.
+        api.put(resource.resource, {resource_type => {status: pivotal_to_aha_status(new_state)}})
+      else
+        # Unhandled change.
+      end
+    end
+  end
+  
+protected
 
   def add_story(project_id, resource, parent_id = nil, parent_resource = nil)
     story_id = nil
@@ -216,5 +250,18 @@ class AhaServices::PivotalTracker < AhaService
       nil
     end
   end
+  
+  def pivotal_to_aha_status(status)
+    case status
+      when "accepted" then "shipped"
+      when "delivered" then "shipped"
+      when "finished" then "ready_to_ship"
+      when "started" then "in_progress"
+      when "rejected" then "in_progress"
+      when "unstarted" then "scheduled"
+      when "unscheduled" then "under_consideration"
+    end
+  end
 
 end
+
