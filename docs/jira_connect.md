@@ -50,7 +50,8 @@ There are a number of common problems to watch out for and steps to take if you 
 2. Creating issues may fail if you have required fields in your JIRA project that are in addition to the default fields. You must make these fields optional in JIRA.
 3. Your JIRA system must have an issue link named Relates and issue linking must be turned on. This is included and is on by default.
 4. If your changes in JIRA are not being reflected in Aha! check the Installation instructions for _Webhooks_. 
-5. Contact us at support@aha.io
+5. Check the [support documentation](http://support.aha.io/forums/22978468).
+6. Contact us at support@aha.io
 
 
 
