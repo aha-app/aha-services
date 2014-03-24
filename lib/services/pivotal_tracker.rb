@@ -91,7 +91,7 @@ class AhaServices::PivotalTracker < AhaService
         next
       end
     
-      if new_state = change.new_values.current_state
+      if change.new_values and new_state = change.new_values.current_state
         # Update the status.
         api.put(resource.resource, {resource_type => {status: pivotal_to_aha_status(new_state)}})
       else
