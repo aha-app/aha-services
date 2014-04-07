@@ -497,10 +497,16 @@ describe AhaServices::Jira do
     end
   end
 
-  describe "#create_link_for_issue" do
+  describe "#create_link_for_issue" do    
     shared_examples "empty create_link_for_issue method" do
       it "does not call issue_link_resource.create" do
         issue_link_resource.should_not_receive(:create)
+        result
+      end
+    end
+    shared_examples "calls create_link_for_issue method" do
+      it "calls issue_link_resource.create" do
+        issue_link_resource.should_receive(:create)
         result
       end
     end
@@ -512,28 +518,37 @@ describe AhaServices::Jira do
     context "when the issue has a parent" do
       let(:parent) { Hashie::Mash.new }
       context "when the issue is a subtask" do
+        before do
+          service.stub(:issue_type_by_parent).and_return(Hashie::Mash.new(name: 'Issue'))
+        end
         let(:issue_type) { Hashie::Mash.new(subtask: true, name: 'Issue') }
         it_behaves_like "empty create_link_for_issue method"
       end
 
       context "when the issue is not a subtask" do
         let(:is_subtask) { false }
-        context "when the issue type has an epic link field" do
+        context "when the parent type has an epic link field" do
+          before do
+            service.stub(:issue_type_by_parent).and_return(Hashie::Mash.new(name: 'Issue', has_field_epic_name: true))
+          end
           let(:issue_type) { Hashie::Mash.new(subtask: is_subtask, has_field_epic_link: true) }
           it_behaves_like "empty create_link_for_issue method"
         end
 
         context "when the issue type has an epic name field" do
+          before do
+            service.stub(:issue_type_by_parent).and_return(Hashie::Mash.new(name: 'Issue'))
+          end
           let(:issue_type) { Hashie::Mash.new(subtask: is_subtask, has_field_epic_name: true) }
-          it_behaves_like "empty create_link_for_issue method"
+          it_behaves_like "calls create_link_for_issue method"
         end
 
         context "when the issue is neither an Epic nor a Story" do
-          let(:issue_type) { Hashie::Mash.new(subtask: is_subtask) }
-          it "calls issue_link_resource.create" do
-            issue_link_resource.should_receive(:create)
-            result
+          before do
+            service.stub(:issue_type_by_parent).and_return(Hashie::Mash.new(name: 'Issue'))
           end
+          let(:issue_type) { Hashie::Mash.new(subtask: is_subtask) }
+          it_behaves_like "calls create_link_for_issue method"
         end
       end
     end
