@@ -262,7 +262,7 @@ protected
   end
 
   def create_link_for_issue(issue, issue_type, parent)
-    if parent and !issue_type.subtask and !(issue_type.has_field_epic_link || issue_type.has_field_epic_name)
+    if parent and !issue_type.subtask and !issue_type_by_parent(nil).has_field_epic_name
       link = {
         type: {
           name: "Relates"
@@ -452,9 +452,9 @@ protected
     # Failure was probably due to initiative from another product, convert
     # to a more user friendly message.
     raise AhaService::RemoteError,
-          "Initiative '#{initiative.name}' is from a product\
-           without a JIRA integration. Add a JIRA integration\
-           for the product the initiative belongs to."
+      "Initiative '#{initiative.name}' is from a product\
+       without a JIRA integration. Add a JIRA integration\
+       for the product the initiative belongs to."
   end
   
 end
