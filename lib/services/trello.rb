@@ -5,21 +5,19 @@ class AhaServices::Trello < AhaService
 
   string :username_or_id, description: "Use your Trello username or id, not your email address."
   install_button
-  select :board, collection: ->(meta_data) do
-    meta_data.boards.sort_by(&:name).collect { |board|
+  select :board, collection: ->(meta_data) {
+    meta_data.boards.sort_by(&:name).collect do |board|
       [board.name, board.id]
-    }
-  end
+    end
+  }
   internal :feature_status_mapping
-  select :list_for_new_features, collection: ->(meta_data) do
-    meta_data.lists.collect { |list|
+  select :list_for_new_features, collection: ->(meta_data) {
+    meta_data.lists.collect do |list|
       [list.name, list.id]
-    }
-  end
+    end
+  }
   select :create_features_at,
-    collection: -> do
-      [["top", "top"], ["bottom", "bottom"]]
-    end,
+    collection: -> { [["top", "top"], ["bottom", "bottom"]] },
     description: "Should the newly created features appear at the top or at the bottom of the Trello list."
 
   def receive_installed
