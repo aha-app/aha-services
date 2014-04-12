@@ -21,20 +21,71 @@ class AhaServices::Trello < AhaService
     description: "Should the newly created features appear at the top or at the bottom of the Trello list."
 
   def receive_installed
+    meta_data.boards = board_resource.all
   end
 
   def receive_create_feature
+    create_or_update_trello_card(payload.feature)
   end
 
   def receive_update_feature
+    create_or_update_trello_card(payload.feature)
   end
 
-  # These methods are exposed here so they can be used in the callback and
-  # import code.
-  def get_issue(issue_id)
+  def create_or_update_trello_card(feature)
+    if card = existing_card_integrated_with(feature)
+      update_card(card.id, feature)
+    else
+      create_card_for(feature)
+    end
   end
 
-  def search_issues(params)
+  def existing_card_integrated_with(feature)
+    if card_id = get_integration_field(feature.integration_fields, "id")
+      card_resource.find_by_id(card_id)
+    end
+  end
+
+  def create_card_for(feature)
+    card_resource
+      .create(name: resource_name(feature),
+              desc: ReverseMarkdown.convert(feature.description),
+              pos: data.create_features_at,
+              due: "null",
+              idList: list_id_by_feature_status(feature.status))
+      .tap { |card| integrate_feature_with_trello_card(feature, card) }
+  end
+
+  def update_card(card_id, feature)
+    card_resource.update card_id,
+                         name: resource_name(feature),
+                         desc: ReverseMarkdown.convert(feature.description)
+  end
+
+protected
+
+  def board_resource
+    @board_resource ||= TrelloBoardResource.new(self)
+  end
+
+  def card_resource
+    @card_resource ||= TrelloCardResource.new(self)
+  end
+
+  def list_id_by_feature_status(status)
+    "dummy_list_id"
+  end
+
+  def integrate_feature_with_trello_card(feature, card)
+    api.create_integration_fields(
+      "features",
+      feature.reference_num,
+      self.class.service_name,
+      {
+        id: card.id,
+        url: "https://trello.com/c/#{card.id}"
+      }
+    )
   end
 
 end

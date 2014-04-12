@@ -27,6 +27,7 @@ require 'services/generic_resource'
 require 'services/github/github_resource'
 require 'services/jira/jira_resource'
 require 'services/pivotal_tracker/pivotal_tracker_resource'
+require 'services/trello/trello_resource'
 
 require 'services/redmine/redmine_resource'
 require 'services/redmine/redmine_upload_resource'
