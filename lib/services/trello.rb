@@ -12,7 +12,7 @@ class AhaServices::Trello < AhaService
   }
   internal :feature_status_mapping
   select :list_for_new_features, collection: ->(meta_data) {
-    meta_data.lists.collect do |list|
+    data.board and data.board.lists.collect do |list|
       [list.name, list.id]
     end
   }
@@ -27,12 +27,6 @@ class AhaServices::Trello < AhaService
   end
 
   def receive_update_feature
-  end
-
-  def receive_create_release
-  end
-
-  def receive_update_release
   end
 
   # These methods are exposed here so they can be used in the callback and
