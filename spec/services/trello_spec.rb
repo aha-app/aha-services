@@ -10,6 +10,7 @@ describe AhaServices::Trello do
     AhaServices::Trello.new "server_url" => base_url
   end
 
+  let(:list_id) { "dummy_list_id" }
   let(:card_id) { "dummy_trello_card_id" }
   let(:checklist_id) { "dummy_trello_checklist_id" }
   let(:checklist_item_id) { "dummy_trello_checklist_item_id" }
@@ -20,6 +21,7 @@ describe AhaServices::Trello do
 
   before do
     service.data.stub(:create_features_at).and_return("bottom")
+    service.data.stub(:list_for_new_features).and_return(list_id)
     service.data.stub(:oauth_key).and_return(oauth_key)
     service.data.stub(:oauth_token).and_return(oauth_token)
   end
@@ -35,7 +37,7 @@ describe AhaServices::Trello do
         desc: "",
         pos: "bottom",
         due: "null",
-        idList: "dummy_list_id"
+        idList: list_id
       }.to_json)
       .to_return(status: 201, body: {id: card_id}.to_json)
     integrate_feature_with_card = stub_request(:post, "#{aha_api_url}/features/#{new_feature.reference_num}/integrations/trello/fields")
@@ -115,7 +117,7 @@ describe AhaServices::Trello do
       .with(body: {
         name: updated_feature.name,
         desc: "",
-        idList: "dummy_list_id"
+        idList: "list_id_from_feature_status"
       }.to_json)
       .to_return(status: 200)
     get_checklist_item = stub_request(:get, trello_url("checklists/#{checklist_id}/checkitems/#{checklist_item_id}"))

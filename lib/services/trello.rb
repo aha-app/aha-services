@@ -69,7 +69,7 @@ class AhaServices::Trello < AhaService
       desc: ReverseMarkdown.convert(feature.description.body),
       pos: data.create_features_at,
       due: "null",
-      idList: list_id_by_feature_status(feature.status)
+      idList: data.list_for_new_features
     )
     integrate_feature_with_trello_card(feature, card)
     card_resource.create_comment card.id, "Created from Aha! #{feature.url}"
@@ -155,7 +155,7 @@ protected
   end
 
   def list_id_by_feature_status(status)
-    "dummy_list_id"
+    "list_id_from_feature_status"
   end
 
   def checklist_item_name(requirement)
