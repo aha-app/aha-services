@@ -2,6 +2,7 @@ require "spec_helper"
 require "json"
 
 describe AhaServices::Trello do
+  let(:aha_api_url) { "https://a.aha.io/api/v1" }
   let(:base_url) { "https://api.trello.com/1" }
   let(:oauth_key) { "my_key" }
   let(:oauth_token) { "my_token" }
@@ -21,7 +22,6 @@ describe AhaServices::Trello do
     service.data.stub(:create_features_at).and_return("bottom")
     service.data.stub(:oauth_key).and_return(oauth_key)
     service.data.stub(:oauth_token).and_return(oauth_token)
-    stub_aha_api_posts
   end
 
   it "can receive new features" do
@@ -38,6 +38,20 @@ describe AhaServices::Trello do
         idList: "dummy_list_id"
       }.to_json)
       .to_return(status: 201, body: {id: card_id}.to_json)
+    integrate_feature_with_card = stub_request(:post, "#{aha_api_url}/features/#{new_feature.reference_num}/integrations/trello/fields")
+      .with(body: {
+        integration_fields: [
+          {
+            name: "id",
+            value: card_id
+          },
+          {
+            name: "url",
+            value: "https://trello.com/c/#{card_id}"
+          }
+        ]
+      })
+      .to_return(status: 201)
     create_comment = stub_request(:post, trello_url("cards/#{card_id}/actions/comments"))
       .with(body: { text: "Created from Aha! #{new_feature.url}" }.to_json)
       .to_return(status: 201)
@@ -55,6 +69,19 @@ describe AhaServices::Trello do
         name: "Requirement 1. First requirement\n\n"
       }.to_json)
       .to_return(status: 201, body: {id: checklist_item_id}.to_json)
+    integrate_requirement_with_checklist_item = stub_request(:post, "#{aha_api_url}/requirements/#{new_feature.requirements[0].reference_num}/integrations/trello/fields")
+    .with(body: {
+      integration_fields: [
+        {
+          name: "id",
+          value: checklist_item_id
+        },
+        {
+          name: "checklist_id",
+          value: checklist_id
+        }
+      ]
+    })
     get_attachments = stub_request(:get, trello_url("cards/#{card_id}/attachments"))
       .to_return(status: 200, body: "[]")
     create_attachment = stub_request(:post, trello_url("cards/#{card_id}/attachments"))
@@ -63,10 +90,12 @@ describe AhaServices::Trello do
     service.receive(:create_feature)
 
     expect(create_card).to have_been_requested.once
+    expect(integrate_feature_with_card).to have_been_requested.once
     expect(create_comment).to have_been_requested.once
     expect(get_checklists).to have_been_requested.once
     expect(create_checklist).to have_been_requested.once
     expect(create_checklist_item).to have_been_requested.once
+    expect(integrate_requirement_with_checklist_item).to have_been_requested.once
     # Expecting to issue get_attachments request twice:
     # first time when handling feature attachments,
     # second time when handling requirement attachments
