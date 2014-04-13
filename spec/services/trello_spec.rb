@@ -14,6 +14,7 @@ describe AhaServices::Trello do
   let(:card_id) { "dummy_trello_card_id" }
   let(:checklist_id) { "dummy_trello_checklist_id" }
   let(:checklist_item_id) { "dummy_trello_checklist_item_id" }
+  let(:webhook_id) { "dummy_trello_webhook_id" }
 
   def trello_url(path)
     "#{base_url}/#{path}?key=#{oauth_key}&token=#{oauth_token}"
@@ -40,6 +41,12 @@ describe AhaServices::Trello do
         idList: list_id
       }.to_json)
       .to_return(status: 201, body: {id: card_id}.to_json)
+    create_webhook = stub_request(:post, trello_url("webhooks"))
+      .with(body: {
+        callbackURL: "https://secure.aha.io/api/v1/features/#{new_feature.reference_num}",
+        idModel: card_id
+      })
+      .to_return(status: 201, body: {id: webhook_id}.to_json)
     integrate_feature_with_card = stub_request(:post, "#{aha_api_url}/features/#{new_feature.reference_num}/integrations/trello/fields")
       .with(body: {
         integration_fields: [
@@ -50,14 +57,12 @@ describe AhaServices::Trello do
           {
             name: "url",
             value: "https://trello.com/c/#{card_id}"
+          },
+          {
+            name: "webhook_id",
+            value: webhook_id
           }
         ]
-      })
-      .to_return(status: 201)
-    create_webhook = stub_request(:post, trello_url("webhooks"))
-      .with(body: {
-        callbackURL: "https://secure.aha.io/api/v1/features/#{new_feature.reference_num}",
-        idModel: card_id
       })
       .to_return(status: 201)
     create_comment = stub_request(:post, trello_url("cards/#{card_id}/actions/comments"))
@@ -98,6 +103,7 @@ describe AhaServices::Trello do
     service.receive(:create_feature)
 
     expect(create_card).to have_been_requested.once
+    expect(create_webhook).to have_been_requested.once
     expect(integrate_feature_with_card).to have_been_requested.once
     expect(create_comment).to have_been_requested.once
     expect(get_checklists).to have_been_requested.once
