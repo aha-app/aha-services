@@ -53,7 +53,7 @@ describe AhaServices::Trello do
       .with(body: {
         idChecklist: checklist_id,
         name: "Requirement 1. First requirement\n\n"
-      })
+      }.to_json)
       .to_return(status: 201, body: {id: checklist_item_id}.to_json)
     get_attachments = stub_request(:get, trello_url("cards/#{card_id}/attachments"))
       .to_return(status: 200, body: "[]")
@@ -76,20 +76,43 @@ describe AhaServices::Trello do
   end
 
   it "can update existing features" do
-    service.stub(:payload)
-      .and_return(Hashie::Mash.new(json_fixture("update_feature_event.json")))
-    stub_request(:get, trello_url("cards/#{card_id}"))
+    update_feature_event = Hashie::Mash.new(json_fixture("update_feature_event.json"))
+    service.stub(:payload).and_return(update_feature_event)
+    updated_feature = update_feature_event.feature
+
+    get_card = stub_request(:get, trello_url("cards/#{card_id}"))
       .to_return(status: 200, body: {id: card_id}.to_json)
-    stub_request(:put, trello_url("cards/#{card_id}"))
+    save_card = stub_request(:put, trello_url("cards/#{card_id}"))
+      .with(body: {
+        name: updated_feature.name,
+        desc: "",
+        idList: "dummy_list_id"
+      }.to_json)
       .to_return(status: 200)
-    stub_request(:get, trello_url("checklists/#{checklist_id}/checkitems/#{checklist_item_id}"))
+    get_checklist_item = stub_request(:get, trello_url("checklists/#{checklist_id}/checkitems/#{checklist_item_id}"))
       .to_return(status: 200, body: {id: checklist_item_id}.to_json)
-    stub_request(:put, trello_url("cards/#{card_id}/checklist/#{checklist_id}/checkItem/#{checklist_item_id}"))
+    save_checklist_item = stub_request(:put, trello_url("cards/#{card_id}/checklist/#{checklist_id}/checkItem/#{checklist_item_id}"))
+      .with(body: {
+        idChecklistCurrent: checklist_id,
+        idCheckItem: checklist_item_id,
+        name: "Requirement 1. First requirement  \n, changed\n\n"
+      }.to_json)
       .to_return(status: 200)
-    stub_request(:get, trello_url("cards/#{card_id}/attachments"))
+    get_attachments = stub_request(:get, trello_url("cards/#{card_id}/attachments"))
       .to_return(status: 200, body: [{url: "Finland.png", bytes: 28265}].to_json)
-    stub_request(:post, trello_url("cards/#{card_id}/attachments"))
+    create_attachments = stub_request(:post, trello_url("cards/#{card_id}/attachments"))
       .to_return(status: 201)
+
     service.receive(:update_feature)
+
+    expect(get_card).to have_been_requested.once
+    expect(save_card).to have_been_requested.once
+    # Checking if the checklist item integrated with the requirement exists
+    expect(get_checklist_item).to have_been_requested.once
+    expect(save_checklist_item).to have_been_requested.once
+    expect(get_attachments).to have_been_requested.twice
+    # We are expecting only three of four attachments to be uploaded
+    # since one of them is already attached to the card
+    expect(create_attachments).to have_been_requested.times(3)
   end
 end

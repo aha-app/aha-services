@@ -66,7 +66,7 @@ class AhaServices::Trello < AhaService
   def create_card_for(feature)
     card = card_resource.create(
       name: resource_name(feature),
-      desc: ReverseMarkdown.convert(feature.description),
+      desc: ReverseMarkdown.convert(feature.description.body),
       pos: data.create_features_at,
       due: "null",
       idList: list_id_by_feature_status(feature.status)
@@ -126,7 +126,7 @@ class AhaServices::Trello < AhaService
   end
 
   def attachments_match(aha_attachment, trello_attachment)
-    aha_attachment.file_name == trello_attachment.name and
+    aha_attachment.file_name == trello_attachment.url and
       aha_attachment.file_size.to_i == trello_attachment.bytes.to_i
   end
 
