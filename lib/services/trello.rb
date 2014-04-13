@@ -57,9 +57,11 @@ class AhaServices::Trello < AhaService
   end
 
   def update_card(card_id, feature)
-    card_resource.update card_id,
-                         name: resource_name(feature),
-                         desc: ReverseMarkdown.convert(feature.description)
+    card_resource
+      .update card_id,
+              name: resource_name(feature),
+              desc: ReverseMarkdown.convert(feature.description),
+              idList: list_id_by_feature_status(feature.status)
   end
 
 protected
