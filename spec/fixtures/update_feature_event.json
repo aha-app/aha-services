@@ -85,6 +85,12 @@
         "name": "url",
         "value": "http://localhost:4000/versions/2",
         "service_name": "redmine"
+      },
+      {
+        "id": "61280369",
+        "name": "id",
+        "value": "dummy_trello_card_id",
+        "service_name": "trello"
       }
     ],
     "url": "http://watersco.aha.io/features/PROD-2",
