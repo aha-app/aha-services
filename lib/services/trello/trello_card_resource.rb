@@ -25,4 +25,12 @@ class TrelloCardResource < TrelloResource
       { text: text }.to_json
     process_response(response, 201)
   end
+
+  def create_webhook(card_id, feature)
+    prepare_request
+    response = http_post trello_url("webhooks"),
+      { callbackURL: "https://secure.aha.io/api/v1/features/#{feature.reference_num}",
+        idModel: card_id }.to_json
+    process_response(response, 201)
+  end
 end

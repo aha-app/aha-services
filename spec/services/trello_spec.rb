@@ -54,6 +54,12 @@ describe AhaServices::Trello do
         ]
       })
       .to_return(status: 201)
+    create_webhook = stub_request(:post, trello_url("webhooks"))
+      .with(body: {
+        callbackURL: "https://secure.aha.io/api/v1/features/#{new_feature.reference_num}",
+        idModel: card_id
+      })
+      .to_return(status: 201)
     create_comment = stub_request(:post, trello_url("cards/#{card_id}/actions/comments"))
       .with(body: { text: "Created from Aha! #{new_feature.url}" }.to_json)
       .to_return(status: 201)
