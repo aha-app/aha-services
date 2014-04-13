@@ -8,6 +8,6 @@ class TrelloAttachmentResource < TrelloResource
   def upload(attachment, card_id)
     prepare_request
     response = http_post trello_url("cards/#{card_id}/attachments"),
-                         { url: attachment.download_url }
+                         { url: attachment.download_url }.to_json
   end
 end

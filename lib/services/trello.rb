@@ -80,7 +80,7 @@ class AhaServices::Trello < AhaService
     card_resource
       .update card_id,
               name: resource_name(feature),
-              desc: ReverseMarkdown.convert(feature.description),
+              desc: ReverseMarkdown.convert(feature.description.body),
               idList: list_id_by_feature_status(feature.status)
   end
 
@@ -159,7 +159,8 @@ protected
   end
 
   def checklist_item_name(requirement)
-    [requirement.name, requirement.body].compact.join(". ")
+    [requirement.name, ReverseMarkdown.convert(requirement.description.body)]
+      .compact.join(". ")
   end
 
   def integrate_feature_with_trello_card(feature, card)

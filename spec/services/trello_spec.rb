@@ -18,29 +18,61 @@ describe AhaServices::Trello do
   end
 
   before do
+    service.data.stub(:create_features_at).and_return("bottom")
     service.data.stub(:oauth_key).and_return(oauth_key)
     service.data.stub(:oauth_token).and_return(oauth_token)
     stub_aha_api_posts
   end
 
   it "can receive new features" do
-    service.stub(:payload)
-      .and_return(Hashie::Mash.new(json_fixture("create_feature_event.json")))
-    stub_request(:post, trello_url("cards"))
+    new_feature_event = Hashie::Mash.new(json_fixture("create_feature_event.json"))
+    service.stub(:payload).and_return(new_feature_event)
+    new_feature = new_feature_event.feature
+
+    create_card = stub_request(:post, trello_url("cards"))
+      .with(body: {
+        name: new_feature.name,
+        desc: "",
+        pos: "bottom",
+        due: "null",
+        idList: "dummy_list_id"
+      }.to_json)
       .to_return(status: 201, body: {id: card_id}.to_json)
-    stub_request(:post, trello_url("cards/#{card_id}/actions/comments"))
+    create_comment = stub_request(:post, trello_url("cards/#{card_id}/actions/comments"))
+      .with(body: { text: "Created from Aha! #{new_feature.url}" }.to_json)
       .to_return(status: 201)
-    stub_request(:get, trello_url("cards/#{card_id}/checklists"))
+    get_checklists = stub_request(:get, trello_url("cards/#{card_id}/checklists"))
       .to_return(status: 200, body: "[]")
-    stub_request(:post, trello_url("checklists"))
+    create_checklist = stub_request(:post, trello_url("checklists"))
+      .with(body: {
+        idCard: card_id,
+        name: "Requirements"
+      }.to_json)
       .to_return(status: 201, body: {id: checklist_id}.to_json)
-    stub_request(:post, trello_url("checklists/#{checklist_id}/checkItems"))
+    create_checklist_item = stub_request(:post, trello_url("checklists/#{checklist_id}/checkItems"))
+      .with(body: {
+        idChecklist: checklist_id,
+        name: "Requirement 1. First requirement\n\n"
+      })
       .to_return(status: 201, body: {id: checklist_item_id}.to_json)
-    stub_request(:get, trello_url("cards/#{card_id}/attachments"))
+    get_attachments = stub_request(:get, trello_url("cards/#{card_id}/attachments"))
       .to_return(status: 200, body: "[]")
-    stub_request(:post, trello_url("cards/#{card_id}/attachments"))
+    create_attachment = stub_request(:post, trello_url("cards/#{card_id}/attachments"))
       .to_return(status: 201)
+
     service.receive(:create_feature)
+
+    expect(create_card).to have_been_requested.once
+    expect(create_comment).to have_been_requested.once
+    expect(get_checklists).to have_been_requested.once
+    expect(create_checklist).to have_been_requested.once
+    expect(create_checklist_item).to have_been_requested.once
+    # Expecting to issue get_attachments request twice:
+    # first time when handling feature attachments,
+    # second time when handling requirement attachments
+    expect(get_attachments).to have_been_requested.twice
+    # One request for each feature and requirement attachment
+    expect(create_attachment).to have_been_requested.times(4)
   end
 
   it "can update existing features" do
