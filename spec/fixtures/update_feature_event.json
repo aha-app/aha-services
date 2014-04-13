@@ -166,6 +166,18 @@
             "value": "18669866",
             "id": "5885756848816972098",
             "service_name": "pivotal_tracker"
+          },
+          {
+            "id": "18669867",
+            "name": "id",
+            "value": "dummy_trello_checklist_item_id",
+            "service_name": "trello"
+          },
+          {
+            "id": "18669868",
+            "name": "checklist_id",
+            "value": "dummy_trello_checklist_id",
+            "service_name": "trello"
           }
         ],
         "comments_count": 0

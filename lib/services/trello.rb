@@ -36,7 +36,22 @@ class AhaServices::Trello < AhaService
     if card = existing_card_integrated_with(feature)
       update_card(card.id, feature)
     else
-      create_card_for(feature)
+      card = create_card_for(feature)
+    end
+    update_requirements(card, feature.requirements)
+  end
+
+  def update_requirements(card, requirements)
+    requirements and requirements.each do |requirement|
+      create_or_update_trello_checklist_item(card, requirement)
+    end
+  end
+
+  def create_or_update_trello_checklist_item(card, requirement)
+    if checklist_item = existing_checklist_item_integrated_with(requirement)
+      update_checklist_item(checklist_item, requirement, card)
+    else
+      create_checklist_item_for(requirement, card)
     end
   end
 
@@ -56,6 +71,7 @@ class AhaServices::Trello < AhaService
     )
     integrate_feature_with_trello_card(feature, card)
     card_resource.create_comment card.id, "Created from Aha! #{feature.url}"
+    card
   end
 
   def update_card(card_id, feature)
@@ -64,6 +80,32 @@ class AhaServices::Trello < AhaService
               name: resource_name(feature),
               desc: ReverseMarkdown.convert(feature.description),
               idList: list_id_by_feature_status(feature.status)
+  end
+
+  def existing_checklist_item_integrated_with(requirement)
+    if (checklist_id = get_integration_field(requirement.integration_fields, "checklist_id")) &&
+       (checklist_item_id = get_integration_field(requirement.integration_fields, "id"))
+      checklist_resource.find_item(checklist_id, checklist_item_id)
+    end
+  end
+
+  def create_checklist_item_for(requirement, card)
+    checklist_name = "Requirements"
+    unless checklist = checklist_resource.find_by_name(checklist_name, card)
+      checklist = checklist_resource.create idCard: card.id,
+                                            name: checklist_name
+    end
+    checklist_item =
+      checklist_resource.create_item idChecklist: checklist.id,
+                                     name: checklist_item_name(requirement)
+    integrate_requirement_with_trello_checklist_item(requirement, checklist_item)
+  end
+
+  def update_checklist_item(checklist_item, requirement, card)
+    checklist_resource.update_item card,
+                                   idChecklistCurrent: checklist_item.checklist_id,
+                                   idCheckItem: checklist_item.id,
+                                   name: checklist_item_name(requirement)
   end
 
 protected
@@ -76,8 +118,16 @@ protected
     @card_resource ||= TrelloCardResource.new(self)
   end
 
+  def checklist_resource
+    @checklist_resource ||= TrelloChecklistResource.new(self)
+  end
+
   def list_id_by_feature_status(status)
     "dummy_list_id"
+  end
+
+  def checklist_item_name(requirement)
+    [requirement.name, requirement.body].compact.join(". ")
   end
 
   def integrate_feature_with_trello_card(feature, card)
@@ -88,6 +138,18 @@ protected
       {
         id: card.id,
         url: "https://trello.com/c/#{card.id}"
+      }
+    )
+  end
+
+  def integrate_requirement_with_trello_checklist_item(requirement, checklist_item)
+    api.create_integration_fields(
+      "requirements",
+      requirement.reference_num,
+      self.class.service_name,
+      {
+        id: checklist_item.id,
+        checklist_id: checklist_item.checklist_id
       }
     )
   end
