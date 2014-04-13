@@ -79,7 +79,7 @@ class AhaServices::Trello < AhaService
       idList: data.list_for_new_features
     )
     webhook = card_resource.create_webhook(card.id, feature)
-    integrate_feature_with_trello_card_and_webhook(feature, card, webhook)
+    integrate_feature_with_trello_card(feature, card)
     card_resource.create_comment card.id, "Created from Aha! #{feature.url}"
     card
   end
@@ -171,15 +171,14 @@ protected
       .compact.join(". ")
   end
 
-  def integrate_feature_with_trello_card_and_webhook(feature, card, webhook)
+  def integrate_feature_with_trello_card(feature, card)
     api.create_integration_fields(
       "features",
       feature.reference_num,
       self.class.service_name,
       {
         id: card.id,
-        url: "https://trello.com/c/#{card.id}",
-        webhook_id: webhook.id
+        url: "https://trello.com/c/#{card.id}"
       }
     )
   end
