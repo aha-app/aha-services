@@ -39,11 +39,13 @@ class AhaServices::Trello < AhaService
       card = create_card_for(feature)
     end
     update_requirements(card, feature.requirements)
+    update_attachments(card, feature)
   end
 
   def update_requirements(card, requirements)
     requirements and requirements.each do |requirement|
       create_or_update_trello_checklist_item(card, requirement)
+      update_attachments(card, requirement)
     end
   end
 
@@ -108,6 +110,32 @@ class AhaServices::Trello < AhaService
                                    name: checklist_item_name(requirement)
   end
 
+  def update_attachments(card, resource)
+    aha_attachments = resource.attachments.dup |
+      resource.description.attachments.dup
+    upload_attachments(new_aha_attachments(aha_attachments, card), card)
+  end
+
+  def new_aha_attachments(aha_attachments, card)
+    attachment_resource.all_for_card(card.id).each do |trello_attachment|
+      aha_attachments.reject! do |aha_attachment|
+        attachments_match(aha_attachment, trello_attachment)
+      end
+    end
+    aha_attachments
+  end
+
+  def attachments_match(aha_attachment, trello_attachment)
+    aha_attachment.file_name == trello_attachment.name and
+      aha_attachment.file_size.to_i == trello_attachment.bytes.to_i
+  end
+
+  def upload_attachments(attachments, card)
+    attachments.each do |attachment|
+      attachment_resource.upload(attachment, card.id)
+    end
+  end
+
 protected
 
   def board_resource
@@ -120,6 +148,10 @@ protected
 
   def checklist_resource
     @checklist_resource ||= TrelloChecklistResource.new(self)
+  end
+
+  def attachment_resource
+    @attachment_resource ||= TrelloAttachmentResource.new(self)
   end
 
   def list_id_by_feature_status(status)

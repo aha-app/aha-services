@@ -36,8 +36,10 @@ describe AhaServices::Trello do
       .to_return(status: 201, body: {id: checklist_id}.to_json)
     stub_request(:post, trello_url("checklists/#{checklist_id}/checkItems"))
       .to_return(status: 201, body: {id: checklist_item_id}.to_json)
-    stub_request(:get, trello_url("blah"))
-      .to_return(status: 200)
+    stub_request(:get, trello_url("cards/#{card_id}/attachments"))
+      .to_return(status: 200, body: "[]")
+    stub_request(:post, trello_url("cards/#{card_id}/attachments"))
+      .to_return(status: 201)
     service.receive(:create_feature)
   end
 
@@ -52,6 +54,10 @@ describe AhaServices::Trello do
       .to_return(status: 200, body: {id: checklist_item_id}.to_json)
     stub_request(:put, trello_url("cards/#{card_id}/checklist/#{checklist_id}/checkItem/#{checklist_item_id}"))
       .to_return(status: 200)
+    stub_request(:get, trello_url("cards/#{card_id}/attachments"))
+      .to_return(status: 200, body: [{url: "Finland.png", bytes: 28265}].to_json)
+    stub_request(:post, trello_url("cards/#{card_id}/attachments"))
+      .to_return(status: 201)
     service.receive(:update_feature)
   end
 end
