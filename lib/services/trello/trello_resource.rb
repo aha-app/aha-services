@@ -15,4 +15,9 @@ protected
   def api_url
     "https://api.trello.com/1"
   end
+
+  def trello_url(path)
+    "https://api.trello.com/1/\
+     #{path}?key=#{@service.oauth_key}&token=#{@service.oauth_token}"
+  end
 end
