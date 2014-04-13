@@ -24,7 +24,9 @@ describe AhaServices::Trello do
     service.stub(:payload)
       .and_return(Hashie::Mash.new(json_fixture("create_feature_event.json")))
     stub_request(:post, trello_url("cards"))
-      .to_return(status: 201, body: '{"id": "12345"}')
+      .to_return(status: 201, body: "{\"id\": \"#{card_id}\"}")
+    stub_request(:post, trello_url("cards/#{card_id}/actions/comments"))
+      .to_return(status: 201)
     service.receive(:create_feature)
   end
 

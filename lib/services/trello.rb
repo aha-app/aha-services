@@ -47,13 +47,15 @@ class AhaServices::Trello < AhaService
   end
 
   def create_card_for(feature)
-    card_resource
-      .create(name: resource_name(feature),
-              desc: ReverseMarkdown.convert(feature.description),
-              pos: data.create_features_at,
-              due: "null",
-              idList: list_id_by_feature_status(feature.status))
-      .tap { |card| integrate_feature_with_trello_card(feature, card) }
+    card = card_resource.create(
+      name: resource_name(feature),
+      desc: ReverseMarkdown.convert(feature.description),
+      pos: data.create_features_at,
+      due: "null",
+      idList: list_id_by_feature_status(feature.status)
+    )
+    integrate_feature_with_trello_card(feature, card)
+    card_resource.create_comment card.id, "Created from Aha! #{feature.url}"
   end
 
   def update_card(card_id, feature)

@@ -18,4 +18,10 @@ class TrelloCardResource < TrelloResource
     response = http_put trello_url("cards/#{id}"), updated_card.to_json
     found_resource(response)
   end
+
+  def create_comment(id, text)
+    prepare_request
+    response = http_post trello_url("cards/#{id}/actions/comments"), text: text
+    process_response(response, 201)
+  end
 end
