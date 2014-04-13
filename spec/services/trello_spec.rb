@@ -10,11 +10,14 @@ describe AhaServices::Trello do
     AhaServices::Trello.new "server_url" => base_url
   end
 
-  let(:list_id) { "dummy_list_id" }
   let(:card_id) { "dummy_trello_card_id" }
   let(:checklist_id) { "dummy_trello_checklist_id" }
   let(:checklist_item_id) { "dummy_trello_checklist_item_id" }
   let(:webhook_id) { "dummy_trello_webhook_id" }
+  let(:callback_url) { "http://some_url.com"}
+  let(:feature_statuses) do
+    { "list_id1" => "status1", "list_id2" => "under_consideration" }
+  end
 
   def trello_url(path)
     "#{base_url}/#{path}?key=#{oauth_key}&token=#{oauth_token}"
@@ -22,9 +25,11 @@ describe AhaServices::Trello do
 
   before do
     service.data.stub(:create_features_at).and_return("bottom")
-    service.data.stub(:list_for_new_features).and_return(list_id)
+    service.data.stub(:list_for_new_features).and_return("list_id1")
     service.data.stub(:oauth_key).and_return(oauth_key)
     service.data.stub(:oauth_token).and_return(oauth_token)
+    service.data.stub(:callback_url).and_return(callback_url)
+    service.data.stub(:feature_statuses).and_return(feature_statuses)
   end
 
   it "can receive new features" do
@@ -38,14 +43,14 @@ describe AhaServices::Trello do
         desc: "",
         pos: "bottom",
         due: "null",
-        idList: list_id
+        idList: "list_id1"
       }.to_json)
       .to_return(status: 201, body: {id: card_id}.to_json)
     create_webhook = stub_request(:post, trello_url("webhooks"))
       .with(body: {
-        callbackURL: "https://secure.aha.io/api/v1/features/#{new_feature.reference_num}",
+        callbackURL: "#{callback_url}?feature=PROD-2",
         idModel: card_id
-      })
+      }.to_json)
       .to_return(status: 201, body: {id: webhook_id}.to_json)
     integrate_feature_with_card = stub_request(:post, "#{aha_api_url}/features/#{new_feature.reference_num}/integrations/trello/fields")
       .with(body: {
@@ -129,7 +134,7 @@ describe AhaServices::Trello do
       .with(body: {
         name: updated_feature.name,
         desc: "",
-        idList: "list_id_from_feature_status"
+        idList: "list_id2"
       }.to_json)
       .to_return(status: 200)
     get_checklist_item = stub_request(:get, trello_url("checklists/#{checklist_id}/checkitems/#{checklist_item_id}"))

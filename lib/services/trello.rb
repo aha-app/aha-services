@@ -32,6 +32,13 @@ class AhaServices::Trello < AhaService
     create_or_update_trello_card(payload.feature)
   end
 
+  def receive_webhook
+    if payload.action and payload.action.listAfter
+      new_list_id = payload.action.listAfter.id
+      api.put(webhook_feature_reference_num, { status: data.feature_statuses[new_list_id] })
+    end
+  end
+
   def create_or_update_trello_card(feature)
     if card = existing_card_integrated_with(feature)
       update_card(card.id, feature)
@@ -82,7 +89,7 @@ class AhaServices::Trello < AhaService
       .update card_id,
               name: resource_name(feature),
               desc: ReverseMarkdown.convert(feature.description.body),
-              idList: list_id_by_feature_status(feature.status)
+              idList: data.feature_statuses.invert[feature.status]
   end
 
   def existing_checklist_item_integrated_with(requirement)
@@ -156,7 +163,7 @@ protected
   end
 
   def list_id_by_feature_status(status)
-    "list_id_from_feature_status"
+    data.feature_statuses.invert[status]
   end
 
   def checklist_item_name(requirement)

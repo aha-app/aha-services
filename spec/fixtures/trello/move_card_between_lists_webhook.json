@@ -1,0 +1,40 @@
+{
+  "action": {
+    "id": "534ac90ca0bdf31b7f42e650",
+    "idMemberCreator": "5348fdf16e04efaa0d933a00",
+    "data": {
+      "listAfter": {
+        "name": "Intermediate",
+        "id": "list_id2"
+      },
+      "listBefore": {
+        "name": "Advanced",
+        "id": "5348fdf36e04efaa0d933a06"
+      },
+      "board": {
+        "shortLink": "apcahoEa",
+        "name": "Welcome Board",
+        "id": "5348fdf36e04efaa0d933a02"
+      },
+      "card": {
+        "shortLink": "MX5JyJOW",
+        "idShort": 17,
+        "name": "Want tips, usage examples, or API info?",
+        "id": "5348fdf36e04efaa0d933a1f",
+        "idList": "5348fdf36e04efaa0d933a05"
+      },
+      "old": {
+        "idList": "5348fdf36e04efaa0d933a06"
+      }
+    },
+    "type": "updateCard",
+    "date": "2014-04-13T17:27:40.624Z",
+    "memberCreator": {
+      "id": "5348fdf16e04efaa0d933a00",
+      "avatarHash": "75667d419592750677c7efee600d68b8",
+      "fullName": "Pavel Pomerantsev",
+      "initials": "PP",
+      "username": "pavelpomerantsev"
+    }
+  }
+}
