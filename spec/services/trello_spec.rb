@@ -18,8 +18,8 @@ describe AhaServices::Trello do
   end
 
   before do
-    service.stub(:oauth_key).and_return(oauth_key)
-    service.stub(:oauth_token).and_return(oauth_token)
+    service.data.stub(:oauth_key).and_return(oauth_key)
+    service.data.stub(:oauth_token).and_return(oauth_token)
     stub_aha_api_posts
   end
 
