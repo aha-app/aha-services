@@ -8,7 +8,7 @@ class TrelloCardResource < TrelloResource
   def create(new_card)
     prepare_request
     response = http_post trello_url("cards"), new_card.to_json
-    process_response(response, 201) do |card|
+    process_response(response, 200) do |card|
       return card
     end
   end
@@ -23,7 +23,7 @@ class TrelloCardResource < TrelloResource
     prepare_request
     response = http_post trello_url("cards/#{id}/actions/comments"),
       { text: text }.to_json
-    process_response(response, 201)
+    process_response(response, 200)
   end
 
   def create_webhook(card_id, feature)
@@ -31,6 +31,6 @@ class TrelloCardResource < TrelloResource
     response = http_post trello_url("webhooks"),
       { callbackURL: "#{@service.data.callback_url}?feature=#{feature.reference_num}",
         idModel: card_id }.to_json
-    process_response(response, 201)
+    process_response(response, 200)
   end
 end
