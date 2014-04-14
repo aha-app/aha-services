@@ -1,23 +1,23 @@
 require "reverse_markdown"
 
 class AhaServices::Trello < AhaService
-  title "Trello"
-
-  string :username_or_id, description: "Use your Trello username or id, not your email address."
+  oauth_button request_token_url: "https://trello.com/1/OAuthGetRequestToken",
+    access_token_url: "https://trello.com/1/OAuthGetAccessToken",
+    authorize_url: "https://trello.com/1/OAuthAuthorizeToken"
   install_button
-  select :board, collection: ->(meta_data) {
+  select :board, collection: ->(meta_data, data) {
     meta_data.boards.sort_by(&:name).collect do |board|
       [board.name, board.id]
     end
   }
   internal :feature_status_mapping
-  select :list_for_new_features, collection: ->(meta_data) {
-    data.board and data.board.lists.collect do |list|
+  select :list_for_new_features, collection: ->(meta_data, data) {
+    meta_data.boards.detect {|b| b[:id] == data.board }.lists.collect do |list|
       [list.name, list.id]
     end
   }
   select :create_features_at,
-    collection: -> { [["top", "top"], ["bottom", "bottom"]] },
+    collection: [["Top", "top"], ["Bottom", "bottom"]],
     description: "Should the newly created features appear at the top or at the bottom of the Trello list."
 
   def receive_installed

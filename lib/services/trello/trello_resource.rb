@@ -13,6 +13,7 @@ class TrelloResource < GenericResource
 
 protected
   def trello_url(path)
-    "https://api.trello.com/1/#{path}?key=#{@service.data.oauth_key}&token=#{@service.data.oauth_token}"
+    joiner = (path =~ /\?/) ? "&" : "?"
+    "https://api.trello.com/1/#{path}#{joiner}key=#{@service.data.oauth_key}&token=#{@service.data.oauth_token}"
   end
 end

@@ -28,6 +28,10 @@ module Schema
       add_to_schema :install_button, "install_button", options
     end
     
+    def oauth_button(options = {})
+      add_to_schema :oauth_button, "oauth_button", options
+    end
+    
     def internal(name, options = {})
       add_to_schema :internal, name, options
     end
