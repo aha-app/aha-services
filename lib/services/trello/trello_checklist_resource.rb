@@ -16,7 +16,7 @@ class TrelloChecklistResource < TrelloResource
   def create(new_checklist)
     prepare_request
     response = http_post trello_url("checklists"), new_checklist.to_json
-    process_response(response, 201) do |checklist|
+    process_response(response, 200) do |checklist|
       return checklist
     end
   end
@@ -25,7 +25,7 @@ class TrelloChecklistResource < TrelloResource
     prepare_request
     response = http_post trello_url("checklists/#{new_checklist_item[:idChecklist]}/checkItems"),
       new_checklist_item.to_json
-    process_response(response, 201) do |checklist_item|
+    process_response(response, 200) do |checklist_item|
       return checklist_item.merge(checklist_id: new_checklist_item[:idChecklist])
     end
   end

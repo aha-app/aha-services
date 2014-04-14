@@ -34,8 +34,8 @@ class AhaServices::Trello < AhaService
   end
 
   def receive_webhook
-    if payload.action and payload.action.listAfter
-      new_list_id = payload.action.listAfter.id
+    if payload.model and payload.model.idList
+      new_list_id = payload.model.idList
       api.put(webhook_feature_reference_num, { status: data.feature_statuses[new_list_id] })
     end
   end
