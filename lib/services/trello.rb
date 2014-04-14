@@ -3,7 +3,8 @@ require "reverse_markdown"
 class AhaServices::Trello < AhaService
   oauth_button request_token_url: "https://trello.com/1/OAuthGetRequestToken",
     access_token_url: "https://trello.com/1/OAuthGetAccessToken",
-    authorize_url: "https://trello.com/1/OAuthAuthorizeToken"
+    authorize_url: "https://trello.com/1/OAuthAuthorizeToken",
+    parameters: "name=Aha!%20Integration&scope=read,write"
   install_button
   select :board, collection: ->(meta_data, data) {
     meta_data.boards.sort_by(&:name).collect do |board|
