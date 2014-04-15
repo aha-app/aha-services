@@ -36,7 +36,9 @@ class AhaServices::Trello < AhaService
   def receive_webhook
     if payload.model and payload.model.idList
       new_list_id = payload.model.idList
-      api.put(webhook_feature_reference_num, { status: data.feature_statuses[new_list_id] })
+      if url = webhook_feature_url(payload.model.id)
+        api.put(url, { status: data.feature_statuses[new_list_id.to_s] })
+      end
     end
   end
 
@@ -171,7 +173,26 @@ protected
     [requirement.name, ReverseMarkdown.convert(requirement.description.body)]
       .compact.join(". ")
   end
-
+  
+  def webhook_feature_url(card_id)
+    begin
+      result = api.search_integration_fields(data.integration_id, "id", card_id)
+    rescue AhaApi::NotFound
+      return nil # Ignore cards that we don't have Aha! features for.
+    end
+  
+    if result.feature
+      resource = result.feature
+    elsif result.requirement
+      resource = result.requirement
+    else
+      logger.info("Unhandled resource type")
+      return nil
+    end
+    
+    resource.resource
+  end
+  
   def integrate_feature_with_trello_card(feature, card)
     api.create_integration_fields(
       "features",
