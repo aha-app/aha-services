@@ -78,7 +78,7 @@ class AhaServices::Trello < AhaService
       name: resource_name(feature),
       desc: ReverseMarkdown.convert(feature.description.body),
       pos: data.create_features_at,
-      due: "null",
+      due: Time.parse(feature.release.release_date).utc,
       idList: data.list_for_new_features
     )
     webhook = card_resource.create_webhook(card.id, feature)
@@ -90,9 +90,10 @@ class AhaServices::Trello < AhaService
   def update_card(card_id, feature)
     card_resource
       .update card_id,
-              name: resource_name(feature),
-              desc: ReverseMarkdown.convert(feature.description.body),
-              idList: data.feature_statuses.invert[feature.status]
+        name: resource_name(feature),
+        desc: ReverseMarkdown.convert(feature.description.body),
+        due: Time.parse(feature.release.release_date).utc,
+        idList: data.feature_statuses.invert[feature.status]
   end
 
   def existing_checklist_item_integrated_with(requirement)
