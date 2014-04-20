@@ -1,7 +1,7 @@
 class AhaServices::PivotalTracker < AhaService
   string :api_token, description: "API token from www.pivotaltracker.com"
   install_button
-  select :project, collection: -> (meta_data, data) { meta_data.projects.collect { |p| [p.name, p.id] } }, 
+  select :project, collection: -> (meta_data, data) { meta_data.projects.collect { |p| [p.name, p.id] } },
     description: "Tracker project that this Aha! product will integrate with."
   select :integration,
     collection: ->(meta_data, data) { meta_data.projects.detect {|p| p.id.to_s == data.project.to_s }.integrations.collect{|p| [p.name, p.id] } },
@@ -25,7 +25,7 @@ class AhaServices::PivotalTracker < AhaService
         }
       end
     end
-    
+
     # For each project, get the integrations.
     available_projects.each do |project|
       project[:integrations] = []
@@ -39,7 +39,7 @@ class AhaServices::PivotalTracker < AhaService
         end
       end
     end
-    
+
     @meta_data.projects = available_projects
   end
 
@@ -69,17 +69,17 @@ class AhaServices::PivotalTracker < AhaService
     end
 
   end
-  
+
   def receive_webhook
     payload.changes.each do |change|
       next unless change.kind == "story"
-    
+
       begin
         result = api.search_integration_fields(data.integration_id, "id", change.id)
       rescue AhaApi::NotFound
         return # Ignore stories that we don't have Aha! features for.
       end
-    
+
       if result.feature
         resource = result.feature
         resource_type = "feature"
@@ -90,7 +90,7 @@ class AhaServices::PivotalTracker < AhaService
         logger.info("Unhandled resource type")
         next
       end
-    
+
       if change.new_values and new_state = change.new_values.current_state
         # Update the status.
         api.put(resource.resource, {resource_type => {status: pivotal_to_aha_status(new_state)}})
@@ -99,12 +99,12 @@ class AhaServices::PivotalTracker < AhaService
       end
     end
   end
-  
+
 protected
 
   def add_story(project_id, resource, parent_id = nil, parent_resource = nil)
     story_id = nil
-    
+
     story = {
       name: resource_name(resource),
       description: append_link(html_to_plain(resource.description.body), parent_id),
@@ -128,7 +128,7 @@ protected
 
       api.create_integration_fields(reference_num_to_resource_type(resource.reference_num), resource.reference_num, self.class.service_name, {id: story_id, url: story_url})
     end
-    
+
     story_id
   end
 
@@ -137,13 +137,13 @@ protected
       name: resource_name(resource),
       description: append_link(html_to_plain(resource.description.body), parent_id),
     }
-    
+
     prepare_request
     response = http_put("#{@@api_url}/projects/#{project_id}/stories/#{story_id}", story.to_json)
     process_response(response, 200) do |updated_story|
       logger.info("Updated story #{story_id}")
     end
-    
+
     # Add the new attachments.
     new_attachments = update_attachments(project_id, story_id, resource)
     if new_attachments.any?
@@ -153,7 +153,7 @@ protected
       end
     end
   end
-  
+
   def update_attachments(project_id, story_id, resource)
     aha_attachments = resource.attachments.dup | resource.description.attachments.dup
 
@@ -183,13 +183,13 @@ protected
       attachment_resource.upload(attachment)
     end
   end
-  
-  
+
+
   def attachment_resource
     @attachment_resource ||= PivotalTrackerAttachmentResource.new(self)
   end
-  
-  
+
+
   # add token to header
   def prepare_request
     http.headers['Content-Type'] = 'application/json'
@@ -203,7 +203,7 @@ protected
       body
     end
   end
-  
+
   def kind_to_story_type(kind)
     case kind
     when "new", "improvement"
@@ -216,7 +216,7 @@ protected
       "feature"
     end
   end
-  
+
   def process_response(response, *success_codes, &block)
     if success_codes.include?(response.status)
       yield parse(response.body)
@@ -250,7 +250,7 @@ protected
       nil
     end
   end
-  
+
   def pivotal_to_aha_status(status)
     case status
       when "accepted" then "shipped"
