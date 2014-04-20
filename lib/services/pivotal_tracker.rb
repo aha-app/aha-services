@@ -109,11 +109,7 @@ protected
       description: append_link(html_to_plain(resource.description.body), parent_id),
     }
 
-    prepare_request
-    response = http_put("#{@@api_url}/projects/#{project_id}/stories/#{story_id}", story.to_json)
-    process_response(response, 200) do |updated_story|
-      logger.info("Updated story #{story_id}")
-    end
+    feature_and_requirement_mapping_resource.update_feature_or_requirement(project_id, story_id, story)
 
     # Add the new attachments.
     new_attachments = update_attachments(project_id, story_id, resource)

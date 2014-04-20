@@ -10,6 +10,14 @@ class PivotalTrackerFeatureAndRequirementMappingResource < PivotalTrackerResourc
     end
   end
 
+  def update_feature_or_requirement(project_id, story_id, story)
+    prepare_request
+    response = http_put("#{api_url}/projects/#{project_id}/stories/#{story_id}", story.to_json)
+    process_response(response, 200) do |updated_story|
+      logger.info("Updated story #{story_id}")
+    end
+  end
+
 private
 
   def mapping
