@@ -8,6 +8,24 @@ class PivotalTrackerFeatureAndRequirementMappingResource < PivotalTrackerResourc
     end
   end
 
+  def update_feature(project, feature)
+    # Update story
+    story_id = get_service_id(feature.integration_fields)
+    update_story(project, story_id, feature)
+
+    # Create or update each requirement.
+    feature.requirements.each do |requirement|
+      req_story_id = get_service_id(requirement.integration_fields)
+      if req_story_id
+        # Update requirement.
+        update_story(project, req_story_id, requirement, story_id)
+      else
+        # Create new story for requirement.
+        add_story(project, requirement, story_id, feature)
+      end
+    end
+  end
+
   def create_feature_or_requirement(project_id, story)
     prepare_request
     response = http_post("#{api_url}/projects/#{project_id}/stories", story.to_json)
@@ -63,10 +81,47 @@ private
 
   end
 
+  def update_story(project_id, story_id, resource, parent_id = nil)
+    story = {
+      name: resource_name(resource),
+      description: append_link(html_to_plain(resource.description.body), parent_id),
+    }
+
+    update_feature_or_requirement(project_id, story_id, story)
+
+    # Add the new attachments.
+    new_attachments = update_attachments(project_id, story_id, resource)
+    add_attachments(project_id, story_id, new_attachments)
+  end
+
   def upload_attachments(attachments)
     attachments.collect do |attachment|
       attachment_resource.upload(attachment)
     end
+  end
+
+  def update_attachments(project_id, story_id, resource)
+    aha_attachments = resource.attachments.dup | resource.description.attachments.dup
+
+    # Create any attachments that didn't already exist.
+    upload_attachments(new_aha_attachments(project_id, story_id, aha_attachments))
+  end
+
+  def new_aha_attachments(project_id, story_id, aha_attachments)
+    attachment_resource.all_for_story(project_id, story_id).each do |pivotal_attachment|
+      # Remove any attachments that match.
+      aha_attachments.reject! do |aha_attachment|
+        attachments_match(aha_attachment, pivotal_attachment)
+      end
+    end
+
+    aha_attachments
+  end
+
+  def attachments_match(aha_attachment, pivotal_attachment)
+    logger.debug("MATCHING: #{aha_attachment.file_name} #{pivotal_attachment.filename} #{aha_attachment.file_size.to_i} #{pivotal_attachment['size'].to_i}")
+    aha_attachment.file_name == pivotal_attachment.filename and
+      aha_attachment.file_size.to_i == pivotal_attachment['size'].to_i
   end
 
   def append_link(body, parent_id)
@@ -87,6 +142,19 @@ private
       "chore"
     else
       "feature"
+    end
+  end
+
+  # Get id of current service
+  def get_service_id(integration_fields)
+    return nil if integration_fields.nil?
+    field = integration_fields.detect do |f|
+      f.service_name == @service.class.service_name and f.name == "id"
+    end
+    if field
+      field.value
+    else
+      nil
     end
   end
 
