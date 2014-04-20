@@ -7,6 +7,14 @@ class PivotalTrackerStoryResource < PivotalTrackerProjectDependentResource
     create_from_resource(requirement, feature, feature_mapping_id)
   end
 
+  def update_from_feature(feature_mapping_id, feature)
+    update_from_resource(feature_mapping_id, feature)
+  end
+
+  def update_from_requirement(requirement_mapping_id, requirement, feature_mapping_id)
+    update_from_resource(requirement_mapping_id, requirement, feature_mapping_id)
+  end
+
   def create(story)
     prepare_request
     response = http_post("#{api_url}/projects/#{project_id}/stories", story.to_json)
@@ -49,7 +57,7 @@ protected
       story_type: kind_to_story_type(resource.kind || parent_resource.kind),
       created_at: resource.created_at,
       external_id: parent_id ? parent_resource.reference_num : resource.reference_num,
-      integration_id: @service.data.integration.to_i,
+      integration_id: @service.data.integration.to_i
     }
     file_attachments = upload_attachments(resource.description.attachments | resource.attachments)
     if file_attachments.any?
@@ -59,6 +67,19 @@ protected
     created_story = create(story)
     api.create_integration_fields(reference_num_to_resource_type(resource.reference_num), resource.reference_num, @service.class.service_name, {id: created_story.id, url: created_story.url})
     created_story.id
+  end
+
+  def update_from_resource(resource_mapping_id, resource, parent_id = nil)
+    story = {
+      name: resource_name(resource),
+      description: append_link(html_to_plain(resource.description.body), parent_id)
+    }
+
+    update(resource_mapping_id, story)
+
+    # Add the new attachments.
+    new_attachments = update_attachments(resource_mapping_id, resource)
+    add_attachments(resource_mapping_id, new_attachments)
   end
 
   def upload_attachments(attachments)

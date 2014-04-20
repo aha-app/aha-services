@@ -28,4 +28,17 @@ class PivotalTrackerResource < GenericResource
     end
   end
 
+  # Get id of current service
+  def get_service_id(integration_fields)
+    return nil if integration_fields.nil?
+    field = integration_fields.detect do |f|
+      f.service_name == @service.class.service_name and f.name == "id"
+    end
+    if field
+      field.value
+    else
+      nil
+    end
+  end
+
 end
