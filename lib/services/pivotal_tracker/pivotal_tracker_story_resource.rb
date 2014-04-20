@@ -1,11 +1,4 @@
-class PivotalTrackerStoryResource < PivotalTrackerResource
-  attr_reader :project_id
-
-  def initialize(service, project_id)
-    super(service)
-    @project_id = project_id
-  end
-
+class PivotalTrackerStoryResource < PivotalTrackerProjectDependentResource
   def create(story)
     prepare_request
     response = http_post("#{api_url}/projects/#{project_id}/stories", story.to_json)
