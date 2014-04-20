@@ -11,6 +11,7 @@ class PivotalTrackerResource < GenericResource
   end
 
   def auth_header
+    http.headers['Content-Type'] = 'application/json'
     http.headers['X-TrackerToken'] = @service.data.api_token
   end
 

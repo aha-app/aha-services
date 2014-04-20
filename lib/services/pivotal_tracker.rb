@@ -16,8 +16,6 @@ class AhaServices::PivotalTracker < AhaService
 
   callback_url description: "URL to add to the Activity Web Hook section in Pivotal Tracker using v5."
 
-  @@api_url = 'https://www.pivotaltracker.com/services/v5'
-
   def receive_installed
     meta_data.projects = project_resource.all
   end
@@ -159,12 +157,6 @@ protected
   end
 
 
-  # add token to header
-  def prepare_request
-    http.headers['Content-Type'] = 'application/json'
-    http.headers['X-TrackerToken'] = data.api_token
-  end
-
   def append_link(body, parent_id)
     if parent_id
       "#{body}\n\nRequirement of ##{parent_id}."
@@ -183,27 +175,6 @@ protected
       "chore"
     else
       "feature"
-    end
-  end
-
-  def process_response(response, *success_codes, &block)
-    if success_codes.include?(response.status)
-      yield parse(response.body)
-    elsif [404, 403, 401, 400].include?(response.status)
-      error = parse(response.body)
-      error_string = "#{error['code']} - #{error['error']} #{error['general_problem']} #{error['possible_fix']}"
-
-      raise AhaService::RemoteError, "Error code: #{error_string}"
-    else
-      raise AhaService::RemoteError, "Unhandled error: STATUS=#{response.status} BODY=#{response.body}"
-    end
-  end
-
-  def parse(body)
-    if body.nil? or body.length < 2
-      {}
-    else
-      JSON.parse(body)
     end
   end
 
