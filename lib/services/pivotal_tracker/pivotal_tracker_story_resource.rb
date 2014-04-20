@@ -1,4 +1,12 @@
 class PivotalTrackerStoryResource < PivotalTrackerProjectDependentResource
+  def create_from_feature(feature)
+    create_from_resource(feature)
+  end
+
+  def create_from_requirement(requirement, feature, feature_mapping_id)
+    create_from_resource(requirement, feature, feature_mapping_id)
+  end
+
   def create(story)
     prepare_request
     response = http_post("#{api_url}/projects/#{project_id}/stories", story.to_json)
@@ -26,4 +34,81 @@ class PivotalTrackerStoryResource < PivotalTrackerProjectDependentResource
     end
   end
 
+protected
+
+  def attachment_resource
+    @attachment_resource ||= PivotalTrackerAttachmentResource.new(@service, project_id)
+  end
+
+  def create_from_resource(resource, parent_resource = nil, parent_id = nil)
+    story_id = nil
+
+    story = {
+      name: resource_name(resource),
+      description: append_link(html_to_plain(resource.description.body), parent_id),
+      story_type: kind_to_story_type(resource.kind || parent_resource.kind),
+      created_at: resource.created_at,
+      external_id: parent_id ? parent_resource.reference_num : resource.reference_num,
+      integration_id: @service.data.integration.to_i,
+    }
+    file_attachments = upload_attachments(resource.description.attachments | resource.attachments)
+    if file_attachments.any?
+      story[:comments] = [{file_attachments: file_attachments}]
+    end
+
+    created_story = create(story)
+    api.create_integration_fields(reference_num_to_resource_type(resource.reference_num), resource.reference_num, @service.class.service_name, {id: created_story.id, url: created_story.url})
+    created_story.id
+  end
+
+  def upload_attachments(attachments)
+    attachments.collect do |attachment|
+      attachment_resource.upload(attachment)
+    end
+  end
+
+  def update_attachments(story_id, resource)
+    aha_attachments = resource.attachments.dup | resource.description.attachments.dup
+
+    # Create any attachments that didn't already exist.
+    upload_attachments(new_aha_attachments(story_id, aha_attachments))
+  end
+
+  def new_aha_attachments(story_id, aha_attachments)
+    attachment_resource.all_for_story(story_id).each do |pivotal_attachment|
+      # Remove any attachments that match.
+      aha_attachments.reject! do |aha_attachment|
+        attachments_match(aha_attachment, pivotal_attachment)
+      end
+    end
+
+    aha_attachments
+  end
+
+  def attachments_match(aha_attachment, pivotal_attachment)
+    logger.debug("MATCHING: #{aha_attachment.file_name} #{pivotal_attachment.filename} #{aha_attachment.file_size.to_i} #{pivotal_attachment['size'].to_i}")
+    aha_attachment.file_name == pivotal_attachment.filename and
+      aha_attachment.file_size.to_i == pivotal_attachment['size'].to_i
+  end
+
+  def append_link(body, parent_id)
+    if parent_id
+      "#{body}\n\nRequirement of ##{parent_id}."
+    else
+      body
+    end
+  end
+
+  def kind_to_story_type(kind)
+    case kind
+    when "new", "improvement"
+      "feature"
+    when "bug_fix"
+      "bug"
+    when "research"
+      "chore"
+    else
+      "feature"
+    end
+  end
 end

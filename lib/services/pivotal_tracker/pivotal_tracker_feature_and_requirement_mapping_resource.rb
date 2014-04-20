@@ -1,10 +1,9 @@
 class PivotalTrackerFeatureAndRequirementMappingResource < PivotalTrackerProjectDependentResource
 
   def create_feature(feature)
-    # Add story
-    story_id = add_story(feature)
+    feature_mapping_id = feature_mapping_resource.create_from_feature(feature)
     feature.requirements.each do |requirement|
-      add_story(requirement, story_id, feature)
+      requirement_mapping_resource.create_from_requirement(requirement, feature, feature_mapping_id)
     end
   end
 
@@ -27,6 +26,14 @@ class PivotalTrackerFeatureAndRequirementMappingResource < PivotalTrackerProject
   end
 
 private
+
+  def feature_mapping_resource
+    @feature_mapping_resource ||= PivotalTrackerStoryResource.new(@service, project_id)
+  end
+
+  def requirement_mapping_resource
+    @requirement_mapping_resource ||= PivotalTrackerStoryResource.new(@service, project_id)
+  end
 
   def story_resource
     @story_resource ||= PivotalTrackerStoryResource.new(@service, project_id)
