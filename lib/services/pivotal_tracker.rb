@@ -113,12 +113,7 @@ protected
 
     # Add the new attachments.
     new_attachments = update_attachments(project_id, story_id, resource)
-    if new_attachments.any?
-      response = http_post("#{@@api_url}/projects/#{project_id}/stories/#{story_id}/comments", {file_attachments: new_attachments}.to_json)
-      process_response(response, 200) do |updated_story|
-        logger.info("Updated story #{story_id}")
-      end
-    end
+    feature_and_requirement_mapping_resource.add_attachments(project_id, story_id, new_attachments)
   end
 
   def update_attachments(project_id, story_id, resource)
