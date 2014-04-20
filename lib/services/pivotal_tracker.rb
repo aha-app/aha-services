@@ -19,35 +19,7 @@ class AhaServices::PivotalTracker < AhaService
   @@api_url = 'https://www.pivotaltracker.com/services/v5'
 
   def receive_installed
-    available_projects = []
-
-    # Get list of projects.
-    prepare_request
-    response = http_get("#{@@api_url}/projects")
-    process_response(response, 200) do |projects|
-      projects.each do |project|
-        available_projects << {
-          :id => project['id'],
-          :name => project['name'],
-        }
-      end
-    end
-
-    # For each project, get the integrations.
-    available_projects.each do |project|
-      project[:integrations] = []
-      response = http_get("#{@@api_url}/projects/#{project[:id]}/integrations")
-      process_response(response, 200) do |integrations|
-        integrations.each do |integration|
-          project[:integrations] << {
-            :id => integration['id'],
-            :name => integration['name'],
-          }
-        end
-      end
-    end
-
-    @meta_data.projects = available_projects
+    meta_data.projects = project_resource.all
   end
 
   def receive_create_feature
@@ -191,6 +163,9 @@ protected
     end
   end
 
+  def project_resource
+    @project_resource ||= PivotalTrackerProjectResource.new(self)
+  end
 
   def attachment_resource
     @attachment_resource ||= PivotalTrackerAttachmentResource.new(self)
