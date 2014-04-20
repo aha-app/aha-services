@@ -1,32 +1,39 @@
 class PivotalTrackerFeatureAndRequirementMappingResource < PivotalTrackerResource
 
-  def create_feature(project, feature)
+  attr_reader :project_id
+
+  def initialize(service, project_id)
+    super(service)
+    @project_id = project_id
+  end
+
+  def create_feature(feature)
     # Add story
-    story_id = add_story(project, feature)
+    story_id = add_story(feature)
     feature.requirements.each do |requirement|
-      add_story(project, requirement, story_id, feature)
+      add_story(requirement, story_id, feature)
     end
   end
 
-  def update_feature(project, feature)
+  def update_feature(feature)
     # Update story
     story_id = get_service_id(feature.integration_fields)
-    update_story(project, story_id, feature)
+    update_story(story_id, feature)
 
     # Create or update each requirement.
     feature.requirements.each do |requirement|
       req_story_id = get_service_id(requirement.integration_fields)
       if req_story_id
         # Update requirement.
-        update_story(project, req_story_id, requirement, story_id)
+        update_story(req_story_id, requirement, story_id)
       else
         # Create new story for requirement.
-        add_story(project, requirement, story_id, feature)
+        add_story(requirement, story_id, feature)
       end
     end
   end
 
-  def create_feature_or_requirement(project_id, story)
+  def create_feature_or_requirement(story)
     prepare_request
     response = http_post("#{api_url}/projects/#{project_id}/stories", story.to_json)
 
@@ -36,7 +43,7 @@ class PivotalTrackerFeatureAndRequirementMappingResource < PivotalTrackerResourc
     end
   end
 
-  def update_feature_or_requirement(project_id, story_id, story)
+  def update_feature_or_requirement(story_id, story)
     prepare_request
     response = http_put("#{api_url}/projects/#{project_id}/stories/#{story_id}", story.to_json)
     process_response(response, 200) do |updated_story|
@@ -44,7 +51,7 @@ class PivotalTrackerFeatureAndRequirementMappingResource < PivotalTrackerResourc
     end
   end
 
-  def add_attachments(project_id, story_id, new_attachments)
+  def add_attachments(story_id, new_attachments)
     if new_attachments.any?
       response = http_post("#{api_url}/projects/#{project_id}/stories/#{story_id}/comments", {file_attachments: new_attachments}.to_json)
       process_response(response, 200) do |updated_story|
@@ -56,10 +63,10 @@ class PivotalTrackerFeatureAndRequirementMappingResource < PivotalTrackerResourc
 private
 
   def attachment_resource
-    @attachment_resource ||= PivotalTrackerAttachmentResource.new(@service)
+    @attachment_resource ||= PivotalTrackerAttachmentResource.new(@service, project_id)
   end
 
-  def add_story(project_id, resource, parent_id = nil, parent_resource = nil)
+  def add_story(resource, parent_id = nil, parent_resource = nil)
     story_id = nil
 
     story = {
@@ -75,23 +82,23 @@ private
       story[:comments] = [{file_attachments: file_attachments}]
     end
 
-    created_story = create_feature_or_requirement(project_id, story)
+    created_story = create_feature_or_requirement(story)
     api.create_integration_fields(reference_num_to_resource_type(resource.reference_num), resource.reference_num, @service.class.service_name, {id: created_story.id, url: created_story.url})
     created_story.id
 
   end
 
-  def update_story(project_id, story_id, resource, parent_id = nil)
+  def update_story(story_id, resource, parent_id = nil)
     story = {
       name: resource_name(resource),
       description: append_link(html_to_plain(resource.description.body), parent_id),
     }
 
-    update_feature_or_requirement(project_id, story_id, story)
+    update_feature_or_requirement(story_id, story)
 
     # Add the new attachments.
-    new_attachments = update_attachments(project_id, story_id, resource)
-    add_attachments(project_id, story_id, new_attachments)
+    new_attachments = update_attachments(story_id, resource)
+    add_attachments(story_id, new_attachments)
   end
 
   def upload_attachments(attachments)
@@ -100,15 +107,15 @@ private
     end
   end
 
-  def update_attachments(project_id, story_id, resource)
+  def update_attachments(story_id, resource)
     aha_attachments = resource.attachments.dup | resource.description.attachments.dup
 
     # Create any attachments that didn't already exist.
-    upload_attachments(new_aha_attachments(project_id, story_id, aha_attachments))
+    upload_attachments(new_aha_attachments(story_id, aha_attachments))
   end
 
-  def new_aha_attachments(project_id, story_id, aha_attachments)
-    attachment_resource.all_for_story(project_id, story_id).each do |pivotal_attachment|
+  def new_aha_attachments(story_id, aha_attachments)
+    attachment_resource.all_for_story(story_id).each do |pivotal_attachment|
       # Remove any attachments that match.
       aha_attachments.reject! do |aha_attachment|
         attachments_match(aha_attachment, pivotal_attachment)

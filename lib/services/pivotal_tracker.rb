@@ -21,11 +21,11 @@ class AhaServices::PivotalTracker < AhaService
   end
 
   def receive_create_feature
-    feature_and_requirement_mapping_resource.create_feature(data.project, payload.feature)
+    feature_and_requirement_mapping_resource.create_feature(payload.feature)
   end
 
   def receive_update_feature
-    feature_and_requirement_mapping_resource.update_feature(data.project, payload.feature)
+    feature_and_requirement_mapping_resource.update_feature(payload.feature)
   end
 
   def receive_webhook
@@ -65,7 +65,7 @@ protected
   end
 
   def feature_and_requirement_mapping_resource
-    @feature_and_requirement_mapping_resource ||= PivotalTrackerFeatureAndRequirementMappingResource.new(self)
+    @feature_and_requirement_mapping_resource ||= PivotalTrackerFeatureAndRequirementMappingResource.new(self, data.project)
   end
 
   def pivotal_to_aha_status(status)
