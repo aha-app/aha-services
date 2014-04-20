@@ -97,18 +97,10 @@ protected
       story[:comments] = [{file_attachments: file_attachments}]
     end
 
-    prepare_request
-    response = http_post("#{@@api_url}/projects/#{project_id}/stories", story.to_json)
+    created_story = feature_and_requirement_mapping_resource.create_feature_or_requirement(project_id, story)
+    api.create_integration_fields(reference_num_to_resource_type(resource.reference_num), resource.reference_num, self.class.service_name, {id: created_story.id, url: created_story.url})
+    created_story.id
 
-    process_response(response, 200) do |new_story|
-      story_id = new_story['id']
-      story_url = new_story['url']
-      logger.info("Created story #{story_id}")
-
-      api.create_integration_fields(reference_num_to_resource_type(resource.reference_num), resource.reference_num, self.class.service_name, {id: story_id, url: story_url})
-    end
-
-    story_id
   end
 
   def update_story(project_id, story_id, resource, parent_id = nil)
@@ -165,6 +157,10 @@ protected
 
   def project_resource
     @project_resource ||= PivotalTrackerProjectResource.new(self)
+  end
+
+  def feature_and_requirement_mapping_resource
+    @feature_and_requirement_mapping_resource ||= PivotalTrackerFeatureAndRequirementMappingResource.new(self)
   end
 
   def attachment_resource
