@@ -33,34 +33,11 @@ class PivotalTrackerFeatureAndRequirementMappingResource < PivotalTrackerResourc
     end
   end
 
-  def create_feature_or_requirement(story)
-    prepare_request
-    response = http_post("#{api_url}/projects/#{project_id}/stories", story.to_json)
-
-    process_response(response, 200) do |created_story|
-      logger.info("Created story #{created_story.id}")
-      return created_story
-    end
-  end
-
-  def update_feature_or_requirement(story_id, story)
-    prepare_request
-    response = http_put("#{api_url}/projects/#{project_id}/stories/#{story_id}", story.to_json)
-    process_response(response, 200) do |updated_story|
-      logger.info("Updated story #{story_id}")
-    end
-  end
-
-  def add_attachments(story_id, new_attachments)
-    if new_attachments.any?
-      response = http_post("#{api_url}/projects/#{project_id}/stories/#{story_id}/comments", {file_attachments: new_attachments}.to_json)
-      process_response(response, 200) do |updated_story|
-        logger.info("Updated story #{story_id}")
-      end
-    end
-  end
-
 private
+
+  def story_resource
+    @story_resource ||= PivotalTrackerStoryResource.new(@service, project_id)
+  end
 
   def attachment_resource
     @attachment_resource ||= PivotalTrackerAttachmentResource.new(@service, project_id)
@@ -82,7 +59,7 @@ private
       story[:comments] = [{file_attachments: file_attachments}]
     end
 
-    created_story = create_feature_or_requirement(story)
+    created_story = story_resource.create(story)
     api.create_integration_fields(reference_num_to_resource_type(resource.reference_num), resource.reference_num, @service.class.service_name, {id: created_story.id, url: created_story.url})
     created_story.id
 
@@ -94,11 +71,11 @@ private
       description: append_link(html_to_plain(resource.description.body), parent_id),
     }
 
-    update_feature_or_requirement(story_id, story)
+    story_resource.update(story_id, story)
 
     # Add the new attachments.
     new_attachments = update_attachments(story_id, resource)
-    add_attachments(story_id, new_attachments)
+    story_resource.add_attachments(story_id, new_attachments)
   end
 
   def upload_attachments(attachments)
