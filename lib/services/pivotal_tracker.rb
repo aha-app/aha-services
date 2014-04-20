@@ -6,6 +6,13 @@ class AhaServices::PivotalTracker < AhaService
   select :integration,
     collection: ->(meta_data, data) { meta_data.projects.detect {|p| p.id.to_s == data.project.to_s }.integrations.collect{|p| [p.name, p.id] } },
     description: "Pivotal integration that you added for Aha!"
+  select :mapping, collection: -> {
+    [
+      ["Feature -> Story, Requirement -> Story", 1],
+      ["Feature -> Epic, Requirement -> Story", 2],
+      ["Feature -> Story, Requirement -> Task", 3]
+    ]
+  }
 
   callback_url description: "URL to add to the Activity Web Hook section in Pivotal Tracker using v5."
 
