@@ -9,7 +9,15 @@ class PivotalTrackerAttachmentResource < PivotalTrackerProjectDependentResource
     end
   end
 
-  def upload(attachment)
+  def upload(attachments)
+    attachments.collect do |attachment|
+      upload_single_attachment(attachment)
+    end
+  end
+
+private
+
+  def upload_single_attachment(attachment)
     logger.info("Uploading attachment #{attachment.file_name}")
 
     open(attachment.download_url) do |downloaded_file|

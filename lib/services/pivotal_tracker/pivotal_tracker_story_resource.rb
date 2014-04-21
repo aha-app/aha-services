@@ -15,6 +15,8 @@ class PivotalTrackerStoryResource < PivotalTrackerProjectDependentResource
     update_from_resource(requirement_mapping_id, requirement, feature_mapping_id)
   end
 
+protected
+
   def create(story)
     prepare_request
     response = http_post("#{api_url}/projects/#{project_id}/stories", story.to_json)
@@ -42,8 +44,6 @@ class PivotalTrackerStoryResource < PivotalTrackerProjectDependentResource
     end
   end
 
-protected
-
   def attachment_resource
     @attachment_resource ||= PivotalTrackerAttachmentResource.new(@service, project_id)
   end
@@ -56,10 +56,10 @@ protected
       description: append_link(html_to_plain(resource.description.body), parent_id),
       story_type: kind_to_story_type(resource.kind || parent_resource.kind),
       created_at: resource.created_at,
-      external_id: parent_id ? parent_resource.reference_num : resource.reference_num,
+      external_id: parent_resource ? parent_resource.reference_num : resource.reference_num,
       integration_id: @service.data.integration.to_i
     }
-    file_attachments = upload_attachments(resource.description.attachments | resource.attachments)
+    file_attachments = attachment_resource.upload(resource.description.attachments | resource.attachments)
     if file_attachments.any?
       story[:comments] = [{file_attachments: file_attachments}]
     end
@@ -82,17 +82,11 @@ protected
     add_attachments(resource_mapping_id, new_attachments)
   end
 
-  def upload_attachments(attachments)
-    attachments.collect do |attachment|
-      attachment_resource.upload(attachment)
-    end
-  end
-
   def update_attachments(story_id, resource)
     aha_attachments = resource.attachments.dup | resource.description.attachments.dup
 
     # Create any attachments that didn't already exist.
-    upload_attachments(new_aha_attachments(story_id, aha_attachments))
+    attachment_resource.upload(new_aha_attachments(story_id, aha_attachments))
   end
 
   def new_aha_attachments(story_id, aha_attachments)
