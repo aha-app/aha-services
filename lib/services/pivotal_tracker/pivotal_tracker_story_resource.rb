@@ -78,32 +78,8 @@ protected
     update(resource_mapping_id, story)
 
     # Add the new attachments.
-    new_attachments = update_attachments(resource_mapping_id, resource)
+    new_attachments = attachment_resource.update(resource, attachment_resource.all_for_story(resource_mapping_id))
     add_attachments(resource_mapping_id, new_attachments)
-  end
-
-  def update_attachments(story_id, resource)
-    aha_attachments = resource.attachments.dup | resource.description.attachments.dup
-
-    # Create any attachments that didn't already exist.
-    attachment_resource.upload(new_aha_attachments(story_id, aha_attachments))
-  end
-
-  def new_aha_attachments(story_id, aha_attachments)
-    attachment_resource.all_for_story(story_id).each do |pivotal_attachment|
-      # Remove any attachments that match.
-      aha_attachments.reject! do |aha_attachment|
-        attachments_match(aha_attachment, pivotal_attachment)
-      end
-    end
-
-    aha_attachments
-  end
-
-  def attachments_match(aha_attachment, pivotal_attachment)
-    logger.debug("MATCHING: #{aha_attachment.file_name} #{pivotal_attachment.filename} #{aha_attachment.file_size.to_i} #{pivotal_attachment['size'].to_i}")
-    aha_attachment.file_name == pivotal_attachment.filename and
-      aha_attachment.file_size.to_i == pivotal_attachment['size'].to_i
   end
 
   def append_link(body, parent_id)
