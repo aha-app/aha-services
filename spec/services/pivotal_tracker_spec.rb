@@ -31,19 +31,19 @@ describe AhaServices::PivotalTracker do
     stub_pivotal_attachment_uploads
 
     # PivotalTracker api v5
-    stub_request(:post, '%s/projects/%s/stories' % [api_url, project_id]).
+    create_story = stub_request(:post, '%s/projects/%s/stories' % [api_url, project_id]).
       to_return(:status => 200, :body => "{\"id\":\"#{pivot_data[:story_id]}\",\"url\":\"#{pivot_data[:story_url]}\"}", :headers => {})
 
-    stub_request(:post, '%s/projects/%s/stories/%s/tasks' % [api_url, project_id, pivot_data[:story_id]]).
+    create_task = stub_request(:post, '%s/projects/%s/stories/%s/tasks' % [api_url, project_id, pivot_data[:story_id]]).
       to_return(:status => 200, :body => "{\"id\":\"#{pivot_data[:task_one_id]}\"}", :headers => {})
 
     # Call back into Aha! for feature
-    stub_request(:post, "https://a.aha.io/api/v1/features/PROD-2/integrations/pivotal_tracker/fields").
+    integrate_feature = stub_request(:post, "https://a.aha.io/api/v1/features/PROD-2/integrations/pivotal_tracker/fields").
       with(:body => {:integration_fields => [{:name => "id", :value => "#{pivot_data[:story_id]}"}, {:name => "url", :value => "#{pivot_data[:story_url]}"}]}).
       to_return(:status => 201, :body => "", :headers => {})
 
     # Call back into Aha! for requirement
-    stub_request(:post, "https://a.aha.io/api/v1/requirements/PROD-2-1/integrations/pivotal_tracker/fields").
+    integrate_requirement = stub_request(:post, "https://a.aha.io/api/v1/requirements/PROD-2-1/integrations/pivotal_tracker/fields").
       with(:body => "{\"integration_fields\":[{\"name\":\"id\",\"value\":\"61280364\"},{\"name\":\"url\",\"value\":\"http://www.pivotaltracker.com/story/show/61017898\"}]}").
       to_return(:status => 201, :body => "", :headers => {})
 
@@ -51,6 +51,11 @@ describe AhaServices::PivotalTracker do
     AhaServices::PivotalTracker.new(
       {'api_token' => api_token, 'project' => project_id, 'api_version' => 'a'},
       json_fixture('create_feature_event.json')).receive(:create_feature)
+
+    expect(create_story).to have_been_requested.twice
+    expect(create_task).to_not have_been_requested
+    expect(integrate_feature).to have_been_requested.once
+    expect(integrate_requirement).to have_been_requested.once
   end
 
   it "can update existing features" do
