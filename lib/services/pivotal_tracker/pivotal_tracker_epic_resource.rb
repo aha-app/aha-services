@@ -1,7 +1,5 @@
 class PivotalTrackerEpicResource < PivotalTrackerProjectDependentResource
   def create_from_feature(feature)
-    epic_id = nil
-
     epic = {
       name: resource_name(feature),
       description: html_to_plain(feature.description.body),
@@ -13,8 +11,15 @@ class PivotalTrackerEpicResource < PivotalTrackerProjectDependentResource
     end
 
     created_epic = create(epic)
-    api.create_integration_fields(reference_num_to_resource_type(feature.reference_num), feature.reference_num, @service.class.service_name, {id: created_epic.id, url: created_epic.url})
-    created_epic.id
+    api.create_integration_fields(
+      reference_num_to_resource_type(feature.reference_num),
+      feature.reference_num,
+      @service.class.service_name,
+      { id: created_epic.id,
+        url: created_epic.url,
+        label_id: created_epic.label_id }
+    )
+    created_epic
   end
 
   def update_from_feature(feature_mapping_id, feature)

@@ -7,6 +7,7 @@ describe AhaServices::PivotalTracker do
   let(:pivot_data) do
     { story_id: '61280364',
       story_url: 'http://www.pivotaltracker.com/story/show/61017898',
+      label_id: '12345678',
       task_one_id: '18669866' }
   end
 
@@ -40,7 +41,7 @@ describe AhaServices::PivotalTracker do
       stub_pivotal_attachment_uploads
 
       @create_epic = stub_request(:post, '%s/projects/%s/epics' % [api_url, project_id]).
-        to_return(:status => 200, :body => "{\"id\":\"#{pivot_data[:story_id]}\",\"url\":\"#{pivot_data[:story_url]}\"}", :headers => {})
+        to_return(:status => 200, :body => "{\"id\":\"#{pivot_data[:story_id]}\",\"url\":\"#{pivot_data[:story_url]}\",\"label_id\":\"#{pivot_data[:label_id]}\"}", :headers => {})
 
       @create_story = stub_request(:post, '%s/projects/%s/stories' % [api_url, project_id]).
         to_return(:status => 200, :body => "{\"id\":\"#{pivot_data[:story_id]}\",\"url\":\"#{pivot_data[:story_url]}\"}", :headers => {})
@@ -48,24 +49,24 @@ describe AhaServices::PivotalTracker do
       @create_task = stub_request(:post, '%s/projects/%s/stories/%s/tasks' % [api_url, project_id, pivot_data[:story_id]]).
         to_return(:status => 200, :body => "{\"id\":\"#{pivot_data[:task_one_id]}\"}", :headers => {})
 
-      # Call back into Aha! for feature
-      @integrate_feature = stub_request(:post, "https://a.aha.io/api/v1/features/PROD-2/integrations/pivotal_tracker/fields").
-        with(:body => {:integration_fields => [{:name => "id", :value => "#{pivot_data[:story_id]}"}, {:name => "url", :value => "#{pivot_data[:story_url]}"}]}).
-        to_return(:status => 201, :body => "", :headers => {})
-
       # Call back into Aha! for requirement
       @integrate_requirement = stub_request(:post, "https://a.aha.io/api/v1/requirements/PROD-2-1/integrations/pivotal_tracker/fields").
         with(:body => "{\"integration_fields\":[{\"name\":\"id\",\"value\":\"61280364\"},{\"name\":\"url\",\"value\":\"http://www.pivotaltracker.com/story/show/61017898\"}]}").
         to_return(:status => 201, :body => "", :headers => {})
-
-      # run service
-      service.receive(:create_feature)
     end
 
     context "when the mapping is Feature -> Story, Requirement -> Story" do
       let(:mapping) { 1 }
 
       it "makes certain API calls" do
+        # Call back into Aha! for feature
+        @integrate_feature = stub_request(:post, "https://a.aha.io/api/v1/features/PROD-2/integrations/pivotal_tracker/fields").
+          with(:body => {:integration_fields => [{:name => "id", :value => "#{pivot_data[:story_id]}"}, {:name => "url", :value => "#{pivot_data[:story_url]}"}]}).
+          to_return(:status => 201, :body => "", :headers => {})
+
+        # run service
+        service.receive(:create_feature)
+
         # Calling create_story once for the feature and once for the requirement.
         expect(@create_story).to have_been_requested.twice
         expect(@create_task).to_not have_been_requested
@@ -78,6 +79,13 @@ describe AhaServices::PivotalTracker do
       let(:mapping) { 2 }
 
       it "makes certain API calls" do
+        @integrate_feature = stub_request(:post, "https://a.aha.io/api/v1/features/PROD-2/integrations/pivotal_tracker/fields").
+          with(:body => {:integration_fields => [{:name => "id", :value => "#{pivot_data[:story_id]}"}, {:name => "url", :value => "#{pivot_data[:story_url]}"},{name: "label_id", value: pivot_data[:label_id]}]}).
+          to_return(:status => 201, :body => "", :headers => {})
+
+        # run service
+        service.receive(:create_feature)
+
         expect(@create_epic).to have_been_requested.once
         expect(@create_story).to have_been_requested.once
         expect(@create_task).to_not have_been_requested

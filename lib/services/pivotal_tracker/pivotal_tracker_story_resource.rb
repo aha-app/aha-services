@@ -49,8 +49,6 @@ protected
   end
 
   def create_from_resource(resource, parent_resource = nil, parent_id = nil)
-    story_id = nil
-
     story = {
       name: resource_name(resource),
       description: append_link(html_to_plain(resource.description.body), parent_id),
@@ -66,7 +64,7 @@ protected
 
     created_story = create(story)
     api.create_integration_fields(reference_num_to_resource_type(resource.reference_num), resource.reference_num, @service.class.service_name, {id: created_story.id, url: created_story.url})
-    created_story.id
+    created_story
   end
 
   def update_from_resource(resource_mapping_id, resource, parent_id = nil)

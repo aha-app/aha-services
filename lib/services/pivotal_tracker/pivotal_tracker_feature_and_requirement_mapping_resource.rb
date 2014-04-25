@@ -1,7 +1,7 @@
 class PivotalTrackerFeatureAndRequirementMappingResource < PivotalTrackerProjectDependentResource
 
   def create_feature(feature)
-    feature_mapping_id = feature_mapping_resource.create_from_feature(feature)
+    feature_mapping_id = feature_mapping_resource.create_from_feature(feature).id
     feature.requirements.each do |requirement|
       requirement_mapping_resource.create_from_requirement(requirement, feature, feature_mapping_id)
     end
