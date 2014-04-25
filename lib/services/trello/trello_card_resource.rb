@@ -26,10 +26,10 @@ class TrelloCardResource < TrelloResource
     process_response(response, 200)
   end
 
-  def create_webhook(card_id, feature)
+  def create_webhook(card_id)
     prepare_request
     response = http_post trello_url("webhooks"),
-      { callbackURL: "#{@service.data.callback_url}?feature=#{feature.reference_num}",
+      { callbackURL: "#{@service.data.callback_url}",
         idModel: card_id }.to_json
     process_response(response, 200)
   end

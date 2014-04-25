@@ -81,7 +81,7 @@ class AhaServices::Trello < AhaService
       due: Time.parse(feature.release.release_date).utc,
       idList: data.list_for_new_features
     )
-    webhook = card_resource.create_webhook(card.id, feature)
+    webhook = card_resource.create_webhook(card.id)
     integrate_feature_with_trello_card(feature, card)
     card_resource.create_comment card.id, "Created from Aha! #{feature.url}"
     card
@@ -146,6 +146,10 @@ class AhaServices::Trello < AhaService
     attachments.each do |attachment|
       attachment_resource.upload(attachment, card.id)
     end
+  end
+  
+  def create_card_webhook(card_id)
+    card_resource.create_webhook(card_id)
   end
 
 protected
