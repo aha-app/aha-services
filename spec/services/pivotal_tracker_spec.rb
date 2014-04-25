@@ -26,36 +26,65 @@ describe AhaServices::PivotalTracker do
       to_return(:status => 200, :body => "", :headers => {})
   end
 
-  it "can receive new features" do
-    stub_download_feature_attachments
-    stub_pivotal_attachment_uploads
+  describe "receiving new features" do
+    let(:service) do
+      AhaServices::PivotalTracker.new(
+        {'api_token' => api_token, 'project' => project_id, 'api_version' => 'a'},
+        json_fixture('create_feature_event.json'))
+    end
 
-    # PivotalTracker api v5
-    create_story = stub_request(:post, '%s/projects/%s/stories' % [api_url, project_id]).
-      to_return(:status => 200, :body => "{\"id\":\"#{pivot_data[:story_id]}\",\"url\":\"#{pivot_data[:story_url]}\"}", :headers => {})
+    before do
+      service.data.stub(:mapping).and_return(mapping)
 
-    create_task = stub_request(:post, '%s/projects/%s/stories/%s/tasks' % [api_url, project_id, pivot_data[:story_id]]).
-      to_return(:status => 200, :body => "{\"id\":\"#{pivot_data[:task_one_id]}\"}", :headers => {})
+      stub_download_feature_attachments
+      stub_pivotal_attachment_uploads
 
-    # Call back into Aha! for feature
-    integrate_feature = stub_request(:post, "https://a.aha.io/api/v1/features/PROD-2/integrations/pivotal_tracker/fields").
-      with(:body => {:integration_fields => [{:name => "id", :value => "#{pivot_data[:story_id]}"}, {:name => "url", :value => "#{pivot_data[:story_url]}"}]}).
-      to_return(:status => 201, :body => "", :headers => {})
+      @create_epic = stub_request(:post, '%s/projects/%s/epics' % [api_url, project_id]).
+        to_return(:status => 200, :body => "{\"id\":\"#{pivot_data[:story_id]}\",\"url\":\"#{pivot_data[:story_url]}\"}", :headers => {})
 
-    # Call back into Aha! for requirement
-    integrate_requirement = stub_request(:post, "https://a.aha.io/api/v1/requirements/PROD-2-1/integrations/pivotal_tracker/fields").
-      with(:body => "{\"integration_fields\":[{\"name\":\"id\",\"value\":\"61280364\"},{\"name\":\"url\",\"value\":\"http://www.pivotaltracker.com/story/show/61017898\"}]}").
-      to_return(:status => 201, :body => "", :headers => {})
+      @create_story = stub_request(:post, '%s/projects/%s/stories' % [api_url, project_id]).
+        to_return(:status => 200, :body => "{\"id\":\"#{pivot_data[:story_id]}\",\"url\":\"#{pivot_data[:story_url]}\"}", :headers => {})
 
-    # run service
-    AhaServices::PivotalTracker.new(
-      {'api_token' => api_token, 'project' => project_id, 'api_version' => 'a'},
-      json_fixture('create_feature_event.json')).receive(:create_feature)
+      @create_task = stub_request(:post, '%s/projects/%s/stories/%s/tasks' % [api_url, project_id, pivot_data[:story_id]]).
+        to_return(:status => 200, :body => "{\"id\":\"#{pivot_data[:task_one_id]}\"}", :headers => {})
 
-    expect(create_story).to have_been_requested.twice
-    expect(create_task).to_not have_been_requested
-    expect(integrate_feature).to have_been_requested.once
-    expect(integrate_requirement).to have_been_requested.once
+      # Call back into Aha! for feature
+      @integrate_feature = stub_request(:post, "https://a.aha.io/api/v1/features/PROD-2/integrations/pivotal_tracker/fields").
+        with(:body => {:integration_fields => [{:name => "id", :value => "#{pivot_data[:story_id]}"}, {:name => "url", :value => "#{pivot_data[:story_url]}"}]}).
+        to_return(:status => 201, :body => "", :headers => {})
+
+      # Call back into Aha! for requirement
+      @integrate_requirement = stub_request(:post, "https://a.aha.io/api/v1/requirements/PROD-2-1/integrations/pivotal_tracker/fields").
+        with(:body => "{\"integration_fields\":[{\"name\":\"id\",\"value\":\"61280364\"},{\"name\":\"url\",\"value\":\"http://www.pivotaltracker.com/story/show/61017898\"}]}").
+        to_return(:status => 201, :body => "", :headers => {})
+
+      # run service
+      service.receive(:create_feature)
+    end
+
+    context "when the mapping is Feature -> Story, Requirement -> Story" do
+      let(:mapping) { 1 }
+
+      it "makes certain API calls" do
+        # Calling create_story once for the feature and once for the requirement.
+        expect(@create_story).to have_been_requested.twice
+        expect(@create_task).to_not have_been_requested
+        expect(@integrate_feature).to have_been_requested.once
+        expect(@integrate_requirement).to have_been_requested.once
+      end
+    end
+
+    context "when the mapping is Feature -> Epic, Requirement -> Story" do
+      let(:mapping) { 2 }
+
+      it "makes certain API calls" do
+        expect(@create_epic).to have_been_requested.once
+        expect(@create_story).to have_been_requested.once
+        expect(@create_task).to_not have_been_requested
+        expect(@integrate_feature).to have_been_requested.once
+        expect(@integrate_requirement).to have_been_requested.once
+      end
+    end
   end
 
   it "can update existing features" do
