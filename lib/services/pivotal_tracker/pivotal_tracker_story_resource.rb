@@ -84,14 +84,6 @@ protected
     add_attachments(resource_mapping.id, new_attachments)
   end
 
-  def append_link(body, parent_id)
-    if parent_id
-      "#{body}\n\nRequirement of ##{parent_id}."
-    else
-      body
-    end
-  end
-
   def kind_to_story_type(kind)
     case kind
     when "new", "improvement"

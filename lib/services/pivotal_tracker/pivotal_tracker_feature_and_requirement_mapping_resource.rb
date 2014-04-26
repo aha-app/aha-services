@@ -31,7 +31,9 @@ private
   end
 
   def requirement_mapping_resource
-    @requirement_mapping_resource ||= PivotalTrackerStoryResource.new(@service, project_id)
+    @requirement_mapping_resource ||= (mapping == 3) ?
+      PivotalTrackerTaskResource.new(@service, project_id) :
+      PivotalTrackerStoryResource.new(@service, project_id)
   end
 
   def mapping
