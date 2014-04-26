@@ -93,6 +93,34 @@ describe AhaServices::PivotalTracker do
         expect(@integrate_requirement).to have_been_requested.once
       end
     end
+
+    context "when the mapping is Feature -> Story, Requirement -> Task" do
+      let(:mapping) { 3 }
+
+      it "makes certain API calls" do
+        @integrate_feature = stub_request(:post, "https://a.aha.io/api/v1/features/PROD-2/integrations/pivotal_tracker/fields").
+          with(:body => {:integration_fields => [{:name => "id", :value => "#{pivot_data[:story_id]}"}, {:name => "url", :value => "#{pivot_data[:story_url]}"}]}).
+          to_return(:status => 201, :body => "", :headers => {})
+
+        @integrate_requirement = stub_request(:post, "https://a.aha.io/api/v1/requirements/PROD-2-1/integrations/pivotal_tracker/fields").
+          with(:body => "{\"integration_fields\":[{\"name\":\"id\",\"value\":\"18669866\"}]}").
+          to_return(:status => 201, :body => "", :headers => {})
+
+        @add_attachments_to_story = stub_request(:put, 'https://www.pivotaltracker.com/services/v5/projects/202020/stories/61280364').
+          to_return(:status => 200, :body => "{}", :headers => {})
+
+
+        # run service
+        service.receive(:create_feature)
+
+        expect(@create_epic).to_not have_been_requested
+        expect(@create_story).to have_been_requested.once
+        expect(@add_attachments_to_story).to have_been_requested.once
+        expect(@create_task).to have_been_requested.once
+        expect(@integrate_feature).to have_been_requested.once
+        expect(@integrate_requirement).to have_been_requested.once
+      end
+    end
   end
 
   it "can update existing features" do
