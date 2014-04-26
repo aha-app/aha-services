@@ -62,6 +62,10 @@ protected
       story[:comments] = [{file_attachments: file_attachments}]
     end
 
+    if parent_mapping && parent_mapping.label_id
+      story[:label_ids] = [parent_mapping.label_id]
+    end
+
     created_story = create(story)
     api.create_integration_fields(reference_num_to_resource_type(resource.reference_num), resource.reference_num, @service.class.service_name, {id: created_story.id, url: created_story.url})
     created_story
