@@ -2,11 +2,11 @@ require 'open-uri'
 
 class PivotalTrackerAttachmentResource < PivotalTrackerProjectDependentResource
   def all_for_story(story_id)
-    prepare_request
-    response = http_get "#{api_url}/projects/#{project_id}/stories/#{story_id}/comments?fields=file_attachments"
-    process_response(response, 200) do |comments|
-      return comments.collect {|c| c.file_attachments }.flatten
-    end
+    all_attachments("stories", story_id)
+  end
+
+  def all_for_epic(epic_id)
+    all_attachments("epics", epic_id)
   end
 
   def upload(attachments)
@@ -21,6 +21,14 @@ class PivotalTrackerAttachmentResource < PivotalTrackerProjectDependentResource
   end
 
 private
+
+  def all_attachments(resource_name, resource_id)
+    prepare_request
+    response = http_get "#{api_url}/projects/#{project_id}/#{resource_name}/#{resource_id}/comments?fields=file_attachments"
+    process_response(response, 200) do |comments|
+      return comments.collect {|c| c.file_attachments }.flatten
+    end
+  end
 
   def new_aha_attachments(aha_attachments, pivotal_tracker_attachments)
     pivotal_tracker_attachments.each do |pivotal_attachment|
