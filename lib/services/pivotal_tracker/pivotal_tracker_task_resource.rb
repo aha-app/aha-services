@@ -2,7 +2,7 @@ class PivotalTrackerTaskResource < PivotalTrackerProjectDependentResource
   def create_from_requirement(requirement, feature, feature_mapping)
     task = {
       description: task_description(requirement, feature_mapping.id),
-      created_at: resource.created_at,
+      created_at: requirement.created_at,
     }
     file_attachments = attachment_resource.upload(requirement.description.attachments | requirement.attachments)
     if file_attachments.any?
