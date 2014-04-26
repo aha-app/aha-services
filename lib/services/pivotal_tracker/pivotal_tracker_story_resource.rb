@@ -15,6 +15,23 @@ class PivotalTrackerStoryResource < PivotalTrackerProjectDependentResource
     update_from_resource(requirement_mapping, requirement, feature_mapping)
   end
 
+  def add_attachments(story_id, new_attachments)
+    if new_attachments.any?
+      response = http_post("#{api_url}/projects/#{project_id}/stories/#{story_id}/comments", {file_attachments: new_attachments}.to_json)
+      process_response(response, 200) do |updated_story|
+        logger.info("Updated story #{story_id}")
+      end
+    end
+  end
+
+  def update(story_id, story)
+    prepare_request
+    response = http_put("#{api_url}/projects/#{project_id}/stories/#{story_id}", story.to_json)
+    process_response(response, 200) do |updated_story|
+      logger.info("Updated story #{story_id}")
+    end
+  end
+
 protected
 
   def create(story)
@@ -24,14 +41,6 @@ protected
     process_response(response, 200) do |created_story|
       logger.info("Created story #{created_story.id}")
       return created_story
-    end
-  end
-
-  def update(story_id, story)
-    prepare_request
-    response = http_put("#{api_url}/projects/#{project_id}/stories/#{story_id}", story.to_json)
-    process_response(response, 200) do |updated_story|
-      logger.info("Updated story #{story_id}")
     end
   end
 
