@@ -30,7 +30,7 @@ class AhaServices::PivotalTracker < AhaService
 
   def receive_webhook
     payload.changes.each do |change|
-      next unless change.kind == "story"
+      next unless change.kind == "story" || change.kind == "task"
 
       begin
         result = api.search_integration_fields(data.integration_id, "id", change.id)
@@ -49,11 +49,8 @@ class AhaServices::PivotalTracker < AhaService
         next
       end
 
-      if change.new_values and new_state = change.new_values.current_state
-        # Update the status.
-        api.put(resource.resource, {resource_type => {status: pivotal_to_aha_status(new_state)}})
-      else
-        # Unhandled change.
+      if change.new_values
+        apply_change change.kind, change.new_values, resource.resource, resource_type
       end
     end
   end
@@ -66,6 +63,14 @@ protected
 
   def feature_and_requirement_mapping_resource
     @feature_and_requirement_mapping_resource ||= PivotalTrackerFeatureAndRequirementMappingResource.new(self, data.project)
+  end
+
+  def apply_change(kind, new_values, resource, resource_type)
+    if kind == "story" && new_state = new_values.current_state
+      api.put(resource, {resource_type => { status: pivotal_to_aha_status(new_state) }})
+    elsif kind == "task" && ["true", true].include?(new_values.complete)
+      api.put(resource, {resource_type => { status: "shipped" }})
+    end
   end
 
   def pivotal_to_aha_status(status)
