@@ -3,16 +3,16 @@ class PivotalTrackerStoryResource < PivotalTrackerProjectDependentResource
     create_from_resource(feature)
   end
 
-  def create_from_requirement(requirement, feature, feature_mapping_id)
-    create_from_resource(requirement, feature, feature_mapping_id)
+  def create_from_requirement(requirement, feature, feature_mapping)
+    create_from_resource(requirement, feature, feature_mapping)
   end
 
-  def update_from_feature(feature_mapping_id, feature)
-    update_from_resource(feature_mapping_id, feature)
+  def update_from_feature(feature_mapping, feature)
+    update_from_resource(feature_mapping, feature)
   end
 
-  def update_from_requirement(requirement_mapping_id, requirement, feature_mapping_id)
-    update_from_resource(requirement_mapping_id, requirement, feature_mapping_id)
+  def update_from_requirement(requirement_mapping, requirement, feature_mapping)
+    update_from_resource(requirement_mapping, requirement, feature_mapping)
   end
 
 protected
@@ -48,10 +48,10 @@ protected
     @attachment_resource ||= PivotalTrackerAttachmentResource.new(@service, project_id)
   end
 
-  def create_from_resource(resource, parent_resource = nil, parent_id = nil)
+  def create_from_resource(resource, parent_resource = nil, parent_mapping = nil)
     story = {
       name: resource_name(resource),
-      description: append_link(html_to_plain(resource.description.body), parent_id),
+      description: append_link(html_to_plain(resource.description.body), parent_mapping && parent_mapping.id),
       story_type: kind_to_story_type(resource.kind || parent_resource.kind),
       created_at: resource.created_at,
       external_id: parent_resource ? parent_resource.reference_num : resource.reference_num,
@@ -67,17 +67,17 @@ protected
     created_story
   end
 
-  def update_from_resource(resource_mapping_id, resource, parent_id = nil)
+  def update_from_resource(resource_mapping, resource, parent_mapping = nil)
     story = {
       name: resource_name(resource),
-      description: append_link(html_to_plain(resource.description.body), parent_id)
+      description: append_link(html_to_plain(resource.description.body), parent_mapping && parent_mapping.id)
     }
 
-    update(resource_mapping_id, story)
+    update(resource_mapping.id, story)
 
     # Add the new attachments.
-    new_attachments = attachment_resource.update(resource, attachment_resource.all_for_story(resource_mapping_id))
-    add_attachments(resource_mapping_id, new_attachments)
+    new_attachments = attachment_resource.update(resource, attachment_resource.all_for_story(resource_mapping.id))
+    add_attachments(resource_mapping.id, new_attachments)
   end
 
   def append_link(body, parent_id)

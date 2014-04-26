@@ -1,23 +1,23 @@
 class PivotalTrackerFeatureAndRequirementMappingResource < PivotalTrackerProjectDependentResource
 
   def create_feature(feature)
-    feature_mapping_id = feature_mapping_resource.create_from_feature(feature).id
+    feature_mapping = feature_mapping_resource.create_from_feature(feature)
     feature.requirements.each do |requirement|
-      requirement_mapping_resource.create_from_requirement(requirement, feature, feature_mapping_id)
+      requirement_mapping_resource.create_from_requirement(requirement, feature, feature_mapping)
     end
   end
 
   def update_feature(feature)
-    feature_mapping_id = get_resource(feature.integration_fields).id
-    feature_mapping_resource.update_from_feature(feature_mapping_id, feature)
+    feature_mapping = get_resource(feature.integration_fields)
+    feature_mapping_resource.update_from_feature(feature_mapping, feature)
 
     # Create or update each requirement.
     feature.requirements.each do |requirement|
-      requirement_mapping_id = get_resource(requirement.integration_fields).id
-      if requirement_mapping_id
-        requirement_mapping_resource.update_from_requirement(requirement_mapping_id, requirement, feature_mapping_id)
+      requirement_mapping = get_resource(requirement.integration_fields)
+      if requirement_mapping
+        requirement_mapping_resource.update_from_requirement(requirement_mapping, requirement, feature_mapping)
       else
-        requirement_mapping_resource.create_from_requirement(requirement, feature, feature_mapping_id)
+        requirement_mapping_resource.create_from_requirement(requirement, feature, feature_mapping)
       end
     end
   end

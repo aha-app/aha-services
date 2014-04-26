@@ -22,17 +22,17 @@ class PivotalTrackerEpicResource < PivotalTrackerProjectDependentResource
     created_epic
   end
 
-  def update_from_feature(feature_mapping_id, feature)
+  def update_from_feature(feature_mapping, feature)
     epic = {
       name: resource_name(feature),
       description: html_to_plain(feature.description.body)
     }
 
-    update(feature_mapping_id, epic)
+    update(feature_mapping.id, epic)
 
     # Add the new attachments.
-    new_attachments = attachment_resource.update(feature, attachment_resource.all_for_story(feature_mapping_id))
-    add_attachments(feature_mapping_id, new_attachments)
+    new_attachments = attachment_resource.update(feature, attachment_resource.all_for_story(feature_mapping.id))
+    add_attachments(feature_mapping.id, new_attachments)
   end
 
 protected
