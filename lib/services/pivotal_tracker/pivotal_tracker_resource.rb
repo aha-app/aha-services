@@ -28,17 +28,17 @@ class PivotalTrackerResource < GenericResource
     end
   end
 
-  # Get id of current service
-  def get_service_id(integration_fields)
+  def get_resource(integration_fields)
     return nil if integration_fields.nil?
-    field = integration_fields.detect do |f|
-      f.service_name == @service.class.service_name and f.name == "id"
-    end
-    if field
-      field.value
-    else
-      nil
-    end
+    resource = Hashie::Mash.new
+    integration_fields
+      .select do |f|
+        f.service_name == @service.class.service_name
+      end
+      .each do |f|
+        resource[f.name] = f.value
+      end
+    resource
   end
 
 end

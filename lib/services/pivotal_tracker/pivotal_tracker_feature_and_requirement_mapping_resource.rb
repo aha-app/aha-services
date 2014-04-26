@@ -8,12 +8,12 @@ class PivotalTrackerFeatureAndRequirementMappingResource < PivotalTrackerProject
   end
 
   def update_feature(feature)
-    feature_mapping_id = get_service_id(feature.integration_fields)
+    feature_mapping_id = get_resource(feature.integration_fields).id
     feature_mapping_resource.update_from_feature(feature_mapping_id, feature)
 
     # Create or update each requirement.
     feature.requirements.each do |requirement|
-      requirement_mapping_id = get_service_id(requirement.integration_fields)
+      requirement_mapping_id = get_resource(requirement.integration_fields).id
       if requirement_mapping_id
         requirement_mapping_resource.update_from_requirement(requirement_mapping_id, requirement, feature_mapping_id)
       else
