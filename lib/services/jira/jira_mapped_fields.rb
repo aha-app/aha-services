@@ -39,10 +39,12 @@ module JiraMappedFields
     case jira_type
     when "string"
       aha_type_to_string(aha_type, aha_value)
+    when "number"
+      aha_type_to_number(aha_type, aha_value)
     when "array"
       aha_type_to_array(aha_type, aha_value, jira_sub_type)
     else
-      logger.debug("Using default field type mapping for '#{aha_type}' to '#{info.type}'")
+      logger.debug("Using default field type mapping for '#{aha_type}' to '#{jira_type}'")
       aha_value
     end
   end
@@ -51,10 +53,16 @@ module JiraMappedFields
     case aha_type
     when "html"
       convert_html(aha_value)
+    when "array"
+      aha_value.join(",")
     else
       logger.debug("Using default string mapping for '#{aha_type}'")
       aha_value
     end
+  end
+  
+  def aha_type_to_number(aha_type, aha_value)
+    aha_value.to_i
   end
   
   def aha_type_to_array(aha_type, aha_value, jira_sub_type)
