@@ -1,4 +1,4 @@
-module JiraMappedFields
+module Jira::JiraMappedFields
   def mapped_custom_fields(resource, issue_type)
     custom_fields = Hash.new
     
