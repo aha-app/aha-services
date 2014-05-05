@@ -3,7 +3,6 @@ module JiraMappedFields
     custom_fields = Hash.new
     
     (data.field_mapping || []).each do |field_mapping|
-      logger.debug("FIELD MAPPING: #{field_mapping.inspect} #{field_mapping.is_a? Hashie::Mash}")
       next unless field_mapping.is_a? Hashie::Mash
 
       info = jira_field_info(field_mapping.jira_field, issue_type)
@@ -16,18 +15,13 @@ module JiraMappedFields
       
     end
 
-    logger.debug("SETTNG CUSTOM FIELDS: #{custom_fields.inspect}")
-        
     custom_fields
   end
   
   def custom_field_for_resource(resource, aha_field, jira_field, issue_type)
-    logger.debug("CUSTOM FIELDS: #{resource.custom_fields.inspect} for #{aha_field}")
-    
     return nil unless resource.custom_fields # We only have custom fields for Requirements.
     
     field = resource.custom_fields.find {|field| field['key'] == aha_field}
-    logger.debug("FIELDS: #{field.inspect}")
     if field
       aha_type_to_jira_type(field.value, field.type, jira_field, issue_type)
     else
