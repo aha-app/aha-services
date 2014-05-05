@@ -18,11 +18,12 @@ class AhaServices::Jira < AhaService
       meta_data.projects.detect {|p| p[:key] == data.project}.issue_types.find_all{|i| !i.subtype}.collect{|p| [p.name, p.id] }
     }, description: "JIRA issue type that will be used when sending requirements. If you are using JIRA Agile then we recommend 'Sub-task'."
   internal :feature_status_mapping
-  internal :resolution_mapping
+  internal :field_mapping
+  # internal :resolution_mapping  # TODO: we are not actually using this at the moment.
   boolean :send_tags, description: "Check to synchronize Aha! tags and JIRA labels. We recommend enabling this for new integrations. Enabling this option once features are synced to JIRA may cause tags in Aha! or labels in JIRA to be removed from a feature if the corresponding label or tag doesn't exist in the other system."
   
   callback_url description: "URL to add to the webhooks section of JIRA. Only one hook is necessary, even if multiple products are integrated with JIRA."
-  
+    
   def receive_installed
     # Get custom field mappings.
     meta_data.merge! epic_name_field: field_resource.epic_name_field,
@@ -60,6 +61,7 @@ class AhaServices::Jira < AhaService
   end
 
 protected
+  include JiraMappedFields
 
   def new_or_existing_aha_reference_field
     # Create custom field for Aha! reference.
@@ -221,6 +223,7 @@ protected
       .merge!(issue_epic_link_field(issue_type, parent, initiative))
       .merge!(subtask_fields(issue_type.subtask, parent))
       .merge!(time_tracking_fields(resource, issue_type))
+      .merge!(mapped_custom_fields(resource, issue_type))
     
     new_issue = issue_resource.create(issue)
 
@@ -252,6 +255,7 @@ protected
       .merge!(label_fields(resource, issue_type))
       .merge!(time_tracking_fields(resource, issue_type))
       .merge!(aha_reference_fields(resource, issue_type))
+      .merge!(mapped_custom_fields(resource, issue_type))
     issue.merge!(version_update_fields(version, issue_type))
 
     issue_resource.update(issue_info.id, issue)
@@ -408,7 +412,7 @@ protected
       Hash.new
     end
   end
-
+  
   def issue_type_by_parent(parent)
     issue_type_id = parent ? (data.requirement_issue_type || data.feature_issue_type) : data.feature_issue_type
     issue_type_by_id(issue_type_id)

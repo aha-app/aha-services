@@ -8,6 +8,7 @@ class JiraProjectResource < JiraResource
         issue_types = project.issuetypes.collect do |issue_type|
           Hashie::Mash.new(id: issue_type.id, name: issue_type.name)
             .merge(issue_field_capabilities(meta_data, issue_type))
+            .merge(issue_fields(issue_type))
         end
 
         # Get the statuses.
@@ -64,5 +65,25 @@ protected
       end
 
     Hashie::Mash.new(subtask: issue_type.subtask).merge(fields)
+  end
+  
+  def issue_fields(issue_type)
+    fields =
+      if issue_type.fields.present?
+        {fields:
+          issue_type.fields.collect do |field_key, field|
+            {
+              key: field_key, 
+              name: field.name,
+              type: field.schema.type,
+              sub_type: field.schema.items
+            }
+          end
+        }
+      else
+        Hash.new
+      end
+
+    Hashie::Mash.new(fields)
   end
 end
