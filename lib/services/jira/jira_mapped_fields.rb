@@ -37,6 +37,8 @@ module JiraMappedFields
       aha_type_to_number(aha_type, aha_value)
     when "array"
       aha_type_to_array(aha_type, aha_value, jira_sub_type)
+    when "priority"
+      {name: aha_type_to_string(aha_type, aha_value)}
     else
       logger.debug("Using default field type mapping for '#{aha_type}' to '#{jira_type}'")
       aha_value
