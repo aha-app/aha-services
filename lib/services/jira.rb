@@ -263,6 +263,14 @@ protected
     update_attachments(issue_info.id, resource)
     
     issue_info
+  rescue Errors::RemoteError => e
+    if e.message =~ /You do not have permission to edit issues/
+      # Ignore permission errors. They happen when we try to update an issue
+      # that was already closed.
+      issue_info
+    else
+      raise e
+    end
   end
 
   def create_link_for_issue(issue, issue_type, parent)
