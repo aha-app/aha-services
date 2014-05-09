@@ -79,6 +79,7 @@ protected
   end
 
   def integrate_or_update_feature(feature)
+    @feature = feature
     version = find_or_attach_jira_version(feature.release)
     issue_info = update_or_attach_jira_issue(feature, feature.initiative, version)
     update_requirements(feature, version, issue_info)
@@ -223,7 +224,7 @@ protected
       .merge!(issue_epic_link_field(issue_type, parent, initiative))
       .merge!(subtask_fields(issue_type.subtask, parent))
       .merge!(time_tracking_fields(resource, issue_type))
-      .merge!(mapped_custom_fields(resource, issue_type))
+      .merge!(mapped_custom_fields(@feature, issue_type))
     
     new_issue = issue_resource.create(issue)
 
@@ -255,7 +256,7 @@ protected
       .merge!(label_fields(resource, issue_type))
       .merge!(time_tracking_fields(resource, issue_type))
       .merge!(aha_reference_fields(resource, issue_type))
-      .merge!(mapped_custom_fields(resource, issue_type))
+      .merge!(mapped_custom_fields(@feature, issue_type))
     issue.merge!(version_update_fields(version, issue_type))
 
     issue_resource.update(issue_info.id, issue)
