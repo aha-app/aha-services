@@ -15,6 +15,6 @@ class AhaServices::JiraConnect < AhaServices::Jira
       meta_data.projects.detect {|p| p[:key] == data.project}.issue_types.find_all{|i| !i.subtype}.collect{|p| [p.name, p.id] }
     }, description: "JIRA issue type that will be used when sending requirements. If you are using JIRA Agile then we recommend 'Sub-task'."
   internal :feature_status_mapping
-  internal :resolution_mapping
+  internal :field_mapping
   boolean :send_tags, description: "Check to synchronize Aha! tags and JIRA labels. We recommend enabling this for new integrations. Enabling this option once features are synced to JIRA may cause tags in Aha! or labels in JIRA to be removed from a feature if the corresponding label or tag doesn't exist in the other system."
 end
