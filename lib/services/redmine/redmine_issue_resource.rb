@@ -1,3 +1,5 @@
+require 'clothred'
+
 class RedmineIssueResource < RedmineResource
   
   def create(payload_fragment: nil, parent_id: nil)
@@ -65,6 +67,7 @@ private
       tracker_id: @service.data.tracker,
       project_id: @service.data.project,
       subject: @service.resource_name(payload_fragment),
+      description: ClothRed.new(payload_fragment.description.body).to_textile,
       parent_issue_id: parent_id,
       fixed_version_id: version_id,
       priority_id: @service.data.issue_priority
