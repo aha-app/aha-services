@@ -16,6 +16,10 @@ class RedmineResource
 
   def prepare_request
     http.headers['Content-Type'] = 'application/json'
+    auth_header
+  end
+  
+  def auth_header
     http.headers['X-Redmine-API-Key'] = @service.data.api_key
   end
 
@@ -23,8 +27,7 @@ class RedmineResource
     if success_codes.include?(response.status)
       yield Hashie::Mash.new parse(response.body)
     elsif response.status.between?(400, 499)
-      error = parse(response.body)
-      raise RemoteError, "Error message: #{error['errors'].join(', ')}"
+      raise RemoteError, "Error message: #{response.status} #{response.message}"
     else
       raise RemoteError, "Unhandled error: STATUS=#{response.status} BODY=#{response.body}"
     end

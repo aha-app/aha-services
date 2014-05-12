@@ -31,14 +31,22 @@ class AhaServices::Redmine < AhaService
   def receive_update_release; update_version; end
 
   def receive_create_feature
-    attachments = check_attachments payload.feature
-    response_body = create_issue attachments: attachments
+    issue = create_issue payload_fragment: payload.feature
     payload.feature.requirements.each do |requirement|
-      create_issue payload_fragment: requirement, parent_id: response_body[:issue][:id]
+      create_issue payload_fragment: requirement, parent_id: issue[:id]
     end
   end
 
-  def receive_update_feature; update_issue; end
+  def receive_update_feature
+    issue = update_issue payload_fragment: payload.feature
+    payload.feature.requirements.each do |requirement|
+      if get_integration_field(requirement.integration_fields, 'id')
+        update_issue payload_fragment: requirement, parent_id: issue[:id]
+      else
+        create_issue payload_fragment: requirement, parent_id: issue[:id]
+      end
+    end
+  end
 
 private
 
@@ -66,9 +74,9 @@ private
     version_resource.update
   end
 
-  def update_issue
+  def update_issue **options
     check_projects
-    issue_resource.update
+    issue_resource.update options
   end
 
 #===========
@@ -95,9 +103,6 @@ private
     @issue_resource ||= RedmineIssueResource.new(self)
   end
 
-  def attachment_resource
-    @attachment_resource ||= RedmineUploadResource.new(self)
-  end
 
 #=========
 # SUPPORT
@@ -106,12 +111,6 @@ private
   def check_projects
     @meta_data.projects ||= []
     install_projects if @meta_data.projects.empty?
-  end
-
-  def check_attachments payload_fragment
-    payload_fragment.description.attachments.map do |attachment|
-      attachment.merge(token: attachment_resource.upload_attachment(attachment))
-    end
   end
 
 end

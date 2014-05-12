@@ -1,29 +1,59 @@
-class RedmineIssueResource < RedmineResource
+require 'clothred'
 
-  def create(payload_fragment: nil, parent_id: nil, attachments: nil)
+class RedmineIssueResource < RedmineResource
+  
+  def create(payload_fragment: nil, parent_id: nil)
     params = parse_payload \
       payload_fragment: payload_fragment,
       parent_id: parent_id,
-      attachments: attachments
+      attachments: check_attachments(payload_fragment)
     prepare_request
     logger.debug("PARAMS: #{params.to_json}")
     response = http_post redmine_issues_path, params.to_json
-    parse_response response, payload_fragment, parent_id
+    response_body = parse_response response, payload_fragment, parent_id
+    {id: response_body[:issue][:id]}
   end
 
-  def update
-    params = parse_payload
-    issue_id = get_integration_field @payload.feature.integration_fields, 'id'
-
+  def update(payload_fragment: nil, parent_id: nil)
+    issue_id = get_integration_field payload_fragment.integration_fields, 'id'
+    params = parse_payload \
+      payload_fragment: payload_fragment,
+      parent_id: parent_id,
+      attachments: check_attachments(payload_fragment, issue_id)
     prepare_request
     response = http_put redmine_issues_path(issue_id), params.to_json
     process_response response, 200 do
       logger.info("Updated feature #{issue_id}")
     end
+    
+    {id: issue_id}
   end
 
 private
 
+  def attachment_resource
+    @attachment_resource ||= RedmineUploadResource.new(@service)
+  end
+
+  def check_attachments(resource, issue_id = nil)
+    attachments = resource.attachments.dup | resource.description.attachments.dup
+    if issue_id
+      attachment_resource.all_for_issue(issue_id).each do |redmine_attachment|
+        attachments.reject! do |aha_attachment|
+          attachments_match(aha_attachment, redmine_attachment)
+        end
+      end
+    end
+    attachments.map do |attachment|
+      attachment.merge(token: attachment_resource.upload_attachment(attachment))
+    end
+  end
+  
+  def attachments_match(aha_attachment, redmine_attachment)
+    aha_attachment.file_name == redmine_attachment.filename and
+      aha_attachment.file_size.to_i == redmine_attachment.filesize.to_i
+  end
+  
   def redmine_issues_path *concat
     str = "#{@service.data.redmine_url}/issues"
     str = str + '/' + concat.join('/') unless concat.empty?
@@ -37,6 +67,7 @@ private
       tracker_id: @service.data.tracker,
       project_id: @service.data.project,
       subject: @service.resource_name(payload_fragment),
+      description: ClothRed.new(payload_fragment.description.body).to_textile,
       parent_issue_id: parent_id,
       fixed_version_id: version_id,
       priority_id: @service.data.issue_priority
