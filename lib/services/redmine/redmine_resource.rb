@@ -24,7 +24,7 @@ class RedmineResource
       yield Hashie::Mash.new parse(response.body)
     elsif response.status.between?(400, 499)
       error = parse(response.body)
-      raise RemoteError, "Error message: #{error['errors'].join(', ')}"
+      raise RemoteError, "Error message: #{(error['errors'] || []).join(', ')}"
     else
       raise RemoteError, "Unhandled error: STATUS=#{response.status} BODY=#{response.body}"
     end

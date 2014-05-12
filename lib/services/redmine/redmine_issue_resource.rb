@@ -11,9 +11,13 @@ class RedmineIssueResource < RedmineResource
     parse_response response, payload_fragment, parent_id
   end
 
-  def update
-    params = parse_payload
-    issue_id = get_integration_field @payload.feature.integration_fields, 'id'
+  def update(payload_fragment: nil, parent_id: nil, attachments: nil)
+    Rails.logger.debug("FRAGMENT: #{payload_fragment.inspect}")
+    params = parse_payload \
+      payload_fragment: payload_fragment,
+      parent_id: parent_id,
+      attachments: attachments
+    issue_id = get_integration_field payload_fragment.integration_fields, 'id'
 
     prepare_request
     response = http_put redmine_issues_path(issue_id), params.to_json
