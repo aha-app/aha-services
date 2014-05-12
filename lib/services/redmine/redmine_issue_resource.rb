@@ -1,10 +1,10 @@
 class RedmineIssueResource < RedmineResource
-
-  def create(payload_fragment: nil, parent_id: nil, attachments: nil)
+  
+  def create(payload_fragment: nil, parent_id: nil)
     params = parse_payload \
       payload_fragment: payload_fragment,
       parent_id: parent_id,
-      attachments: attachments
+      attachments: check_attachments(payload_fragment)
     prepare_request
     logger.debug("PARAMS: #{params.to_json}")
     response = http_post redmine_issues_path, params.to_json
@@ -12,14 +12,12 @@ class RedmineIssueResource < RedmineResource
     {id: response_body[:issue][:id]}
   end
 
-  def update(payload_fragment: nil, parent_id: nil, attachments: nil)
-    Rails.logger.debug("FRAGMENT: #{payload_fragment.inspect}")
+  def update(payload_fragment: nil, parent_id: nil)
+    issue_id = get_integration_field payload_fragment.integration_fields, 'id'
     params = parse_payload \
       payload_fragment: payload_fragment,
       parent_id: parent_id,
-      attachments: attachments
-    issue_id = get_integration_field payload_fragment.integration_fields, 'id'
-
+      attachments: check_attachments(payload_fragment, issue_id)
     prepare_request
     response = http_put redmine_issues_path(issue_id), params.to_json
     process_response response, 200 do
@@ -31,6 +29,29 @@ class RedmineIssueResource < RedmineResource
 
 private
 
+  def attachment_resource
+    @attachment_resource ||= RedmineUploadResource.new(@service)
+  end
+
+  def check_attachments(resource, issue_id = nil)
+    attachments = resource.attachments.dup | resource.description.attachments.dup
+    if issue_id
+      attachment_resource.all_for_issue(issue_id).each do |redmine_attachment|
+        attachments.reject! do |aha_attachment|
+          attachments_match(aha_attachment, redmine_attachment)
+        end
+      end
+    end
+    attachments.map do |attachment|
+      attachment.merge(token: attachment_resource.upload_attachment(attachment))
+    end
+  end
+  
+  def attachments_match(aha_attachment, redmine_attachment)
+    aha_attachment.file_name == redmine_attachment.filename and
+      aha_attachment.file_size.to_i == redmine_attachment.filesize.to_i
+  end
+  
   def redmine_issues_path *concat
     str = "#{@service.data.redmine_url}/issues"
     str = str + '/' + concat.join('/') unless concat.empty?
