@@ -8,7 +8,8 @@ class RedmineIssueResource < RedmineResource
     prepare_request
     logger.debug("PARAMS: #{params.to_json}")
     response = http_post redmine_issues_path, params.to_json
-    parse_response response, payload_fragment, parent_id
+    response_body = parse_response response, payload_fragment, parent_id
+    {id: response_body[:issue][:id]}
   end
 
   def update(payload_fragment: nil, parent_id: nil, attachments: nil)
@@ -24,6 +25,8 @@ class RedmineIssueResource < RedmineResource
     process_response response, 200 do
       logger.info("Updated feature #{issue_id}")
     end
+    
+    {id: issue_id}
   end
 
 private

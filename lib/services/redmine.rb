@@ -32,16 +32,20 @@ class AhaServices::Redmine < AhaService
 
   def receive_create_feature
     attachments = check_attachments payload.feature
-    response_body = create_issue payload_fragment: payload.feature, attachments: attachments
+    issue = create_issue payload_fragment: payload.feature, attachments: attachments
     payload.feature.requirements.each do |requirement|
-      create_issue payload_fragment: requirement, parent_id: response_body[:issue][:id]
+      create_issue payload_fragment: requirement, parent_id: issue[:id]
     end
   end
 
   def receive_update_feature
-    update_issue payload_fragment: payload.feature
+    issue = update_issue payload_fragment: payload.feature
     payload.feature.requirements.each do |requirement|
-      update_issue payload_fragment: requirement
+      if get_integration_field(requirement.integration_fields, 'id')
+        update_issue payload_fragment: requirement, parent_id: issue[:id]
+      else
+        create_issue payload_fragment: requirement, parent_id: issue[:id]
+      end
     end
   end
 
