@@ -7,7 +7,7 @@ module JiraMappedFields
 
       info = jira_field_info(field_mapping.jira_field, issue_type)
       if info
-        value = custom_field_for_resource(resource, field_mapping.aha_field, info.type, info.sub_type)
+        value = custom_field_for_resource(resource, field_mapping.aha_field, info)
         custom_fields[field_mapping.jira_field] = value if value
       else
         Rails.logger.warn("JIRA field information not found - use Test Connection button again: #{field_mapping.jira_field}")
@@ -18,29 +18,36 @@ module JiraMappedFields
     custom_fields
   end
   
-  def custom_field_for_resource(resource, aha_field, jira_field, issue_type)
+  def custom_field_for_resource(resource, aha_field, jira_type_info)
     return nil unless resource.custom_fields # We only have custom fields for Requirements.
     
     field = resource.custom_fields.find {|field| field['key'] == aha_field}
     if field
-      aha_type_to_jira_type(field.value, field.type, jira_field, issue_type)
+      aha_type_to_jira_type(field.value, field.type, jira_type_info)
     else
       nil
     end
   end
   
-  def aha_type_to_jira_type(aha_value, aha_type, jira_type, jira_sub_type = nil)
-    case jira_type
+  def aha_type_to_jira_type(aha_value, aha_type, jira_type_info)
+    case jira_type_info.type
     when "string"
-      aha_type_to_string(aha_type, aha_value)
+      v = aha_type_to_string(aha_type, aha_value)
+      if jira_type_info.editor == "com.atlassian.jira.plugin.system.customfieldtypes:select"
+        {value: v}
+      elsif jira_type_info.editor == "com.atlassian.jira.plugin.system.customfieldtypes:radiobuttons"
+        {value: v}
+      else
+        v
+      end
     when "number"
       aha_type_to_number(aha_type, aha_value)
     when "array"
-      aha_type_to_array(aha_type, aha_value, jira_sub_type)
+      aha_type_to_array(aha_type, aha_value, jira_type_info)
     when "priority"
       {name: aha_type_to_string(aha_type, aha_value)}
     else
-      logger.debug("Using default field type mapping for '#{aha_type}' to '#{jira_type}'")
+      logger.debug("Using default field type mapping for '#{aha_type}' to '#{jira_type_info.type}'")
       aha_value
     end
   end
@@ -61,7 +68,7 @@ module JiraMappedFields
     aha_value.to_i
   end
   
-  def aha_type_to_array(aha_type, aha_value, jira_sub_type)
+  def aha_type_to_array(aha_type, aha_value, jira_type_info)
     values = case aha_type
       when "array"
         aha_value
@@ -70,9 +77,15 @@ module JiraMappedFields
       end
 
     # Recurse for the array 
-    case jira_sub_type
+    case jira_type_info.sub_type
     when "component"
       values.collect {|v| {name: v} }
+    when "string"
+      if jira_type_info.editor == "com.atlassian.jira.plugin.system.customfieldtypes:multiselect"
+        values.collect {|v| {value: v} }
+      else
+        values
+      end
     else
       values
     end

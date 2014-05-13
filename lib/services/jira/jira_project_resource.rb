@@ -76,7 +76,8 @@ protected
               key: field_key, 
               name: field.name,
               type: field.schema.type,
-              sub_type: field.schema.items
+              sub_type: field.schema.items,
+              editor: field.schema.custom || field.schema.system
             }
           end
         }
