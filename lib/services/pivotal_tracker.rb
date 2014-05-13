@@ -93,7 +93,7 @@ class AhaServices::PivotalTracker < AhaService
     
       if change.new_values and new_state = change.new_values.current_state
         # Update the status.
-        api.put(resource.resource, {resource_type => {status: pivotal_to_aha_status(new_state)}})
+        api.put(resource.resource, {resource_type => {workflow_status: {category: pivotal_to_aha_category(new_state)}}})
       else
         # Unhandled change.
       end
@@ -251,15 +251,15 @@ protected
     end
   end
   
-  def pivotal_to_aha_status(status)
+  def pivotal_to_aha_category(status)
     case status
       when "accepted" then "shipped"
-      when "delivered" then "ready_to_ship"
+      when "delivered" then "done"
       when "finished" then "in_progress"
       when "started" then "in_progress"
       when "rejected" then "in_progress"
-      when "unstarted" then "scheduled"
-      when "unscheduled" then "under_consideration"
+      when "unstarted" then "initial"
+      when "unscheduled" then "initial"
     end
   end
 

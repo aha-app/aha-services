@@ -37,7 +37,7 @@ class AhaServices::Trello < AhaService
     if payload.model and payload.model.idList
       new_list_id = payload.model.idList
       if url = webhook_feature_url(payload.model.id)
-        api.put(url, { status: data.feature_statuses[new_list_id.to_s] })
+        api.put(url, { workflow_status: data.feature_statuses[new_list_id.to_s] })
       end
     end
   end
