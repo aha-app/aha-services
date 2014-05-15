@@ -33,7 +33,7 @@ PATH
       aha-api
       faraday (~> 0.8.9)
       faraday_middleware (~> 0.9.0)
-      hashie (~> 2.0.0)
+      hashie (~> 2.1.1)
       html2confluence
       htmlentities
       reverse_markdown
