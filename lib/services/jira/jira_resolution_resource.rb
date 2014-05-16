@@ -5,7 +5,7 @@ class JiraResolutionResource < JiraResource
     resolutions = []
     process_response(response, 200) do |meta|
       meta.each do |resolution|
-        resolutions << {id: resolution.id, name: resolution.name}
+        resolutions << {'id' => resolution.id, 'name' => resolution.name}
       end
     end
     resolutions

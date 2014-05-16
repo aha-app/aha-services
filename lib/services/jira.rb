@@ -26,12 +26,12 @@ class AhaServices::Jira < AhaService
     
   def receive_installed
     # Get custom field mappings.
-    meta_data.merge! epic_name_field: field_resource.epic_name_field,
-                     epic_link_field: field_resource.epic_link_field,
-                     story_points_field: field_resource.story_points_field,
-                     aha_reference_field: new_or_existing_aha_reference_field
-    meta_data.projects = project_resource.all(meta_data)
-    meta_data.resolutions = resolution_resource.all
+    @meta_data = {'epic_name_field' => field_resource.epic_name_field,
+      'epic_link_field' => field_resource.epic_link_field,
+      'story_points_field' => field_resource.story_points_field,
+      'aha_reference_field' => new_or_existing_aha_reference_field}
+    @meta_data['projects'] = project_resource.all(meta_data)
+    @meta_data['resolutions'] = resolution_resource.all
   end
   
   def receive_create_feature
