@@ -94,7 +94,8 @@ protected
   end
   
   def update_or_attach_jira_version(release)
-    if version_id = get_integration_field(release.integration_fields, 'id')
+    if version_id = get_integration_field(release.integration_fields, 'id') and
+        version = existing_version_integrated_with(release)
       update_version(version_id, release)
     else
       attach_version_to(release)
