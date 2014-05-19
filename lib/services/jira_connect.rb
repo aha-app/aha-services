@@ -8,11 +8,11 @@ class AhaServices::JiraConnect < AhaServices::Jira
   boolean :send_initiatives, description: "Check to use feature initatives to create Epics in JIRA Agile"
   select :feature_issue_type, 
     collection: ->(meta_data, data) { 
-      meta_data.projects.detect {|p| p[:key] == data.project}.issue_types.find_all{|i| !i.subtype}.collect{|p| [p.name, p.id] }
+      meta_data.issue_type_sets[meta_data.projects.detect {|p| p[:key] == data.project}.issue_types].find_all{|i| !i.subtype}.collect{|p| [p.name, p.id] }
     }, description: "JIRA issue type that will be used when sending features. If you are using JIRA Agile then we recommend 'Story'."
   select :requirement_issue_type, 
     collection: ->(meta_data, data) { 
-      meta_data.projects.detect {|p| p[:key] == data.project}.issue_types.find_all{|i| !i.subtype}.collect{|p| [p.name, p.id] }
+      meta_data.issue_type_sets[meta_data.projects.detect {|p| p[:key] == data.project}.issue_types].find_all{|i| !i.subtype}.collect{|p| [p.name, p.id] }
     }, description: "JIRA issue type that will be used when sending requirements. If you are using JIRA Agile then we recommend 'Sub-task'."
   internal :feature_status_mapping
   internal :field_mapping

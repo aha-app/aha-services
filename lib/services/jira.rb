@@ -11,11 +11,11 @@ class AhaServices::Jira < AhaService
   boolean :send_initiatives, description: "Check to use feature initatives to create Epics in JIRA Agile"
   select :feature_issue_type, 
     collection: ->(meta_data, data) { 
-      meta_data.projects.detect {|p| p[:key] == data.project}.issue_types.find_all{|i| !i.subtype}.collect{|p| [p.name, p.id] }
+      meta_data.issue_type_sets[meta_data.projects.detect {|p| p[:key] == data.project}.issue_types].find_all{|i| !i.subtype}.collect{|p| [p.name, p.id] }
     }, description: "JIRA issue type that will be used when sending features. If you are using JIRA Agile then we recommend 'Story'."
   select :requirement_issue_type, 
     collection: ->(meta_data, data) { 
-      meta_data.projects.detect {|p| p[:key] == data.project}.issue_types.find_all{|i| !i.subtype}.collect{|p| [p.name, p.id] }
+      meta_data.issue_type_sets[meta_data.projects.detect {|p| p[:key] == data.project}.issue_types].find_all{|i| !i.subtype}.collect{|p| [p.name, p.id] }
     }, description: "JIRA issue type that will be used when sending requirements. If you are using JIRA Agile then we recommend 'Sub-task'."
   internal :feature_status_mapping
   internal :field_mapping
@@ -432,7 +432,8 @@ protected
     raise AhaService::RemoteError, "Integration has not been configured" if meta_data.projects.nil?
     project = meta_data.projects.find {|project| project[:key] == data.project }
     raise AhaService::RemoteError, "Integration has not been configured, can't find project '#{data.project}'" if project.nil?
-    issue_type = project.issue_types.find {|type| type.id.to_s == id.to_s }
+    issue_types = meta_data.issue_type_sets[project.issue_types]
+    issue_type = issue_types.find {|type| type.id.to_s == id.to_s }
     raise AhaService::RemoteError, "Integration needs to be reconfigured, issue types have changed, can't find issue type '#{id}'" if issue_type.nil?
     issue_type
   end
@@ -441,7 +442,8 @@ protected
     raise AhaService::RemoteError, "Integration has not been configured" if meta_data.projects.nil?
     project = meta_data.projects.find {|project| project[:key] == data.project }
     raise AhaService::RemoteError, "Integration has not been configured, can't find project '#{data.project}'" if project.nil?
-    project.issue_types.find {|type| type.has_field_epic_name == true }
+    issue_types = meta_data.issue_type_sets[project.issue_types]
+    issue_types.find {|type| type.has_field_epic_name == true }
   end
   
   # Convert HTML from Aha! into Confluence-style wiki markup.
