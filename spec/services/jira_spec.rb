@@ -154,9 +154,9 @@ describe AhaServices::Jira do
       
       service = AhaServices::Jira.new(service_params)
       service.receive(:installed)
-      service.meta_data.projects[0]["key"].should == "APPJ"
-      service.meta_data.projects[0].issue_types[0].name.should == "Bug"     
-      service.meta_data.projects[0].issue_types[0].statuses[0].name.should == "Open"     
+      service.meta_data['projects'][0]["key"].should == "APPJ"
+      issue_type = service.meta_data['issue_type_sets'][service.meta_data['projects'][0]['issue_types']][0]
+      issue_type['name'].should == "Bug"     
     end
     
     it "handles installed event for Jira 5.0" do
@@ -173,9 +173,9 @@ describe AhaServices::Jira do
     
       service = AhaServices::Jira.new(service_params)
       service.receive(:installed)
-      service.meta_data.projects[0]["key"].should == "APPJ"
-      service.meta_data.projects[0].issue_types[0].name.should == "Bug"     
-      service.meta_data.projects[0].issue_types[0].statuses[0].name.should == "Open"     
+      service.meta_data['projects'][0]["key"].should == "APPJ"
+      issue_type = service.meta_data['issue_type_sets'][service.meta_data['projects'][0]['issue_types']][0]
+      issue_type['name'].should == "Bug"     
     end
     
   end
