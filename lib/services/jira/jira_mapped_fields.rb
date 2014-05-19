@@ -5,7 +5,7 @@ module JiraMappedFields
     (data.field_mapping || []).each do |field_mapping|
       next unless field_mapping.is_a? Hashie::Mash
 
-      info = jira_field_info(field_mapping.jira_field, issue_type)
+      info = jira_field_info(field_mapping.jira_field)
       if info
         value = custom_field_for_resource(resource, field_mapping.aha_field, info)
         custom_fields[field_mapping.jira_field] = value if value
@@ -91,10 +91,8 @@ module JiraMappedFields
     end
   end
   
-  def jira_field_info(jira_field, issue_type)
-    if issue_type and field = issue_type.fields.find{ |f| f['key'] == jira_field }
-      field
-    end
+  def jira_field_info(jira_field)
+    meta_data.fields[jira_field]
   end
   
 end
