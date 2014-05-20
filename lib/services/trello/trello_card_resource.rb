@@ -32,5 +32,8 @@ class TrelloCardResource < TrelloResource
       { callbackURL: "#{@service.data.callback_url}",
         idModel: card_id }.to_json
     process_response(response, 200)
+  rescue Exception => e
+    # Don't fail if we can't create webhook.
+    logger.warn(e.message)
   end
 end
