@@ -30,7 +30,11 @@ private
   end
 
   def parse_payload payload_fragment
-    return Hashie::Mash.new( version: { name: payload_fragment.name })
+    return Hashie::Mash.new( version: {
+      name: payload_fragment.name,
+      due_date: payload_fragment.release_date,
+      description: "Created from Aha! #{payload_fragment.url}",
+    })
   end
 
 end
