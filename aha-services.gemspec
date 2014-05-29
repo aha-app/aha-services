@@ -24,6 +24,7 @@ Gem::Specification.new do |s|
   s.add_dependency "htmlentities"
 
   # For Jira integration.
+  s.add_dependency "jwt"
   s.add_dependency "html2confluence"
 
   # For Trello integration.
