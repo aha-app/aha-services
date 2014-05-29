@@ -30,14 +30,13 @@ Please carefully follow these instructions to ensure that the integration is pro
 1. Log into your JIRA On-demand instance. Under _Administration_ -> _Add-ons_ use the _Find new add-ons_ screen to find the _Aha! Product Roadmaps_ add-on and install it.
 2. Click on the _Configure_ button to configure the _Aha! Product Roadmaps_ add-on.
 3. Enter the sub-domain of your Aha! instance and save.
-4. Create a new custom field in your JIRA instance. The custom field must be a URL type and be named exactly "Aha! Reference". Aha! will use this field to store the link back to the related feature for each issue. The field should be added to the default screen (or your custom issue creation screen).
-5. Log into Aha! and find the _Account settings_ -> _Integrations_ -> _JIRA via Connect_ page for the product you want to integrate with JIRA.
-6. Click on the _Create integration_ button below.
-7. Click the _Test connection_ button to verify that the add-on was installed correctly and load the configuration from JIRA.
-8. After a short delay, you will be able to choose the Project the issues will be created in.
-9. Map how you want new features to show up in JIRA and how the JIRA status fields should map to Aha! 
-10. Enable the integration.
-11. Test the integration by going to one of your features in Aha! and using the _Send to JIRA_ item in the _Actions_ menu on the features page. You should then look at your project in JIRA and see that the feature (and any requirements) were properly copied. 
+4. Log into Aha! and find the _Account settings_ -> _Integrations_ -> _JIRA via Connect_ page for the product you want to integrate with JIRA.
+5. Click on the _Create integration_ button below.
+6. Click the _Test connection_ button to verify that the add-on was installed correctly and load the configuration from JIRA.
+7. After a short delay, you will be able to choose the Project the issues will be created in.
+8. Map how you want new features to show up in JIRA and how the JIRA status fields should map to Aha! 
+9. Enable the integration.
+10. Test the integration by going to one of your features in Aha! and using the _Send to JIRA_ item in the _Actions_ menu on the features page. You should then look at your project in JIRA and see that the feature (and any requirements) were properly copied. 
 
 If multiple Aha! products are being integrated with JIRA, then the steps 1 to 3 only need to be completed once. Step 4 onwards must be repeated for each product.
 
