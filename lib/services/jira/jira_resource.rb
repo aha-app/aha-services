@@ -79,15 +79,11 @@ class AddJiraJwt < Faraday::Middleware
   def call(env)
     uri = env[:url]
     
-    Rails.logger.debug("URL FOR JWT: #{uri.inspect}")
-    
     canonical_url = canonical_url(env[:method].to_s.upcase, uri)
-    Rails.logger.debug("CANONICAL URL: #{canonical_url}")
     qsh = Digest::SHA256.new.hexdigest(canonical_url)
     
     jwt = JWT.encode({"iss" => "io.aha.connect", "iat" => Time.now.utc.to_i, 
-        "exp" => Time.now.utc.to_i + 300, "qsh" => qsh}, 
-      @shared_secret, "HS256")
+      "exp" => Time.now.utc.to_i + 300, "qsh" => qsh}, @shared_secret, "HS256")
     
     uri.query = [uri.query, "jwt=#{jwt}"].compact.join('&')
 
@@ -96,7 +92,6 @@ class AddJiraJwt < Faraday::Middleware
   
   def path_without_context(path)
     context_path = URI.parse(@context_url).path
-    Rails.logger.debug("CONTEXT PATH: #{context_path} #{@context_url.inspect} #{path.sub(context_path, "")}")
     new_path = path.sub(context_path, "")
     new_path = "/" if new_path.blank?
     new_path
