@@ -68,7 +68,9 @@ protected
     if kind == "story" && new_state = new_values.current_state
       api.put(resource, {resource_type => { workflow_status: {category: pivotal_to_aha_category(new_state) }}})
     elsif kind == "task" && ["true", true].include?(new_values.complete)
-      api.put(resource, {resource_type => { workflow_status: {category: "shipped" }}})
+      api.put(resource, {resource_type => { workflow_status: {category: "done" }}})
+    elsif kind == "task" && ["false", false].include?(new_values.complete)
+      api.put(resource, {resource_type => { workflow_status: {category: "initial" }}})
     end
   end
 

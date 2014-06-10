@@ -4,11 +4,6 @@ class PivotalTrackerTaskResource < PivotalTrackerProjectDependentResource
       description: task_description(requirement, feature_mapping.id),
       created_at: requirement.created_at,
     }
-    file_attachments = attachment_resource.upload(requirement.description.attachments | requirement.attachments)
-    if file_attachments.any?
-      story_resource.update(feature_mapping.id, { comments: [ { file_attachments: file_attachments } ] })
-    end
-
     created_task = create(task, feature_mapping.id)
     api.create_integration_fields(reference_num_to_resource_type(requirement.reference_num), requirement.reference_num, @service.class.service_name, {id: created_task.id})
     created_task
@@ -20,10 +15,6 @@ class PivotalTrackerTaskResource < PivotalTrackerProjectDependentResource
     }
 
     update(requirement_mapping.id, task, feature_mapping.id)
-
-    # Add the new attachments.
-    new_attachments = attachment_resource.update(requirement, attachment_resource.all_for_story(feature_mapping.id))
-    story_resource.add_attachments(feature_mapping.id, new_attachments)
   end
 
 protected
@@ -55,6 +46,6 @@ protected
   end
 
   def task_description(requirement, feature_mapping_id)
-    [requirement.name, append_link(html_to_plain(requirement.description.body), feature_mapping_id)].join("\n")
+    [requirement.name, html_to_plain(requirement.description.body)].join("\n")
   end
 end

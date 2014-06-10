@@ -14,7 +14,7 @@ class PivotalTrackerFeatureAndRequirementMappingResource < PivotalTrackerProject
     # Create or update each requirement.
     feature.requirements.each do |requirement|
       requirement_mapping = get_resource(requirement.integration_fields)
-      if requirement_mapping
+      if requirement_mapping.present?
         requirement_mapping_resource.update_from_requirement(requirement_mapping, requirement, feature_mapping)
       else
         requirement_mapping_resource.create_from_requirement(requirement, feature, feature_mapping)
