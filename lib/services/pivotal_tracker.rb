@@ -66,9 +66,9 @@ protected
 
   def apply_change(kind, new_values, resource, resource_type)
     if kind == "story" && new_state = new_values.current_state
-      api.put(resource, {resource_type => { category: pivotal_to_aha_category(new_state) }})
+      api.put(resource, {resource_type => { workflow_status: {category: pivotal_to_aha_category(new_state) }}})
     elsif kind == "task" && ["true", true].include?(new_values.complete)
-      api.put(resource, {resource_type => { category: "shipped" }})
+      api.put(resource, {resource_type => { workflow_status: {category: "shipped" }}})
     end
   end
 
