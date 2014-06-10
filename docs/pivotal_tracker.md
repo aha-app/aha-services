@@ -5,12 +5,11 @@ This two-way integration allows you to push your features and requirements in Ah
 * One Aha! product is associated with one Pivotal Tracker project.
 * Individual features can be sent to Pivotal Tracker using the _Send to Pivotal Tracker_ item in the _Actions_ menu on the features page.
 * All features in a release (that have not already been implemented or sent to Pivotal Tracker previously) can be sent to Pivotal Tracker using the _Send to Pivotal Tracker_ item in the _Actions_ menu on the release page.
-* When a feature is copied to Pivotal Tracker one story will be created for the feature. If 
-  the feature has requirements then each requirement will also be sent as a 
-  linked story of the feature story.
+* How the features and requirements will be mapped to epics, stories and tasks
+in Pivotal Tracker will depend on the _Mapping_ field.
 * Only the description of a feature or requirement is sent. No tasks or comments are included. 
-* Attachments of a feature or requirement are also sent.
-* When a feature is sent to Pivotal Tracker, its status in Aha! is automatically changed to Ready to develop.
+* Attachments of a feature or requirement are also sent, unless requirements
+are mapped to tasks in which case no requirement attachments will be sent.
 * After a feature is first sent to Pivotal Tracker, changes to the name, description and requirements, can also be sent to Pivotal Tracker using the _Update Pivotal Tracker_ item in the _Actions_ menu on the features page or by sending all features in a release to Pivotal Tracker again. New requirements will also be created in Pivotal Tracker, however stories that were created for an existing requirement are not deleted from Pivotal Tracker if the requirement is deleted from Aha!. If an attachment is deleted in Aha! the corresponding attachment in Pivotal Tracker is not deleted. 
 
 ## Configuration
