@@ -15,6 +15,10 @@ module Helpers
     converter.convert!(nil)
   end
   
+  def html_to_markdown(html)
+    ReverseMarkdown.convert(html)
+  end
+  
   def reference_num_to_resource_type(reference_num)
     if reference_num =~ /-R-\d+$/ or reference_num =~ /-R-PL$/
       "releases"

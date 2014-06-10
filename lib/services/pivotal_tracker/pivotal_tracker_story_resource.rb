@@ -60,7 +60,7 @@ protected
   def create_from_resource(resource, parent_resource = nil, parent_mapping = nil)
     story = {
       name: resource_name(resource),
-      description: append_link(html_to_plain(resource.description.body), parent_mapping && parent_mapping.id),
+      description: append_link(html_to_markdown(resource.description.body), parent_mapping && parent_mapping.id),
       story_type: kind_to_story_type(resource.kind || parent_resource.kind),
       created_at: resource.created_at,
       external_id: parent_resource ? parent_resource.reference_num : resource.reference_num,
@@ -83,7 +83,7 @@ protected
   def update_from_resource(resource_mapping, resource, parent_mapping = nil)
     story = {
       name: resource_name(resource),
-      description: append_link(html_to_plain(resource.description.body), parent_mapping && parent_mapping.id)
+      description: append_link(html_to_markdown(resource.description.body), parent_mapping && parent_mapping.id)
     }
 
     update(resource_mapping.id, story)

@@ -2,7 +2,7 @@ class PivotalTrackerEpicResource < PivotalTrackerProjectDependentResource
   def create_from_feature(feature)
     epic = {
       name: resource_name(feature),
-      description: html_to_plain(feature.description.body),
+      description: html_to_markdown(feature.description.body),
       created_at: feature.created_at
     }
     file_attachments = attachment_resource.upload(feature.description.attachments | feature.attachments)
@@ -25,7 +25,7 @@ class PivotalTrackerEpicResource < PivotalTrackerProjectDependentResource
   def update_from_feature(feature_mapping, feature)
     epic = {
       name: resource_name(feature),
-      description: html_to_plain(feature.description.body)
+      description: html_to_markdown(feature.description.body)
     }
 
     update(feature_mapping.id, epic)
