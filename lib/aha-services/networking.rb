@@ -23,16 +23,16 @@ module Networking
       end
     end
   end
-  
+
   # Override this to install additional middleware.
   def faraday_builder(builder)
   end
-  
+
   # Reset the HTTP connection so it can be recreated with new options.
   def http_reset
     @http = nil
   end
-  
+
   # Gets the path to the SSL Certificate Authority certs.  These were taken
   # from: http://curl.haxx.se/ca/cacert.pem
   #
@@ -40,7 +40,7 @@ module Networking
   def ca_file
     @ca_file ||= File.expand_path('../../config/cacert.pem', __FILE__)
   end
-  
+
   # Public: Makes an HTTP GET call.
   #
   # url     - Optional String URL to request.
@@ -80,7 +80,7 @@ module Networking
       end
     end
   end
-  
+
   # Public: Makes an HTTP POST call.
   #
   # url     - Optional String URL to request.
@@ -111,7 +111,7 @@ module Networking
     block = Proc.new if block_given?
     http_method :post, url, body, headers, &block
   end
-  
+
   def http_put(url = nil, body = nil, headers = nil)
     block = Proc.new if block_given?
     http_method :put, url, body, headers, &block
@@ -166,7 +166,7 @@ module Networking
       end
     end
   end
-  
+
   #
   # Make sure that user provided URLs cannot be used to attack any internal
   # services. We reject any that resolve to a local address.
@@ -174,13 +174,13 @@ module Networking
   def verify_url(url_to_check)
     return url_to_check
     uri = URI.parse(url_to_check)
-    
+
     if (verified = @@verified_urls[uri.host]) == false
       raise AhaService::InvalidUrlError, "Invalid local address #{uri.host}"
     elsif verified
       return url_to_check
     end
-    
+
     ip_to_check = IPSocket::getaddress(uri.host)
     @@prohibited_addresses.each do |addr|
       if addr === ip_to_check
@@ -188,15 +188,15 @@ module Networking
         raise AhaService::InvalidUrlError, "Invalid local address #{uri.host}"
       end
     end
-    
+
     @@verified_urls[uri.host] = true
     url_to_check
   end
-  
-  # URLs that we have already checked. Hash of address to true/false if the 
+
+  # URLs that we have already checked. Hash of address to true/false if the
   # URL is valid.
   @@verified_urls = {}
-  
+
   # CIDR ranges that could be the local network and are prohibited.
   @@prohibited_addresses = [
       "0.0.0.0/8",
@@ -211,7 +211,7 @@ module Networking
       "fe80::/10"].collect do |a|
       IPAddr.new(a)
     end
-  
+
   # Public: Checks for an SSL error, and re-raises a Services configuration error.
   #
   # Returns nothing.
@@ -220,11 +220,11 @@ module Networking
   rescue OpenSSL::SSL::SSLError => e
     raise_config_error "Invalid SSL certificate"
   end
-  
+
   def reportable_http_env(env, time)
     "#{env[:method].to_s.upcase} #{env[:url]} -- (#{"%.02fs" % [Time.now - time]}) #{env[:status]} #{env[:body]} #{env[:response_headers].inspect}"
   end
-  
+
   class HttpReporter < ::Faraday::Response::Middleware
     def initialize(app, service = nil)
       super(app)

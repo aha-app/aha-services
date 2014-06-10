@@ -2,12 +2,16 @@ class GenericResource
 
   include Networking
   include Errors
+  include Helpers
+  include Api
 
   attr_reader :logger
+  attr_reader :api
 
   def initialize(service)
     @service = service
     @logger = service.data.logger || allocate_logger
+    @api = service.data.api_client || allocate_api_client
   end
 
   def parse(body)
