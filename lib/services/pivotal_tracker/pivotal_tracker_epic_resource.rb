@@ -17,7 +17,7 @@ class PivotalTrackerEpicResource < PivotalTrackerProjectDependentResource
       @service.class.service_name,
       { id: created_epic.id,
         url: created_epic.url,
-        label_id: created_epic.label_id }
+        label_id: created_epic.label.id }
     )
     created_epic
   end

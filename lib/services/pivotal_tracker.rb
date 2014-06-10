@@ -1,18 +1,17 @@
 class AhaServices::PivotalTracker < AhaService
-  string :api_token, description: "API token from www.pivotaltracker.com"
+  string :api_token, description: "API token from user profile screen at www.pivotaltracker.com"
   install_button
   select :project, collection: -> (meta_data, data) { meta_data.projects.collect { |p| [p.name, p.id] } },
     description: "Tracker project that this Aha! product will integrate with."
   select :integration,
     collection: ->(meta_data, data) { meta_data.projects.detect {|p| p.id.to_s == data.project.to_s }.integrations.collect{|p| [p.name, p.id] } },
     description: "Pivotal integration that you added for Aha!"
-  select :mapping, collection: -> {
-    [
-      ["Feature -> Story, Requirement -> Story", 1],
-      ["Feature -> Epic, Requirement -> Story", 2],
-      ["Feature -> Story, Requirement -> Task", 3]
-    ]
-  }
+  select :mapping, collection: [
+        ["Feature -> Story, Requirement -> Story", "story-story"],
+        ["Feature -> Epic, Requirement -> Story", "epic-story"],
+        ["Feature -> Story, Requirement -> Task", "story-task"]
+      ],
+    description: "Choose how features and requirements in Aha! will map to epics, stories and tasks in Pivotal Tracker."
 
   callback_url description: "URL to add to the Activity Web Hook section in Pivotal Tracker using v5."
 

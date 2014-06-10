@@ -25,13 +25,13 @@ class PivotalTrackerFeatureAndRequirementMappingResource < PivotalTrackerProject
 private
 
   def feature_mapping_resource
-    @feature_mapping_resource ||= (mapping == 2) ?
+    @feature_mapping_resource ||= (mapping == "epic-story") ?
       PivotalTrackerEpicResource.new(@service, project_id) :
       PivotalTrackerStoryResource.new(@service, project_id)
   end
 
   def requirement_mapping_resource
-    @requirement_mapping_resource ||= (mapping == 3) ?
+    @requirement_mapping_resource ||= (mapping == "story-task") ?
       PivotalTrackerTaskResource.new(@service, project_id) :
       PivotalTrackerStoryResource.new(@service, project_id)
   end

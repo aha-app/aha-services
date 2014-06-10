@@ -71,8 +71,8 @@ protected
       story[:comments] = [{file_attachments: file_attachments}]
     end
 
-    if parent_mapping && parent_mapping.label_id
-      story[:label_ids] = [parent_mapping.label_id]
+    if parent_mapping && parent_mapping.label && parent_mapping.label.id
+      story[:label_ids] = [parent_mapping.label.id]
     end
 
     created_story = create(story)
