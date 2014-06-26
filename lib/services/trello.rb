@@ -93,7 +93,7 @@ class AhaServices::Trello < AhaService
         name: resource_name(feature),
         desc: ReverseMarkdown.convert(feature.description.body),
         due: Time.parse(feature.release.release_date).utc,
-        idList: data.feature_statuses.invert[feature.status]
+        idList: data.feature_statuses.invert[feature.workflow_status.id]
   end
 
   def existing_checklist_item_integrated_with(requirement)
