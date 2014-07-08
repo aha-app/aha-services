@@ -1,3 +1,2 @@
-This integration allows generic integration using webhooks. When certain events 
-occur in your Aha! account (e.g. a feature being updated) then an HTTP
-POST will be made to the URL you specify in the _Hook URL_ parameter.
+This integration allows generic integration using webhooks. When a user
+chooses _Send to Webhook_ under the _Actions_ menu for a feature or a release  then an HTTP POST will be made to the URL you specify in the _Hook URL_ parameter.
