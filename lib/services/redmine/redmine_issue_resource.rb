@@ -2,11 +2,12 @@ require 'clothred'
 
 class RedmineIssueResource < RedmineResource
   
-  def create(payload_fragment: nil, parent_id: nil)
+  def create(payload_fragment: nil, parent_id: nil, version_id: nil)
     params = parse_payload \
       payload_fragment: payload_fragment,
       parent_id: parent_id,
-      attachments: check_attachments(payload_fragment)
+      attachments: check_attachments(payload_fragment),
+      version_id: version_id
     prepare_request
     logger.debug("PARAMS: #{params.to_json}")
     response = http_post redmine_issues_path, params.to_json
@@ -14,12 +15,13 @@ class RedmineIssueResource < RedmineResource
     {id: response_body[:issue][:id]}
   end
 
-  def update(payload_fragment: nil, parent_id: nil)
+  def update(payload_fragment: nil, parent_id: nil, version_id: nil)
     issue_id = get_integration_field payload_fragment.integration_fields, 'id'
     params = parse_payload \
       payload_fragment: payload_fragment,
       parent_id: parent_id,
-      attachments: check_attachments(payload_fragment, issue_id)
+      attachments: check_attachments(payload_fragment, issue_id),
+      version_id: version_id
     prepare_request
     response = http_put redmine_issues_path(issue_id), params.to_json
     process_response response, 200 do
@@ -60,9 +62,8 @@ private
     str + '.json'
   end
 
-  def parse_payload(payload_fragment: nil, parent_id: nil, attachments: nil)
+  def parse_payload(payload_fragment: nil, parent_id: nil, attachments: nil, version_id: nil)
     payload_fragment ||= @payload.feature
-    version_id = get_integration_field payload_fragment.release.try(:integration_fields), 'id'
     hashie = Hashie::Mash.new( issue: {
       tracker_id: @service.data.tracker,
       project_id: @service.data.project,
@@ -80,7 +81,7 @@ private
       }}}) if attachments.present?
     hashie
   end
-
+  
   def parse_response response, payload_fragment=nil, requirement=false
     payload_fragment ||= @payload.feature
     resource = requirement ? 'requirements' : 'features'

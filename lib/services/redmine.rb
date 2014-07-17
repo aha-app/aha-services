@@ -31,19 +31,21 @@ class AhaServices::Redmine < AhaService
   def receive_update_release; update_version; end
 
   def receive_create_feature
-    issue = create_issue payload_fragment: payload.feature
+    version_id = get_integration_field(payload.feature.release.integration_fields, 'id')
+    issue = create_issue payload_fragment: payload.feature, version_id: version_id
     payload.feature.requirements.each do |requirement|
-      create_issue payload_fragment: requirement, parent_id: issue[:id]
+      create_issue payload_fragment: requirement, parent_id: issue[:id], version_id: version_id
     end
   end
 
   def receive_update_feature
+    version_id = get_integration_field(payload.feature.release.integration_fields, 'id')
     issue = update_issue payload_fragment: payload.feature
     payload.feature.requirements.each do |requirement|
       if get_integration_field(requirement.integration_fields, 'id')
-        update_issue payload_fragment: requirement, parent_id: issue[:id]
+        update_issue payload_fragment: requirement, parent_id: issue[:id], version_id: version_id
       else
-        create_issue payload_fragment: requirement, parent_id: issue[:id]
+        create_issue payload_fragment: requirement, parent_id: issue[:id], version_id: version_id
       end
     end
   end
