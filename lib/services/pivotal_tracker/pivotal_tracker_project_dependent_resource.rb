@@ -9,7 +9,7 @@ class PivotalTrackerProjectDependentResource < PivotalTrackerResource
 protected
 
   def append_link(body, parent_id)
-    if parent_id
+    if parent_id and @service.data.mapping == "story-story"
       "#{body}\n\nRequirement of ##{parent_id}."
     else
       body
