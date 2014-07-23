@@ -134,7 +134,7 @@ protected
   def update_requirements(feature, version, issue_info)
     if feature.requirements
       feature.requirements.each do |requirement|
-        update_or_attach_jira_issue(requirement, feature.initiative, version, issue_info)
+        update_or_attach_jira_issue(requirement, nil, version, issue_info)
       end
     end
   end
