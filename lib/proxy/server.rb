@@ -5,10 +5,12 @@ require 'optparse'
 
 require File.expand_path("../../aha-services.rb", __FILE__)
 
+#
+# Prepare the options.
+#
 options = {
   port: 3030
 }
-
 opt_parser = OptionParser.new do |opt|
   opt.banner = "Usage: proxy_server [OPTIONS]"
   opt.separator  ""
@@ -23,10 +25,16 @@ opt_parser = OptionParser.new do |opt|
     return
   end
 end
-
 opt_parser.parse!
 
+#
+# Configure the server.
+#
 server = WEBrick::HTTPServer.new(:Port => options[:port])
-server.mount "/questions", WebForm
 trap "INT" do server.shutdown end
+server.mount_proc '/' do |req, res|
+  res.body = 'Hello, world!'
+end
+
+# Run the server until exit.
 server.start
