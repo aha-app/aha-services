@@ -38,6 +38,14 @@ Each Aha! release, feature and requirement can have _integration fields_ which t
 
 When an object is created in a third party system, the integration code can use the [Aha! API](http://www.aha.io/api) to store integration fields for the object.
 
+Developing an integration
+-------------------------
+
+You can run the integration in development by using a proxy between Aha! and
+your development machine. Your development machine must be accessible to the Internet so that Aha! can send messages to it asynchronously. One way to do
+this is using https://ngrok.com/.
+
+
 
 Running from the command line
 -----------------------------

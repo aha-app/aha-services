@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+
+proxy_path = File.expand_path('../../lib', __FILE__)
+$:.unshift(proxy_path)
+
+require "proxy/server"
