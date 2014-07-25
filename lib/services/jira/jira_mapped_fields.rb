@@ -10,7 +10,7 @@ module JiraMappedFields
         value = custom_field_for_resource(resource, field_mapping.aha_field, info)
         custom_fields[field_mapping.jira_field] = value if value
       else
-        Rails.logger.warn("JIRA field information not found - use Test Connection button again: #{field_mapping.jira_field}")
+        logger.warn("JIRA field information not found - use Test Connection button again: #{field_mapping.jira_field}")
       end
       
     end

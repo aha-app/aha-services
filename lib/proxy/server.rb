@@ -35,6 +35,26 @@ trap "INT" do server.shutdown end
 server.mount_proc '/' do |req, res|
   res.body = 'Hello, world!'
 end
+server.mount_proc '/configuration' do |req, res|
+  configuration = {
+    services: AhaService.service_classes.collect do |service| 
+      
+      {
+        service_name: service.service_name,
+        title: service.title,
+        schema: service.schema.collect do |field|
+          {
+            type: field[0],
+            name: field[1],
+            options: field[2]
+          }
+        end
+      }
+    end
+  }
+  
+  res.body = JSON.pretty_generate(configuration)
+end
 
 # Run the server until exit.
 server.start

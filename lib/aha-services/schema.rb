@@ -36,6 +36,10 @@ module Schema
       add_to_schema :internal, name, options
     end
     
+    def development_form(options = {})
+      add_to_schema :development_form, "development_form", options
+    end
+    
     def add_to_schema(type, name, options)
       schema << [type, name.to_sym, options]
     end
