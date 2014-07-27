@@ -26,7 +26,7 @@ Service code is called in response to events triggered by the Aha! user interfac
 Configuration
 -------------
 
-Each service has two types of configuration information, each persistently stored and available via a Hashie mash. Each mash can store Ruby scalar values `String`, `Symbol`, `Numeric`, `NilClass`, `TrueClass`, `FalseClass`, `Date`, `Time`, `DateTime` as well as `Array` and `Hash`, but should not be used for other objects.
+Each service has two types of configuration information, each persistently stored and available via a [Hashie::Mash](https://github.com/intridea/hashie). Each mash can store Ruby scalar values `String`, `Symbol`, `Numeric`, `NilClass`, `TrueClass`, `FalseClass`, `Date`, `Time`, `DateTime` as well as `Array` and `Hash`, but should not be used for other objects.
 
 * `meta_data` - this mash is solely for the use of the integration to store any configuration information it needs to persist between events.
 * `data` - this mash stores the user entered configuration information, corresponding to the fields in the Integrations user interface. It should not be modified by the integration code.
@@ -38,12 +38,12 @@ Each Aha! release, feature and requirement can have _integration fields_ which t
 
 When an object is created in a third party system, the integration code can use the [Aha! API](http://www.aha.io/api) to store integration fields for the object.
 
-Developing an integration
--------------------------
+Running an integration in development
+-------------------------------------
 
 You can run the integration in development by using a proxy between Aha! and
 your development machine. Your development machine must be accessible to the Internet so that Aha! can send messages to it asynchronously. One way to do
-this is using https://ngrok.com/.
+this is using [ngrok](https://ngrok.com/).
 
 The proxy works by sending HTTP messages from Aha! to your development machine
 to get configuration and remotely access the service. This allows you to 
@@ -65,7 +65,7 @@ Aha! instance.
     
 3. Copy the HTTPS version of the `Forwarding address`, e.g.  `https://ba4a410.ngrok.com`.
 
-4. You can test this URL by loading `/configuration` in your browser.
+4. You can test this URL by loading `https://ba4a410.ngrok.com/configuration` in your browser.
 
 5. Make the special "Development Proxy" integration visible in the Aha! UI by
 logging into your Aha! account and going to any existing integration. Add `?development=true` to the URL and load the page. You will see a new integration appear named "Development Proxy".
