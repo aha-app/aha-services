@@ -45,6 +45,31 @@ You can run the integration in development by using a proxy between Aha! and
 your development machine. Your development machine must be accessible to the Internet so that Aha! can send messages to it asynchronously. One way to do
 this is using https://ngrok.com/.
 
+The proxy works by sending HTTP messages from Aha! to your development machine
+to get configuration and remotely access the service. This allows you to 
+rapidly develop and troubleshoot the service code using data from your live
+Aha! instance.
+
+1. Run the proxy server on your local development machine:
+
+    bundle
+    ./bin/proxy_server
+
+2. In another terminal window start a tunnel to your running proxy server so that Aha! can access it, e.g. using ngrok:
+
+    ngrok 4567
+    
+Copy the HTTPS version of the `Forwarding address`, e.g.  https://ba4a410.ngrok.com .
+
+3. You can test this URL by loading `/configuration` in your browser.
+
+4. Make the special "Development Proxy" integration visible in the Aha! UI by
+logging into your Aha! account and going to any existing integration. Add `?development=true` to the URL and load the page. You will see a new integration appear named "Development Proxy".
+
+5. Configure the development proxy settings. After you enter the proxy server
+URL go got in step 2 you will be able to choose from a list of the services
+that are running on your local machine.
+
 
 
 Running from the command line

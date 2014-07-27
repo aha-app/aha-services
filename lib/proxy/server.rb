@@ -99,8 +99,11 @@ class ProxyApp < Sinatra::Base
       
       # We force encode the string in UTF-8 so it can pass through JSON.
       message.encode!("UTF-8", "binary", invalid: :replace, undef: :replace, replace: "?")
-      
+        		
       @array << {severity: severity, message: message}
+
+      ts = Time.now.strftime("%Y-%m-%d %H:%M:%S.%L")
+  		puts "[#{ts}] #{SEV_LABEL[severity].ljust(6)} #{message}"
 
       true
     end

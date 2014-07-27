@@ -154,6 +154,9 @@ class AhaService
 
     attr_writer :service_name
 
+    def development_proxy?
+      self.service_name == "development_proxy"
+    end
   end
 
   def allocate_logger
