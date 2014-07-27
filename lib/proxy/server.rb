@@ -48,8 +48,6 @@ class ProxyApp < Sinatra::Base
     
     service_class = AhaService.service_classes.detect {|s| s.service_name == request_payload.service_name }
     
-    logger.info("Got data: #{request_payload.inspect}")
-    
     data = request_payload.user_data
     data['logger'] = ArrayLogger.new(result[:messages])
     data['api_client'] = AhaApi::Client.new(
@@ -58,8 +56,6 @@ class ProxyApp < Sinatra::Base
       :oauth_token => data.api_token,
       :logger => data['logger'])
 
-    logger.info("Set data: #{data.inspect}")
-    
     service = service_class.new(data, request_payload.payload, request_payload.meta_data)
     begin
       service.receive(request_payload.event)
@@ -67,8 +63,6 @@ class ProxyApp < Sinatra::Base
     rescue Exception => e    
       result[:exception] = {exception_class: e.class.to_s, message: e.message, backtrace: e.backtrace}
     end
-    
-    logger.info("RESULT: #{result.inspect}")
     
     content_type :json
     JSON.pretty_generate(result)

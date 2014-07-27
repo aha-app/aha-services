@@ -65,6 +65,11 @@ class AhaService
       $1
     end.compact.collect {|e| e.to_sym }
   end
+  
+  # Returns true if the service responds to the specified event.
+  def self.responds_to_event(event)
+    self.responds_to_events.include?(event.to_sym)
+  end
 
   # Returns a list of the services.
   def self.service_classes
