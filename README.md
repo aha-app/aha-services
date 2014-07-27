@@ -51,36 +51,30 @@ rapidly develop and troubleshoot the service code using data from your live
 Aha! instance.
 
 1. Run the proxy server on your local development machine:
-
+  
+    ```
     bundle
     ./bin/proxy_server
-
+    ```
+    
 2. In another terminal window start a tunnel to your running proxy server so that Aha! can access it, e.g. using ngrok:
 
+    ```
     ngrok 4567
+    ```
     
-Copy the HTTPS version of the `Forwarding address`, e.g.  https://ba4a410.ngrok.com .
+3. Copy the HTTPS version of the `Forwarding address`, e.g.  `https://ba4a410.ngrok.com`.
 
-3. You can test this URL by loading `/configuration` in your browser.
+4. You can test this URL by loading `/configuration` in your browser.
 
-4. Make the special "Development Proxy" integration visible in the Aha! UI by
+5. Make the special "Development Proxy" integration visible in the Aha! UI by
 logging into your Aha! account and going to any existing integration. Add `?development=true` to the URL and load the page. You will see a new integration appear named "Development Proxy".
 
-5. Configure the development proxy settings. After you enter the proxy server
-URL go got in step 2 you will be able to choose from a list of the services
+6. Configure the development proxy settings. After you enter the proxy server
+URL go got in step 3 you will be able to choose from a list of the services
 that are running on your local machine.
 
+7. Send features and releases to the "Development Proxy" and they will be send to your remotely running code.
 
-
-Running from the command line
------------------------------
-
-An integration can be triggered from the command line during testing. Here is an example:
-
-    bundle exec ruby -r ./config/load.rb -e "AhaServices::Jira.new( 
-      {'server_url' => 'https://watersco.atlassian.net', 
-        'username' => 'u', 
-        'password' => 'p', 
-        'api_version' => '2'},
-      JSON.parse(File.new('spec/fixtures/create_feature_event.json').read)).receive(:create_feature)"
-    
+The proxy server must be stopped using Ctrl-C and restarted each time the code
+changes.
