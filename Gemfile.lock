@@ -52,6 +52,7 @@ GEM
       tzinfo (~> 0.3.37)
     addressable (2.3.5)
     atomic (1.1.15)
+    backports (3.6.0)
     coderay (1.1.0)
     crack (0.4.1)
       safe_yaml (~> 0.9.0)
@@ -84,6 +85,11 @@ GEM
       method_source (~> 0.8)
       slop (~> 3.4)
       win32console (~> 1.3)
+    rack (1.5.2)
+    rack-protection (1.5.1)
+      rack
+    rack-test (0.6.2)
+      rack (>= 1.0)
     reverse_markdown (0.5.1)
       nokogiri
     rspec (2.14.1)
@@ -96,9 +102,21 @@ GEM
     rspec-mocks (2.14.4)
     safe_yaml (0.9.7)
     simple_oauth (0.2.0)
+    sinatra (1.4.4)
+      rack (~> 1.4)
+      rack-protection (~> 1.4)
+      tilt (~> 1.3, >= 1.3.4)
+    sinatra-contrib (1.4.2)
+      backports (>= 2.0)
+      multi_json
+      rack-protection
+      rack-test
+      sinatra (~> 1.4.0)
+      tilt (~> 1.3)
     slop (3.4.7)
     thread_safe (0.2.0)
       atomic (>= 1.1.7, < 2)
+    tilt (1.4.1)
     tzinfo (0.3.39)
     webmock (1.17.1)
       addressable (>= 2.2.7)
@@ -117,4 +135,6 @@ DEPENDENCIES
   pry
   reverse_markdown (= 0.5.1)
   rspec
+  sinatra
+  sinatra-contrib
   webmock
