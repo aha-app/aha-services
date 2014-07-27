@@ -26,7 +26,7 @@ class ProxyApp < Sinatra::Base
           schema: service.schema.collect do |field|
             # Replace any Proc options.
             o = field[2].dup
-            o.each { |k, v| o[k] = "remote_collection" if k.to_s == "collection" }
+            o.each { |k, v| o[k] = "remote_collection" if k.to_s == "collection" && v.is_a?(Proc) }
             
             {
               type: field[0],
@@ -42,30 +42,37 @@ class ProxyApp < Sinatra::Base
     JSON.pretty_generate(configuration)
   end
   post '/send_event' do
-    request_payload = Hashie::Mash.new(JSON.parse(request.body.read))
-    
-    result = {messages: []}
-    
-    service_class = AhaService.service_classes.detect {|s| s.service_name == request_payload.service_name }
-    
-    data = request_payload.user_data
-    data['logger'] = ArrayLogger.new(result[:messages])
-    data['api_client'] = AhaApi::Client.new(
-      :domain => data.account_domain,
-      :url_base => data.api_url_base,
-      :oauth_token => data.api_token,
-      :logger => data['logger'])
-
-    service = service_class.new(data, request_payload.payload, request_payload.meta_data)
+    original_service_name = nil
     begin
-      service.receive(request_payload.event)
-      result[:meta_data] = service.meta_data.to_hash
-    rescue Exception => e    
-      result[:exception] = {exception_class: e.class.to_s, message: e.message, backtrace: e.backtrace}
-    end
+      request_payload = Hashie::Mash.new(JSON.parse(request.body.read))
     
-    content_type :json
-    JSON.pretty_generate(result)
+      result = {messages: []}
+    
+      service_class = AhaService.service_classes.detect {|s| s.service_name == request_payload.service_name }
+    
+      data = request_payload.user_data
+      data['logger'] = ArrayLogger.new(result[:messages])
+      data['api_client'] = AhaApi::Client.new(
+        :domain => data.account_domain,
+        :url_base => data.api_url_base,
+        :oauth_token => data.api_token,
+        :logger => data['logger'])
+
+      service = service_class.new(data, request_payload.payload, request_payload.meta_data)
+      original_service_name = service_class.service_name
+      service_class.service_name = "development_proxy" # So that integration fields are associated with the right service.
+      begin
+        service.receive(request_payload.event)
+        result[:meta_data] = service.meta_data.to_hash
+      rescue Exception => e    
+        result[:exception] = {exception_class: e.class.to_s, message: e.message, backtrace: e.backtrace}
+      end
+    
+      content_type :json
+      JSON.pretty_generate(result)
+    ensure
+      service_class.service_name = original_service_name if original_service_name
+    end
   end
   post '/remote_collection' do
     request_payload = Hashie::Mash.new(JSON.parse(request.body.read))
