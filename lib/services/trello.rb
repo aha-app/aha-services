@@ -138,7 +138,9 @@ class AhaServices::Trello < AhaService
   end
 
   def attachments_match(aha_attachment, trello_attachment)
-    aha_attachment.file_name == trello_attachment.url and
+    uri = URI.parse(trello_attachment.url)
+    trello_filename = File.basename(uri.path)
+    aha_attachment.file_name == trello_filename and
       aha_attachment.file_size.to_i == trello_attachment.bytes.to_i
   end
 
