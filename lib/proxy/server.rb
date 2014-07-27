@@ -42,8 +42,6 @@ class ProxyApp < Sinatra::Base
     JSON.pretty_generate(configuration)
   end
   post '/send_event' do
-    original_service_name = nil
-    begin
       request_payload = Hashie::Mash.new(JSON.parse(request.body.read))
     
       result = {messages: []}
@@ -60,19 +58,20 @@ class ProxyApp < Sinatra::Base
 
       service = service_class.new(data, request_payload.payload, request_payload.meta_data)
       original_service_name = service_class.service_name
-      service_class.service_name = "development_proxy" # So that integration fields are associated with the right service.
       begin
-        service.receive(request_payload.event)
-        result[:meta_data] = service.meta_data.to_hash
-      rescue Exception => e    
-        result[:exception] = {exception_class: e.class.to_s, message: e.message, backtrace: e.backtrace}
+        begin
+          service_class.service_name = "development_proxy" # So that integration fields are associated with the right service.
+          service.receive(request_payload.event)
+          result[:meta_data] = service.meta_data.to_hash
+        rescue Exception => e    
+          result[:exception] = {exception_class: e.class.to_s, message: e.message, backtrace: e.backtrace}
+        end
+      ensure
+        service_class.service_name = original_service_name if original_service_name
       end
     
       content_type :json
       JSON.pretty_generate(result)
-    ensure
-      service_class.service_name = original_service_name if original_service_name
-    end
   end
   post '/remote_collection' do
     request_payload = Hashie::Mash.new(JSON.parse(request.body.read))
