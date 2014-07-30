@@ -29,9 +29,7 @@ EOF
           'consumer_key' => 'io.aha.connect', 'consumer_secret' => private_key, 'user_id' => 'chris'},
         nil)
       service.receive(:installed)
-      service.meta_data.projects[0]["key"].should == "APPJ"
-      service.meta_data.projects[0].issue_types[0].name.should == "Bug"     
-      service.meta_data.projects[0].issue_types[0].statuses[0].name.should == "Open"     
+      service.meta_data["projects"][0]["key"].should == "APPJ"
     end
   end
 end

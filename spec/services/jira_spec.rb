@@ -126,6 +126,8 @@ describe AhaServices::Jira do
   
   context "releases" do
     it "can be updated" do
+      stub_request(:get, "#{base_url}/version/777").
+        to_return(:status => 200, :body => "", :headers => {})
       stub_request(:put, "#{base_url}/version/777").
         with(:body => "{\"name\":\"Production Web Hosting\",\"releaseDate\":\"2013-01-28\",\"released\":false,\"id\":\"777\"}").
         to_return(:status => 200, :body => "", :headers => {})
@@ -258,6 +260,9 @@ describe AhaServices::Jira do
         service.stub(:get_integration_field).and_return(version_id)
         service.should_receive(:update_version)
           .with(version_id, release)
+        found_version = { name: 'Existing version' }
+        version_resource.should_receive(:find_by_id).with(version_id)
+          .and_return(found_version)
         service.send(:update_or_attach_jira_version, release)
       end
     end
