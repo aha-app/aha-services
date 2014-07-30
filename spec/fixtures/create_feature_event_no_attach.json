@@ -9,11 +9,14 @@
     "updated_at": "2013-06-05T18:49:06Z",
     "id": "5886067808745625353",
     "kind": "new",
-    "status": "under_consideration",
     "description": {
       "body": "",
       "id": "5886067808747078641",
       "attachments": []
+    },
+    "workflow_status": {
+      "id": "6010067280556566142",
+      "name": "Ready to develop"
     },
     "attachments": [],
     "integration_fields": [],
@@ -23,6 +26,7 @@
       "reference_num": "PROD-R-1",
       "name": "Summer",
       "id": "5886060481533761060",
+      "release_date": "2014-06-06",
       "integration_fields": [
         {"id":"68217473","name":"id","value":"777","service_name":"jira"},
         {"id":"68217474","name":"id","value":"2","service_name":"redmine"},

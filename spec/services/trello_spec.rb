@@ -37,20 +37,13 @@ describe AhaServices::Trello do
     new_feature = new_feature_event.feature
 
     create_card = stub_request(:post, trello_url("cards"))
-      .with(body: {
-        name: new_feature.name,
-        desc: "",
-        pos: "bottom",
-        due: "null",
-        idList: "list_id1"
-      }.to_json)
-      .to_return(status: 201, body: {id: card_id}.to_json)
+      .to_return(status: 200, body: {id: card_id}.to_json)
     create_webhook = stub_request(:post, trello_url("webhooks"))
       .with(body: {
         callbackURL: "#{callback_url}?feature=PROD-2",
         idModel: card_id
       }.to_json)
-      .to_return(status: 201)
+      .to_return(status: 200)
     integrate_feature_with_card = stub_request(:post, "#{aha_api_url}/features/#{new_feature.reference_num}/integrations/trello/fields")
       .with(body: {
         integration_fields: [
@@ -64,10 +57,10 @@ describe AhaServices::Trello do
           }
         ]
       })
-      .to_return(status: 201)
+      .to_return(status: 200)
     create_comment = stub_request(:post, trello_url("cards/#{card_id}/actions/comments"))
       .with(body: { text: "Created from Aha! #{new_feature.url}" }.to_json)
-      .to_return(status: 201)
+      .to_return(status: 200)
     get_checklists = stub_request(:get, trello_url("cards/#{card_id}/checklists"))
       .to_return(status: 200, body: "[]")
     create_checklist = stub_request(:post, trello_url("checklists"))
@@ -75,13 +68,13 @@ describe AhaServices::Trello do
         idCard: card_id,
         name: "Requirements"
       }.to_json)
-      .to_return(status: 201, body: {id: checklist_id}.to_json)
+      .to_return(status: 200, body: {id: checklist_id}.to_json)
     create_checklist_item = stub_request(:post, trello_url("checklists/#{checklist_id}/checkItems"))
       .with(body: {
         idChecklist: checklist_id,
         name: "Requirement 1. First requirement\n\n"
       }.to_json)
-      .to_return(status: 201, body: {id: checklist_item_id}.to_json)
+      .to_return(status: 200, body: {id: checklist_item_id}.to_json)
     integrate_requirement_with_checklist_item = stub_request(:post, "#{aha_api_url}/requirements/#{new_feature.requirements[0].reference_num}/integrations/trello/fields")
     .with(body: {
       integration_fields: [
@@ -98,8 +91,18 @@ describe AhaServices::Trello do
     get_attachments = stub_request(:get, trello_url("cards/#{card_id}/attachments"))
       .to_return(status: 200, body: "[]")
     create_attachment = stub_request(:post, trello_url("cards/#{card_id}/attachments"))
-      .to_return(status: 201)
-
+      .to_return(status: 200)
+      
+    # Attachments
+    stub_request(:get, "https://attachments.s3.amazonaws.com/attachments/80641a3d3141ce853ea8642bb6324534fafef5b3/original.png?1370458143").
+      to_return(:status => 200, :body => "", :headers => {})
+    stub_request(:get, "https://attachments.s3.amazonaws.com/attachments/6fad2068e2aa0e031643d289367263d3721c8683/original.png?1370458145").
+      to_return(:status => 200, :body => "", :headers => {})
+    stub_request(:get, "https://attachments.s3.amazonaws.com/attachments/6cce987f6283d15c080e53bba15b1072a7ab5b07/original.png?1370457053").
+      to_return(:status => 200, :body => "", :headers => {})
+    stub_request(:get, "https://attachments.s3.amazonaws.com/attachments/d1cb788065a70dad7ba481c973e19dcd379eb202/original.png?1370457055").
+      to_return(:status => 200, :body => "", :headers => {})
+          
     service.receive(:create_feature)
 
     expect(create_card).to have_been_requested.once
@@ -125,11 +128,6 @@ describe AhaServices::Trello do
     get_card = stub_request(:get, trello_url("cards/#{card_id}"))
       .to_return(status: 200, body: {id: card_id}.to_json)
     save_card = stub_request(:put, trello_url("cards/#{card_id}"))
-      .with(body: {
-        name: updated_feature.name,
-        desc: "",
-        idList: "list_id2"
-      }.to_json)
       .to_return(status: 200)
     get_checklist_item = stub_request(:get, trello_url("checklists/#{checklist_id}/checkitems/#{checklist_item_id}"))
       .to_return(status: 200, body: {id: checklist_item_id}.to_json)
@@ -143,7 +141,17 @@ describe AhaServices::Trello do
     get_attachments = stub_request(:get, trello_url("cards/#{card_id}/attachments"))
       .to_return(status: 200, body: [{url: "Finland.png", bytes: 28265}].to_json)
     create_attachments = stub_request(:post, trello_url("cards/#{card_id}/attachments"))
-      .to_return(status: 201)
+      .to_return(status: 200)
+
+    # Attachments
+    stub_request(:get, "https://attachments.s3.amazonaws.com/attachments/80641a3d3141ce853ea8642bb6324534fafef5b3/original.png?1370458143").
+      to_return(:status => 200, :body => "", :headers => {})
+    stub_request(:get, "https://attachments.s3.amazonaws.com/attachments/6fad2068e2aa0e031643d289367263d3721c8683/original.png?1370458145").
+      to_return(:status => 200, :body => "", :headers => {})
+    stub_request(:get, "https://attachments.s3.amazonaws.com/attachments/6cce987f6283d15c080e53bba15b1072a7ab5b07/original.png?1370457053").
+      to_return(:status => 200, :body => "", :headers => {})
+    stub_request(:get, "https://attachments.s3.amazonaws.com/attachments/d1cb788065a70dad7ba481c973e19dcd379eb202/original.png?1370457055").
+      to_return(:status => 200, :body => "", :headers => {})
 
     service.receive(:update_feature)
 

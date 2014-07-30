@@ -13,6 +13,10 @@
     },
     "url": "http://watersco.aha.io/releases/PROD-R-1",
     "resource": "http://watersco.aha.io/api/v1/releases/PROD-R-1",
-    "integration_fields": []
+    "integration_fields": [],
+    "workflow_status": {
+      "id": "6010067280556566142",
+      "name": "Ready to develop"
+    },
   }
 }
