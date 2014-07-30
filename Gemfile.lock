@@ -7,12 +7,12 @@ GIT
       htmlentities
 
 GIT
-  remote: https://383f0d3f6e966653045bbbe228f0d2c3eaa693c2:x-oauth-basic@github.com/aha-app/aha-api
-  revision: 2db69c51bdc2464d196eb6fe8a0a565ed01e73c1
+  remote: https://github.com/aha-app/aha-api
+  revision: b101d83243c42fd1e434ab845230a0b9e019ce8a
   specs:
-    aha-api (1.0.6)
+    aha-api (1.0.8)
       activesupport
-      faraday
+      faraday (~> 0.8.9)
       faraday_middleware
       hashie
       multi_json
