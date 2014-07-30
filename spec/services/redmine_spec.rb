@@ -45,7 +45,9 @@ describe AhaServices::Redmine do
       {type: :string, field_name: :redmine_url},
       {type: :string, field_name: :api_key},
       {type: :install_button, field_name: :install_button},
-      {type: :select, field_name: :project} ]}
+      {type: :select, field_name: :project},
+      {type: :select, field_name: :tracker}, 
+      {type: :select, field_name: :issue_priority} ]}
 
     it "has required title and name" do
       expect(described_class.title).to eq title
