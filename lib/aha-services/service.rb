@@ -78,7 +78,7 @@ class AhaService
     
     # Removed under development services.
     if defined?(Rails) && !["development", "staging"].include?(Rails.env)
-      subclasses.reject! {|s| s == AhaServices::Zendesk }
+      subclasses.reject! {|s| [AhaServices::Zendesk].include?(s) }
     end
     
     subclasses
