@@ -11,7 +11,7 @@ Each third-party service is represented by at least three files:
 2. User documentation for configuring and using the integration in `docs/<service-name>.md`.
 3. Unit test for the integration in `spec/servces/<service-name>_spec.rb`.
 
-To add support for a new service, add these three files then submit a pull request.
+To add support for a new service, add these three files, implement and test your service, then submit a pull request.
 
 Contact [support@aha.io](mailto:support@aha.io) for help using this code.
 
