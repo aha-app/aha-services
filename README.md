@@ -3,6 +3,8 @@ Aha! to third-party service integrations
 
 This library provides integrations between Aha! and third-party services in response to user interface events within Aha! It is based on the [Github-Services](https://github.com/github/github-services) library.
 
+This library supports integrations written in Ruby.
+
 Each third-party service is represented by at least three files:
 
 1. Implementation of the integration in `lib/services/<service-name>.rb`.
