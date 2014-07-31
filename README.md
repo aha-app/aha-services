@@ -27,6 +27,8 @@ This service code is called in response to events triggered by the Aha! user int
 * `update_release` - occurs when there are changes to a release which has integration fields. The payload contains complete information about the release. See [spec/fixtures/update_release_event.json](spec/fixtures/update_release_event.json) for an example.
 * `webhook` - occurs when a POST call to a webhook is received by Aha! The payload contains the body of the POST. This event can be used to make the integration bi-directional and react to changes happening in the integrated system.
 
+Note that you can use the `ngrok` web interface to see the contents of the payloads being sent to your service for each of these events. 
+
 Configuration
 -------------
 
