@@ -33,6 +33,10 @@ Gem::Specification.new do |s|
   # For Redmine integration.
   s.add_dependency "ClothRed"
 
+  # For Fogbuz integration
+  s.add_dependency "fogbugz"
+  s.add_dependency "sanitize"
+
   s.add_dependency "aha-api"
 
   s.files        = Dir.glob("{lib}/**/*") + %w(LICENSE README.md)

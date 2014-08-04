@@ -8,6 +8,8 @@ gem "html2confluence", :git => 'https://github.com/k1w1/html2confluence.git'
 gem "reverse_markdown", "0.5.1"
 gem 'plain-david', github: 'k1w1/plain-david' # HTML to plain text conversion.
 gem 'sinatra'
+gem 'ruby-fogbugz', git: 'git@github.com:gamepoet/ruby-fogbugz.git'
+gem 'sanitize'
 
 gem 'pry'
 
