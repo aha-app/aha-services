@@ -48,7 +48,7 @@ class AhaServices::Fogbugz < AhaService
       command = :edit
       parameters['ixBug'] = fogbugz_case['ixBug']
     end
-    
+
     attachments = feature.description.attachments.map do |attachment|
       {:filename => attachment.file_name, :file => open(attachment.download_url)}
     end
@@ -59,7 +59,8 @@ class AhaServices::Fogbugz < AhaService
 
   def fetch_case(feature)
     case_number = get_integration_field(feature.integration_fields, 'number')
-    fogbugz_api.command(:search, q: "case:#{ case_number }")['cases']['case']
+    found_case = fogbugz_api.command(:search, q: "case:#{ case_number }")
+    found_case.try(:[], 'cases').try(:[], 'case')
   end
 
 
