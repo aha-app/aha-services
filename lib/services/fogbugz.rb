@@ -46,7 +46,7 @@ class AhaServices::Fogbugz < AhaService
     command = :new
     if fogbugz_case = fetch_case(feature)
       command = :edit
-      parameters['ixBug'] = fogbugz_case['ixBug']
+      parameters[:ixBug] = fogbugz_case['ixBug']
     end
 
     attachments = feature.description.attachments.map do |attachment|

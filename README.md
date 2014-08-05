@@ -64,7 +64,7 @@ Aha! instance.
   
     ```
     bundle
-    ./bin/proxy_server
+    rerun ./bin/proxy_server
     ```
     
 2. In another terminal window start a tunnel to your running proxy server so that Aha! can access it, e.g. using ngrok:
@@ -78,7 +78,7 @@ Aha! instance.
 4. You can test this URL by loading `https://ba4a410.ngrok.com/configuration` in your browser.
 
 5. Make the special "Development Proxy" integration visible in the Aha! UI by
-logging into your Aha! account and going to any existing integration. Add `?development=true` to the URL and load the page. You will see a new integration appear named "Development Proxy".
+logging into your Aha! account and going to any existing integration. Add `?development=true` to the pages URL and load the page. You will see a new integration appear named "Development Proxy".
 
 6. Configure the development proxy settings. After you enter the proxy server
 URL go got in step 3 you will be able to choose from a list of the services
@@ -86,5 +86,4 @@ that are running on your local machine.
 
 7. Send features and releases to the "Development Proxy" and they will be send to your remotely running code.
 
-The proxy server must be stopped using Ctrl-C and restarted each time the code
-changes.
+The proxy server will auto reload when you save a file

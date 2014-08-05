@@ -1,0 +1,26 @@
+{"projects": 
+  {"project": 
+    [{
+      "ixProject": "2", 
+      "sProject": "Inbox", 
+      "ixPersonOwner": "2", 
+      "sPersonOwner": "Chris Waters", 
+      "sEmail": "chris@aha.io", 
+      "sPhone": null, 
+      "fInbox": "true", 
+      "ixWorkflow": "1", 
+      "fDeleted": 
+      "false"
+    }, {
+      "ixProject": "1", 
+      "sProject": "Sample Project", 
+      "ixPersonOwner": "2", 
+      "sPersonOwner": "Chris Waters", 
+      "sEmail": "chris@aha.io", 
+      "sPhone": null, 
+      "fInbox": "false", 
+      "ixWorkflow": "2", 
+      "fDeleted": "false"
+    }
+  ]}
+}

@@ -11,6 +11,9 @@ gem 'sinatra'
 gem 'ruby-fogbugz', git: 'git@github.com:gamepoet/ruby-fogbugz.git'
 gem 'sanitize'
 
+# Auto reload sinatra
+gem 'rerun'
+
 gem 'pry'
 
 gemspec
