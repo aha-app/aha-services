@@ -1,9 +1,8 @@
 {"cases": 
   {"case":
-    {
-      "ixBug": "20", 
-      "operations": "edit,assign,resolve,email,remind"
-    }, 
+    {"sLatestTextSummary":"Text","sTitle":"Text","sStatus":"Closed (Fixed)","ixStatus":"2","events":{"event":{"ixBugEvent":"200","evt":"6","sVerb":"Closed","ixPerson":"3","ixPersonAssignedTo":"0","dt":"2014-08-06T16:56:08Z","s":null,"fEmail":"false","fHTML":"false","fExternal":"false","sChanges":null,"sFormat":null,"rgAttachments":null,"evtDescription":"Closed by Jeremy Geros","bEmail":"false","bExternal":"false","sPerson":"Jeremy Geros","sHtml":null,"ixBug":"20"}},"tags":{"tag":[]},"ixBug":"20","operations":"edit,reopen,email,remind"},
   "count": "1"
   }
 } 
+
+

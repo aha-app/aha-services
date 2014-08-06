@@ -26,8 +26,10 @@ describe AhaServices::Fogbugz do
   let(:fogbugz_case) { json_fixture("fogbugz/cases.json")['cases'] }
   let(:feature) { Hashie::Mash.new(name: 'First feature',
                                    description: { body: 'First feature description', attachments: [] },
-                                   tags: [ 'First', 'Second', 'Third' ]) }
+                                   tags: [ 'First', 'Second', 'Third' ],
+                                   resource: 'https://aha.aha.io/api/v1/feature/NBT-1-4') }
   let(:attachments_feature) { json_fixture("fogbugz/attachments.json") }
+  let(:feature_with_requirements) { json_fixture("create_feature_event.json") }
   let(:new_parameters) do
     {
       sTitle: feature.name, 
@@ -71,8 +73,19 @@ describe AhaServices::Fogbugz do
     service.stub(:get_integration_field).and_return(nil)
 
   
-    service.should_receive(:fetch_case).with(mock_payload.feature).and_return(nil)
+    service.should_receive(:fetch_case_from_feature).with(mock_payload.feature).and_return(nil)
     api.should_receive(:command).with(:new, new_parameters, []).and_return(fogbugz_case)
+    service.receive(:create_feature)
+  end
+
+  it "handles the 'create feature' event with requirements" do
+    mock_payload = Hashie::Mash.new(feature_with_requirements)
+    service.stub(:payload).and_return(mock_payload)
+    service.stub(:get_integration_field).and_return(nil)
+
+  
+    service.should_receive(:fetch_case_from_feature).exactly(2).times
+    api.should_receive(:command).exactly(2).times.and_return(fogbugz_case)
     service.receive(:create_feature)
   end
 
@@ -81,7 +94,7 @@ describe AhaServices::Fogbugz do
     service.stub(:payload).and_return(mock_payload)
     service.stub(:get_integration_field).and_return('20')
     
-    service.should_receive(:fetch_case).with(mock_payload.feature).and_return(fogbugz_case['case'])
+    service.should_receive(:fetch_case_from_feature).with(mock_payload.feature).and_return(fogbugz_case['case'])
     api.should_receive(:command).with(:edit, edit_parameters, []).and_return(fogbugz_case)
     service.receive(:update_feature)
   end
@@ -91,18 +104,29 @@ describe AhaServices::Fogbugz do
     service.stub(:payload).and_return(mock_payload)
     service.stub(:get_integration_field).and_return(nil)
 
-    service.should_receive(:fetch_case).with(mock_payload.feature).and_return(nil)
+    service.should_receive(:fetch_case_from_feature).with(mock_payload.feature).and_return(nil)
     api.should_receive(:command).with(:new, new_parameters, [{:filename => 'a.png', :file => file_like_object}, {:filename => 'b.png', :file => file_like_object}]).and_return(fogbugz_case)
     service.receive(:create_feature)
   end
 
-    it "handles attachments in 'update feature' event" do
+  it "handles attachments in 'update feature' event" do
     mock_payload = Hashie::Mash.new(attachments_feature)
     service.stub(:payload).and_return(mock_payload)
     service.stub(:get_integration_field).and_return('20')
 
-    service.should_receive(:fetch_case).with(mock_payload.feature).and_return(fogbugz_case['case'])
+    service.should_receive(:fetch_case_from_feature).with(mock_payload.feature).and_return(fogbugz_case['case'])
     api.should_receive(:command).with(:edit, edit_parameters, [{:filename => 'a.png', :file => file_like_object}, {:filename => 'b.png', :file => file_like_object}]).and_return(fogbugz_case)
     service.receive(:update_feature)
   end
+
+  it "handles the 'webhook' event" do
+    mock_payload = Hashie::Mash.new(case_number: '20')
+    service.stub(:payload).and_return(mock_payload)
+
+    service.should_receive(:fetch_case).with('20').and_return(fogbugz_case['case'])
+    service.should_receive(:find_resource_with_case).with(fogbugz_case['case']).and_return(Hashie::Mash.new(feature: feature))
+    service.should_receive(:update_resource).with('https://aha.aha.io/api/v1/feature/NBT-1-4', 'feature', 'Closed (Fixed)').and_return(nil)
+    service.receive(:webhook)
+  end
+
 end
