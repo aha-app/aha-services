@@ -5,13 +5,13 @@ require 'open-uri'
 class AhaServices::Fogbugz < AhaService
   title 'Fogbugz'
 
-  string :fogbugz_url
-  string :api_key # g3ai353gges79trub8pge4fmrvlvgr
+  string :fogbugz_url, description: "URL for your FogBugz server without the trailing slash, e.g. https://bigaha.fogbugz.com"
+  string :api_token, description: "API token for the FogBugz server. You can generate this token using the instructions here: http://help.fogcreek.com/8447/how-to-get-a-fogbugz-xml-api-token"
 
   install_button
   select :projects, collection: -> (meta_data, data) do
     meta_data.projects.sort_by(&:sProject).collect { |project| [project.sProject, project.ixProject] }
-  end
+  end, description: "FogBugz project that this Aha! product should integrate with." 
 
   callback_url description: "Please add '?case_number=\#{CaseNumber}' to this url"
 
@@ -126,7 +126,7 @@ class AhaServices::Fogbugz < AhaService
   private
 
     def fogbugz_api
-      @fogbugz_api ||= Fogbugz::Interface.new(token: data.api_key, uri: data.fogbugz_url) # remember to use https!
+      @fogbugz_api ||= Fogbugz::Interface.new(token: data.api_token, uri: data.fogbugz_url) # remember to use https!
     end
 
     def integrate_resource_with_case(feature, fogbugz_case)
