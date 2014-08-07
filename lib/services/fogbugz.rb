@@ -13,7 +13,7 @@ class AhaServices::Fogbugz < AhaService
     meta_data.projects.sort_by(&:sProject).collect { |project| [project.sProject, project.ixProject] }
   end, description: "FogBugz project that this Aha! product should integrate with." 
 
-  callback_url description: "Please add '?case_number=\#{CaseNumber}' to this url"
+  callback_url description: "Add '?case_number=\#{CaseNumber}' to this url before creating the trigger in FogBugz."
 
 
 #========
