@@ -1,7 +1,3 @@
-require 'fogbugz'
-require 'sanitize'
-require 'open-uri'
-
 class AhaServices::Fogbugz < AhaService
   title 'Fogbugz'
 
@@ -21,7 +17,7 @@ class AhaServices::Fogbugz < AhaService
 #========
 
   def receive_installed
-    meta_data.projects = fogbugz_api.command(:listProjects)['projects']['project']
+    meta_data.projects = fogbugz_resource.projects
   end
 
   def receive_create_feature
@@ -52,7 +48,7 @@ class AhaServices::Fogbugz < AhaService
       return
     end
 
-    update_resource(resource.resource, resource_type, fogbugz_case["sStatus"])
+    update_resource(resource.resource, resource_type, fogbugz_case.sStatus)
   end
 
 #==============
@@ -64,30 +60,34 @@ class AhaServices::Fogbugz < AhaService
 
     parameters = {
       sTitle: feature.name, 
-      sEvent: Sanitize.fragment(feature.description.body).strip,
+      sEvent: feature.description.body,
       sTags: feature.tags,
       ixProject: data.projects
     }
 
     parameters[:ixBugParent] = parent_case if parent_case
 
-    command = :new
-    if fogbugz_case = fetch_case_from_feature(feature)
-      command = :edit
-      parameters = set_edit_parameters(fogbugz_case, parameters)
-      old_attachments = has_attachments(fogbugz_case)
+
+    if found_fogbugz_case = fetch_case_from_feature(feature)
+      parameters = set_edit_parameters(found_fogbugz_case, parameters)
+      old_attachments = has_attachments(found_fogbugz_case)
     end
 
     attachments = feature.description.attachments.map do |attachment| 
-      {:filename => attachment.file_name, :file => open(attachment.download_url)} unless old_attachments.include?(attachment.file_name)
+      {:filename => attachment.file_name, :file_url => attachment.download_url} unless old_attachments.include?(attachment.file_name)
+    end.compact
+
+    if found_fogbugz_case
+      fogbugz_case = fogbugz_case_resource.edit_case(parameters, attachments)
+    else
+      fogbugz_case = fogbugz_case_resource.new_case(parameters, attachments)
     end
 
-    fogbugz_case = fogbugz_api.command(command, parameters, attachments)["case"]
     integrate_resource_with_case(feature, fogbugz_case)
 
     if feature.requirements
       feature.requirements.each do |requirement|
-        create_or_update_case(requirement, fogbugz_case["ixBug"])
+        create_or_update_case(requirement, fogbugz_case.ixBug)
       end
     end
 
@@ -96,16 +96,16 @@ class AhaServices::Fogbugz < AhaService
 
 
   def set_edit_parameters(fogbugz_case, parameters)
-    parameters.delete(:sTitle) if fogbugz_case["sTitle"] == parameters[:sTitle]
-    parameters.delete(:sEvent) if fogbugz_case["sLatestTextSummary"] == parameters[:sEvent]
-    parameters[:ixBug] = fogbugz_case['ixBug']
+    parameters.delete(:sTitle) if fogbugz_case.sTitle == parameters[:sTitle]
+    parameters.delete(:sEvent) if fogbugz_case.sLatestTextSummary == parameters[:sEvent]
+    parameters[:ixBug] = fogbugz_case.ixBug
     parameters
   end
 
   def has_attachments(fogbugz_case)
-    if case_attachments = fogbugz_case['events']['event']['rgAttachments']
-      case_attachments = case_attachments['attachment'].is_a?(Hash) ? [case_attachments['attachment']] : case_attachments['attachment']
-      case_attachments.collect {|attachment| attachment['sFileName'] }
+    if case_attachments = fogbugz_case.events.event.rgAttachments
+      case_attachments = case_attachments.attachment.is_a?(Hash) ? [case_attachments.attachment] : case_attachments.attachment
+      case_attachments.collect {|attachment| attachment.sFileName }
     else
       []
     end
@@ -113,29 +113,31 @@ class AhaServices::Fogbugz < AhaService
 
   def fetch_case_from_feature(feature)
     case_number = get_integration_field(feature.integration_fields, 'number')
-    fetch_case(case_number)
+    fetch_case(case_number) if case_number
   end
 
   def fetch_case(case_number)
-    found_case = fogbugz_api.command(:search, q: "case:#{ case_number }", cols: "sLatestTextSummary,latestEvent,tags,File1,sTitle,sStatus,ixStatus")
-    puts found_case.try(:[], 'cases').try(:[], 'case')
-    found_case.try(:[], 'cases').try(:[], 'case')
+    found_case = fogbugz_case_resource.search(case_number)
   end
 
 
   private
 
-    def fogbugz_api
-      @fogbugz_api ||= Fogbugz::Interface.new(token: data.api_key, uri: data.fogbugz_url) # remember to use https!
+    def fogbugz_resource
+      @fogbugz_resource ||= FogbugzResource.new(self)
+    end
+    
+    def fogbugz_case_resource
+      @fogbugz_case_resource ||= FogbugzCaseResource.new(self)
     end
 
     def integrate_resource_with_case(feature, fogbugz_case)
       api.create_integration_fields(reference_num_to_resource_type(feature.reference_num), feature.reference_num, self.class.service_name, 
-        {number: fogbugz_case['ixBug'], url: "#{data.fogbugz_url}/f/cases/#{fogbugz_case["ixBug"]}"})
+        {number: fogbugz_case.ixBug, url: "#{ URI.join(data.fogbugz_url, "/f/cases/#{fogbugz_case.ixBug}") }"})
     end
 
     def find_resource_with_case(fogbugz_case)
-      api.search_integration_fields(data.integration_id, :number, fogbugz_case["ixBug"])
+      api.search_integration_fields(data.integration_id, :number, fogbugz_case.ixBug)
     end
 
     def update_resource(resource, resource_type, new_state)

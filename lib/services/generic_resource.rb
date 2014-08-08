@@ -1,3 +1,5 @@
+require 'crack/xml'
+
 class GenericResource
 
   include Networking
@@ -19,6 +21,14 @@ class GenericResource
       {}
     else
       JSON.parse(body)
+    end
+  end
+
+  def parse_xml(body)
+    if body.nil? or body.length < 2
+      {}
+    else
+      Crack::XML.parse(body)
     end
   end
 

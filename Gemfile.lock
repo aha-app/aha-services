@@ -7,14 +7,6 @@ GIT
       htmlentities
 
 GIT
-  remote: git@github.com:gamepoet/ruby-fogbugz.git
-  revision: 688a3af732df67526682ca12c50211f798967a60
-  specs:
-    ruby-fogbugz (0.1.1)
-      crack
-      multipart-post
-
-GIT
   remote: https://github.com/aha-app/aha-api
   revision: b101d83243c42fd1e434ab845230a0b9e019ce8a
   specs:
@@ -156,13 +148,13 @@ PLATFORMS
 DEPENDENCIES
   aha-api!
   aha-services!
+  crack
   html2confluence!
   plain-david!
   pry
   rerun
   reverse_markdown (= 0.5.1)
   rspec
-  ruby-fogbugz!
   sanitize
   sinatra
   webmock
