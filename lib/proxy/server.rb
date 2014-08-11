@@ -51,9 +51,9 @@ class ProxyApp < Sinatra::Base
       data = request_payload.user_data
       data['logger'] = ArrayLogger.new(result[:messages])
       data['api_client'] = AhaApi::Client.new(
-        :domain => data.account_domain,
-        :url_base => data.api_url_base,
-        :oauth_token => data.api_token,
+        :domain => data.aha_account_domain,
+        :url_base => data.aha_api_url_base,
+        :oauth_token => data.aha_api_token,
         :logger => data['logger'])
 
       service = service_class.new(data, request_payload.payload, request_payload.meta_data)

@@ -144,7 +144,7 @@ class AhaServices::Fogbugz < AhaService
       api.put(resource, { resource_type => { workflow_status: { category: fogbugz_to_aha_category(new_state) } } })
     end
 
-
+    # TODO: This needs to be updated to handle custom workflow configuration.
     def fogbugz_to_aha_category(status)
       case status
         when "Active" then "in_progress"
