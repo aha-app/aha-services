@@ -41,7 +41,7 @@ describe AhaServices::Fogbugz do
   before do
     service.stub(:fogbugz_resource).and_return(fogbugz_resource)
     service.stub(:fogbugz_case_resource).and_return(fogbugz_case_resource)
-    service.stub(:data).and_return(Hashie::Mash.new(projects: '1', token: 'token', fogbugz_url: 'https://fogbugz.com/'))
+    service.stub(:data).and_return(Hashie::Mash.new(projects: '1', api_token: 'token', fogbugz_url: 'https://fogbugz.com/'))
     service.stub(:integrate_resource_with_case).and_return(nil)
   end
 
