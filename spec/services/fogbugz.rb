@@ -1,35 +1,22 @@
 require 'spec_helper'
 
-class FogbugzApi
-  def command(command, opts = {}, attachments = [])
-    if :listProjects
-      json_fixture("fogbugz/projects.json")
-    elsif :search
-      if opts['q'] == 'case:20'
-        json_fixture("fogbugz/cases.json")
-      else
-        nil
-      end
-    elsif :new
-
-    elsif :edit
-
-    end
-  end
-end
-
 describe AhaServices::Fogbugz do
   let(:service) do
     AhaServices::Fogbugz.new
   end
-  let(:api) { FogbugzApi.new }
-  let(:fogbugz_case) { json_fixture("fogbugz/cases.json")['cases'] }
+  let(:fogbugz_resource) { FogbugzResource.new(service) }
+  let(:fogbugz_case_resource) { FogbugzCaseResource.new(service) }
+
+  let(:projects) { Hashie::Mash.new(json_fixture("fogbugz/projects.json")).projects.project }
+  let(:fogbugz_case) { Hashie::Mash.new(json_fixture("fogbugz/cases.json")['cases']) }
   let(:feature) { Hashie::Mash.new(name: 'First feature',
                                    description: { body: 'First feature description', attachments: [] },
                                    tags: [ 'First', 'Second', 'Third' ],
                                    resource: 'https://aha.aha.io/api/v1/feature/NBT-1-4') }
   let(:attachments_feature) { json_fixture("fogbugz/attachments.json") }
   let(:feature_with_requirements) { json_fixture("create_feature_event.json") }
+
+  let(:response_error_xml) { '<?xml version="1.0" encoding="UTF-8"?><response><error code="3"><![CDATA[Not logged in]]></error></response>' }
   let(:new_parameters) do
     {
       sTitle: feature.name, 
@@ -48,22 +35,21 @@ describe AhaServices::Fogbugz do
       ixBug: '20'
     }
   end
-
-  let(:file_like_object) { double("file like object") }
   
 
 
   before do
-    service.stub(:fogbugz_api).and_return(api)
-    service.stub(:data).and_return(Hashie::Mash.new(projects: '1'))
+    service.stub(:fogbugz_resource).and_return(fogbugz_resource)
+    service.stub(:fogbugz_case_resource).and_return(fogbugz_case_resource)
+    service.stub(:data).and_return(Hashie::Mash.new(projects: '1', token: 'token', fogbugz_url: 'https://fogbugz.com/'))
     service.stub(:integrate_resource_with_case).and_return(nil)
-    service.stub(:open).and_return(file_like_object)
   end
 
   context "can be installed" do
     it "and handles installed event" do
+      fogbugz_resource.should_receive(:projects).and_return(projects)
       service.receive(:installed)
-      expect(service.meta_data.projects.collect(&:sProject).sort).to eq ['Inbox', 'Sample Project']
+      expect(service.meta_data.projects.sort_by(&:sProject).collect { |project| [project.sProject, project.ixProject] }).to eq [['Inbox', '2'], ['Sample Project', '1']]
     end
   end
 
@@ -74,7 +60,7 @@ describe AhaServices::Fogbugz do
 
   
     service.should_receive(:fetch_case_from_feature).with(mock_payload.feature).and_return(nil)
-    api.should_receive(:command).with(:new, new_parameters, []).and_return(fogbugz_case)
+    fogbugz_case_resource.should_receive(:new_case).with(new_parameters, []).and_return(fogbugz_case)
     service.receive(:create_feature)
   end
 
@@ -85,7 +71,7 @@ describe AhaServices::Fogbugz do
 
   
     service.should_receive(:fetch_case_from_feature).exactly(2).times
-    api.should_receive(:command).exactly(2).times.and_return(fogbugz_case)
+    fogbugz_case_resource.should_receive(:new_case).exactly(2).times.and_return(fogbugz_case)
     service.receive(:create_feature)
   end
 
@@ -95,7 +81,7 @@ describe AhaServices::Fogbugz do
     service.stub(:get_integration_field).and_return('20')
     
     service.should_receive(:fetch_case_from_feature).with(mock_payload.feature).and_return(fogbugz_case['case'])
-    api.should_receive(:command).with(:edit, edit_parameters, []).and_return(fogbugz_case)
+    fogbugz_case_resource.should_receive(:edit_case).with(edit_parameters, []).and_return(fogbugz_case)
     service.receive(:update_feature)
   end
 
@@ -105,7 +91,7 @@ describe AhaServices::Fogbugz do
     service.stub(:get_integration_field).and_return(nil)
 
     service.should_receive(:fetch_case_from_feature).with(mock_payload.feature).and_return(nil)
-    api.should_receive(:command).with(:new, new_parameters, [{:filename => 'a.png', :file => file_like_object}, {:filename => 'b.png', :file => file_like_object}]).and_return(fogbugz_case)
+    fogbugz_case_resource.should_receive(:new_case).with(new_parameters, [{:filename => 'a.png', :file_url => 'urla'}, {:filename => 'b.png', :file_url => 'urlb'}]).and_return(fogbugz_case)
     service.receive(:create_feature)
   end
 
@@ -115,7 +101,7 @@ describe AhaServices::Fogbugz do
     service.stub(:get_integration_field).and_return('20')
 
     service.should_receive(:fetch_case_from_feature).with(mock_payload.feature).and_return(fogbugz_case['case'])
-    api.should_receive(:command).with(:edit, edit_parameters, [{:filename => 'a.png', :file => file_like_object}, {:filename => 'b.png', :file => file_like_object}]).and_return(fogbugz_case)
+    fogbugz_case_resource.should_receive(:edit_case).with(edit_parameters, [{:filename => 'a.png', :file_url => 'urla'}, {:filename => 'b.png', :file_url => 'urlb'}]).and_return(fogbugz_case)
     service.receive(:update_feature)
   end
 
@@ -127,6 +113,20 @@ describe AhaServices::Fogbugz do
     service.should_receive(:find_resource_with_case).with(fogbugz_case['case']).and_return(Hashie::Mash.new(feature: feature))
     service.should_receive(:update_resource).with('https://aha.aha.io/api/v1/feature/NBT-1-4', 'feature', 'Closed (Fixed)').and_return(nil)
     service.receive(:webhook)
+  end
+
+  it "raise an error when api returns an error" do
+    mock_response = Hashie::Mash.new(body: response_error_xml)
+    expect {
+      fogbugz_resource.process_response(mock_response, 200)
+    }.to raise_error(AhaService::RemoteError)
+  end
+
+  it "raise an error when not a 200 status" do
+    mock_response = Hashie::Mash.new(status: 404, body: response_error_xml)
+    expect {
+      fogbugz_resource.process_response(mock_response, 200)
+    }.to raise_error(AhaService::RemoteError)
   end
 
 end
