@@ -29,7 +29,8 @@ class FogbugzResource < GenericResource
     end
 
     params[:sEvent] = Sanitize.fragment(params[:sEvent]).strip if params[:sEvent]
-    response = http_post("#{ api_url }#{ command }", params.merge({'token' => @token, 'cols' => request_columns}))
+
+    response = http_post("#{ api_url }#{ command }", URI.encode_www_form(params.merge({'token' => @token, 'cols' => request_columns})))
     process_response(response, 200).response
   end
 
