@@ -9,7 +9,7 @@ class AhaServices::Fogbugz < AhaService
     meta_data.projects.sort_by(&:sProject).collect { |project| [project.sProject, project.ixProject] }
   end, description: "FogBugz project that this Aha! product should integrate with." 
 
-  callback_url description: "Add '?case_number=\#{CaseNumber}' to this url before creating the trigger in FogBugz."
+  callback_url description: "Add '?case_number={CaseNumber}' to this url before creating the trigger in FogBugz."
 
 
 #========
@@ -147,21 +147,35 @@ class AhaServices::Fogbugz < AhaService
     # TODO: This needs to be updated to handle custom workflow configuration.
     def fogbugz_to_aha_category(status)
       case status
-        when "Active" then "in_progress"
-        when "Resolved (Fixed)" then "done"
-        when "Closed (Fixed)" then "shipped"
+      when "Active" 
+        "in_progress"
+        
+      when "Resolved (Fixed)",
+        "Resolved (Responded)",
+        "Resolved (Waiting For Info)"
+        "done"
+        
+      when "Closed (Fixed)",
+        "Closed (Completed)" 
+        "shipped"
 
-        when "Resolved (Not Reproducible)"
-        when "Resolved (Duplicate)"
-        when "Resolved (Postponed)"
-        when "Resolved (Won't Fix)"
-        when "Resolved (By Design)"
-        when "Closed (Not Reproducible)"
-        when "Closed (Duplicate)"
-        when "Closed (Postponed)"
-        when "Closed (Won't Fix)"
-        when "Closed (By Design)"
-          "will_not_implement"
+      when "Resolved (Not Reproducible)",
+        "Resolved (Canceled)",
+        "Resolved (Duplicate)",
+        "Resolved (Postponed)",
+        "Resolved (Won't Fix)",
+        "Resolved (Won't Respond)",
+        "Resolved (SPAM)",
+        "Resolved (By Design)",
+        "Closed (Not Reproducible)",
+        "Closed (Duplicate)",
+        "Closed (Postponed)",
+        "Closed (Won't Fix)",
+        "Closed (By Design)"
+        "will_not_do"
+        
+      else
+        raise ConfigurationError, "Unhandled Fogbugz status: '#{status}'"
       end
     end
 
