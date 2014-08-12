@@ -61,10 +61,10 @@ class AhaServices::Fogbugz < AhaService
     parameters = {
       sTitle: feature.name, 
       sEvent: feature.description.body,
-      sTags: feature.tags.join(","),
       ixProject: data.projects
     }
 
+    parameters[:sTags] = feature.tags.join(",") if feature.tags
     parameters[:ixBugParent] = parent_case if parent_case
 
 
