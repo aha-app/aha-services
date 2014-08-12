@@ -9,7 +9,7 @@ require File.expand_path("../../aha-services.rb", __FILE__)
 # App that responds to requests from remote Aha! instance.
 #
 class ProxyApp < Sinatra::Base
-  enable :logging
+  enable :logging, :lock
   
   #
   # Configure the server.
