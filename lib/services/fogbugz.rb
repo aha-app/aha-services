@@ -61,7 +61,7 @@ class AhaServices::Fogbugz < AhaService
     parameters = {
       sTitle: feature.name, 
       sEvent: feature.description.body,
-      sTags: feature.tags,
+      sTags: feature.tags.join(","),
       ixProject: data.projects
     }
 
