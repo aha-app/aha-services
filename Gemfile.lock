@@ -27,13 +27,12 @@ GIT
 PATH
   remote: .
   specs:
-    aha-services (1.9.1)
+    aha-services (1.9.3)
       ClothRed
       activesupport
       aha-api
       faraday (~> 0.8.9)
       faraday_middleware (~> 0.9.0)
-      fogbugz
       hashie (~> 2.1.1)
       html2confluence
       htmlentities
@@ -56,7 +55,6 @@ GEM
     atomic (1.1.15)
     celluloid (0.15.2)
       timers (~> 1.1.0)
-    chronic (0.10.2)
     coderay (1.1.0)
     crack (0.4.1)
       safe_yaml (~> 0.9.0)
@@ -68,11 +66,7 @@ GEM
       faraday (>= 0.7.4, < 0.9)
     ffi (1.9.3)
     ffi (1.9.3-x86-mingw32)
-    fogbugz (1.0.8)
-      chronic
-      highline
     hashie (2.1.1)
-    highline (1.6.21)
     html2markdown (0.0.3)
       nokogiri
     htmlentities (4.3.1)

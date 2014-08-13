@@ -34,7 +34,6 @@ Gem::Specification.new do |s|
   s.add_dependency "ClothRed"
 
   # For Fogbuz integration
-  s.add_dependency "fogbugz"
   s.add_dependency "sanitize"
 
   s.add_dependency "aha-api"
