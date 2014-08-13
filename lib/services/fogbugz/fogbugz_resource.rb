@@ -1,4 +1,3 @@
-require 'sanitize'
 require 'open-uri'
 
 class FogbugzResource < GenericResource
@@ -32,7 +31,6 @@ class FogbugzResource < GenericResource
       http(:encoding => :multipart)
     end
 
-    params[:sEvent] = Sanitize.fragment(params[:sEvent]).strip if params[:sEvent]
     params = params.merge!({'token' => @token, 'cols' => request_columns})
     
     params = URI.encode_www_form(params) if attachments.empty?

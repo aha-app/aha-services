@@ -64,7 +64,7 @@ class AhaServices::Fogbugz < AhaService
 
     parameters = {
       sTitle: feature.name, 
-      sEvent: feature.description.body,
+      sEvent: html_to_plain(feature.description.body),
       ixProject: data.projects
     }
 

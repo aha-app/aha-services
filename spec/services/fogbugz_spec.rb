@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe AhaServices::Fogbugz do
+  include Helpers
+  
   let(:service) do
     AhaServices::Fogbugz.new
   end
@@ -20,18 +22,18 @@ describe AhaServices::Fogbugz do
   let(:new_parameters) do
     {
       sTitle: feature.name, 
-      sEvent: Sanitize.fragment(feature.description.body).strip,
-      sTags: feature.tags,
-      ixProject: '1'
+      sEvent: html_to_plain(feature.description.body),
+      ixProject: '1',
+      sTags: feature.tags.join(",")
     } 
   end
 
   let (:edit_parameters) do
     {
       sTitle: feature.name, 
-      sEvent: Sanitize.fragment(feature.description.body).strip,
-      sTags: feature.tags,
+      sEvent: html_to_plain(feature.description.body),
       ixProject: '1',
+      sTags: feature.tags.join(","),
       ixBug: '20'
     }
   end
@@ -57,7 +59,6 @@ describe AhaServices::Fogbugz do
     mock_payload = Hashie::Mash.new(feature: feature)
     service.stub(:payload).and_return(mock_payload)
     service.stub(:get_integration_field).and_return(nil)
-
   
     service.should_receive(:fetch_case_from_feature).with(mock_payload.feature).and_return(nil)
     fogbugz_case_resource.should_receive(:new_case).with(new_parameters, []).and_return(fogbugz_case)
