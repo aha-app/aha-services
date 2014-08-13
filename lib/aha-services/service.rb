@@ -73,6 +73,8 @@ class AhaService
 
   # Returns a list of the services.
   def self.service_classes
+    return @service_classes if @service_classes
+    
     subclasses = []
     ObjectSpace.each_object(Module) {|m| subclasses << m if m.ancestors.include?(AhaService) && m != AhaService}
     
@@ -81,7 +83,7 @@ class AhaService
       subclasses.reject! {|s| [AhaServices::Zendesk].include?(s) }
     end
     
-    subclasses
+    @service_classes = subclasses
   end
 
   def respond_to_event?

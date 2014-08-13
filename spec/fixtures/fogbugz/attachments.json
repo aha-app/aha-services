@@ -1,0 +1,61 @@
+{
+  "event": "create_feature",
+  "feature": {
+    "name": "First feature",
+    "reference_num": "PROD-2",
+    "position": 2,
+    "score": 0,
+    "created_at": "2013-06-05T18:29:16Z",
+    "updated_at": "2013-06-05T18:49:06Z",
+    "id": "5886067808745625353",
+    "kind": "new",
+    "description": {
+      "body": "First feature description",
+      "id": "5886067808747078641",
+      "attachments": [
+        {
+          "id": "5886068229656194500",
+          "download_url": "urla",
+          "content_type": "image/png",
+          "file_name": "a.png",
+          "file_size": 29129
+        },
+        {
+          "id": "5886068238246802292",
+          "download_url": "urlb",
+          "content_type": "image/png",
+          "file_name": "b.png",
+          "file_size": 28228
+        }
+      ]
+    },
+    "workflow_status": {
+      "id": "6010067280556566142",
+      "name": "Ready to develop"
+    },
+    "tags": ["First", "Second", "Third"],
+    "attachments": [],
+    "integration_fields": [],
+    "url": "http://watersco.aha.io/features/PROD-2",
+    "resource": "http://watersco.aha.io/api/v1/features/PROD-2",
+    "release": {
+      "reference_num": "PROD-R-1",
+      "name": "Summer",
+      "id": "5886060481533761060",
+      "release_date": "2014-06-06",
+      "integration_fields": [
+        {"id":"68217473","name":"id","value":"777","service_name":"jira"},
+        {"id":"68217474","name":"id","value":"2","service_name":"redmine"},
+        {"id":"68217475","name":"name","value":"milestone2","service_name":"redmine"},
+        {"id":"68217476","name":"url","value":"http://localhost:4000/versions/2","service_name":"redmine"}
+      ]
+    },
+    "created_by_user": {
+      "name": "Chris Waters",
+      "email": "watersco@gmail.com",
+      "id": "5886060318329899366"
+    },
+    "requirements": [],
+    "comments_count": 1
+  }
+}

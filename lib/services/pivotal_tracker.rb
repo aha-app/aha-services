@@ -76,13 +76,13 @@ protected
 
   def pivotal_to_aha_category(status)
     case status
-      when "accepted" then "shipped"
-      when "delivered" then "done"
-      when "finished" then "in_progress"
-      when "started" then "in_progress"
-      when "rejected" then "in_progress"
-      when "unstarted" then "initial"
-      when "unscheduled" then "initial"
+    when "accepted" then "shipped"
+    when "delivered" then "done"
+    when "finished" then "in_progress"
+    when "started" then "in_progress"
+    when "rejected" then "in_progress"
+    when "unstarted" then "initial"
+    when "unscheduled" then "initial"
     end
   end
 
