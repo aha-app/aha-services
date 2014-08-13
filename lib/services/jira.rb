@@ -253,6 +253,10 @@ protected
     #   .merge!(issue_epic_name_field(issue_type, summary))
     #   .merge!(issue_epic_link_field(issue_type, parent, initiative))
     #   .merge!(subtask_fields(issue_type.subtask, parent))
+    # We do still generate the epic link field since it creates the initiative
+    # in JIRA, though it doesn't link it.
+    issue_epic_link_field(issue_type, parent, initiative)
+    
     issue.fields
       .merge!(label_fields(resource, issue_type))
       .merge!(time_tracking_fields(resource, issue_type))
