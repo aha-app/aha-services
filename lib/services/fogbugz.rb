@@ -9,7 +9,7 @@ class AhaServices::Fogbugz < AhaService
     meta_data.projects.sort_by(&:sProject).collect { |project| [project.sProject, project.ixProject] }
   end, description: "FogBugz project that this Aha! product should integrate with." 
 
-  callback_url description: "Add '?case_number=\#{CaseNumber}' to this url before creating the trigger in FogBugz."
+  callback_url description: "Add '?case_number={CaseNumber}' to this url before creating the trigger in FogBugz."
 
 
 #========
@@ -18,6 +18,10 @@ class AhaServices::Fogbugz < AhaService
 
   def receive_installed
     meta_data.projects = fogbugz_resource.projects
+    meta_data.statuses = {}
+    fogbugz_resource.statuses.each do |status|
+      meta_data.statuses[status.ixStatus] = status
+    end
   end
 
   def receive_create_feature
@@ -48,7 +52,7 @@ class AhaServices::Fogbugz < AhaService
       return
     end
 
-    update_resource(resource.resource, resource_type, fogbugz_case.sStatus)
+    update_resource(resource.resource, resource_type, fogbugz_case)
   end
 
 #==============
@@ -61,10 +65,10 @@ class AhaServices::Fogbugz < AhaService
     parameters = {
       sTitle: feature.name, 
       sEvent: feature.description.body,
-      sTags: feature.tags,
       ixProject: data.projects
     }
 
+    parameters[:sTags] = feature.tags.join(",") if feature.tags
     parameters[:ixBugParent] = parent_case if parent_case
 
 
@@ -140,28 +144,23 @@ class AhaServices::Fogbugz < AhaService
       api.search_integration_fields(data.integration_id, :number, fogbugz_case.ixBug)
     end
 
-    def update_resource(resource, resource_type, new_state)
-      api.put(resource, { resource_type => { workflow_status: { category: fogbugz_to_aha_category(new_state) } } })
+    def update_resource(resource, resource_type, fogbugz_case)
+      api.put(resource, { resource_type => { workflow_status: { category: fogbugz_to_aha_category(fogbugz_case) } } })
     end
 
     # TODO: This needs to be updated to handle custom workflow configuration.
-    def fogbugz_to_aha_category(status)
-      case status
-        when "Active" then "in_progress"
-        when "Resolved (Fixed)" then "done"
-        when "Closed (Fixed)" then "shipped"
-
-        when "Resolved (Not Reproducible)"
-        when "Resolved (Duplicate)"
-        when "Resolved (Postponed)"
-        when "Resolved (Won't Fix)"
-        when "Resolved (By Design)"
-        when "Closed (Not Reproducible)"
-        when "Closed (Duplicate)"
-        when "Closed (Postponed)"
-        when "Closed (Won't Fix)"
-        when "Closed (By Design)"
-          "will_not_implement"
+    def fogbugz_to_aha_category(fogbugz_case)
+      status = meta_data.statuses[fogbugz_case.ixStatus]
+      if status.fWorkDone == "false" && status.fResolved == "false"
+        "in_progress"
+      elsif status.fWorkDone == "true" && status.fResolved == "true" && fogbugz_case.fOpen == "false"
+        "shipped"
+      elsif status.fWorkDone == "true" && status.fResolved == "true"
+        "done"
+      elsif status.fWorkDone == "false" && status.fResolved == "true"
+        "will_not_do"
+      else
+        raise ConfigurationError, "Unhandled Fogbugz status: '#{status.sStatus} - #{status.ixStatus}'"
       end
     end
 

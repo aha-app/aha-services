@@ -13,6 +13,10 @@ class FogbugzResource < GenericResource
     command(:listProjects).projects.project
   end
 
+  def statuses
+    command(:listStatuses).statuses.status
+  end
+
   def command(command, params = {}, attachments = [])
     # add attachments
     if !attachments.empty?
@@ -29,7 +33,11 @@ class FogbugzResource < GenericResource
     end
 
     params[:sEvent] = Sanitize.fragment(params[:sEvent]).strip if params[:sEvent]
-    response = http_post("#{ api_url }#{ command }", params.merge({'token' => @token, 'cols' => request_columns}))
+    params = params.merge!({'token' => @token, 'cols' => request_columns})
+    
+    params = URI.encode_www_form(params) if attachments.empty?
+
+    response = http_post("#{ api_url }#{ command }", params)
     process_response(response, 200).response
   end
 
@@ -57,7 +65,7 @@ class FogbugzResource < GenericResource
   end
 
   def request_columns
-    "sLatestTextSummary,latestEvent,tags,File1,sTitle,sStatus,ixStatus"
+    "sLatestTextSummary,latestEvent,tags,File1,sTitle,sStatus,ixStatus,fOpen"
   end
 
 end
