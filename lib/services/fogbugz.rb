@@ -18,6 +18,10 @@ class AhaServices::Fogbugz < AhaService
 
   def receive_installed
     meta_data.projects = fogbugz_resource.projects
+    meta_data.statuses = {}
+    fogbugz_resource.statuses.each do |status|
+      meta_data.statuses[status.ixStatus] = status
+    end
   end
 
   def receive_create_feature
@@ -48,7 +52,7 @@ class AhaServices::Fogbugz < AhaService
       return
     end
 
-    update_resource(resource.resource, resource_type, fogbugz_case.sStatus)
+    update_resource(resource.resource, resource_type, fogbugz_case)
   end
 
 #==============
@@ -140,42 +144,23 @@ class AhaServices::Fogbugz < AhaService
       api.search_integration_fields(data.integration_id, :number, fogbugz_case.ixBug)
     end
 
-    def update_resource(resource, resource_type, new_state)
-      api.put(resource, { resource_type => { workflow_status: { category: fogbugz_to_aha_category(new_state) } } })
+    def update_resource(resource, resource_type, fogbugz_case)
+      api.put(resource, { resource_type => { workflow_status: { category: fogbugz_to_aha_category(fogbugz_case) } } })
     end
 
     # TODO: This needs to be updated to handle custom workflow configuration.
-    def fogbugz_to_aha_category(status)
-      case status
-      when "Active" 
+    def fogbugz_to_aha_category(fogbugz_case)
+      status = meta_data.statuses[fogbugz_case.ixStatus]
+      if status.fWorkDone == "false" && status.fResolved == "false"
         "in_progress"
-        
-      when "Resolved (Fixed)",
-        "Resolved (Responded)",
-        "Resolved (Waiting For Info)"
-        "done"
-        
-      when "Closed (Fixed)",
-        "Closed (Completed)" 
+      elsif status.fWorkDone == "true" && status.fResolved == "true" && fogbugz_case.fOpen == "false"
         "shipped"
-
-      when "Resolved (Not Reproducible)",
-        "Resolved (Canceled)",
-        "Resolved (Duplicate)",
-        "Resolved (Postponed)",
-        "Resolved (Won't Fix)",
-        "Resolved (Won't Respond)",
-        "Resolved (SPAM)",
-        "Resolved (By Design)",
-        "Closed (Not Reproducible)",
-        "Closed (Duplicate)",
-        "Closed (Postponed)",
-        "Closed (Won't Fix)",
-        "Closed (By Design)"
+      elsif status.fWorkDone == "true" && status.fResolved == "true"
+        "done"
+      elsif status.fWorkDone == "false" && status.fResolved == "true"
         "will_not_do"
-        
       else
-        raise ConfigurationError, "Unhandled Fogbugz status: '#{status}'"
+        raise ConfigurationError, "Unhandled Fogbugz status: '#{status.sStatus} - #{status.ixStatus}'"
       end
     end
 

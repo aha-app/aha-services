@@ -13,6 +13,10 @@ class FogbugzResource < GenericResource
     command(:listProjects).projects.project
   end
 
+  def statuses
+    command(:listStatuses).statuses.status
+  end
+
   def command(command, params = {}, attachments = [])
     # add attachments
     if !attachments.empty?
@@ -61,7 +65,7 @@ class FogbugzResource < GenericResource
   end
 
   def request_columns
-    "sLatestTextSummary,latestEvent,tags,File1,sTitle,sStatus,ixStatus"
+    "sLatestTextSummary,latestEvent,tags,File1,sTitle,sStatus,ixStatus,fOpen"
   end
 
 end
