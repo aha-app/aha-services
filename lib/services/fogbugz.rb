@@ -151,6 +151,9 @@ class AhaServices::Fogbugz < AhaService
     # TODO: This needs to be updated to handle custom workflow configuration.
     def fogbugz_to_aha_category(fogbugz_case)
       status = meta_data.statuses[fogbugz_case.ixStatus]
+      if status.nil?
+        raise ConfigurationError, "Unhandled Fogbugz status: '#{fogbugz_case.ixStatus}', use the 'Test connection' button to update the configuration"
+      end
       if status.fWorkDone == "false" && status.fResolved == "false"
         "in_progress"
       elsif status.fWorkDone == "true" && status.fResolved == "true" && fogbugz_case.fOpen == "false"
@@ -160,7 +163,7 @@ class AhaServices::Fogbugz < AhaService
       elsif status.fWorkDone == "false" && status.fResolved == "true"
         "will_not_do"
       else
-        raise ConfigurationError, "Unhandled Fogbugz status: '#{status.sStatus} - #{status.ixStatus}'"
+        raise ConfigurationError, "Unhandled Fogbugz status: '#{status.sStatus} - #{status.ixStatus}', use the 'Test connection' button to update the configuration"
       end
     end
 
