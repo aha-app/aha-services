@@ -1,0 +1,25 @@
+{"statuses": {
+    "status": [
+      {
+        "ixStatus": "1",
+        "sStatus": "Active",
+        "ixCategory": "1",
+        "fWorkDone": "false",
+        "fResolved": "false",
+        "fDuplicate": "false",
+        "fDeleted": "false",
+        "iOrder": "0"
+      },
+      {
+        "ixStatus": "2",
+        "sStatus": "Resolved (Fixed) ",
+        "ixCategory": "1",
+        "fWorkDone": "true",
+        "fResolved": "true",
+        "fDuplicate": "false",
+        "fDeleted": "false",
+        "iOrder": "0"
+      }
+    ]
+  } 
+}

@@ -10,6 +10,7 @@ describe AhaServices::Fogbugz do
   let(:fogbugz_case_resource) { FogbugzCaseResource.new(service) }
 
   let(:projects) { Hashie::Mash.new(json_fixture("fogbugz/projects.json")).projects.project }
+  let(:statuses) { Hashie::Mash.new(json_fixture("fogbugz/statuses.json")).statuses.status }
   let(:fogbugz_case) { Hashie::Mash.new(json_fixture("fogbugz/cases.json")['cases']) }
   let(:feature) { Hashie::Mash.new(name: 'First feature',
                                    description: { body: 'First feature description', attachments: [] },
@@ -50,6 +51,7 @@ describe AhaServices::Fogbugz do
   context "can be installed" do
     it "and handles installed event" do
       fogbugz_resource.should_receive(:projects).and_return(projects)
+      fogbugz_resource.should_receive(:statuses).and_return(statuses)
       service.receive(:installed)
       expect(service.meta_data.projects.sort_by(&:sProject).collect { |project| [project.sProject, project.ixProject] }).to eq [['Inbox', '2'], ['Sample Project', '1']]
     end
@@ -112,7 +114,7 @@ describe AhaServices::Fogbugz do
 
     service.should_receive(:fetch_case).with('20').and_return(fogbugz_case['case'])
     service.should_receive(:find_resource_with_case).with(fogbugz_case['case']).and_return(Hashie::Mash.new(feature: feature))
-    service.should_receive(:update_resource).with('https://aha.aha.io/api/v1/feature/NBT-1-4', 'feature', 'Closed (Fixed)').and_return(nil)
+    service.should_receive(:update_resource).with('https://aha.aha.io/api/v1/feature/NBT-1-4', 'feature', fogbugz_case['case']).and_return(nil)
     service.receive(:webhook)
   end
 
