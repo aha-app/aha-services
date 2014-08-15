@@ -473,9 +473,7 @@ protected
     # Failure was probably due to initiative from another product, convert
     # to a more user friendly message.
     raise AhaService::RemoteError,
-      "Initiative '#{initiative.name}' is from a product\
-       without a JIRA integration. Add a JIRA integration\
-       for the product the initiative belongs to."
+      "Initiative '#{initiative.name}' is from a product without a JIRA integration. Add a JIRA integration for the product the initiative belongs to."
   end
   
 end
