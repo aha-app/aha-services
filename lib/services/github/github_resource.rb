@@ -10,8 +10,15 @@ class GithubResource < GenericResource
     http.basic_auth @service.data.username, @service.data.password
   end
 
-  def github_http_get_paginated(url)
-    http_get("#{url}?per_page=100")
+  def github_http_get_paginated(url, page = 1, previous_response = [], &block)
+    response = http_get("#{url}?per_page=100&page=#{page}")
+    process_response(response, 200) do |parsed_response|
+      if has_paginated_header?(response)
+        github_http_get_paginated(url, page + 1, previous_response + parsed_response, &block)
+      else
+        yield previous_response + parsed_response
+      end
+    end
   end
 
   def process_response(response, *success_codes, &block)
@@ -24,5 +31,10 @@ class GithubResource < GenericResource
       raise RemoteError, "Unhandled error: STATUS=#{response.status} BODY=#{response.body}"
     end
   end
+
+  def has_paginated_header?(response)
+    response.headers['link'] && response.headers['link'].match(/rel=\"next\"/)
+  end
+
 
 end
