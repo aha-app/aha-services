@@ -6,7 +6,7 @@ class PivotalTrackerTaskResource < PivotalTrackerProjectDependentResource
     }
     created_task = create(task, feature_mapping.id)
     api.create_integration_fields(reference_num_to_resource_type(requirement.reference_num), 
-      requirement.reference_num, @service.class.service_name, {id: created_task.id, url: feature_mapping.url})
+      requirement.reference_num, @service.data.integration_id, {id: created_task.id, url: feature_mapping.url})
     created_task
   end
 

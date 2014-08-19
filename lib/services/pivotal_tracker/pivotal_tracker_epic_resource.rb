@@ -14,7 +14,7 @@ class PivotalTrackerEpicResource < PivotalTrackerProjectDependentResource
     api.create_integration_fields(
       reference_num_to_resource_type(feature.reference_num),
       feature.reference_num,
-      @service.class.service_name,
+      @service.data.integration_id,
       { id: created_epic.id,
         url: created_epic.url,
         label_id: created_epic.label.id }

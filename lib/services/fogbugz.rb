@@ -136,7 +136,7 @@ class AhaServices::Fogbugz < AhaService
     end
 
     def integrate_resource_with_case(feature, fogbugz_case)
-      api.create_integration_fields(reference_num_to_resource_type(feature.reference_num), feature.reference_num, self.class.service_name, 
+      api.create_integration_fields(reference_num_to_resource_type(feature.reference_num), feature.reference_num, data.integration_id, 
         {number: fogbugz_case.ixBug, url: "#{ URI.join(data.fogbugz_url, "/f/cases/#{fogbugz_case.ixBug}") }"})
     end
 

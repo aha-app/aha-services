@@ -162,12 +162,12 @@ protected
   end
 
   def integrate_release_with_github_milestone(release, milestone)
-    api.create_integration_fields("releases", release.reference_num, self.class.service_name, 
+    api.create_integration_fields("releases", release.reference_num, data.integration_id, 
       {number: milestone['number'], url: "https://github.com/#{data.repository}/issues?milestone=#{milestone['number']}"})
   end
 
   def integrate_resource_with_github_issue(resource, issue)
-    api.create_integration_fields(reference_num_to_resource_type(resource.reference_num), resource.reference_num, self.class.service_name, 
+    api.create_integration_fields(reference_num_to_resource_type(resource.reference_num), resource.reference_num, data.integration_id, 
       {number: issue['number'], url: "https://github.com/#{data.repository}/issues/#{issue['number']}"})
   end
 

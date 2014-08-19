@@ -458,12 +458,12 @@ protected
   end
 
   def integrate_release_with_jira_version(release, version)
-    api.create_integration_fields("releases", release.reference_num, self.class.service_name, 
+    api.create_integration_fields("releases", release.reference_num, data.integration_id, 
     {id: version.id, url: "#{data.server_url}/browse/#{data.project}/fixforversion/#{version.id}"})
   end
 
   def integrate_resource_with_jira_issue(resource_type, resource, issue)
-    api.create_integration_fields(resource_type, resource.id, self.class.service_name,
+    api.create_integration_fields(resource_type, resource.id, data.integration_id,
       {url: "#{data.server_url}/browse/#{issue[:key]}", id: issue.id, key: issue[:key]})
   end
 

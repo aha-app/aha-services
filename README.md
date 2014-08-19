@@ -45,7 +45,7 @@ Each Aha! release, feature and requirement can have _integration fields_ which t
 
 When an object is created in a third party system, the integration code can use the [Aha! API](http://www.aha.io/api) to store integration fields for the object. A typical pattern is to store the integration fields like:
 
-    api.create_integration_fields('features', feature.id, self.class.service_name,
+    api.create_integration_fields('features', feature.id, data.integration_id,
       {id: issue.id, key: issue[:key]})
 
 The payload for each feature and release event will contain the integration fields that have previously been set.
