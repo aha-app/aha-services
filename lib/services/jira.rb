@@ -226,6 +226,7 @@ protected
       .merge!(subtask_fields(issue_type.subtask, parent))
       .merge!(time_tracking_fields(resource, issue_type))
       .merge!(mapped_custom_fields(@feature, issue_type))
+      .merge!(assignee_fields(resource, issue_type))
     
     new_issue = issue_resource.create(issue)
 
@@ -262,6 +263,7 @@ protected
       .merge!(time_tracking_fields(resource, issue_type))
       .merge!(aha_reference_fields(resource, issue_type))
       .merge!(mapped_custom_fields(@feature, issue_type))
+      .merge!(assignee_fields(resource, issue_type))
     issue.merge!(version_update_fields(version, issue_type))
 
     issue_resource.update(issue_info.id, issue)
@@ -323,6 +325,10 @@ protected
   def attachment_resource
     @attachment_resource ||= JiraAttachmentResource.new(self)
   end
+
+  def user_resource
+    @user_resource ||= JiraUserResource.new(self)
+  end
   
   def update_attachments(issue_id, resource)
     aha_attachments = resource.attachments.dup | resource.description.attachments.dup
@@ -372,6 +378,15 @@ protected
   def aha_reference_fields(resource, issue_type)
     if issue_type.has_field_aha_reference
       { meta_data.aha_reference_field => resource.url }
+    else
+      Hash.new
+    end
+  end
+
+  def assignee_fields(resource, issue_type)
+    user = user_resource.picker(resource.assigned_to_user.email)
+    if user
+      { assignee: { name: user.name } }
     else
       Hash.new
     end
