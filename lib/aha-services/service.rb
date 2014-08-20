@@ -170,7 +170,7 @@ class AhaService
   def get_integration_field(integration_fields, field_name)
     return nil if integration_fields.nil?
     field = integration_fields.detect do |f|
-      f.service_name == self.class.service_name and f.name == field_name
+      f.integration_id.to_s == self.data.integration_id.to_s and f.name == field_name
     end
     field && field.value
   end
