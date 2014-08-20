@@ -922,13 +922,12 @@ describe AhaServices::Jira do
     end
 
     it "adds the assignee when valid" do
-      stub_request(:get, "#{base_url}/user/picker?query=watersco@gmail.com").
-        to_return(:status => 200, :body => '{"users": [{"name": "fred","key": "fred","emailAddress": "fred@example.com","displayName": "Fred Grumble","avatarUrl": ""}],"total": 25, "header": "Showing 20 of 25 matching groups"}')
-
       resource = json_fixture("create_feature_event_assignee.json")
       service.stub(:issue_type_by_id).and_return(Hashie::Mash.new(id: 239509))
+      user_resource.should_receive(:picker).with("watersco@gmail.com").and_return(Hashie::Mash.new("name" => "chris","emailAddress" => "watersco@gmail.com"))
+
       issue_resource.should_receive(:create).
-        with(Hashie::Mash.new(fields: {assignee: {name: 'fred'}, description: "", issuetype: {id: 239509}, summary: "Feature with attachments"})).
+        with(Hashie::Mash.new(fields: {assignee: {name: 'chris'}, description: "", issuetype: {id: 239509}, summary: "Feature with attachments"})).
         and_return(Hashie::Mash.new(id: 53498, key: 'key'))
 
       service.send(:create_issue_for, Hashie::Mash.new(resource['feature']), initiative, version, nil)
