@@ -54,6 +54,7 @@
       "email": "watersco@gmail.com",
       "id": "5886060318329899366"
     },
+    "assigned_to_user": null,
     "requirements": [
       {
         "status": 0,
