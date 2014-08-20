@@ -19,3 +19,4 @@ doc/
 
 # Sublime files
 *.sublime-*
+*.DS_Store
