@@ -54,7 +54,11 @@
       "email": "watersco@gmail.com",
       "id": "5886060318329899366"
     },
-    "assigned_to_user": null,
+    "assigned_to_user": {
+      "name": "Chris Waters",
+      "email": "watersco@gmail.com",
+      "id": "5886060318329899366"
+    },
     "requirements": [
       {
         "status": 0,
