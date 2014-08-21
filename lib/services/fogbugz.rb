@@ -1,5 +1,6 @@
 class AhaServices::Fogbugz < AhaService
   title 'FogBugz'
+  caption "Send features to FogBugz bug tracking software"
 
   string :fogbugz_url, description: "URL for your FogBugz server without the trailing slash, e.g. https://bigaha.fogbugz.com"
   string :api_token, description: "API token for the FogBugz server. You can generate this token using the instructions here: http://help.fogcreek.com/8447/how-to-get-a-fogbugz-xml-api-token"

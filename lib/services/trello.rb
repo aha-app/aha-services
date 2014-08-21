@@ -1,6 +1,8 @@
 require "reverse_markdown"
 
 class AhaServices::Trello < AhaService
+  caption "Send features to a Trello board"
+  
   oauth_button request_token_url: "https://trello.com/1/OAuthGetRequestToken",
     access_token_url: "https://trello.com/1/OAuthGetAccessToken",
     authorize_url: "https://trello.com/1/OAuthAuthorizeToken",

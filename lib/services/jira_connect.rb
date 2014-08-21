@@ -2,6 +2,7 @@ require "#{File.dirname(__FILE__)}/jira"
 
 class AhaServices::JiraConnect < AhaServices::Jira
   title "JIRA via Connect"
+  caption "Send features to JIRA (using a plugin)"
   
   install_button
   select :project, collection: ->(meta_data, data) { meta_data.projects.collect{|p| [p.name, p[:key]] } }

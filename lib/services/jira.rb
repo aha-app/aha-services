@@ -2,6 +2,7 @@ require 'html2confluence'
 
 class AhaServices::Jira < AhaService
   title "JIRA"
+  caption "Send features to JIRA issue tracking"
   
   string :server_url, description: "URL for the JIRA server, without the trailing slash, e.g. https://bigaha.atlassian.net"
   string :username, description: "Use your JIRA username from the JIRA profile page, not your email address."

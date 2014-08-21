@@ -1,4 +1,6 @@
 class AhaServices::GithubIssues < AhaService
+  caption "Send features to Github Issues"
+  
   string :username
   password :password
   install_button

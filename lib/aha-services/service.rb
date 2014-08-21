@@ -115,10 +115,8 @@ class AhaService
   end
 
   class << self
-    # Gets the official title of this Service.  This is used in any
+    # The official title of this Service.  This is used in any
     # user-facing documentation regarding the Service.
-    #
-    # Returns a String.
     def title(value = nil)
       if value
         @title = value
@@ -130,18 +128,10 @@ class AhaService
         end
       end
     end
-
-    # Sets the official title of this Service.
-    #
-    # title - The String title.
-    #
-    # Returns nothing.
     attr_writer :title
 
-    # Gets the name that identifies this Service type.  This is a
+    # Name that identifies this Service type.  This is a
     # short string that is used to uniquely identify the service internally.
-    #
-    # Returns a String.
     def service_name(value = nil)
       if value
         @service_name = value
@@ -153,9 +143,18 @@ class AhaService
         end
       end
     end
-
     attr_writer :service_name
 
+    # A short description of the service that will appear in the user interface.
+    def caption(value = nil)
+      if value
+        @caption = value
+      else
+        @caption || ""
+      end
+    end
+    attr_writer :service_name
+    
     def development_proxy?
       self.service_name == "development_proxy"
     end

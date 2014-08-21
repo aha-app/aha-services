@@ -1,4 +1,6 @@
 class AhaServices::Webhooks < AhaService
+  caption "Generic HTTP webhooks for notifications"
+
   string :hook_url
   
   def receive_create_feature
