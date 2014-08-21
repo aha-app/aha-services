@@ -195,6 +195,7 @@ describe AhaServices::Jira do
   let(:version_resource) { service.send(:version_resource) }
   let(:issue_link_resource) { service.send(:issue_link_resource) }
   let(:attachment_resource) { service.send(:attachment_resource) }
+  let(:user_resource) { service.send(:user_resource) }
 
   describe "#new_or_existing_aha_reference_field" do
     context "when a reference field exists" do
@@ -897,5 +898,41 @@ describe AhaServices::Jira do
           .to eq Hash.new
       end
     end
+  end
+
+  describe "Sends assignee" do
+    let(:initiative) { Hashie::Mash.new }
+    let(:version) { Hashie::Mash.new({ name: 'Existing version', :id => 2350823958 }) }
+
+    it "jira user resource parses user/picker response" do
+      stub_request(:get, "#{base_url}/user/picker?query=someemail@someemail.com").
+        to_return(:status => 200, :body => '{"users":[],"total":0,"header":"Showing 0 of 0 matching users"}')
+      stub_request(:get, "#{base_url}/user/picker?query=fred@example.com").
+        to_return(:status => 200, :body => '{"users": [{"name": "fred","key": "fred","emailAddress": "fred@example.com","displayName": "Fred Grumble","avatarUrl": ""}],"total": 25, "header": "Showing 20 of 25 matching groups"}')
+
+      expect(user_resource.picker("someemail@someemail.com")).to eq(nil)
+
+      expect(user_resource.picker("fred@example.com")).to eq(Hashie::Mash.new({
+            "name" => "fred",
+            "key" => "fred",
+            "emailAddress" => "fred@example.com",
+            "displayName" => "Fred Grumble",
+            "avatarUrl" => ""
+        }))
+    end
+
+    it "adds the assignee when valid" do
+      resource = json_fixture("create_feature_event_assignee.json")
+      service.stub(:issue_type_by_id).and_return(Hashie::Mash.new(id: 239509))
+      user_resource.should_receive(:picker).with("watersco@gmail.com").and_return(Hashie::Mash.new("name" => "chris","emailAddress" => "watersco@gmail.com"))
+
+      issue_resource.should_receive(:create).
+        with(Hashie::Mash.new(fields: {assignee: {name: 'chris'}, description: "", issuetype: {id: 239509}, summary: "Feature with attachments"})).
+        and_return(Hashie::Mash.new(id: 53498, key: 'key'))
+
+      service.send(:create_issue_for, Hashie::Mash.new(resource['feature']), initiative, version, nil)
+    end
+
+
   end
 end
