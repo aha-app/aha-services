@@ -1,5 +1,5 @@
 class AhaServices::HipChat < AhaService
-  caption "Send all activity into a group chat for teams"
+  caption "Send all activity from Aha! into group chat"
   
   string :auth_token,
     description: "An authentication token from HipChat. For best security you should use a 'Room Notification Token'."

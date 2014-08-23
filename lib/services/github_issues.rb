@@ -1,5 +1,6 @@
 class AhaServices::GithubIssues < AhaService
-  caption "Send features to Github Issues"
+  title "GitHub Issues"
+  caption "Send features to GitHub Issues"
   
   string :username
   password :password

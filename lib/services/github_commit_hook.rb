@@ -1,5 +1,6 @@
 class AhaServices::GithubCommitHook < AhaService
-  caption "Create Aha! comments from Github commits"
+  title "GitHub Commit Hook"
+  caption "Create Aha! comments from GitHub commits"
 
   callback_url
 
