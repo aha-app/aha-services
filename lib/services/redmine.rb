@@ -1,5 +1,6 @@
 class AhaServices::Redmine < AhaService
   title 'Redmine'
+  caption "Send features to Redmine open source issue tracking"
 
   string :redmine_url
   string :api_key

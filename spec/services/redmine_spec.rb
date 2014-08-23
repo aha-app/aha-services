@@ -10,7 +10,8 @@ describe AhaServices::Redmine do
     described_class.new(
       { redmine_url: 'http://api.my-redmine.org',
         project: project_id,
-        api_key: '123456'
+        api_key: '123456',
+        integration_id: 111
       }, payload)
   end
   let(:projects_index_raw) { raw_fixture('redmine/projects/index.json') }

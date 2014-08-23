@@ -1,6 +1,8 @@
 require "reverse_markdown"
 
 class AhaServices::Trello < AhaService
+  caption "Send features to a Trello board"
+  
   oauth_button request_token_url: "https://trello.com/1/OAuthGetRequestToken",
     access_token_url: "https://trello.com/1/OAuthGetAccessToken",
     authorize_url: "https://trello.com/1/OAuthAuthorizeToken",
@@ -204,7 +206,7 @@ protected
     api.create_integration_fields(
       "features",
       feature.reference_num,
-      self.class.service_name,
+      data.integration_id,
       {
         id: card.id,
         url: "https://trello.com/c/#{card.id}"
@@ -216,7 +218,7 @@ protected
     api.create_integration_fields(
       "requirements",
       requirement.reference_num,
-      self.class.service_name,
+      data.integration_id,
       {
         id: checklist_item.id,
         checklist_id: checklist_item.checklist_id

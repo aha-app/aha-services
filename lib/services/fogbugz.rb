@@ -1,5 +1,6 @@
 class AhaServices::Fogbugz < AhaService
   title 'FogBugz'
+  caption "Send features to FogBugz bug tracking software"
 
   string :fogbugz_url, description: "URL for your FogBugz server without the trailing slash, e.g. https://bigaha.fogbugz.com"
   string :api_token, description: "API token for the FogBugz server. You can generate this token using the instructions here: http://help.fogcreek.com/8447/how-to-get-a-fogbugz-xml-api-token"
@@ -136,7 +137,7 @@ class AhaServices::Fogbugz < AhaService
     end
 
     def integrate_resource_with_case(feature, fogbugz_case)
-      api.create_integration_fields(reference_num_to_resource_type(feature.reference_num), feature.reference_num, self.class.service_name, 
+      api.create_integration_fields(reference_num_to_resource_type(feature.reference_num), feature.reference_num, data.integration_id, 
         {number: fogbugz_case.ixBug, url: "#{ URI.join(data.fogbugz_url, "/f/cases/#{fogbugz_case.ixBug}") }"})
     end
 
