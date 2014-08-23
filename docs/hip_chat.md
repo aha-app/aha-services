@@ -1,0 +1,1 @@
+Send a log of activity from Aha! to a HipChat room. Configure the integration for a product to send only activity for that product. Configure the integration for the account to send all activity that you have access to.
