@@ -7,7 +7,7 @@ class AhaServices::HipChat < AhaService
   install_button
   
   def receive_installed
-    send_message("Test message from <a href='http://www.aha.io/'>Aha!</a>")
+    send_message("Aha! integration installed successfully. Make sure you enable the integration!")
   end
   
   def receive_audit

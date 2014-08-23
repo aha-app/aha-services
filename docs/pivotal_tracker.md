@@ -28,13 +28,12 @@ First configure Pivotal Tracker:
 
 Next create the integration in Aha!
 
-1. Click on the _Create integration_ button below.
-2. Enter the API token you copied from Pivotal Tracker. Click the _Test connection_ button
-3. After a short delay, you will be able to choose the Project the stories will be created in.
-4. Choose the integration in Pivotal Tracker that you created in step 2 above.
-5.	Create a new _Activity Web Hook_ for v5 in Pivotal Tracker and paste in the Hook URL.
-6. Enable the integration.
-7. Test the integration by going to one of your features in Aha! and using the _Send to Pivotal Tracker_ item in the _Actions_ menu on the features page. You should then look at your project in Pivotal Tracker and see that the feature (and any requirements) were properly copied. 
+1. Enter the API token you copied from Pivotal Tracker. Click the _Test connection_ button
+2. After a short delay, you will be able to choose the Project the stories will be created in.
+3. Choose the integration in Pivotal Tracker that you created in step 2 above.
+4.	Create a new _Activity Web Hook_ for v5 in Pivotal Tracker and paste in the Hook URL.
+5. Enable the integration.
+6. Test the integration by going to one of your features in Aha! and using the _Send to Pivotal Tracker_ item in the _Actions_ menu on the features page. You should then look at your project in Pivotal Tracker and see that the feature (and any requirements) were properly copied. 
 
 
 ## Troubleshooting

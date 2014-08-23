@@ -21,12 +21,11 @@ Please carefully follow these instructions to ensure that the integration is pro
 
 Create the integration in Aha!
 
-1. Click on the _Create integration_ button below.
-2. Enter your Redmine url and the _API access key_. You can find the _API access key_ for a specific Redmine user by going to user's _My account_ page. The API access key can be revealed on the right-side menu.
-3. Click the _Test connection_ button.
-4. After a short delay, you will be able to choose the project the issues will be created for.
-5. Enable the integration.
-6. Test the integration by going to one of your features in Aha! and using the _Send to Redmine Issues_ item in the _Actions_ menu on the features page. You should then look at your Redmine project and see that the feature (and any requirements) were properly copied to issues.
+1. Enter your Redmine url and the _API access key_. You can find the _API access key_ for a specific Redmine user by going to user's _My account_ page. The API access key can be revealed on the right-side menu.
+2. Click the _Test connection_ button.
+3. After a short delay, you will be able to choose the project the issues will be created for.
+4. Enable the integration.
+5. Test the integration by going to one of your features in Aha! and using the _Send to Redmine Issues_ item in the _Actions_ menu on the features page. You should then look at your Redmine project and see that the feature (and any requirements) were properly copied to issues.
 
 
 ## Troubleshooting
