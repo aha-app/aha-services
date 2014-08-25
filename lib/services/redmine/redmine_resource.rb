@@ -49,7 +49,7 @@ class RedmineResource
 
   def create_integrations resource, reference, fields
     fields.each do |field, value|
-      @service.api.create_integration_fields(resource, reference, @data.integration_id, fields)
+      @service.api.create_integration_fields(resource, reference, @service.data.integration_id, fields)
     end
   end
 
