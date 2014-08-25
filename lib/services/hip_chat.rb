@@ -1,4 +1,5 @@
 class AhaServices::HipChat < AhaService
+  title "HipChat"
   caption "Send all activity from Aha! into group chat"
   
   string :auth_token,
