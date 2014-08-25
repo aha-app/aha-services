@@ -94,15 +94,6 @@ protected
   end
 
   def kind_to_story_type(kind)
-    case kind
-    when "new", "improvement"
-      "feature"
-    when "bug_fix"
-      "bug"
-    when "research"
-      "chore"
-    else
-      "feature"
-    end
+    @service.data.feature_kinds[kind]
   end
 end
