@@ -30,7 +30,7 @@ describe AhaServices::PivotalTracker do
   describe "receiving new features" do
     let(:service) do
       AhaServices::PivotalTracker.new(
-        {'api_token' => api_token, 'project' => project_id, 'api_version' => 'a'},
+        {'api_token' => api_token, 'project' => project_id, 'api_version' => 'a', 'integration_id' => 111},
         json_fixture('create_feature_event.json'))
     end
 
@@ -50,7 +50,7 @@ describe AhaServices::PivotalTracker do
         to_return(:status => 200, :body => "{\"id\":\"#{pivot_data[:task_one_id]}\"}", :headers => {})
 
       # Call back into Aha! for requirement
-      @integrate_requirement = stub_request(:post, "https://a.aha.io/api/v1/requirements/PROD-2-1/integrations/pivotal_tracker/fields").
+      @integrate_requirement = stub_request(:post, "https://a.aha.io/api/v1/requirements/PROD-2-1/integrations/111/fields").
         with(:body => "{\"integration_fields\":[{\"name\":\"id\",\"value\":\"61280364\"},{\"name\":\"url\",\"value\":\"http://www.pivotaltracker.com/story/show/61017898\"}]}").
         to_return(:status => 201, :body => "", :headers => {})
     end
@@ -60,7 +60,7 @@ describe AhaServices::PivotalTracker do
 
       it "makes certain API calls" do
         # Call back into Aha! for feature
-        @integrate_feature = stub_request(:post, "https://a.aha.io/api/v1/features/PROD-2/integrations/pivotal_tracker/fields").
+        @integrate_feature = stub_request(:post, "https://a.aha.io/api/v1/features/PROD-2/integrations/111/fields").
           with(:body => {:integration_fields => [{:name => "id", :value => "#{pivot_data[:story_id]}"}, {:name => "url", :value => "#{pivot_data[:story_url]}"}]}).
           to_return(:status => 201, :body => "", :headers => {})
 
@@ -79,7 +79,7 @@ describe AhaServices::PivotalTracker do
       let(:mapping) { "epic-story" }
 
       it "makes certain API calls" do
-        @integrate_feature = stub_request(:post, "https://a.aha.io/api/v1/features/PROD-2/integrations/pivotal_tracker/fields").
+        @integrate_feature = stub_request(:post, "https://a.aha.io/api/v1/features/PROD-2/integrations/111/fields").
           with(:body => {:integration_fields => [{:name => "id", :value => "#{pivot_data[:story_id]}"}, {:name => "url", :value => "#{pivot_data[:story_url]}"},{name: "label_id", value: pivot_data[:label][:id]}]}).
           to_return(:status => 201, :body => "", :headers => {})
 
@@ -98,24 +98,19 @@ describe AhaServices::PivotalTracker do
       let(:mapping) { "story-task" }
 
       it "makes certain API calls" do
-        @integrate_feature = stub_request(:post, "https://a.aha.io/api/v1/features/PROD-2/integrations/pivotal_tracker/fields").
+        @integrate_feature = stub_request(:post, "https://a.aha.io/api/v1/features/PROD-2/integrations/111/fields").
           with(:body => {:integration_fields => [{:name => "id", :value => "#{pivot_data[:story_id]}"}, {:name => "url", :value => "#{pivot_data[:story_url]}"}]}).
           to_return(:status => 201, :body => "", :headers => {})
 
-        @integrate_requirement = stub_request(:post, "https://a.aha.io/api/v1/requirements/PROD-2-1/integrations/pivotal_tracker/fields").
-          with(:body => "{\"integration_fields\":[{\"name\":\"id\",\"value\":\"18669866\"}]}").
+        @integrate_requirement = stub_request(:post, "https://a.aha.io/api/v1/requirements/PROD-2-1/integrations/111/fields").
+          with(:body => "{\"integration_fields\":[{\"name\":\"id\",\"value\":\"18669866\"},{\"name\":\"url\",\"value\":\"http://www.pivotaltracker.com/story/show/61017898\"}]}").
           to_return(:status => 201, :body => "", :headers => {})
-
-        @add_attachments_to_story = stub_request(:put, 'https://www.pivotaltracker.com/services/v5/projects/202020/stories/61280364').
-          to_return(:status => 200, :body => "{}", :headers => {})
-
 
         # run service
         service.receive(:create_feature)
 
         expect(@create_epic).to_not have_been_requested
         expect(@create_story).to have_been_requested.once
-        expect(@add_attachments_to_story).to have_been_requested.once
         expect(@create_task).to have_been_requested.once
         expect(@integrate_feature).to have_been_requested.once
         expect(@integrate_requirement).to have_been_requested.once
@@ -185,7 +180,7 @@ describe AhaServices::PivotalTracker do
         to_return(:status => 200, :body => "", :headers => {})
 
       service = AhaServices::PivotalTracker.new(
-        {'api_token' => api_token, 'api_version' => 'a'},
+        {'api_token' => api_token, 'api_version' => 'a', 'integration_id' => 111},
         nil)
       service.receive(:installed)
       service.meta_data.projects[0]["name"].should == "Learn About the Force"

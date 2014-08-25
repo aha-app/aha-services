@@ -20,11 +20,10 @@ Please carefully follow these instructions to ensure that the integration is pro
 
 Create the integration in Aha!
 
-1. Click on the _Create integration_ button below.
-2. Enter your FogBugz URL and API token. Click the _Test connection_ button
-3. After a short delay, you will be able to choose the Projects the cases will be created in.
-4. Enable the integration.
-5. Test the integration by going to one of your features in Aha! and using the _Send to FogBugz_ item in the _Actions_ menu on the features page. You should then look at your FogBugz project and see that the feature were properly copied to a case. 
+1. Enter your FogBugz URL and API token. Click the _Test connection_ button
+2. After a short delay, you will be able to choose the Projects the cases will be created in.
+3. Enable the integration.
+4. Test the integration by going to one of your features in Aha! and using the _Send to FogBugz_ item in the _Actions_ menu on the features page. You should then look at your FogBugz project and see that the feature were properly copied to a case. 
 
 Enable URL triggers in FogBugz to get status changes back:
 

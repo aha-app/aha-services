@@ -17,14 +17,13 @@ You need to be a Product Owner in Aha! to set up this integration.
 
 Please carefully follow these instructions to ensure that the integration is properly configured.
 
-1. Click on the _Create integration_ button below.
-2. Click on the _Authenticate_ button. You will be taken to a screen to log into your Trello account and approve the Aha! integration.
-3. Click the _Test connection_ button.
-4. After a short delay, you will be able to choose the Board the cards will be created in.
-5. Each list in the Trello board can map to a different feature status in Aha!
-6. Choose the list that new features should be created in, and whether they should be added to the top or bottom of the list.
-7. Enable the integration.
-8. Test the integration by going to one of your features in Aha! and using the _Send to Trello_ item in the _Actions_ menu on the features page. You should then look at your board in Trello and see that the feature (and any requirements) were properly copied. 
+1. Click on the _Authenticate_ button. You will be taken to a screen to log into your Trello account and approve the Aha! integration.
+2. Click the _Test connection_ button.
+3. After a short delay, you will be able to choose the Board the cards will be created in.
+4. Each list in the Trello board can map to a different feature status in Aha!
+5. Choose the list that new features should be created in, and whether they should be added to the top or bottom of the list.
+6. Enable the integration.
+7. Test the integration by going to one of your features in Aha! and using the _Send to Trello_ item in the _Actions_ menu on the features page. You should then look at your board in Trello and see that the feature (and any requirements) were properly copied. 
 
 
 ## Troubleshooting

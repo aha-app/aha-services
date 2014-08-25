@@ -7,7 +7,7 @@ describe AhaServices::Trello do
   let(:oauth_key) { "my_key" }
   let(:oauth_token) { "my_token" }
   let(:service) do
-    AhaServices::Trello.new "server_url" => base_url
+    AhaServices::Trello.new "server_url" => base_url, "integration_id" => 111
   end
 
   let(:card_id) { "dummy_trello_card_id" }
@@ -44,7 +44,7 @@ describe AhaServices::Trello do
         idModel: card_id
       }.to_json)
       .to_return(status: 200)
-    integrate_feature_with_card = stub_request(:post, "#{aha_api_url}/features/#{new_feature.reference_num}/integrations/trello/fields")
+    integrate_feature_with_card = stub_request(:post, "#{aha_api_url}/features/#{new_feature.reference_num}/integrations/111/fields")
       .with(body: {
         integration_fields: [
           {
@@ -75,7 +75,7 @@ describe AhaServices::Trello do
         name: "Requirement 1. First requirement\n\n"
       }.to_json)
       .to_return(status: 200, body: {id: checklist_item_id}.to_json)
-    integrate_requirement_with_checklist_item = stub_request(:post, "#{aha_api_url}/requirements/#{new_feature.requirements[0].reference_num}/integrations/trello/fields")
+    integrate_requirement_with_checklist_item = stub_request(:post, "#{aha_api_url}/requirements/#{new_feature.requirements[0].reference_num}/integrations/111/fields")
     .with(body: {
       integration_fields: [
         {

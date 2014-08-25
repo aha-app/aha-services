@@ -76,7 +76,7 @@ protected
     end
 
     created_story = create(story)
-    api.create_integration_fields(reference_num_to_resource_type(resource.reference_num), resource.reference_num, @service.class.service_name, {id: created_story.id, url: created_story.url})
+    api.create_integration_fields(reference_num_to_resource_type(resource.reference_num), resource.reference_num, @service.data.integration_id, {id: created_story.id, url: created_story.url})
     created_story
   end
 
