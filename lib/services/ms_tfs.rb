@@ -8,11 +8,16 @@ class AhaServices::MSTFS < AhaService
   install_button
 
   def receive_installed
-    meta_data.projects = project_resource.all
+    #meta_data.projects = project_resource.all
+    puts workitem_resource.all
   end
 
 protected
   def project_resource
     @project_resource ||= MSTFSProjectResource.new(self)
+  end
+
+  def workitem_resource
+    @workitem_resource ||= MSTFSWorkItemResource.new(self)
   end
 end
