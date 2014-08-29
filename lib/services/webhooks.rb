@@ -1,5 +1,6 @@
 class AhaServices::Webhooks < AhaService
-  caption "Generic HTTP webhooks for notifications"
+  title "Integration webhook"
+  caption "Generic HTTP webhook for feature integration"
 
   string :hook_url
   

@@ -4,7 +4,7 @@ Send a log of activity from Aha! to a HipChat room. Configure the integration fo
 
 ## Configuration
 
-Configure room in HipChat
+Configure a room in HipChat
 
 1. In HipChat, go to the administration web interface. On the _Rooms_ screen choose the room you want Aha! activity to be sent to.
 2. Go to the _Tokens_ sub-menu.
