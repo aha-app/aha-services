@@ -14,6 +14,8 @@ class AhaServices::PivotalTracker < AhaService
         ["Feature -> Story, Requirement -> Task", "story-task"]
       ],
     description: "Choose how features and requirements in Aha! will map to epics, stories and tasks in Pivotal Tracker."
+  internal :feature_status_mapping
+  internal :feature_kind_mapping
 
   callback_url description: "URL to add to the Activity Web Hook section in Pivotal Tracker using v5."
 
@@ -68,7 +70,7 @@ protected
 
   def apply_change(kind, new_values, resource, resource_type)
     if kind == "story" && new_state = new_values.current_state
-      api.put(resource, {resource_type => { workflow_status: {category: pivotal_to_aha_category(new_state) }}})
+      api.put(resource, {resource_type => { workflow_status: pivotal_to_aha_category(new_state) }})
     elsif kind == "task" && ["true", true].include?(new_values.complete)
       api.put(resource, {resource_type => { workflow_status: {category: "done" }}})
     elsif kind == "task" && ["false", false].include?(new_values.complete)
@@ -77,15 +79,7 @@ protected
   end
 
   def pivotal_to_aha_category(status)
-    case status
-    when "accepted" then "shipped"
-    when "delivered" then "done"
-    when "finished" then "in_progress"
-    when "started" then "in_progress"
-    when "rejected" then "in_progress"
-    when "unstarted" then "initial"
-    when "unscheduled" then "initial"
-    end
+    data.feature_statuses[status]
   end
 
 end

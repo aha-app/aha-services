@@ -8,7 +8,10 @@
     "created_at": "2013-06-05T18:29:16Z",
     "updated_at": "2013-06-05T18:49:06Z",
     "id": "5886067808745625353",
-    "kind": "new",
+    "workflow_kind": {
+      "id": "54523452345235235",
+      "name": "New"
+    },
     "workflow_status": {
       "id": "6010067280556566142",
       "name": "Ready to develop"

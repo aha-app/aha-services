@@ -35,7 +35,9 @@ describe AhaServices::PivotalTracker do
     end
 
     before do
+      service.data.stub(:feature_kinds).and_return(Hashie::Mash.new({"54523452345235235" => "New`"}))
       service.data.stub(:mapping).and_return(mapping)
+
 
       stub_download_feature_attachments
       stub_pivotal_attachment_uploads
@@ -148,7 +150,7 @@ describe AhaServices::PivotalTracker do
       to_return(:status => 401, :body => raw_fixture('pivotal_tracker/invalid_parameter.json'), :headers => {})
     expect {
       AhaServices::PivotalTracker.new(
-        {'api_token' => api_token, 'project' => project_id, 'api_version' => 'a'},
+        {'api_token' => api_token, 'project' => project_id, 'api_version' => 'a', 'feature_kinds' => {"54523452345235235" => "New"}},
         json_fixture('create_feature_event.json')).receive(:create_feature)
     }.to raise_error(AhaService::RemoteError)
   end
@@ -163,7 +165,7 @@ describe AhaServices::PivotalTracker do
     expect {
       # run service
       AhaServices::PivotalTracker.new(
-        {'api_token' => '', 'project' => project_id, 'api_version' => 'a'},
+        {'api_token' => '', 'project' => project_id, 'api_version' => 'a', 'feature_kinds' => {"54523452345235235" => "New"}},
         json_fixture('create_feature_event.json')).receive(:create_feature)
     }.to raise_error(AhaService::RemoteError)
   end
@@ -180,7 +182,7 @@ describe AhaServices::PivotalTracker do
         to_return(:status => 200, :body => "", :headers => {})
 
       service = AhaServices::PivotalTracker.new(
-        {'api_token' => api_token, 'api_version' => 'a', 'integration_id' => 111},
+        {'api_token' => api_token, 'api_version' => 'a', 'integration_id' => 111, 'feature_kinds' => {"54523452345235235" => "New"}},
         nil)
       service.receive(:installed)
       service.meta_data.projects[0]["name"].should == "Learn About the Force"
