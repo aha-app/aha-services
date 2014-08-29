@@ -17,6 +17,12 @@ class MSTFSWorkItemResource < MSTFSResource
     end
   end
 
+  def create hash
+    prepare_request
+    body = { fields: to_field_array(hash)}.to_json
+    response = http_post mstfs_url("wit/workitems"), body
+  end
+
 protected
 
   def field_by_refName fields, refName
@@ -29,6 +35,15 @@ protected
     hashie = found_resource(response)
     hashie.results.collect do |entity|
       entity.sourceId
+    end
+  end
+
+  def to_field_array hash
+    hash.collect do |key, value|
+      {
+        field: { refName: key },
+        value: value
+      }
     end
   end
 end
