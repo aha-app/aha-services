@@ -79,7 +79,15 @@ protected
   end
 
   def pivotal_to_aha_category(status)
-    data.feature_statuses[status]
+    if data.feature_statuses
+      data.feature_statuses[status]
+    else
+      status_mapping[status]
+    end
+  end
+
+  def status_mapping
+    {"accepted" => "shipped", "delivered" => "done", "finished" => "in_progress", "started" => "in_progress", "rejected" => "in_progress", "unstarted" => "initial", "unscheduled" => "initial"}
   end
 
 end

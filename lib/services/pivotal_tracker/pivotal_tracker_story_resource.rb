@@ -94,6 +94,10 @@ protected
   end
 
   def kind_to_story_type(kind)
-    @service.data.feature_kinds[kind]
+    if @service.data.feature_kinds
+      @service.data.feature_kinds[kind]
+    else
+      "feature"
+    end
   end
 end
