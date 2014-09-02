@@ -82,7 +82,7 @@ protected
     if data.feature_statuses
       data.feature_statuses[status]
     else
-      status_mapping[status]
+      {category: status_mapping[status]}
     end
   end
 
