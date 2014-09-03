@@ -74,7 +74,8 @@ protected
           'has_field_epic_name' => issue_type.fields[meta_data['epic_name_field']].present?,
           'has_field_epic_link' => issue_type.fields[meta_data['epic_link_field']].present?,
           'has_field_labels' => issue_type.fields.labels.present?,
-          'has_field_time_tracking' => issue_type.fields.timetracking.present?
+          'has_field_time_tracking' => issue_type.fields.timetracking.present?,
+          'has_field_assignee' => issue_type.fields.assignee.present?
         }
       else
         Hash.new

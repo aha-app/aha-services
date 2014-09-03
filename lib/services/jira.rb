@@ -385,7 +385,7 @@ protected
   end
 
   def assignee_fields(resource, issue_type)
-    if resource.assigned_to_user && (user = user_resource.picker(resource.assigned_to_user.email))
+    if (issue_type.has_field_assignee.blank? || issue_type.has_field_assignee) && resource.assigned_to_user && (user = user_resource.picker(resource.assigned_to_user.email))
       { assignee: { name: user.name } }
     else
       Hash.new
