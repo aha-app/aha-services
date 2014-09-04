@@ -20,9 +20,14 @@ class AhaServices::HipChat < AhaService
       end
 
     fields = audit.changes.collect { |change| "<b>#{change.field_name}</b> #{change.value}<br/>" }
-    
+    link = if audit.auditable_url
+        "<a href='#{audit.auditable_url}'>#{audit.description}</a>"
+      else
+        audit.description
+      end
+      
     send_message <<-EOS
-      #{user} <a href="#{audit.auditable_url}">#{audit.description}</a><br/>
+      #{user} #{link}<br/>
       #{fields.join("\n")}
     EOS
   end

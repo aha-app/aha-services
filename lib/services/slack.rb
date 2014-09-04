@@ -17,8 +17,14 @@ class AhaServices::Slack < AhaService
         "Aha!"
       end
     
+    link = if audit.auditable_url
+        "<#{audit.auditable_url}|#{audit.description}>"
+      else
+        audit.description
+      end
+      
     send_message(fallback: "#{user} #{audit.description}",
-      pretext: "#{user} <#{audit.auditable_url}|#{audit.description}>",
+      pretext: "#{user} #{link}",
       fields: audit.changes.collect do |change|
         {
           title: change.field_name,
