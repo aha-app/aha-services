@@ -60,7 +60,7 @@ module JiraMappedFields
       aha_value.join(",")
     else
       logger.debug("Using default string mapping for '#{aha_type}'")
-      aha_value
+      aha_value.to_s
     end
   end
   
