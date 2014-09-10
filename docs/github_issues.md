@@ -23,7 +23,7 @@ Please carefully follow these instructions to ensure that the integration is pro
 
 Create the integration in Aha!
 
-1. Enter your Github username and password. Click the _Test connection_ button
+1. Enter your Github username and password. Consider using a [Github Personal Token](https://help.github.com/articles/creating-an-access-token-for-command-line-use) rather than a password here. A token is essential if you use two-factor authentication with your Github account. Click the _Test connection_ button
 2. After a short delay, you will be able to choose the repository the issues will be created in.
 3. Enable the integration.
 4. Test the integration by going to one of your features in Aha! and using the _Send to Github Issues_ item in the _Actions_ menu on the features page. You should then look at your repository in Github and see that the feature (and any requirements) were properly copied to issues. 
