@@ -37,23 +37,27 @@ class AhaServices::Fogbugz < AhaService
     fogbugz_case = fetch_case(payload.case_number)
 
     begin
-      result = find_resource_with_case(fogbugz_case)
+      results = find_resource_with_case(fogbugz_case)['records']
     rescue AhaApi::NotFound
       return # Ignore cases that we don't have Aha! features for.
     end
 
-    if result.feature
-      resource = result.feature
-      resource_type = "feature"
-    elsif result.requirement
-      resource = result.requirement
-      resource_type = "requirement"
-    else
-      logger.info("Unhandled resource type")
-      return
-    end
+    if results
+      results.each do |result|
+        if result.feature
+          resource = result.feature
+          resource_type = "feature"
+        elsif result.requirement
+          resource = result.requirement
+          resource_type = "requirement"
+        else
+          logger.info("Unhandled resource type")
+          return
+        end
 
-    update_resource(resource.resource, resource_type, fogbugz_case)
+        update_resource(resource.resource, resource_type, fogbugz_case)
+      end
+    end
   end
 
 #==============

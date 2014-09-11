@@ -185,14 +185,14 @@ protected
   
   def webhook_feature_url(card_id)
     begin
-      result = api.search_integration_fields(data.integration_id, "id", card_id)
+      result = api.search_integration_fields(data.integration_id, "id", card_id)['records'].first
     rescue AhaApi::NotFound
       return nil # Ignore cards that we don't have Aha! features for.
     end
-  
-    if result.feature
+    
+    if result && result.feature
       resource = result.feature
-    elsif result.requirement
+    elsif result && result.requirement
       resource = result.requirement
     else
       logger.info("Unhandled resource type")

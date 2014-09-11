@@ -36,24 +36,28 @@ class AhaServices::PivotalTracker < AhaService
       next unless change.kind == "story" || change.kind == "task"
 
       begin
-        result = api.search_integration_fields(data.integration_id, "id", change.id)
+        results = api.search_integration_fields(data.integration_id, "id", change.id)['records']
       rescue AhaApi::NotFound
         return # Ignore stories that we don't have Aha! features for.
       end
 
-      if result.feature
-        resource = result.feature
-        resource_type = "feature"
-      elsif result.requirement
-        resource = result.requirement
-        resource_type = "requirement"
-      else
-        logger.info("Unhandled resource type")
-        next
-      end
+      if results
+        results.each do |result|
+          if result.feature
+            resource = result.feature
+            resource_type = "feature"
+          elsif result.requirement
+            resource = result.requirement
+            resource_type = "requirement"
+          else
+            logger.info("Unhandled resource type")
+            next
+          end
 
-      if change.new_values
-        apply_change change.kind, change.new_values, resource.resource, resource_type
+          if change.new_values
+            apply_change change.kind, change.new_values, resource.resource, resource_type
+          end
+        end
       end
     end
   end
@@ -69,12 +73,20 @@ protected
   end
 
   def apply_change(kind, new_values, resource, resource_type)
-    if kind == "story" && new_state = new_values.current_state
-      api.put(resource, {resource_type => { workflow_status: pivotal_to_aha_category(new_state) }})
-    elsif kind == "task" && ["true", true].include?(new_values.complete)
-      api.put(resource, {resource_type => { workflow_status: {category: "done" }}})
-    elsif kind == "task" && ["false", false].include?(new_values.complete)
-      api.put(resource, {resource_type => { workflow_status: {category: "initial" }}})
+    new_values.each do |change_kind, value|
+      if kind == "story"
+        if change_kind == "current_state"
+          api.put(resource, { resource_type => { workflow_status: pivotal_to_aha_category(value) } })
+        elsif change_kind == "name"
+          api.put(resource, { resource_type => { name: value } })
+        elsif change_kind == "description"
+          api.put(resource, { resource_type => { description: value } })
+        end
+      elsif kind == "task" && change_kind == "complete" && value == true
+        api.put(resource, {resource_type => { workflow_status: {category: "done" }}})
+      elsif kind == "task" && change_kind == "complete" && value == false
+        api.put(resource, {resource_type => { workflow_status: {category: "initial" }}})
+      end
     end
   end
 
