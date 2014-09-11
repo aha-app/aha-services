@@ -48,7 +48,11 @@ class GenericResource
   def prepare_request
     http.headers['Content-Type'] = 'application/json'
   end
-
+  
+  def logger
+    @logger
+  end
+  
   def self.default_http_options
     @@default_http_options ||= {
       :request => {:timeout => 310, :open_timeout => 5},

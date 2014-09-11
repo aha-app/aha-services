@@ -31,6 +31,9 @@ class JiraProjectResource < JiraResource
           issue_types.each do |issue_type|
             issue_type['statuses'] = statuses_hash
           end
+        elsif status_response.status == 400
+          # This happens because of some corruption in the server. The
+          # project is present but can't return statuses. See ticket #4577.
         else
           process_response(status_response, 200) do |status_meta|
             status_meta.each do |status_issue_type|
