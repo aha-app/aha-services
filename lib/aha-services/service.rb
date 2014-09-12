@@ -78,10 +78,10 @@ class AhaService
     subclasses = []
     ObjectSpace.each_object(Module) {|m| subclasses << m if m.ancestors.include?(AhaService) && m != AhaService}
     
-    # Removed under development services.
-    if defined?(Rails) && !["development", "staging"].include?(Rails.env)
-      subclasses.reject! {|s| [AhaServices::Zendesk].include?(s) }
-    end
+    # Remove under development services.
+    #if defined?(Rails) && !["development", "staging"].include?(Rails.env)
+    #  subclasses.reject! {|s| [AhaServices::Zendesk].include?(s) }
+    #end
     
     @service_classes = subclasses
   end
