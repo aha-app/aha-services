@@ -1,4 +1,4 @@
-This two-way integration allows you to push your features and requirements in Aha! into Pivotal Tracker and get status changes back.
+This two-way integration allows you to push your features and requirements in Aha! into Pivotal Tracker and get name, description, status changes back.
 
 ## Features
 
@@ -10,7 +10,7 @@ in Pivotal Tracker will depend on the _Mapping_ field.
 * Only the description of a feature or requirement is sent. No tasks or comments are included. 
 * Attachments of a feature or requirement are also sent, unless requirements
 are mapped to tasks in which case no requirement attachments will be sent.
-* After a feature is first sent to Pivotal Tracker, changes to the name, description and requirements, can also be sent to Pivotal Tracker using the _Update Pivotal Tracker_ item in the _Actions_ menu on the features page or by sending all features in a release to Pivotal Tracker again. New requirements will also be created in Pivotal Tracker, however stories that were created for an existing requirement are not deleted from Pivotal Tracker if the requirement is deleted from Aha!. If an attachment is deleted in Aha! the corresponding attachment in Pivotal Tracker is not deleted. 
+* After a feature is first sent to Pivotal Tracker, changes to the name, description and requirements, can also be sent to Pivotal Tracker using the _Update Pivotal Tracker_ item in the _Actions_ menu on the features page or by sending all features in a release to Pivotal Tracker again. New requirements will also be created in Pivotal Tracker, however stories that were created for an existing requirement are not deleted from Pivotal Tracker if the requirement is deleted from Aha!. If an attachment is deleted in Aha! the corresponding attachment in Pivotal Tracker is not deleted. Updating the name, description or status in Pivotal Tracker will update these in Aha!.
 
 ## Configuration
 
