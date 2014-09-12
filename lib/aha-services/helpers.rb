@@ -1,4 +1,5 @@
 require 'plain-david'
+require 'redcarpet'
 
 # Utility routines specific to Aha! data.
 module Helpers
@@ -19,6 +20,11 @@ module Helpers
   
   def html_to_markdown(html)
     ReverseMarkdown.convert(html)
+  end
+
+  def markdown_to_html(markdown)
+    converter = Redcarpet::Markdown.new(Redcarpet::Render::HTML, autolink: true, tables: true)
+    converter.render(markdown)
   end
   
   def reference_num_to_resource_type(reference_num)
