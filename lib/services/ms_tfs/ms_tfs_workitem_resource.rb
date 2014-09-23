@@ -17,10 +17,17 @@ class MSTFSWorkItemResource < MSTFSResource
     end
   end
 
-  def create hash
+  def create fields, links = []
     prepare_request
-    body = { fields: to_field_array(hash)}.to_json
+    body = { fields: to_field_array(fields), links: links }.to_json
     response = http_post mstfs_url("wit/workitems"), body
+    if response.status == 201 then
+      body = parsed_body(response)
+      body.fields = unwrap_field_array body.fields
+      body
+    else
+      raise "Workitem creation unsuccessful"
+    end
   end
 
 protected
@@ -36,6 +43,14 @@ protected
     hashie.results.collect do |entity|
       entity.sourceId
     end
+  end
+
+  def unwrap_field_array array
+    obj = {}
+    array.each do |element|
+      obj[element.field.refName] = element.value
+    end
+    obj
   end
 
   def to_field_array hash

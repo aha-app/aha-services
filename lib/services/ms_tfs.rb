@@ -21,9 +21,14 @@ class AhaServices::MSTFS < AhaService
   end
 
   def receive_create_feature
+    sync_feature
+  end
+
+
+  def sync_feature
     path = meta_data.projects.detect{ |project| data.project == project.id }.name
     # All fields required, exepct for maybe Description
-    workitem_resource.create Hash[
+    workitem = workitem_resource.create Hash[
       "System.Title" => payload.feature.name,
       "System.Description" => payload.feature.description.body,
       "System.WorkItemType" => "Feature",
@@ -33,6 +38,46 @@ class AhaServices::MSTFS < AhaService
       "System.Reason" => "New Feature",
       "Microsoft.VSTS.Common.Priority" => 3
     ]
+    #sync_requirements workitem, path
+    sync_tasks workitem, path
+  end
+
+  def sync_requirements workitem, path
+    payload.feature.requirements.each do |requirement|
+      workitem_resource.create Hash[
+        "System.Title" => requirement.name,
+        "System.Description" => requirement.description.body,
+        "System.WorkItemType" => data.requirement_mapping,
+        "System.AreaPath" => path,
+        "System.IterationPath" => path,
+        "System.State" => "New",
+        "System.Reason" => "New backlog item",
+        "Microsoft.VSTS.Common.Priority" => 3
+      ], [
+        {
+          :linkType => "System.LinkTypes.Hierarchy",
+          :targetWorkItemId => -1,
+          :sourceWorkItemId => workitem.id
+        }
+      ]
+    end
+  end
+
+  def sync_tasks workitem, path
+    puts
+    puts payload.to_hash
+    puts
+    payload.feature.tasks.each do |task|
+      workitem_resource.create Hash[
+        "System.Title" => task.name
+      ], [
+        {
+          :linkType => "System.LinkTypes.Hierarchy",
+          :targetWorkItemId => -1,
+          :sourceWorkItemId => workitem.id
+        }
+      ]
+    end
   end
 
 protected
