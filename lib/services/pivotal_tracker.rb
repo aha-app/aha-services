@@ -83,7 +83,7 @@ protected
           api.put(resource, { resource_type => { description: markdown_to_html(value) } })
         end
       elsif kind == "task" && change_kind == "complete" && value == true
-        api.put(resource, {resource_type => { workflow_status: {category: "done" }}})
+        api.put(resource, {resource_type => { workflow_status: {category: "shipped" }}})
       elsif kind == "task" && change_kind == "complete" && value == false
         api.put(resource, {resource_type => { workflow_status: {category: "initial" }}})
       end
