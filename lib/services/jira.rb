@@ -308,10 +308,14 @@ protected
     
     logger.info("Creating comment for #{issue_info.id}")
     
-    comment = Hashie::Mash.new(
-      body: convert_html(comment.body)
+    comment_hash = Hashie::Mash.new(
+      body: "Comment added by #{comment.user.name} in [Aha!|#{comment.url}]\n\n" + convert_html(comment.body)
     )
-    new_comment = comment_resource.create(issue_info.id, comment)
+    new_comment = comment_resource.create(issue_info.id, comment_hash)
+    
+    upload_attachments(comment.attachments, issue_info.id)
+    
+    new_comment
   end
   
   def project_resource
