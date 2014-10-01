@@ -38,11 +38,12 @@ class AhaServices::MSTFS < AhaService
       "System.Reason" => "New Feature",
       "Microsoft.VSTS.Common.Priority" => 3
     ]
-    #sync_requirements workitem, path
+    sync_requirements workitem, path
     sync_tasks workitem, path
   end
 
   def sync_requirements workitem, path
+    return unless payload.feature.requirements
     payload.feature.requirements.each do |requirement|
       workitem_resource.create Hash[
         "System.Title" => requirement.name,
@@ -64,9 +65,7 @@ class AhaServices::MSTFS < AhaService
   end
 
   def sync_tasks workitem, path
-    puts
-    puts payload.to_hash
-    puts
+    return unless payload.feature.tasks
     payload.feature.tasks.each do |task|
       workitem_resource.create Hash[
         "System.Title" => task.name
