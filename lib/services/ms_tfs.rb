@@ -7,14 +7,14 @@ class AhaServices::MSTFS < AhaService
 
   install_button
 
-  select :requirement_mapping, collection: [ [ "User Story", "User Story" ], [ "Requirement", "Requirement" ], [ "Product Backlog Item", "Product Backlog Item" ] ]
-
   select :project, description: "The project you want to create new features in.",
     collection: ->(meta_data, data) {
     meta_data.projects.collect do |project|
       [project.name, project.id]
     end
   }
+
+  select :requirement_mapping, collection: [ [ "User Story", "User Story" ], [ "Requirement", "Requirement" ], [ "Product Backlog Item", "Product Backlog Item" ] ]
 
   def receive_installed
     meta_data.projects = project_resource.all
