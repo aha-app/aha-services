@@ -1,12 +1,14 @@
 class MSTFSResource < GenericResource
 
+  API_VERSION = "1.0-preview.1"
+
   def faraday_builder b
     b.basic_auth(@service.data.user_name, @service.data.user_password)
   end
 protected
   def mstfs_url(path)
     joiner = (path =~ /\?/) ? "&" : "?"
-    "https://#{@service.data.account_name}.visualstudio.com/defaultcollection/_apis/#{path}#{joiner}&api-version=1.0-preview.1"
+    "https://#{@service.data.account_name}.visualstudio.com/defaultcollection/_apis/#{path}#{joiner}&api-version="+MSTFSResource::API_VERSION
   end
 
   def parsed_body response
