@@ -50,6 +50,10 @@ class AhaServices::Jira < AhaService
   def receive_update_release
     update_or_attach_jira_version(payload.release)
   end
+  
+  def receive_create_comment
+    create_comment(payload.comment, payload.commentable)
+  end
 
   # These methods are exposed here so they can be used in the callback and
   # import code.
@@ -298,7 +302,18 @@ protected
       issue_link_resource.create(link)
     end
   end
-
+  
+  def create_comment(comment, resource)
+    issue_info = get_existing_issue_info(resource)
+    
+    logger.info("Creating comment for #{issue_info.id}")
+    
+    comment = Hashie::Mash.new(
+      body: convert_html(comment.body)
+    )
+    new_comment = comment_resource.create(issue_info.id, comment)
+  end
+  
   def project_resource
     @project_resource ||= JiraProjectResource.new(self)
   end
@@ -313,6 +328,10 @@ protected
 
   def version_resource
     @version_resource ||= JiraVersionResource.new(self)
+  end
+  
+  def comment_resource
+    @comment_resource ||= JiraCommentResource.new(self)
   end
 
   def issue_resource
