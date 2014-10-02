@@ -232,6 +232,7 @@ protected
       .merge!(time_tracking_fields(resource, issue_type))
       .merge!(mapped_custom_fields(@feature, issue_type))
       .merge!(assignee_fields(resource, issue_type))
+      .merge!(reporter_fields(@feature, issue_type))
     
     new_issue = issue_resource.create(issue)
 
@@ -410,6 +411,14 @@ protected
   def assignee_fields(resource, issue_type)
     if (issue_type.has_field_assignee.nil? || issue_type.has_field_assignee) && resource.assigned_to_user && !resource.assigned_to_user.default_assignee && (user = user_resource.picker(resource.assigned_to_user.email))
       { assignee: { name: user.name } }
+    else
+      Hash.new
+    end
+  end
+  
+  def reporter_fields(resource, issue_type)
+    if (issue_type.has_field_reporter.nil? || issue_type.has_field_reporter) && resource.release.owner && (user = user_resource.picker(resource.release.owner.email))
+      { reporter: { name: user.name } }
     else
       Hash.new
     end
