@@ -50,6 +50,10 @@ class AhaServices::Jira < AhaService
   def receive_update_release
     update_or_attach_jira_version(payload.release)
   end
+  
+  def receive_create_comment
+    create_comment(payload.comment, payload.commentable)
+  end
 
   # These methods are exposed here so they can be used in the callback and
   # import code.
@@ -228,6 +232,7 @@ protected
       .merge!(time_tracking_fields(resource, issue_type))
       .merge!(mapped_custom_fields(@feature, issue_type))
       .merge!(assignee_fields(resource, issue_type))
+      .merge!(reporter_fields(resource, issue_type))
     
     new_issue = issue_resource.create(issue)
 
@@ -298,7 +303,22 @@ protected
       issue_link_resource.create(link)
     end
   end
-
+  
+  def create_comment(comment, resource)
+    issue_info = get_existing_issue_info(resource)
+    
+    logger.info("Creating comment for #{issue_info.id}")
+    
+    comment_hash = Hashie::Mash.new(
+      body: "Comment added by #{comment.user.name} in [Aha!|#{comment.url}]\n\n" + convert_html(comment.body)
+    )
+    new_comment = comment_resource.create(issue_info.id, comment_hash)
+    
+    upload_attachments(comment.attachments, issue_info.id)
+    
+    new_comment
+  end
+  
   def project_resource
     @project_resource ||= JiraProjectResource.new(self)
   end
@@ -313,6 +333,10 @@ protected
 
   def version_resource
     @version_resource ||= JiraVersionResource.new(self)
+  end
+  
+  def comment_resource
+    @comment_resource ||= JiraCommentResource.new(self)
   end
 
   def issue_resource
@@ -387,6 +411,14 @@ protected
   def assignee_fields(resource, issue_type)
     if (issue_type.has_field_assignee.nil? || issue_type.has_field_assignee) && resource.assigned_to_user && !resource.assigned_to_user.default_assignee && (user = user_resource.picker(resource.assigned_to_user.email))
       { assignee: { name: user.name } }
+    else
+      Hash.new
+    end
+  end
+  
+  def reporter_fields(resource, issue_type)
+    if (issue_type.has_field_reporter.nil? || issue_type.has_field_reporter) && resource.created_by_user && (user = user_resource.picker(resource.created_by_user.email))
+      { reporter: { name: user.name } }
     else
       Hash.new
     end
