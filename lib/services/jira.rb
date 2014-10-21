@@ -433,7 +433,7 @@ protected
         }
       }
     elsif resource.work_units == 20 and issue_type.has_field_story_points # Units are points.
-      { meta_data.story_points_field => resource.remaining_estimate }
+      { meta_data.story_points_field => resource.original_estimate }
     else
       Hash.new
     end
