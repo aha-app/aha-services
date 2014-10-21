@@ -110,5 +110,5 @@ class AddJiraJwt < Faraday::Middleware
   end
 end
 
-Faraday.register_middleware :request, :add_jira_user => lambda { AddJiraUser }
-Faraday.register_middleware :request, :add_jira_jwt => lambda { AddJiraJwt }
+Faraday::Middleware.register_middleware :request, :add_jira_user => lambda { AddJiraUser }
+Faraday::Middleware.register_middleware :request, :add_jira_jwt => lambda { AddJiraJwt }
