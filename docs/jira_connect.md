@@ -23,7 +23,7 @@ The integration supports features and requirements being sent from Aha! to JIRA 
 
 You need to be a Product Owner in Aha! and an Administrator in JIRA to set up this integration.
 
-This integration works with both the on-demand and on premise versions of JIRA. Note that if you are running the downloaded, on premise version of JIRA you will need to create a [firewall exception](http://support.aha.io/entries/40842777) so Aha! can make calls to the JIRA API. The exception should forward requests to the internal JIRA server.
+This integration works with both the on-demand version of JIRA. 
 
 Please carefully follow these instructions to ensure that the integration is properly configured.
 
