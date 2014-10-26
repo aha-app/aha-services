@@ -9,6 +9,7 @@ class AhaServices::MSTFS < AhaService
 
   select :project, description: "The project you want to create new features in.",
     collection: ->(meta_data, data) {
+    return [] if meta_data.nil? or meta_data.projects.nil?
     meta_data.projects.collect do |project|
       [project.name, project.id]
     end
@@ -24,56 +25,42 @@ class AhaServices::MSTFS < AhaService
     sync_feature
   end
 
-
-  def sync_feature
-    path = meta_data.projects.detect{ |project| data.project == project.id }.name
-    # All fields required, exepct for maybe Description
-    workitem = workitem_resource.create Hash[
-      "System.Title" => payload.feature.name,
-      "System.Description" => payload.feature.description.body,
-      "System.WorkItemType" => "Feature",
-      "System.AreaPath" => path,
-      "System.IterationPath" => path,
-      "System.State" => "New",
-      "System.Reason" => "New Feature",
-      "Microsoft.VSTS.Common.Priority" => 3
-    ]
-    sync_requirements workitem, path
-    sync_tasks workitem, path
+  def receive_update_feature
+    # no-op
+    # TODO: implement updating features
+    puts "TODO: received an update"
   end
 
-  def sync_requirements workitem, path
+  def sync_feature
+    feature = workitem_resource.create_feature data.project, payload.feature.name, payload.feature.description.body
+    sync_requirements feature
+    sync_tasks feature
+  end
+
+  def sync_requirements feature
     return unless payload.feature.requirements
     payload.feature.requirements.each do |requirement|
-      workitem_resource.create Hash[
+      workitem_resource.create data.project, data.requirement_mapping, Hash[
         "System.Title" => requirement.name,
         "System.Description" => requirement.description.body,
-        "System.WorkItemType" => data.requirement_mapping,
-        "System.AreaPath" => path,
-        "System.IterationPath" => path,
-        "System.State" => "New",
-        "System.Reason" => "New backlog item",
-        "Microsoft.VSTS.Common.Priority" => 3
       ], [
         {
-          :linkType => "System.LinkTypes.Hierarchy",
-          :targetWorkItemId => -1,
-          :sourceWorkItemId => workitem.id
+          :rel => "System.LinkTypes.Hierarchy-Forward",
+          :url => feature.url
         }
       ]
     end
   end
 
-  def sync_tasks workitem, path
+  def sync_tasks feature
     return unless payload.feature.tasks
     payload.feature.tasks.each do |task|
-      workitem_resource.create Hash[
+      workitem_resource.create data.project, "Task", Hash[
         "System.Title" => task.name
       ], [
         {
-          :linkType => "System.LinkTypes.Hierarchy",
-          :targetWorkItemId => -1,
-          :sourceWorkItemId => workitem.id
+          :rel => "System.LinkTypes.Hierarchy-Forward",
+          :url => feature.url
         }
       ]
     end

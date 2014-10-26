@@ -1,63 +1,46 @@
+require 'erb'
+
 class MSTFSWorkItemResource < MSTFSResource
 
-  ALL_QUERY = "SELECT [System.ID], [System.Title], [System.Description], [System.WorkItemType], [System.State] FROM WorkItems"
+  PATCH_HEADER = { 'Content-Type'=> 'application/json-patch+json' }
 
-  def all
+  def create project, type, fields, links = []
     prepare_request
-    response = http_post mstfs_url("wit/queryresults"), { wiql: ALL_QUERY }.to_json
-    ids = collect_ids_from_query response
-    response = http_get mstfs_url("wit/workitems?ids=#{ids.join(",")}")
-    found_resource(response).value.collect do |workitem|
+    body = (to_field_patch_array(fields) + to_relation_patch_array(links) ).to_json
+    url = mstfs_project_url project, "wit/workitems/$" + ERB::Util.url_encode(type) 
+    response = http_patch url, body, PATCH_HEADER
+    return parsed_body(response) if response.status == 200
+    # Something went wrong ..
+    raise "Workitem creation unsuccessful"
+  end
+
+  def create_feature project, title, description
+    create project, "Feature", Hash[
+      "System.Title" => title,
+      "System.Description" => description,
+    ]
+  end
+
+protected
+  def to_field_patch_array fields
+    fields.collect do |path, value|
       {
-        id: workitem.id,
-        name: field_by_refName( workitem.fields, "System.Title" ),
-        description: field_by_refName( workitem.fields, "System.Description" ),
-        workItemType: field_by_refName( workitem.fields, "System.WorkItemType" )
+        op: "add",
+        path: "/fields/" + path,
+        value: value
       }
     end
   end
 
-  def create fields, links = []
-    prepare_request
-    body = { fields: to_field_array(fields), links: links }.to_json
-    response = http_post mstfs_url("wit/workitems"), body
-    if response.status == 201 then
-      body = parsed_body(response)
-      body.fields = unwrap_field_array body.fields
-      body
-    else
-      raise "Workitem creation unsuccessful"
-    end
-  end
-
-protected
-
-  def field_by_refName fields, refName
-    f = fields.find{ |fieldObject| fieldObject.field.refName == refName }
-    f ? f.value : nil
-  end
-
-  def collect_ids_from_query response
-    return [] unless response.status == 200
-    hashie = found_resource(response)
-    hashie.results.collect do |entity|
-      entity.sourceId
-    end
-  end
-
-  def unwrap_field_array array
-    obj = {}
-    array.each do |element|
-      obj[element.field.refName] = element.value
-    end
-    obj
-  end
-
-  def to_field_array hash
-    hash.collect do |key, value|
+  def to_relation_patch_array relations
+    relations.collect do |relation|
       {
-        field: { refName: key },
-        value: value
+        op: "add",
+        path: "/relations/-",
+        value: {
+          rel: relation[:rel],
+          url: relation[:url]
+        }
       }
     end
   end
