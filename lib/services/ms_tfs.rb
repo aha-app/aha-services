@@ -17,8 +17,11 @@ class AhaServices::MSTFS < AhaService
 
   select :requirement_mapping, collection: [ [ "User Story", "User Story" ], [ "Requirement", "Requirement" ], [ "Product Backlog Item", "Product Backlog Item" ] ]
 
+  callback_url description: "This url will be used to receive updates from TFS."
+
   def receive_installed
     meta_data.projects = project_resource.all
+    pp subscriptions_resource.create_maybe data.callback_url
   end
 
   def receive_create_feature
@@ -80,5 +83,9 @@ protected
 
   def workitem_resource
     @workitem_resource ||= MSTFSWorkItemResource.new(self)
+  end
+
+  def subscriptions_resource
+    @subscriptions_resource ||= MSTFSSubscriptionsResource.new(self)
   end
 end
