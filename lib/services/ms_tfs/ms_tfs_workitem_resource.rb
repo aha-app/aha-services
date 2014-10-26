@@ -14,11 +14,14 @@ class MSTFSWorkItemResource < MSTFSResource
     raise "Workitem creation unsuccessful"
   end
 
-  def create_feature project, title, description
-    create project, "Feature", Hash[
-      "System.Title" => title,
-      "System.Description" => description,
+  def create_feature project, feature
+    created_feature = create project, "Feature", Hash[
+      "System.Title" => feature.name,
+      "System.Description" => feature.description.body,
     ]
+    api.create_integration_fields("features", 
+      feature.reference_num, @service.data.integration_id, {id: created_feature.id, url: created_feature.url})
+    created_feature
   end
 
 protected

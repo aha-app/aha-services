@@ -31,8 +31,15 @@ class AhaServices::MSTFS < AhaService
     puts "TODO: received an update"
   end
 
+  def receive_webhook
+    # no-op
+    # TODO: implement two way sync
+    puts "TODO: implement two way sync"
+    pp payload.webhook
+  end
+
   def sync_feature
-    feature = workitem_resource.create_feature data.project, payload.feature.name, payload.feature.description.body
+    feature = workitem_resource.create_feature data.project, payload.feature
     sync_requirements feature
     sync_tasks feature
   end
