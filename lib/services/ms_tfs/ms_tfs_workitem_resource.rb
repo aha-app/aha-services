@@ -5,7 +5,6 @@ class MSTFSWorkItemResource < MSTFSResource
   PATCH_HEADER = { 'Content-Type'=> 'application/json-patch+json' }
 
   def create project, type, fields, links = []
-    prepare_request
     body = (to_field_patch_array(fields) + to_relation_patch_array(links) ).to_json
     url = mstfs_project_url project, "wit/workitems/$" + ERB::Util.url_encode(type) 
     response = http_patch url, body, PATCH_HEADER
