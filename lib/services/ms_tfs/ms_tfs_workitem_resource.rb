@@ -4,6 +4,12 @@ class MSTFSWorkItemResource < MSTFSResource
 
   PATCH_HEADER = { 'Content-Type'=> 'application/json-patch+json' }
 
+  def by_url url
+    response = http_get url
+    return parsed_body response if response.status == 200
+    raise "Workitem not found"
+  end
+
   def create project, type, fields, links = []
     body = (to_field_patch_array(fields) + to_relation_patch_array(links) ).to_json
     url = mstfs_project_url project, "wit/workitems/$" + ERB::Util.url_encode(type) 

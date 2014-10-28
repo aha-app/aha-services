@@ -1,3 +1,5 @@
+require 'erb'
+
 class AhaServices::MSTFS < AhaService
   caption "Send features to Microsoft Team Foundation Server"
 
@@ -25,7 +27,8 @@ class AhaServices::MSTFS < AhaService
   end
 
   def receive_create_feature
-    sync_feature
+    feature = workitem_resource.create_feature data.project, payload.feature
+    sync_requirements feature
   end
 
   def receive_update_feature
@@ -37,14 +40,14 @@ class AhaServices::MSTFS < AhaService
   def receive_webhook
     # no-op
     # TODO: implement two way sync
-    puts "TODO: implement two way sync"
-    pp payload.webhook
-  end
-
-  def sync_feature
-    feature = workitem_resource.create_feature data.project, payload.feature
-    sync_requirements feature
-    sync_tasks feature
+    begin
+      url = payload.webhook.resource._links.parent.href
+      workitem = workitem_resource.by_url url
+      results = api.search_integration_fields(data.integration_id, "id", workitem.id)['records']
+      pp results
+    rescue AhaApi::NotFound
+      return # Ignore stories that we don't have Aha! features for.
+    end
   end
 
   def sync_requirements feature
@@ -53,20 +56,6 @@ class AhaServices::MSTFS < AhaService
       workitem_resource.create data.project, data.requirement_mapping, Hash[
         "System.Title" => requirement.name,
         "System.Description" => requirement.description.body,
-      ], [
-        {
-          :rel => "System.LinkTypes.Hierarchy-Forward",
-          :url => feature.url
-        }
-      ]
-    end
-  end
-
-  def sync_tasks feature
-    return unless payload.feature.tasks
-    payload.feature.tasks.each do |task|
-      workitem_resource.create data.project, "Task", Hash[
-        "System.Title" => task.name
       ], [
         {
           :rel => "System.LinkTypes.Hierarchy-Forward",

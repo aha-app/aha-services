@@ -1,4 +1,4 @@
-This integration allows you to push features, requirements and tasks in Aha! into the Microsoft Team Foundation server.
+This integration allows you to push features and requirements in Aha! into the Microsoft Team Foundation server.
 
 ##Features
 
