@@ -23,12 +23,11 @@ class AhaServices::MSTFS < AhaService
 
   def receive_installed
     meta_data.projects = project_resource.all
-    pp subscriptions_resource.create_maybe data.callback_url
   end
 
   def receive_create_feature
-    feature = workitem_resource.create_feature data.project, payload.feature
-    sync_requirements feature
+    created_feature = workitem_resource.create_feature data.project, payload.feature
+    sync_requirements created_feature
   end
 
   def receive_update_feature

@@ -24,9 +24,28 @@ class MSTFSWorkItemResource < MSTFSResource
       "System.Title" => feature.name,
       "System.Description" => feature.description.body,
     ]
-    api.create_integration_fields("features", 
-      feature.reference_num, @service.data.integration_id, {id: created_feature.id, url: created_feature.url})
+    api.create_integration_fields("features", feature.reference_num, @service.data.integration_id, {id: created_feature.id, url: created_feature.url})
+    (feature.attachments | feature.description.attachments).each do |aha_attachment|
+      new_attachment = attachment_resource.upload_attachment aha_attachment
+      add_attachment created_feature, new_attachment
+    end
     created_feature
+  end
+
+  def add_attachment workitem, attachment
+    body = [{
+      :op => :add,
+      :path => "/relations/-",
+      :value => {
+        :rel => :AttachedFile,
+        :url => attachment.url
+      }
+    }].to_json
+    puts "wit/workitem/#{workitem.id}"
+    url = mstfs_url "wit/workitems/#{workitem.id}"
+    response = http_patch url, body, PATCH_HEADER
+    return parsed_body response if response.status == 200
+    raise AhaService::RemoteError.new("Could not link attachment, response status is #{response.status}")
   end
 
 protected
@@ -51,5 +70,9 @@ protected
         }
       }
     end
+  end
+
+  def attachment_resource
+    @attachment_resource ||= MSTFSAttachmentResource.new(@service)
   end
 end

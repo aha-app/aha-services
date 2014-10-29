@@ -14,12 +14,12 @@ class MSTFSResource < GenericResource
 protected
   def mstfs_url path
     joiner = (path =~ /\?/) ? "&" : "?"
-    "https://#{@service.data.account_name}.visualstudio.com/defaultcollection/_apis/#{path}#{joiner}&api-version="+self.class::API_VERSION
+    "https://#{@service.data.account_name}.visualstudio.com/defaultcollection/_apis/#{path}#{joiner}api-version="+self.class::API_VERSION
   end
 
   def mstfs_project_url project, path
     joiner = (path =~ /\?/) ? "&" : "?"
-    "https://#{@service.data.account_name}.visualstudio.com/defaultcollection/#{project}/_apis/#{path}#{joiner}&api-version="+self.class::API_VERSION
+    "https://#{@service.data.account_name}.visualstudio.com/defaultcollection/#{project}/_apis/#{path}#{joiner}api-version="+self.class::API_VERSION
   end
 
   def parsed_body response
