@@ -23,7 +23,7 @@ The integration supports features and requirements being sent from Aha! to JIRA 
 
 You need to be a Product Owner in Aha! and an Administrator in JIRA to set up this integration.
 
-This integration works with both the on-demand version of JIRA. 
+This integration only works with the on-demand version of JIRA. 
 
 Please carefully follow these instructions to ensure that the integration is properly configured.
 
