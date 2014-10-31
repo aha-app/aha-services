@@ -36,6 +36,19 @@ class MSTFSFeatureResource < MSTFSResource
     workitem_resource.update tfs_feature.id, patch_set
   end
 
+  def update_aha_feature aha_feature, tfs_feature
+      changes = {}
+      if aha_feature.name != tfs_feature.fields["System.Title"]
+        changes[:name] = tfs_feature.fields["System.Title"]
+      end
+      if aha_feature.description.body != tfs_feature.fields["System.Description"]
+        changes[:description] = tfs_feature.fields["System.Description"]
+      end
+      if changes.length > 0
+        api.put feature.resource, { :feature => changes }
+      end
+  end
+
 protected
   def create_attachments tfs_feature, aha_attachments
     aha_attachments.each do |aha_attachment|

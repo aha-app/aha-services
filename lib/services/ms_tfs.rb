@@ -45,8 +45,7 @@ class AhaServices::MSTFS < AhaService
       results = api.search_integration_fields(data.integration_id, "id", workitem.id)['records']
       return if results.length != 1
       return unless results[0].feature
-      feature = results[0].feature
-      api.put feature.resource, { :feature => { :name => workitem.fields["System.Title"], :description => workitem.fields["System.Description"] } }
+      feature_resource.update_aha_feature results[0].feature, workitem
     rescue AhaApi::NotFound
       return # Ignore features that we don't have Aha! features for.
     end
