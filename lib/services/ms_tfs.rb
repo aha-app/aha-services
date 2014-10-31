@@ -26,14 +26,13 @@ class AhaServices::MSTFS < AhaService
   end
 
   def receive_create_feature
-    created_feature = workitem_resource.create_feature data.project, payload.feature
-    sync_requirements created_feature
+    created_feature = feature_resource.create data.project, payload.feature
   end
 
   def receive_update_feature
-    workitem_id = payload.feature.integration_fields.detect{|field| field.name == "id"}.value rescue nil
-    unless workitem_id.nil?
-      workitem_resource.update workitem_id, payload.feature.name, payload.feature.description.body
+    tfs_feature_id = payload.feature.integration_fields.detect{|field| field.name == "id"}.value rescue nil
+    unless tfs_feature_id.nil?
+      feature_resource.update tfs_feature_id, payload.feature
     end
   end
 
@@ -53,21 +52,6 @@ class AhaServices::MSTFS < AhaService
     end
   end
 
-  def sync_requirements new_feature
-    return unless payload.new_feature.requirements
-    payload.new_feature.requirements.each do |requirement|
-      workitem_resource.create data.project, data.requirement_mapping, Hash[
-        "System.Title" => requirement.name,
-        "System.Description" => requirement.description.body,
-      ], [
-        {
-          :rel => "System.LinkTypes.Hierarchy-Forward",
-          :url => new_feature.url
-        }
-      ]
-    end
-  end
-
 protected
   def project_resource
     @project_resource ||= MSTFSProjectResource.new(self)
@@ -79,5 +63,9 @@ protected
 
   def subscriptions_resource
     @subscriptions_resource ||= MSTFSSubscriptionsResource.new(self)
+  end
+
+  def feature_resource
+    @feature_resource ||= MSTFSFeatureResource.new(self)
   end
 end

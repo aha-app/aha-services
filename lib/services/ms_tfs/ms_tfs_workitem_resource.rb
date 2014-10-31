@@ -10,53 +10,35 @@ class MSTFSWorkItemResource < MSTFSResource
     raise "Workitem not found"
   end
 
+  def by_id id
+    url = mstfs_url "wit/workitems/#{id}"
+    by_url url
+  end
+
   def create project, type, fields, links = []
     body = (to_field_patch_array(fields) + to_relation_patch_array(links) ).to_json
-    url = mstfs_project_url project, "wit/workitems/$" + ERB::Util.url_encode(type) 
+    url = mstfs_project_url project, "wit/workitems/$" + ERB::Util.url_encode(type)
     response = http_patch url, body, PATCH_HEADER
     return parsed_body(response) if response.status == 200
     # Something went wrong ..
-    raise "Workitem creation unsuccessful"
-  end
-
-  def create_feature project, feature
-    created_feature = create project, "Feature", Hash[
-      "System.Title" => feature.name,
-      "System.Description" => feature.description.body,
-    ]
-    api.create_integration_fields("features", feature.reference_num, @service.data.integration_id, {id: created_feature.id, url: created_feature.url})
-    (feature.attachments | feature.description.attachments).each do |aha_attachment|
-      new_attachment = attachment_resource.upload_attachment aha_attachment
-      add_attachment created_feature, new_attachment
-    end
-    created_feature
+    raise AhaService::RemoteError.new "Workitem creation unsuccessful"
   end
 
   def add_attachment workitem, attachment
-    body = [{
+    patch_set = [{
       :op => :add,
       :path => "/relations/-",
       :value => {
         :rel => :AttachedFile,
         :url => attachment.url
       }
-    }].to_json
-    url = mstfs_url "wit/workitems/#{workitem.id}"
-    response = http_patch url, body, PATCH_HEADER
-    return parsed_body response if response.status == 200
-    raise AhaService::RemoteError.new("Could not link attachment, response status is #{response.status}")
+    }]
+    update workitem.id, patch_set
   end
 
-  def update workitem_id, title, description
-    body = [{
-      :op => :replace,
-      :path => "/fields/System.Title",
-      :value => title
-    }, {
-      :op => :replace,
-      :path => "/fields/System.Description",
-      :value => description
-    }].to_json
+  def update workitem_id, patch_set
+    return if patch_set.length == 0
+    body = patch_set.to_json
     url = mstfs_url "wit/workitems/#{workitem_id}"
     response = http_patch url, body, PATCH_HEADER
     return parsed_body response if response.status == 200
