@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
   s.add_dependency "hashie", "~> 2.1.1"
   s.add_dependency "faraday", "~> 0.9.0"
   s.add_dependency "faraday_middleware", "~> 0.9.0"
-  s.add_dependency "simple_oauth"
+  s.add_dependency "simple_oauth", '>= 0.1', '< 0.3'
   s.add_dependency "activesupport"
   s.add_dependency "htmlentities"
 
