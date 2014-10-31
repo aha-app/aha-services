@@ -14,9 +14,11 @@ module Networking
         end
       end
       options[:ssl][:ca_file] ||= ca_file
-
+      
+      encoding = options.delete(:encoding)
+      
       Faraday.new(options) do |b|
-        b.request options[:encoding] || :url_encoded
+        b.request encoding || :url_encoded
         faraday_builder(b)
         b.adapter *(options[:adapter] || :net_http)
         b.use(HttpReporter, self)
