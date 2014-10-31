@@ -18,4 +18,7 @@ class AhaServices::JiraConnect < AhaServices::Jira
   internal :feature_status_mapping
   internal :field_mapping
   boolean :send_tags, description: "Check to synchronize Aha! tags and JIRA labels. We recommend enabling this for new integrations. Enabling this option once features are synced to JIRA may cause tags in Aha! or labels in JIRA to be removed from a feature if the corresponding label or tag doesn't exist in the other system."
+  
+  callback_url description: "URL to add to the webhooks section of JIRA if you want to automatically import new JIRA issues to Aha!. See instructions for configuring the webhook."
+  
 end

@@ -39,6 +39,11 @@ Please carefully follow these instructions to ensure that the integration is pro
 
 If multiple Aha! products are being integrated with JIRA, then the steps 1 to 3 only need to be completed once. Step 4 onwards must be repeated for each product.
 
+If you want to have issues created in JIRA automatically imported into Aha! then it is necessary to also create a webhook in JIRA:
+
+4.	Copy the Webhook URL below. In the JIRA administration section on the _System_ tab, choose _Webhooks_.
+5.	Create a new _Webhook_ in JIRA and paste in the Webhook URL that you copied. Enable only the _Issue created_ event. Only one webhook should be created per Aha! account.
+
 
 ## Troubleshooting
 

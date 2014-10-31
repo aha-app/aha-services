@@ -31,8 +31,8 @@ Please carefully follow these instructions to ensure that the integration is pro
 1.	Configure the Server URL, Username and Password below. Click the _Test connection_ button
 2.	After a short delay, you will be able to choose the Project the issues will be created in.
 3. 	Map how you want new features to show up in JIRA and how the JIRA status fields should map to Aha! 
-4.	Copy the Hook URL below. In the JIRA administration section on the _System_ tab, choose _Webhooks_.
-5.	Create a new _Webhook_ in JIRA and paste in the Hook URL that you copied. Enable _All issue events_. This will enable the features listed above in the From JIRA to Aha! section. Only one webhook should be created per Aha! account.
+4.	Copy the Webhook URL below. In the JIRA administration section on the _System_ tab, choose _Webhooks_.
+5.	Create a new _Webhook_ in JIRA and paste in the Webhook URL that you copied. Enable _All issue events_. This will enable changes in JIRA to be reflected in Aha!. Only one webhook should be created per Aha! account.
 6.	Enable the integration.
 7. 	Test the integration by going to one of your features in Aha! and using the _Send to JIRA_ item in the _Actions_ menu on the features page. You should then look at your project in JIRA and see that the feature (and any requirements) were properly copied. 
 
