@@ -41,11 +41,26 @@ class MSTFSWorkItemResource < MSTFSResource
         :url => attachment.url
       }
     }].to_json
-    puts "wit/workitem/#{workitem.id}"
     url = mstfs_url "wit/workitems/#{workitem.id}"
     response = http_patch url, body, PATCH_HEADER
     return parsed_body response if response.status == 200
     raise AhaService::RemoteError.new("Could not link attachment, response status is #{response.status}")
+  end
+
+  def update workitem_id, title, description
+    body = [{
+      :op => :replace,
+      :path => "/fields/System.Title",
+      :value => title
+    }, {
+      :op => :replace,
+      :path => "/fields/System.Description",
+      :value => description
+    }].to_json
+    url = mstfs_url "wit/workitems/#{workitem_id}"
+    response = http_patch url, body, PATCH_HEADER
+    return parsed_body response if response.status == 200
+    raise AhaService::RemoteError.new("Could not update workitem, response status is #{response.status}")
   end
 
 protected

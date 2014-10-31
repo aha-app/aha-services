@@ -31,9 +31,10 @@ class AhaServices::MSTFS < AhaService
   end
 
   def receive_update_feature
-    # no-op
-    # TODO: implement updating features
-    puts "TODO: received an update"
+    workitem_id = payload.feature.integration_fields.detect{|field| field.name == "id"}.value rescue nil
+    unless workitem_id.nil?
+      workitem_resource.update workitem_id, payload.feature.name, payload.feature.description.body
+    end
   end
 
   def receive_webhook
@@ -43,22 +44,25 @@ class AhaServices::MSTFS < AhaService
       url = payload.webhook.resource._links.parent.href
       workitem = workitem_resource.by_url url
       results = api.search_integration_fields(data.integration_id, "id", workitem.id)['records']
-      pp results
+      return if results.length != 1
+      return unless results[0].feature
+      feature = results[0].feature
+      api.put feature.resource, { :feature => { :name => workitem.fields["System.Title"], :description => workitem.fields["System.Description"] } }
     rescue AhaApi::NotFound
-      return # Ignore stories that we don't have Aha! features for.
+      return # Ignore features that we don't have Aha! features for.
     end
   end
 
-  def sync_requirements feature
-    return unless payload.feature.requirements
-    payload.feature.requirements.each do |requirement|
+  def sync_requirements new_feature
+    return unless payload.new_feature.requirements
+    payload.new_feature.requirements.each do |requirement|
       workitem_resource.create data.project, data.requirement_mapping, Hash[
         "System.Title" => requirement.name,
         "System.Description" => requirement.description.body,
       ], [
         {
           :rel => "System.LinkTypes.Hierarchy-Forward",
-          :url => feature.url
+          :url => new_feature.url
         }
       ]
     end
