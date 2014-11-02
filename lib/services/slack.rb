@@ -27,6 +27,8 @@ class AhaServices::Slack < AhaService
       
     send_message(fallback: "#{user} #{audit.description}",
       pretext: "#{user} #{link}",
+      username: "Aha!",
+      icon_url: "https://secure.aha.io/assets/logos/aha_square_300.png",
       fields: audit.changes.collect do |change|
         {
           title: change.field_name,
