@@ -13,6 +13,8 @@ class AhaServices::HipChat < AhaService
   
   def receive_audit
     audit = payload.audit
+    return unless audit.interesting
+    
     user = if audit.user
         audit.user.name
       else

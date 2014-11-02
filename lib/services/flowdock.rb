@@ -12,6 +12,8 @@ class AhaServices::Flowdock < AhaService
   
   def receive_audit
     audit = payload.audit
+    return unless audit.interesting
+    
     user, email = if audit.user
         [audit.user.name, audit.user.email]
       else
