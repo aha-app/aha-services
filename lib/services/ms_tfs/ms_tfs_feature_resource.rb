@@ -45,7 +45,7 @@ class MSTFSFeatureResource < MSTFSResource
         changes[:description] = tfs_feature.fields["System.Description"]
       end
       if changes.length > 0
-        api.put feature.resource, { :feature => changes }
+        api.put aha_feature.resource, { :feature => changes }
       end
   end
 

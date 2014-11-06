@@ -44,8 +44,11 @@ class AhaServices::MSTFS < AhaService
       workitem = workitem_resource.by_url url
       results = api.search_integration_fields(data.integration_id, "id", workitem.id)['records']
       return if results.length != 1
-      return unless results[0].feature
-      feature_resource.update_aha_feature results[0].feature, workitem
+      if results[0].feature then
+        feature_resource.update_aha_feature results[0].feature, workitem
+      elsif results[0].requirement then
+        requirement_mapping_resource.update_aha_requirement results[0].requirement, workitem
+      end
     rescue AhaApi::NotFound
       return # Ignore features that we don't have Aha! features for.
     end
@@ -66,5 +69,9 @@ protected
 
   def feature_resource
     @feature_resource ||= MSTFSFeatureResource.new(self)
+  end
+
+  def requirement_mapping_resource
+    @requirement_mapping_resource ||= MSTFSRequirementMappingResource.new(self)
   end
 end

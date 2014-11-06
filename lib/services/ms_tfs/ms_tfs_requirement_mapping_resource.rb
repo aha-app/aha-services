@@ -14,6 +14,19 @@ class MSTFSRequirementMappingResource < MSTFSResource
     return created_workitem
   end
 
+  def update_aha_requirement aha_requirement, workitem
+      changes = {}
+      if aha_requirement.name != workitem.fields["System.Title"]
+        changes[:name] = workitem.fields["System.Title"]
+      end
+      if aha_requirement.description.body != workitem.fields["System.Description"]
+        changes[:description] = workitem.fields["System.Description"]
+      end
+      if changes.length > 0
+        api.put aha_requirement.resource, { :requirement => changes }
+      end
+  end
+
 protected
   def workitem_resource
     @workitem_resource ||= MSTFSWorkItemResource.new @service
