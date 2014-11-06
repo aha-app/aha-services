@@ -55,12 +55,16 @@ protected
       new_attachment = attachment_resource.create aha_attachment
       workitem_resource.add_attachment tfs_feature, new_attachment
     end
+  rescue AhaService::RemoteError => e
+    logger.error e.message
   end
 
   def create_and_link_requirements project, tfs_feature, requirements
     requirements.each do |requirement|
       requirement_mapping_resource.create_and_link project, tfs_feature, requirement
     end
+  rescue AhaService::RemoteError => e
+    logger.error e.message
   end
 
   def attachment_resource

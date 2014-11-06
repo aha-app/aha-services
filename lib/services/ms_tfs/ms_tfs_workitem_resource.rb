@@ -18,10 +18,11 @@ class MSTFSWorkItemResource < MSTFSResource
   def create project, type, fields, links = []
     body = (to_field_patch_array(fields) + to_relation_patch_array(links) ).to_json
     url = mstfs_project_url project, "wit/workitems/$" + ERB::Util.url_encode(type)
+    logger.debug "Sending request to #{url}\nBody: #{body}\n"
     response = http_patch url, body, PATCH_HEADER
     return parsed_body(response) if response.status == 200
     # Something went wrong ..
-    raise AhaService::RemoteError.new "Workitem creation unsuccessful"
+    raise AhaService::RemoteError.new "Workitem creation unsuccessfull, HTTP status #{response.status}"
   end
 
   def add_attachment workitem, attachment
