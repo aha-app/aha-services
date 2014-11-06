@@ -1,4 +1,4 @@
-Our Zendesk app is pending approval in the Zendesk Marketplace. When it is approved you will be able to follow these instructions to install it.
+The Zendesk app allows yu to create ideas in Aha! from Zendesk tickets. You can also link existing ideas to existing tickets.
 
 To use the Zendesk app you must:
 
