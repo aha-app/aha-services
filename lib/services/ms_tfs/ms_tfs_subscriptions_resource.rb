@@ -1,6 +1,6 @@
 class MSTFSSubscriptionsResource < MSTFSResource
 
-  API_VERSION = "1.0-preview.1"
+  API_VERSION = "1.0"
 
   def all
     url = mstfs_url "hooks/subscriptions"

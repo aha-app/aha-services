@@ -1,6 +1,6 @@
 class MSTFSResource < GenericResource
 
-  API_VERSION = "1.0-preview.2"
+  API_VERSION = "1.0"
 
   def faraday_builder b
     b.basic_auth(@service.data.user_name, @service.data.user_password)
