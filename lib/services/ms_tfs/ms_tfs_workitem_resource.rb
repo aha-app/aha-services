@@ -11,7 +11,7 @@ class MSTFSWorkItemResource < MSTFSResource
   end
 
   def by_id id
-    url = mstfs_url "wit/workitems/#{id}"
+    url = mstfs_url "wit/workitems/#{id}?$expand=all"
     by_url url
   end
 

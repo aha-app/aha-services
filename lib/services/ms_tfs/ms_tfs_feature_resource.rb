@@ -17,6 +17,7 @@ class MSTFSFeatureResource < MSTFSResource
 
   def update tfs_feature_id, aha_feature
     tfs_feature = workitem_resource.by_id tfs_feature_id
+    # determine changes
     patch_set = []
     if tfs_feature.fields["System.Title"] != aha_feature.name then
       patch_set << {
@@ -32,10 +33,14 @@ class MSTFSFeatureResource < MSTFSResource
         :value => aha_feature.description.body
       }
     end
+    # update the feature
     workitem_resource.update tfs_feature.id, patch_set
+    # update associated requirements
     aha_feature.requirements.each do |requirement|
       requirement_mapping_resource.create_or_update @service.data.project, tfs_feature, requirement
     end
+    # add new attachments
+    create_attachments tfs_feature, (aha_feature.attachments | aha_feature.description.attachments)
   end
 
   def update_aha_feature aha_feature, tfs_feature
@@ -53,7 +58,9 @@ class MSTFSFeatureResource < MSTFSResource
 
 protected
   def create_attachments tfs_feature, aha_attachments
+    existing_files = tfs_feature.relations.select{|relation| relation.rel == "AttachedFile"}.map{|relation| relation.attributes.name} rescue []
     aha_attachments.each do |aha_attachment|
+      next if existing_files.include?(aha_attachment.file_name)
       new_attachment = attachment_resource.create aha_attachment
       workitem_resource.add_attachment tfs_feature, new_attachment
     end
