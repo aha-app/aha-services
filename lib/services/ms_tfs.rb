@@ -37,8 +37,6 @@ class AhaServices::MSTFS < AhaService
   end
 
   def receive_webhook
-    # no-op
-    # TODO: implement two way sync
     begin
       url = payload.webhook.resource._links.parent.href
       workitem = workitem_resource.by_url url

@@ -14,6 +14,35 @@ class MSTFSRequirementMappingResource < MSTFSResource
     return created_workitem
   end
 
+  def create_or_update project, tfs_feature, aha_requirement
+    integration_field = aha_requirement.integration_fields.find {|field| field.name == "id" and field.integration_id.to_i == @service.data.integration_id}
+    if integration_field
+      update integration_field.value, aha_requirement
+    else
+      create_and_link project, tfs_feature, aha_requirement
+    end
+  end
+
+  def update workitem_id, aha_requirement
+    workitem = workitem_resource.by_id workitem_id
+    patch_set = []
+    if workitem.fields["System.Title"] != aha_requirement.name then
+      patch_set << {
+        :op => :replace,
+        :path => "/fields/System.Title",
+        :value => aha_requirement.name
+      }
+    end
+    if workitem.fields["System.Description"] != aha_requirement.description.body then
+      patch_set << {
+        :op => :replace,
+        :path => "/fields/System.Description",
+        :value => aha_requirement.description.body
+      }
+    end
+    workitem_resource.update workitem_id, patch_set
+  end
+
   def update_aha_requirement aha_requirement, workitem
       changes = {}
       if aha_requirement.name != workitem.fields["System.Title"]

@@ -29,11 +29,13 @@ class MSTFSFeatureResource < MSTFSResource
       patch_set << {
         :op => :replace,
         :path => "/fields/System.Description",
-        :value => description
+        :value => aha_feature.description.body
       }
     end
-    # TODO update attachments and requirements
     workitem_resource.update tfs_feature.id, patch_set
+    aha_feature.requirements.each do |requirement|
+      requirement_mapping_resource.create_or_update @service.data.project, tfs_feature, requirement
+    end
   end
 
   def update_aha_feature aha_feature, tfs_feature
