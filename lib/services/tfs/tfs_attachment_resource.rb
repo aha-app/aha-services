@@ -1,6 +1,6 @@
 require 'open-uri'
 
-class MSTFSAttachmentResource < MSTFSResource
+class TFSAttachmentResource < TFSResource
 
   def create aha_attachment
     logger.info("Uploading attachment #{aha_attachment.file_name}")

@@ -1,4 +1,4 @@
-class MSTFSRequirementMappingResource < MSTFSResource
+class TFSRequirementMappingResource < TFSResource
 
   def create_and_link project, tfs_feature, aha_requirement
     created_workitem = workitem_resource.create project, mapped_type, Hash[
@@ -61,7 +61,7 @@ class MSTFSRequirementMappingResource < MSTFSResource
 
 protected
   def workitem_resource
-    @workitem_resource ||= MSTFSWorkItemResource.new @service
+    @workitem_resource ||= TFSWorkItemResource.new @service
   end
 
   def mapped_type

@@ -1,6 +1,6 @@
 require 'erb'
 
-class AhaServices::MSTFS < AhaService
+class AhaServices::TFS < AhaService
   caption "Send features to Microsoft Team Foundation Server"
 
   string :account_name, description: "The name of your Visual Studio subdomain."
@@ -54,22 +54,22 @@ class AhaServices::MSTFS < AhaService
 
 protected
   def project_resource
-    @project_resource ||= MSTFSProjectResource.new(self)
+    @project_resource ||= TFSProjectResource.new(self)
   end
 
   def workitem_resource
-    @workitem_resource ||= MSTFSWorkItemResource.new(self)
+    @workitem_resource ||= TFSWorkItemResource.new(self)
   end
 
   def subscriptions_resource
-    @subscriptions_resource ||= MSTFSSubscriptionsResource.new(self)
+    @subscriptions_resource ||= TFSSubscriptionsResource.new(self)
   end
 
   def feature_resource
-    @feature_resource ||= MSTFSFeatureResource.new(self)
+    @feature_resource ||= TFSFeatureResource.new(self)
   end
 
   def requirement_mapping_resource
-    @requirement_mapping_resource ||= MSTFSRequirementMappingResource.new(self)
+    @requirement_mapping_resource ||= TFSRequirementMappingResource.new(self)
   end
 end

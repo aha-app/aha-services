@@ -1,4 +1,4 @@
-class MSTFSFeatureResource < MSTFSResource
+class TFSFeatureResource < TFSResource
 
   def create project, aha_feature
     # create new feature in TFS
@@ -77,15 +77,15 @@ protected
   end
 
   def attachment_resource
-    @attachment_resource ||= MSTFSAttachmentResource.new(@service)
+    @attachment_resource ||= TFSAttachmentResource.new(@service)
   end
 
   def workitem_resource
-    @workitem_resource ||= MSTFSWorkItemResource.new(@service)
+    @workitem_resource ||= TFSWorkItemResource.new(@service)
   end
 
   def requirement_mapping_resource
-    @requirement_mapping_resource ||= MSTFSRequirementMappingResource.new @service
+    @requirement_mapping_resource ||= TFSRequirementMappingResource.new @service
   end
 end
 

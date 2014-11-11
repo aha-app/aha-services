@@ -1,4 +1,4 @@
-class MSTFSSubscriptionsResource < MSTFSResource
+class TFSSubscriptionsResource < TFSResource
 
   API_VERSION = "1.0"
 

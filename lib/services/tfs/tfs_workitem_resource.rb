@@ -1,6 +1,6 @@
 require 'erb'
 
-class MSTFSWorkItemResource < MSTFSResource
+class TFSWorkItemResource < TFSResource
 
   PATCH_HEADER = { 'Content-Type'=> 'application/json-patch+json' }
 
@@ -68,6 +68,6 @@ protected
   end
 
   def attachment_resource
-    @attachment_resource ||= MSTFSAttachmentResource.new(@service)
+    @attachment_resource ||= TFSAttachmentResource.new(@service)
   end
 end

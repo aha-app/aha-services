@@ -1,4 +1,4 @@
-class MSTFSResource < GenericResource
+class TFSResource < GenericResource
 
   API_VERSION = "1.0"
 

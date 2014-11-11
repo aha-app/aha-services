@@ -1,4 +1,4 @@
-class MSTFSProjectResource < MSTFSResource
+class TFSProjectResource < TFSResource
 
   def all
     response = http_get mstfs_url("projects")
