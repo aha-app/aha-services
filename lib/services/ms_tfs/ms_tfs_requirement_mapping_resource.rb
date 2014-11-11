@@ -4,12 +4,15 @@ class MSTFSRequirementMappingResource < MSTFSResource
     created_workitem = workitem_resource.create project, mapped_type, Hash[
       "System.Title" => aha_requirement.name,
       "System.Description" => aha_requirement.description.body,
-    ], [
-      {
-        :rel => "System.LinkTypes.Hierarchy-Forward",
-        :url => tfs_feature.url
-      }
     ]
+    workitem_resource.update created_workitem.id, [{
+      :op => :add,
+      :path => "/relations/-",
+      :value => {
+        :rel => "System.LinkTypes.Hierarchy-Reverse",
+        :url => tfs_feature.url,
+      }
+    }]
     api.create_integration_fields("requirements", aha_requirement.reference_num, @service.data.integration_id, {id: created_workitem.id, url: created_workitem.url})
     return created_workitem
   end

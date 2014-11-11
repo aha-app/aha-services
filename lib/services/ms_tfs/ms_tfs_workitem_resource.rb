@@ -62,10 +62,7 @@ protected
       {
         op: "add",
         path: "/relations/-",
-        value: {
-          rel: relation[:rel],
-          url: relation[:url]
-        }
+        value: relation
       }
     end
   end
