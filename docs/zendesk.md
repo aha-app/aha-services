@@ -1,4 +1,4 @@
-The Zendesk app allows yu to create ideas in Aha! from Zendesk tickets. You can also link existing ideas to existing tickets.
+The Zendesk app allows you to create ideas in Aha! from Zendesk tickets. You can also link existing ideas to existing tickets.
 
 To use the Zendesk app you must:
 
