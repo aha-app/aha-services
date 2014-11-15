@@ -23,6 +23,10 @@ class AhaServices::Rally < AhaService
     rally_release_resource.update payload.release
   end
 
+  def receive_create_feature
+    rally_hierarchical_requirement_resource.create_from_feature payload.feature
+  end
+
 protected
   def rally_resource
     @rally_resource ||= RallyResource.new self
@@ -34,5 +38,9 @@ protected
 
   def rally_project_resource
     @rally_project_resource ||= RallyProjectResource.new self
+  end
+
+  def rally_hierarchical_requirement_resource
+    @rally_hierarchical_requirement_resource ||= RallyHierarchicalRequirementResource.new self
   end
 end
