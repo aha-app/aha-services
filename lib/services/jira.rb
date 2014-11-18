@@ -426,7 +426,7 @@ protected
 
   def time_tracking_fields(resource, issue_type)
     # Don't send updates to JIRA if capacity planning is disabled.
-    return unless resource.key?('original_estimate')
+    return Hash.new unless resource.key?('original_estimate')
     
     if resource.work_units == 10 and issue_type.has_field_time_tracking # Units are minutes.
       {
