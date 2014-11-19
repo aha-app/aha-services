@@ -25,7 +25,7 @@ class JiraAttachmentResource < JiraResource
     end
 
   rescue AhaService::RemoteError, Zlib::BufError => e
-    logger.error("Failed to upload attachment to #{issue_id}: #{e.message}")
+    logger.error("Unable to attach '#{attachment.file_name}', perhaps it is too large.")
   ensure
     http_reset
     prepare_request
