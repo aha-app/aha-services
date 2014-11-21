@@ -32,7 +32,7 @@ protected
     release = {
       :Name => aha_release.name,
       :Project => @service.data.project,
-      :ReleaseDate => aha_release.release_date,
+      :ReleaseDate => Date.parse(aha_release.release_date).rfc3339(),
       :ReleaseStartDate => aha_release.created_at,
       :State => "Planning",
       :Theme => aha_release.theme.body
