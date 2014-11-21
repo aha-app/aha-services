@@ -17,19 +17,24 @@ class RallyResource < GenericResource
   def get_security_token
     url = rally_url "/security/authorize"
     response = http_get url
-    if response.status == 200 then
-      document = hashie_or_array_of_hashies response.body
+    process_response response do |document|
       self.security_token = document.OperationResult.SecurityToken
-      return
-    elsif response.status == 401 then
-      raise_config_error "Invalid credentials."
     end
-    raise AhaService::RemoteError, "Error code: #{response.status}"
   end
 
   def process_response(response, *success_codes, &block)
+    success_codes = [200] if success_codes == []
     if success_codes.include?(response.status)
-      yield hashie_or_array_of_hashies(response.body) if block_given?
+      document = hashie_or_array_of_hashies response.body
+      result = document.OperationResult || document.CreateResult || document.QueryResult
+      if result.Errors.size > 0 then
+        raise AhaService::RemoteError, "Error: #{result.Errors.join(";")}"
+      end
+      if block_given?
+        yield document
+      else
+        return document
+      end
     elsif [403, 401].include?(response.status)
       raise_config_error "Authentication or authorization failed!"
     elsif [404, 400].include?(response.status)

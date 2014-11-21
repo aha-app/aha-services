@@ -10,9 +10,16 @@ class AhaServices::Rally < AhaService
     meta_data.projects.collect {|p| [p.Name, p.ObjectID] }
   }
 
+  select :portfolio_item_type, description: "The type of PortfolioItem you want to map ... to.", collection: -> (meta_data,data) {
+    meta_data.portfolio_item_types
+  }
+
   def receive_installed
     projects = rally_project_resource.all
     meta_data.projects = projects
+    portfolio_item_types = rally_portfolio_item_resource.get_all_types
+    pp portfolio_item_types
+    meta_data.portfolio_item_types = portfolio_item_types
   end
 
   def receive_create_release
@@ -42,5 +49,9 @@ protected
 
   def rally_hierarchical_requirement_resource
     @rally_hierarchical_requirement_resource ||= RallyHierarchicalRequirementResource.new self
+  end
+
+  def rally_portfolio_item_resource
+    @rally_portfolio_item_resource ||= RallyPortfolioItemResource.new self
   end
 end

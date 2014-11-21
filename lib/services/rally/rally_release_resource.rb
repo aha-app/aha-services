@@ -2,7 +2,7 @@ class RallyReleaseResource < RallyResource
   def by_id id
     url = rally_url "/release/#{id}"
     response = http_get url
-    process_response response, 200 do |document|
+    process_response response do |document|
       return document.Release
     end
   end
@@ -24,7 +24,7 @@ class RallyReleaseResource < RallyResource
     body = { :Release =>  map_release(aha_release) }.to_json
     url = rally_secure_url "/release/#{id}"
     response = http_post url, body
-    process_response response, 200
+    process_response response
   end
 
 protected
