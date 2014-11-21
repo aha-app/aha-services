@@ -5,7 +5,7 @@ class AhaServices::TFS < AhaService
 
   string :account_name, description: "The name of your Visual Studio subdomain."
   string :user_name, description: "The name of the user used to access Visual Studio Online."
-  string :user_password, description: "The password of the user used to access Visual Studio Online."
+  password :user_password, description: "The password of the user used to access Visual Studio Online."
 
   install_button
 
@@ -23,6 +23,7 @@ class AhaServices::TFS < AhaService
 
   def receive_installed
     meta_data.projects = project_resource.all
+    meta_data.available_states = workitemtype_resource.all_projects_all_states
   end
 
   def receive_create_feature
@@ -71,5 +72,9 @@ protected
 
   def requirement_mapping_resource
     @requirement_mapping_resource ||= TFSRequirementMappingResource.new(self)
+  end
+
+  def workitemtype_resource
+    @workitemtype_resource ||= TFSWorkitemtypeResource.new(self)
   end
 end
