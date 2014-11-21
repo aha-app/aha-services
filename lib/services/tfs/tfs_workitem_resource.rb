@@ -6,8 +6,7 @@ class TFSWorkItemResource < TFSResource
 
   def by_url url
     response = http_get url
-    return parsed_body response if response.status == 200
-    raise "Workitem not found"
+    process_response response
   end
 
   def by_id id
@@ -20,9 +19,7 @@ class TFSWorkItemResource < TFSResource
     url = mstfs_project_url project, "wit/workitems/$" + ERB::Util.url_encode(type)
     logger.debug "Sending request to #{url}\nBody: #{body}\n"
     response = http_patch url, body, PATCH_HEADER
-    return parsed_body(response) if response.status == 200
-    # Something went wrong ..
-    raise AhaService::RemoteError.new "Workitem creation unsuccessfull, HTTP status #{response.status}"
+    process_response response
   end
 
   def add_attachment workitem, attachment
@@ -42,8 +39,7 @@ class TFSWorkItemResource < TFSResource
     body = patch_set.to_json
     url = mstfs_url "wit/workitems/#{workitem_id}"
     response = http_patch url, body, PATCH_HEADER
-    return parsed_body response if response.status == 200
-    raise AhaService::RemoteError.new("Could not update workitem, response status is #{response.status}")
+    process_response response
   end
 
 protected

@@ -3,9 +3,9 @@ class TFSWorkitemtypeResource < TFSResource
   def all project
     url = mstfs_project_url project, "wit/workitemtypes"
     response = http_get url
-    raise AhaService::RemoteError.new "Could not retrieve workitem types: #{response.status}" if response.status != 200
-    body = parsed_body response
-    return body.value
+    process_response response do |body|
+      return body.value
+    end
   end
 
   def all_states project

@@ -13,7 +13,7 @@ class TFSRequirementMappingResource < TFSResource
         :url => tfs_feature.url,
       }
     }]
-    api.create_integration_fields("requirements", aha_requirement.reference_num, @service.data.integration_id, {id: created_workitem.id, url: created_workitem.url})
+    api.create_integration_fields("requirements", aha_requirement.reference_num, @service.data.integration_id, {id: created_workitem.id, url: created_workitem._links.html.href})
     return created_workitem
   end
 

@@ -5,8 +5,9 @@ class TFSSubscriptionsResource < TFSResource
   def all
     url = mstfs_url "hooks/subscriptions"
     response = http_get url
-    return [] unless response.status == 200
-    parsed_body(response).value
+    process_response response do |body|
+      return body.value
+    end
   end
 
   def create_maybe callback_url
@@ -38,10 +39,6 @@ class TFSSubscriptionsResource < TFSResource
       }
     }.to_json
     response = http_post url, body
-    if response.status == 200 then
-      parsed_body response
-    else
-      raise "Error while creating subscription"
-    end
+    process_response response
   end
 end
