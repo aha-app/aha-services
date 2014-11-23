@@ -8,7 +8,6 @@ class RallyReleaseResource < RallyResource
   end
 
   def create aha_release
-    get_security_token
     body = { :Release => map_release(aha_release) }.to_json
     url = rally_secure_url "/release/create"
     response = http_put url, body
@@ -19,7 +18,6 @@ class RallyReleaseResource < RallyResource
   end
 
   def update aha_release
-    get_security_token
     id = aha_release.integration_fields.find{|field| field.integration_id == @service.data.integration_id.to_s and field.name == "id"}.value
     body = { :Release =>  map_release(aha_release) }.to_json
     url = rally_secure_url "/release/#{id}"

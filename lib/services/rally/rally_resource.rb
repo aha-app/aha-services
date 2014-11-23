@@ -55,8 +55,8 @@ class RallyResource < GenericResource
   end
 
   def rally_secure_url path
+    get_security_token unless self.security_token
     joiner = (path =~ /\?/) ? "&" : "?"
-    raise "Missing security token" unless self.security_token
     "#{API_URL}#{path}#{joiner}key=#{self.security_token}"
   end
 end
