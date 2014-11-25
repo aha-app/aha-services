@@ -23,7 +23,7 @@ class AhaServices::TFS < AhaService
 
   def receive_installed
     meta_data.projects = project_resource.all
-    meta_data.available_states = workitemtype_resource.all_projects_all_states
+    workitemtype_resource.determin_possible_workflows(meta_data)
   end
 
   def receive_create_feature
