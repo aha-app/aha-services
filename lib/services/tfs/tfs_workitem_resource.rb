@@ -22,13 +22,18 @@ class TFSWorkItemResource < TFSResource
     process_response response
   end
 
-  def add_attachment workitem, attachment
+  def add_attachment workitem, attachment, size
     patch_set = [{
       :op => :add,
       :path => "/relations/-",
       :value => {
         :rel => :AttachedFile,
-        :url => attachment.url
+        :url => attachment.url,
+        :attributes => {
+          # This does currently not work and I don't know why
+          # I reported a bug but I can't find it anymore ...
+          #:resourceSize => size.to_s
+        }
       }
     }]
     update workitem.id, patch_set
