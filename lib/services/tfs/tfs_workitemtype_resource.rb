@@ -17,7 +17,6 @@ class TFSWorkitemtypeResource < TFSResource
       # For each workitem type in the project, determine the set of states
       # Then add it to the workitem type set of the project
       project_workitem_types.each do |workitem|
-        next unless ["Feature", "User Story", "Product Backlog Item", "Requirement", "Task", "Bug"].include?(workitem.name)
         states = workitem.transitions.map{|t| t[0]}.reject{|s| s == ""}.sort
         state_sets[states.hash] ||= states
         workitem_type_set << Hashie::Mash.new({ :name => workitem.name, :states => states.hash })
