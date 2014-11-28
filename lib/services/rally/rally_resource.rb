@@ -27,7 +27,7 @@ class RallyResource < GenericResource
     if success_codes.include?(response.status)
       document = hashie_or_array_of_hashies response.body
       result = document.OperationResult || document.CreateResult || document.QueryResult
-      if result.Errors.size > 0 then
+      if result and result.Errors.size > 0 then
         raise AhaService::RemoteError, "Error: #{result.Errors.join(";")}"
       end
       if block_given?
@@ -58,5 +58,11 @@ class RallyResource < GenericResource
     get_security_token unless self.security_token
     joiner = (path =~ /\?/) ? "&" : "?"
     "#{API_URL}#{path}#{joiner}key=#{self.security_token}"
+  end
+
+  def map_to_objectid aha_resource
+    aha_resource.integration_fields.find{|field| field.integration_id == @service.data.integration_id.to_s and field.name == "id"}.value.to_i
+  rescue
+    return nil
   end
 end
