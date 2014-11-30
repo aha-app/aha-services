@@ -17,7 +17,13 @@ class AhaServices::TFS < AhaService
     end
   }
 
-  select :requirement_mapping, collection: [ [ "User Story", "User Story" ], [ "Requirement", "Requirement" ], [ "Product Backlog Item", "Product Backlog Item" ] ]
+  select :requirement_mapping, collection: -> (meta_data, data) {
+    return [] if meta_data.nil? or meta_data.projects.nil? or data.project.nil?
+    project = meta_data.projects.find{|p| p.id == data.project}
+    meta_data.workflow_sets[project.workflow].collect do |wit|
+      [wit.name, wit.name]
+    end
+  }
 
   callback_url description: "This url will be used to receive updates from TFS."
 
