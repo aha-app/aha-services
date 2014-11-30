@@ -1,5 +1,3 @@
-require 'erb'
-
 class AhaServices::TFS < AhaService
   caption "Send features to Microsoft Team Foundation Server"
 
