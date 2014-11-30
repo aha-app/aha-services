@@ -11,4 +11,10 @@ class RallyAttachmentContentResource < RallyResource
       end
     end
   end
+
+  def delete_by_url url
+    token = get_security_token
+    url = url + "?key=#{token}"
+    process_response http_delete(url), 200, 201
+  end
 end

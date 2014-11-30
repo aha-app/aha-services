@@ -14,6 +14,13 @@ class RallyHierarchicalRequirementResource < RallyResource
     end
   end
 
+  def get_attachments id
+    url = rally_url "/hierarchicalrequirement/#{id}/Attachments"
+    process_response http_get(url) do |document|
+      return document.QueryResult.Results
+    end
+  end
+
   def create hrequirement
     body = { :HierarchicalRequierement => hrequirement }.to_json
     url = rally_secure_url "/hierarchicalrequirement/create"
@@ -29,14 +36,8 @@ class RallyHierarchicalRequirementResource < RallyResource
   def create_from_feature aha_feature
     create map_feature(aha_feature) do |hrequirement|
       api.create_integration_fields "features", aha_feature.id, @service.data.integration_id, { id: hrequirement.ObjectID, url: hrequirement._ref }
-      create_from_requirements hrequirement, aha_feature.requirements
+      aha_feature.requirements.each{|requirement| create_from_requirement hrequirement, requirement }
       create_attachments hrequirement, (aha_feature.attachments | aha_feature.description.attachments)
-    end
-  end
-
-  def create_from_requirements parent, aha_requirements
-    aha_requirements.each do |aha_requirement|
-      create_from_requirement parent, aha_requirement
     end
   end
 
@@ -64,12 +65,16 @@ class RallyHierarchicalRequirementResource < RallyResource
     id = map_to_objectid aha_feature
     current = get id
     sync_requirements current, aha_feature.requirements
-    update id, map_feature(aha_feature)
+    update id, map_feature(aha_feature) do |hrequirement|
+      rally_attachment_resource.sync_attachments hrequirement, (aha_feature.attachments | aha_feature.description.attachments)
+    end
   end
 
   def update_from_requirement parent, aha_requirement
     id = map_to_objectid aha_requirement
-    update id, map_requirement(parent, aha_requirement)
+    update id, map_requirement(parent, aha_requirement) do |hrequirement|
+      rally_attachment_resource.sync_attachments hrequirement, (aha_requirement.attachments | aha_requirement.description.attachments)
+    end
   end
 
   def sync_requirements hrequirement, aha_requirements
@@ -78,7 +83,7 @@ class RallyHierarchicalRequirementResource < RallyResource
     childIDs = get_children(hrequirement.ObjectID).map{|child| child.ObjectID }
     # create user stories which do not yet exist
     new_requirements = aha_requirements.select{|requirement| map_to_objectid(requirement).nil? }
-    create_from_requirements hrequirement, new_requirements
+    new_requirements.each{|requirement| create_from_requirement hrequirement, requirement}
     # delete user stories which have been deleted in Aha!
     existingIDs = (aha_requirements - new_requirements).map{|requirement| map_to_objectid(requirement)}
     (childIDs - existingIDs).each{|id| delete(id) }
