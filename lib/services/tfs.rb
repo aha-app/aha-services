@@ -15,6 +15,16 @@ class AhaServices::TFS < AhaService
     end
   }
 
+  select :feature_mapping, collection: -> (meta_data, data) {
+    project = meta_data.projects[data.project] rescue nil
+    return [] unless project
+    meta_data.workflow_sets[project.workflow].feature_mappings.collect do |name, wit|
+      [name, name]
+    end
+  }
+
+  internal :feature_status_mapping
+
   select :requirement_mapping, collection: -> (meta_data, data) {
     project = meta_data.projects[data.project] rescue nil
     return [] unless project
@@ -30,7 +40,6 @@ class AhaServices::TFS < AhaService
   def receive_installed
     meta_data.projects = project_resource.all
     workitemtype_resource.determin_possible_workflows(meta_data)
-    pp meta_data
   end
 
   def receive_create_feature
