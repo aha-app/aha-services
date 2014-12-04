@@ -10,24 +10,27 @@ class AhaServices::TFS < AhaService
   select :project, description: "The project you want to create new features in.",
     collection: ->(meta_data, data) {
     return [] if meta_data.nil? or meta_data.projects.nil?
-    meta_data.projects.collect do |project|
+    meta_data.projects.collect do |id, project|
       [project.name, project.id]
     end
   }
 
   select :requirement_mapping, collection: -> (meta_data, data) {
-    return [] if meta_data.nil? or meta_data.projects.nil? or data.project.nil?
-    project = meta_data.projects.find{|p| p.id == data.project}
-    meta_data.workflow_sets[project.workflow].collect do |wit|
-      [wit.name, wit.name]
+    project = meta_data.projects[data.project] rescue nil
+    return [] unless project
+    meta_data.workflow_sets[project.workflow].requirement_mappings.collect do |name, wit|
+      [name, name]
     end
   }
+
+  internal :requirement_status_mapping
 
   callback_url description: "This url will be used to receive updates from TFS."
 
   def receive_installed
     meta_data.projects = project_resource.all
     workitemtype_resource.determin_possible_workflows(meta_data)
+    pp meta_data
   end
 
   def receive_create_feature

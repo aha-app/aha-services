@@ -1,9 +1,7 @@
 class TFSWorkitemtypeResource < TFSResource
 
-  ALLOWED_CATEGORIES = %w(Microsoft.FeatureCategory Microsoft.RequirementCategory)
-
   def all project
-    url = mstfs_project_url project, "wit/workitemtypes"
+    url = mstfs_project_url project.id, "wit/workitemtypes"
     response = http_get url
     process_response response do |body|
       return body.value
@@ -11,26 +9,25 @@ class TFSWorkitemtypeResource < TFSResource
   end
 
   def determin_possible_workflows meta_data
-    state_sets = Hashie::Mash.new
+    status_sets = Hashie::Mash.new
     workflow_sets = Hashie::Mash.new
-    meta_data.projects.each do |project|
-      categories = get_categories project
-      allowed_types = allowed_types_from_categories categories
-      project_workitem_types = (all project.id).select{|wit| allowed_types.include?(wit.name)}
-      workitem_type_set = []
-      # For each workitem type in the project, determine the set of states
-      # Then add it to the workitem type set of the project
-      project_workitem_types.each do |workitem|
-        states = workitem.transitions.map{|t| t[0]}.reject{|s| s == ""}.sort
-        state_sets[states.hash] ||= states
-        workitem_type_set << Hashie::Mash.new({ :name => workitem.name, :states => states.hash })
+    meta_data.projects.each do |id, project|
+      workflow = get_workflow project
+      workflow.feature_mappings.each do |name, wit|
+        status_hash = wit.statuses.hash
+        status_sets[status_hash] ||= wit.statuses
+        wit.statuses = status_hash
       end
-      # Sort the workitem type set so that same sets will have same hashes
-      workitem_type_set.sort_by!{|wit| wit.name}
-      workflow_sets[workitem_type_set.hash] ||= workitem_type_set
-      project[:workflow] = workitem_type_set.hash
+      workflow.requirement_mappings.each do |name, wit|
+        status_hash = wit.statuses.hash
+        status_sets[status_hash] ||= wit.statuses
+        wit.statuses = status_hash
+      end
+      workflow_hash = workflow.hash
+      workflow_sets[workflow_hash] ||= workflow
+      project.workflow = workflow_hash
     end
-    meta_data[:state_sets] = state_sets
+    meta_data[:status_sets] = status_sets
     meta_data[:workflow_sets] = workflow_sets
   end
 
@@ -38,11 +35,32 @@ class TFSWorkitemtypeResource < TFSResource
     url = mstfs_project_url project.id, "wit/workitemtypecategories"
     response = http_get url
     process_response response do |body|
-      return body.value.select{|c| ALLOWED_CATEGORIES.include?(c.referenceName)}
+      return body.value
     end
   end
 
 protected
+  def get_workflow project
+    categories = get_categories project
+    workitemtypes = all project
+    feature_types = categories.find{|c| c.referenceName == "Microsoft.FeatureCategory"}.workItemTypes.map{|wit| wit.name} rescue []
+    requirement_types = categories.find{|c| c.referenceName == "Microsoft.RequirementCategory"}.workItemTypes.map{|wit| wit.name} rescue []
+    feature_hash = Hashie::Mash.new
+    feature_types.each do |wit_name|
+      wit = workitemtypes.find{|wit| wit.name == wit_name }
+      feature_hash[wit_name] = Hashie::Mash.new({ :name => wit_name, :statuses => wit.transitions.map{|k,v| k}.reject{|s| s == ""}.sort() })
+    end
+    requirement_hash = Hashie::Mash.new
+    requirement_types.each do |wit_name|
+      wit = workitemtypes.find{|wit| wit.name == wit_name }
+      requirement_hash[wit_name] = Hashie::Mash.new({ :name => wit_name, :statuses => wit.transitions.map{|k,v| k}.reject{|s| s == ""}.sort() })
+    end
+    Hashie::Mash.new({
+      :feature_mappings => feature_hash,
+      :requirement_mappings => requirement_hash
+    })
+  end
+
   def allowed_types_from_categories categories
     categories.map{|c| c.workItemTypes.map{|wit| wit.name} }.flatten().uniq()
   end
