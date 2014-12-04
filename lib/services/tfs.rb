@@ -1,5 +1,5 @@
 class AhaServices::TFS < AhaService
-  caption "Send features to Microsoft Team Foundation Server"
+  caption "Send features and requirements to Microsoft Team Foundation Server"
 
   string :account_name, description: "The name of your Visual Studio subdomain."
   string :user_name, description: "The name of the user used to access Visual Studio Online."
@@ -7,7 +7,7 @@ class AhaServices::TFS < AhaService
 
   install_button
 
-  select :project, description: "The project you want to create new features in.",
+  select :project, description: "The project you want to create new workitems in.",
     collection: ->(meta_data, data) {
     return [] if meta_data.nil? or meta_data.projects.nil?
     meta_data.projects.collect do |id, project|
@@ -43,13 +43,13 @@ class AhaServices::TFS < AhaService
   end
 
   def receive_create_feature
-    created_feature = feature_resource.create data.project, payload.feature
+    created_workitem = feature_mapping_resource.create data.project, payload.feature
   end
 
   def receive_update_feature
-    tfs_feature_id = payload.feature.integration_fields.detect{|field| field.name == "id"}.value rescue nil
-    unless tfs_feature_id.nil?
-      feature_resource.update tfs_feature_id, payload.feature
+    workitem_id = payload.feature.integration_fields.detect{|field| field.name == "id"}.value rescue nil
+    unless workitem_id.nil?
+      feature_mapping_resource.update workitem_id, payload.feature
     end
   end
 
@@ -82,8 +82,8 @@ protected
     @subscriptions_resource ||= TFSSubscriptionsResource.new(self)
   end
 
-  def feature_resource
-    @feature_resource ||= TFSFeatureResource.new(self)
+  def feature_mapping_resource
+    @feature_mapping_resource ||= TFSFeatureMappingResource.new(self)
   end
 
   def requirement_mapping_resource
