@@ -15,6 +15,15 @@ class AhaServices::TFS < AhaService
     end
   }
 
+  select :area, description: "The area of the project you want to create new workitems in.", collection: ->(meta_data, data) {
+    return [] if meta_data.nil? or meta_data.projects.nil? or data.project.nil?
+    project = meta_data.projects[data.project]
+    return [] if project.nil? or project.areas.nil?
+    project.areas.collect do |area|
+      [area, area]
+    end
+  }
+
   select :feature_mapping, collection: -> (meta_data, data) {
     project = meta_data.projects[data.project] rescue nil
     return [] unless project
@@ -40,6 +49,7 @@ class AhaServices::TFS < AhaService
   def receive_installed
     meta_data.projects = project_resource.all
     workitemtype_resource.determin_possible_workflows(meta_data)
+    classification_nodes_resource.get_areas_for_all_projects(meta_data)
   end
 
   def receive_create_feature
@@ -92,5 +102,9 @@ protected
 
   def workitemtype_resource
     @workitemtype_resource ||= TFSWorkitemtypeResource.new(self)
+  end
+
+  def classification_nodes_resource
+    @classification_nodes_resource ||= TFSClassificationNodesResource.new(self)
   end
 end
