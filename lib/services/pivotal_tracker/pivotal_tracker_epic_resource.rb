@@ -1,5 +1,5 @@
 class PivotalTrackerEpicResource < PivotalTrackerProjectDependentResource
-  def create_from_feature(feature)
+  def create_from_feature(feature, ignore = nil)
     epic = {
       name: resource_name(feature),
       description: html_to_markdown(feature.description.body),
@@ -22,6 +22,34 @@ class PivotalTrackerEpicResource < PivotalTrackerProjectDependentResource
     created_epic
   end
 
+  def find_or_create_from_initiative(initiative)
+    return nil if initiative.blank?
+    if (existing_epic = get_resource(initiative.integration_fields)).present?
+      return existing_epic
+    end
+    
+    epic = {
+      name: resource_name(initiative),
+      description: html_to_markdown(initiative.description.body),
+      created_at: initiative.created_at
+    }
+    file_attachments = attachment_resource.upload(initiative.description.attachments)
+    if file_attachments.any?
+      epic[:comments] = [{file_attachments: file_attachments}]
+    end
+
+    created_epic = create(epic)
+    api.create_integration_fields(
+      "initiatives",
+      initiative.id,
+      @service.data.integration_id,
+      { id: created_epic.id,
+        url: created_epic.url,
+        label_id: created_epic.label.id }
+    )
+    created_epic
+  end
+  
   def update_from_feature(feature_mapping, feature)
     epic = {
       name: resource_name(feature),
