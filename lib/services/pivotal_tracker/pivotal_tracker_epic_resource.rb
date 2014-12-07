@@ -50,7 +50,7 @@ class PivotalTrackerEpicResource < PivotalTrackerProjectDependentResource
     created_epic
   end
   
-  def update_from_feature(feature_mapping, feature)
+  def update_from_feature(feature_mapping, feature, initiative_mapping = nil)
     epic = {
       name: resource_name(feature),
       description: html_to_markdown(feature.description.body)
