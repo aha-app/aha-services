@@ -52,6 +52,10 @@ class TFSFeatureMappingResource < TFSResource
       if aha_feature.description.body != workitem.fields["System.Description"]
         changes[:description] = workitem.fields["System.Description"]
       end
+      new_status = tfs_to_aha_status workitem.fields["System.State"]
+      if aha_feature.workflow_status.id != new_status
+        changes[:workflow_status] = new_status
+      end
       if changes.length > 0
         api.put aha_feature.resource, { :feature => changes }
       end
@@ -78,7 +82,11 @@ protected
   end
 
   def mapped_type
-    @serivce.data.feature_mapping
+    @service.data.feature_mapping
+  end
+
+  def map_to_aha_status status
+    @service.data.feature_status_mapping[status]
   end
 
   def attachment_resource
