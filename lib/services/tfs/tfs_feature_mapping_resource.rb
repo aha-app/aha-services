@@ -3,8 +3,9 @@ class TFSFeatureMappingResource < TFSResource
   def create project, aha_feature
     # create new workitem in TFS
     created_workitem = workitem_resource.create project, mapped_type, Hash[
-      "System.Title" => aha_feature.name,
-      "System.Description" => aha_feature.description.body,
+      "System.Title" => aha_feature.name || "",
+      "System.Description" => aha_feature.description.body || "",
+      "System.AreaPath" => @service.data.area,
     ]
     # add integration field to workitem in aha
     api.create_integration_fields("features", aha_feature.reference_num, @service.data.integration_id, {id: created_workitem.id, url: created_workitem._links.html.href})

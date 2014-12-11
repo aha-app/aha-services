@@ -2,8 +2,9 @@ class TFSRequirementMappingResource < TFSResource
 
   def create_and_link project, parent, aha_requirement
     created_workitem = workitem_resource.create project, mapped_type, Hash[
-      "System.Title" => aha_requirement.name,
-      "System.Description" => aha_requirement.description.body,
+      "System.Title" => aha_requirement.name || "",
+      "System.Description" => aha_requirement.description.body || "",
+      "System.AreaPath" => @service.data.area,
     ]
     workitem_resource.update created_workitem.id, [{
       :op => :add,

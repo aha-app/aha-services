@@ -20,7 +20,7 @@ protected
     paths = [ name ]
     if area.hasChildren
       area.children.each do |child_area|
-        paths += recursivly_collect_areas(child_area, name + "/")
+        paths += recursivly_collect_areas(child_area, name + "\\")
       end
     end
     paths
