@@ -50,6 +50,7 @@ class AhaServices::TFS < AhaService
     meta_data.projects = project_resource.all
     workitemtype_resource.determin_possible_workflows(meta_data)
     classification_nodes_resource.get_areas_for_all_projects(meta_data)
+    setup_subscriptions
   end
 
   def receive_create_feature
@@ -80,6 +81,15 @@ class AhaServices::TFS < AhaService
   end
 
 protected
+  def setup_subscriptions
+    subscriptions = subscriptions_resource.all
+    ok_project_ids = subscriptions.select{|s| s.consumerInputs.url == data.callback_url }.map{|s| s.publisherInputs.projectId }
+    todo_projects = meta_data.projects.reject{|id, p| ok_project_ids.include?(id) }
+    todo_projects.each do |id, p|
+      subscriptions_resource.create id, data.callback_url
+    end
+  end
+  
   def project_resource
     @project_resource ||= TFSProjectResource.new(self)
   end
