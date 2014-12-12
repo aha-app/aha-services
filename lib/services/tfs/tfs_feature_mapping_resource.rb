@@ -85,7 +85,7 @@ protected
     @service.data.feature_mapping
   end
 
-  def map_to_aha_status status
+  def tfs_to_aha_status status
     @service.data.feature_status_mapping[status]
   end
 

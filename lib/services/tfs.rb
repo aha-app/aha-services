@@ -71,7 +71,7 @@ class AhaServices::TFS < AhaService
       results = api.search_integration_fields(data.integration_id, "id", workitem.id)['records']
       return if results.length != 1
       if results[0].feature then
-        feature_resource.update_aha_feature results[0].feature, workitem
+        feature_mapping_resource.update_aha_feature results[0].feature, workitem
       elsif results[0].requirement then
         requirement_mapping_resource.update_aha_requirement results[0].requirement, workitem
       end

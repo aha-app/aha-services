@@ -55,6 +55,10 @@ class TFSRequirementMappingResource < TFSResource
       if aha_requirement.description.body != workitem.fields["System.Description"]
         changes[:description] = workitem.fields["System.Description"]
       end
+      new_status = tfs_to_aha_status workitem.fields["System.State"]
+      if aha_requirement.workflow_status.id != new_status
+        changes[:workflow_status] = new_status
+      end
       if changes.length > 0
         api.put aha_requirement.resource, { :requirement => changes }
       end
@@ -67,5 +71,9 @@ protected
 
   def mapped_type
     @service.data.requirement_mapping
+  end
+  
+  def tfs_to_aha_status status
+    @service.data.requirement_status_mapping[status]
   end
 end
