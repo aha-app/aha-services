@@ -26,7 +26,7 @@ GIT
 PATH
   remote: .
   specs:
-    aha-services (1.12.1)
+    aha-services (1.12.3)
       ClothRed
       activesupport
       aha-api
@@ -69,18 +69,18 @@ GEM
     htmlentities (4.3.2)
     i18n (0.6.11)
     json (1.8.1)
-    jwt (1.0.0)
+    jwt (1.2.0)
     listen (2.7.11)
       celluloid (>= 0.15.2)
       rb-fsevent (>= 0.9.3)
       rb-inotify (>= 0.9)
     method_source (0.8.2)
-    mini_portile (0.6.0)
+    mini_portile (0.6.1)
     minitest (5.4.2)
     multi_json (1.10.1)
     multipart-post (2.0.0)
-    nokogiri (1.6.3.1)
-      mini_portile (= 0.6.0)
+    nokogiri (1.6.5)
+      mini_portile (~> 0.6.0)
     pry (0.10.1)
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
@@ -94,7 +94,7 @@ GEM
     redcarpet (3.2.0)
     rerun (0.10.0)
       listen (~> 2.7, >= 2.7.3)
-    reverse_markdown (0.5.1)
+    reverse_markdown (0.6.0)
       nokogiri
     rspec (3.1.0)
       rspec-core (~> 3.1.0)
@@ -137,7 +137,7 @@ DEPENDENCIES
   pry
   redcarpet
   rerun
-  reverse_markdown (= 0.5.1)
+  reverse_markdown (= 0.6.0)
   rspec
   sinatra
   webmock

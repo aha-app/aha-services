@@ -18,8 +18,9 @@ module Helpers
     converter.convert!(nil)
   end
   
-  def html_to_markdown(html)
-    ReverseMarkdown.convert(html)
+  def html_to_markdown(html, github_style = false)
+    ReverseMarkdown.convert(html, unknown_tags: 
+    :bypass, github_flavored: github_style)
   end
 
   def markdown_to_html(markdown)
