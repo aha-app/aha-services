@@ -33,7 +33,7 @@ GIT
 PATH
   remote: .
   specs:
-    aha-services (1.12.6)
+    aha-services (1.12.7)
       ClothRed
       activesupport
       aha-api
@@ -142,7 +142,7 @@ DEPENDENCIES
   pry
   redcarpet
   rerun
-  reverse_markdown (= 0.6.1)!
+  reverse_markdown!
   rspec
   sinatra
   webmock
