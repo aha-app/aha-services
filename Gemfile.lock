@@ -44,7 +44,7 @@ PATH
       html2confluence
       htmlentities
       jwt
-      reverse_markdown (= 0.6.1)
+      reverse_markdown
       simple_oauth (>= 0.1, < 0.3)
 
 GEM
