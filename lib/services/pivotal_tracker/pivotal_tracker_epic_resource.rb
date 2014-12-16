@@ -2,7 +2,7 @@ class PivotalTrackerEpicResource < PivotalTrackerProjectDependentResource
   def create_from_feature(feature, ignore = nil)
     epic = {
       name: resource_name(feature),
-      description: html_to_markdown(feature.description.body),
+      description: html_to_markdown(feature.description.body, true),
       created_at: feature.created_at
     }
     file_attachments = attachment_resource.upload(feature.description.attachments | feature.attachments)
@@ -30,7 +30,7 @@ class PivotalTrackerEpicResource < PivotalTrackerProjectDependentResource
     
     epic = {
       name: resource_name(initiative),
-      description: html_to_markdown(initiative.description.body),
+      description: html_to_markdown(initiative.description.body, true),
       created_at: initiative.created_at
     }
     file_attachments = attachment_resource.upload(initiative.description.attachments)
@@ -53,7 +53,7 @@ class PivotalTrackerEpicResource < PivotalTrackerProjectDependentResource
   def update_from_feature(feature_mapping, feature, initiative_mapping = nil)
     epic = {
       name: resource_name(feature),
-      description: html_to_markdown(feature.description.body)
+      description: html_to_markdown(feature.description.body, true)
     }
 
     update(feature_mapping.id, epic)

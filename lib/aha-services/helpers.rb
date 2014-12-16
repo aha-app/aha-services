@@ -1,6 +1,19 @@
 require 'plain-david'
 require 'redcarpet'
 
+# Use a custom table renderer to match Aha table style, so incoming markdown is transformed correctly
+class AhaTableRender < Redcarpet::Render::HTML
+  def table(header, body)
+    "<table class='mce-item-table'>" + 
+      "<tbody>#{header}#{body}</tbody>" +
+    "</table>"
+  end
+  
+  def table_cell(content, alignment)
+    "<td>#{content}</td>"
+  end
+end
+
 # Utility routines specific to Aha! data.
 module Helpers
   
@@ -24,7 +37,7 @@ module Helpers
   end
 
   def markdown_to_html(markdown)
-    converter = Redcarpet::Markdown.new(Redcarpet::Render::HTML, autolink: true, tables: true)
+    converter = Redcarpet::Markdown.new(AhaTableRender.new, autolink: true, tables: true)
     converter.render(markdown)
   end
   

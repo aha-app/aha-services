@@ -70,7 +70,7 @@ protected
   def create_from_resource(resource, parent_resource = nil, parent_mapping = nil)
     story = {
       name: resource_name(resource),
-      description: append_link(html_to_markdown(resource.description.body), parent_mapping && parent_mapping.id),
+      description: append_link(html_to_markdown(resource.description.body, true), parent_mapping && parent_mapping.id),
       story_type: kind_to_story_type(resource.workflow_kind.try(:id) || parent_resource.workflow_kind.id),
       created_at: resource.created_at,
       external_id: parent_resource ? parent_resource.reference_num : resource.reference_num,
@@ -96,7 +96,7 @@ protected
   def update_from_resource(resource_mapping, resource, parent_mapping = nil)
     story = {
       name: resource_name(resource),
-      description: append_link(html_to_markdown(resource.description.body), parent_mapping && parent_mapping.id)
+      description: append_link(html_to_markdown(resource.description.body, true), parent_mapping && parent_mapping.id)
     }
 
     if parent_mapping
