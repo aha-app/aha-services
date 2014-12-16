@@ -7,6 +7,13 @@ GIT
       htmlentities
 
 GIT
+  remote: https://github.com/JeremyGeros/reverse_markdown.git
+  revision: ffcc7bc110382aac4804835a2b1765efa8f03175
+  specs:
+    reverse_markdown (0.6.1)
+      nokogiri
+
+GIT
   remote: https://github.com/aha-app/aha-api
   revision: 1166580dad08835dd6c953a5a2f24a537bcc867a
   specs:
@@ -94,8 +101,6 @@ GEM
     redcarpet (3.2.0)
     rerun (0.10.0)
       listen (~> 2.7, >= 2.7.3)
-    reverse_markdown (0.6.0)
-      nokogiri
     rspec (3.1.0)
       rspec-core (~> 3.1.0)
       rspec-expectations (~> 3.1.0)
@@ -137,7 +142,7 @@ DEPENDENCIES
   pry
   redcarpet
   rerun
-  reverse_markdown (= 0.6.0)
+  reverse_markdown (= 0.6.1)!
   rspec
   sinatra
   webmock
