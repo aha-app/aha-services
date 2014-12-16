@@ -27,6 +27,9 @@ Gem::Specification.new do |s|
   s.add_dependency "jwt"
   s.add_dependency "html2confluence"
 
+  # For Trello integration.
+  s.add_dependency "reverse_markdown", "0.6.1"
+
   # For Redmine integration.
   s.add_dependency "ClothRed"
 

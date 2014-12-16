@@ -33,7 +33,7 @@ GIT
 PATH
   remote: .
   specs:
-    aha-services (1.12.5)
+    aha-services (1.12.6)
       ClothRed
       activesupport
       aha-api
@@ -44,6 +44,7 @@ PATH
       html2confluence
       htmlentities
       jwt
+      reverse_markdown (= 0.6.1)
       simple_oauth (>= 0.1, < 0.3)
 
 GEM
