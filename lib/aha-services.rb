@@ -1,3 +1,6 @@
+require 'rubygems'
+require 'bundler/setup'
+
 require 'active_support'
 ActiveSupport::JSON
 
