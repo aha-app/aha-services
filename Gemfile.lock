@@ -8,9 +8,9 @@ GIT
 
 GIT
   remote: https://github.com/JeremyGeros/reverse_markdown.git
-  revision: 8eba68de9f315ed55f292b034dd0f655d499d69c
+  revision: e669e881bbf67a122f8c296c276cd759c785efa5
   specs:
-    reverse_markdown (0.6.2)
+    reverse_markdown (0.6.3)
       nokogiri
 
 GIT
@@ -33,7 +33,7 @@ GIT
 PATH
   remote: .
   specs:
-    aha-services (1.12.8)
+    aha-services (1.12.9)
       ClothRed
       activesupport
       aha-api
