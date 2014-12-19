@@ -7,8 +7,12 @@ class AhaServices::Rally < AhaService
   install_button
 
   select :project, description: "The Rally project that this Aha! product will integrate with.", collection: -> (meta_data,data) {
+    return [] unless meta_data and meta_data.projects
     meta_data.projects.collect {|p| [p.Name, p.ObjectID] }
   }
+
+  internal :feature_status_mapping
+  internal :requirement_status_mapping
 
   #select :portfolio_item_type, description: "The type of PortfolioItem you want to map ... to.", collection: -> (meta_data,data) {
   #  meta_data.portfolio_item_types
