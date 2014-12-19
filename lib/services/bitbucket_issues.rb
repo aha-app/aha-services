@@ -10,7 +10,6 @@ class AhaServices::BitbucketIssues < AhaService
   end
 
   def receive_installed
-    logger.debug('>>>>>>>>>> Bitbucket: Installed >>>>>')
     meta_data.repos = repo_resource.all.map do |repo|
       {
         slug: "#{repo['owner']}/#{repo['slug']}",
@@ -135,7 +134,7 @@ class AhaServices::BitbucketIssues < AhaService
 
   def attachments_in_body(attachments)
     attachments.map do |attachment|
-      "#{attachment.file_name} (#{attachment.download_url})"
+      "![#{attachment.file_name}](#{attachment.download_url})"
     end.join("\n")
   end
 
