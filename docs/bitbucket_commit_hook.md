@@ -1,5 +1,5 @@
 This integration will create a comment in Aha! each time a feature or
-requirement is referenced in a [Bitbuckt](http://www.bitbucket.org/) commit message.
+requirement is referenced in a [Bitbucket](http://www.bitbucket.org/) commit message.
 
 Installation
 ------------
