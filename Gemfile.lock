@@ -8,9 +8,9 @@ GIT
 
 GIT
   remote: https://github.com/JeremyGeros/reverse_markdown.git
-  revision: ffcc7bc110382aac4804835a2b1765efa8f03175
+  revision: 9d2fb773376d0a4fd5bfc298c2ce317ed21f52fb
   specs:
-    reverse_markdown (0.6.1)
+    reverse_markdown (0.6.4)
       nokogiri
 
 GIT
@@ -33,7 +33,7 @@ GIT
 PATH
   remote: .
   specs:
-    aha-services (1.12.6)
+    aha-services (1.12.10)
       ClothRed
       activesupport
       aha-api
@@ -142,7 +142,7 @@ DEPENDENCIES
   pry
   redcarpet
   rerun
-  reverse_markdown (= 0.6.1)!
+  reverse_markdown!
   rspec
   sinatra
   webmock
