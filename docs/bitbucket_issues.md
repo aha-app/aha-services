@@ -12,7 +12,7 @@ This one-way integration allows you to push your features and requirements in Ah
 * Tags on a feature in Aha! will becomes labels in Bitbucket.
 * Aha! releases will be created as milestones in Bitbucket.
 * When a feature is sent to Bitbucket, its status in Aha! is automatically changed to Ready to develop.
-* After a feature is first sent to Bitbucket, changes to the name, description and requirements, can also be sent to Bitbucket using the _Update Bitbucket item in the _Actions_ menu on the features page or by sending all features in a release to Bitbucket again. New requirements will also be created in Bitbucket, however issues that were created for an existing requirement are not deleted from Bitbucket if the requirement is deleted from Aha!. If an attachment is deleted in Aha! the corresponding attachment in Bitbucket is not deleted. 
+* After a feature is first sent to Bitbucket, changes to the name, description and requirements, can also be sent to Bitbucket using the _Update Bitbucket Issues_ item in the _Actions_ menu on the features page or by sending all features in a release to Bitbucket again. New requirements will also be created in Bitbucket, however issues that were created for an existing requirement are not deleted from Bitbucket if the requirement is deleted from Aha!. If an attachment is deleted in Aha! the corresponding attachment in Bitbucket is not deleted. 
 
 
 ## Configuration
@@ -23,7 +23,7 @@ Please carefully follow these instructions to ensure that the integration is pro
 
 Create the integration in Aha!
 
-1. Enter your Bitbucket username and password. Consider using a [Bitbucket Personal Token](https://help.bitbucket.com/articles/creating-an-access-token-for-command-line-use) rather than a password here. A token is essential if you use two-factor authentication with your Bitbucket account. Click the _Test connection_ button
+1. Enter your Bitbucket username and password. Click the _Test connection_ button
 2. After a short delay, you will be able to choose the repository the issues will be created in.
 3. Enable the integration.
 4. Test the integration by going to one of your features in Aha! and using the _Send to Bitbucket Issues_ item in the _Actions_ menu on the features page. You should then look at your repository in Bitbucket and see that the feature (and any requirements) were properly copied to issues. 

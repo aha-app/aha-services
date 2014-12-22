@@ -4,11 +4,10 @@ requirement is referenced in a [Bitbuckt](http://www.bitbucket.org/) commit mess
 Installation
 ------------
 
-1. On the _Settings_ tab of the Bitbucket repository, open the Webhooks & Services_ section.
-2. Click _Add webhook_.
-3. Paste the payload URL from _Hook URL_ section below.
-4. The _Content type_ should be `application/x-www-form-urlencoded`, the _secret_ should be empty and select _Just the push event_.
-5. Enable this integration below.
+1. On the _Settings_ tab of the Bitbucket repository, open the _Hooks_ section.
+2. Select _POST_ and click _Add hook_.
+3. Paste the payload URL from _Hook URL_ section in the URL box.
+4. Enable this integration below.
 
 Usage
 -----
