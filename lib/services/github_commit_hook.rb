@@ -9,7 +9,8 @@ class AhaServices::GithubCommitHook < AhaService
   def receive_webhook
     commit_payload = Hashie::Mash.new(JSON.parse(payload.payload))
     
-    (commit_payload.commits || []).each do |commit|  
+    (commit_payload.commits || []).each do |commit|
+      next unless commit.distinct
       commit.message.scan(/([A-Z]+-[0-9]+(?:-[0-9]+)?)/) do |m|
         m.each do |ref|
           comment_on_record(commit_payload, ref, commit)
