@@ -27,9 +27,6 @@ class BitbucketResource < GenericResource
       raise RemoteError, "You do not have permissions to access this resource."
     elsif reponse.status == 404
       raise RemoteError, "Resource does not exist."
-    elsif response.status.between?(400, 499)
-      error = parse(response.body)
-      raise RemoteError, "#{error['message']}"
     else
       raise RemoteError, "Unhandled error: STATUS=#{response.status} BODY=#{response.body}"
     end
