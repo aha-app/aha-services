@@ -1,0 +1,23 @@
+{
+    "id": "43d47bf1-9c6c-4387-9945-944f625e60f3",
+    "name": "Aha-Integration",
+    "url": "https://maufl.visualstudio.com/DefaultCollection/_apis/projects/43d47bf1-9c6c-4387-9945-944f625e60f3",
+    "description": "This is a test project to test the Aha-TFS integration.",
+    "state": "wellFormed",
+    "_links": {
+	"self": {
+	    "href": "https://maufl.visualstudio.com/DefaultCollection/_apis/projects/43d47bf1-9c6c-4387-9945-944f625e60f3"
+	},
+	"collection": {
+	    "href": "https://maufl.visualstudio.com/_apis/projectCollections/75fc0e13-fc3c-45a4-9814-c2638a0fbbd4"
+	},
+	"web": {
+	    "href": "https://maufl.visualstudio.com/DefaultCollection/Aha-Integration"
+	}
+    },
+    "defaultTeam": {
+	"id": "8d081db6-7770-45cb-926c-c762bef9c5f8",
+	"name": "Aha-Integration Team",
+	"url": "https://maufl.visualstudio.com/DefaultCollection/_apis/projects/43d47bf1-9c6c-4387-9945-944f625e60f3/teams/8d081db6-7770-45cb-926c-c762bef9c5f8"
+    }
+}

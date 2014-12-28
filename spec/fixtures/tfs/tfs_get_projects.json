@@ -1,22 +1,10 @@
 {
-  "count": 3,
+  "count": 1,
   "value": [
-    {
-      "id": "c0ec63a2-50a2-497f-aac8-743fd91e35d4",
-      "name": "Scrum test project",
-      "url": "https://maufl.visualstudio.com/DefaultCollection/_apis/projects/c0ec63a2-50a2-497f-aac8-743fd91e35d4",
-      "state": "wellFormed"
-    },
     {
       "id": "43d47bf1-9c6c-4387-9945-944f625e60f3",
       "name": "Aha-Integration",
       "url": "https://maufl.visualstudio.com/DefaultCollection/_apis/projects/43d47bf1-9c6c-4387-9945-944f625e60f3",
-      "state": "wellFormed"
-    },
-    {
-      "id": "b4c3a443-a772-4e0a-b87c-a6e8444f9c64",
-      "name": "CMMI test project",
-      "url": "https://maufl.visualstudio.com/DefaultCollection/_apis/projects/b4c3a443-a772-4e0a-b87c-a6e8444f9c64",
       "state": "wellFormed"
     }
   ]

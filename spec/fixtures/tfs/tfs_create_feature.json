@@ -1,0 +1,44 @@
+{
+    "id": 174,
+    "rev": 1,
+    "fields": {
+	"System.AreaPath": "Aha-Integration",
+	"System.TeamProject": "Aha-Integration",
+	"System.IterationPath": "Aha-Integration",
+	"System.WorkItemType": "Feature",
+	"System.State": "New",
+	"System.Reason": "New",
+	"System.CreatedDate": "2014-12-28T10:21:24.083Z",
+	"System.CreatedBy": "Felix Maurer <felix.maurer@gmx.net>",
+	"System.ChangedDate": "2014-12-28T10:21:24.083Z",
+	"System.ChangedBy": "Felix Maurer <felix.maurer@gmx.net>",
+	"System.Title": "Feature with attachments",
+	"Microsoft.VSTS.Common.StateChangeDate": "2014-12-28T10:21:24.083Z",
+	"Microsoft.VSTS.Common.Priority": 2,
+	"WEF_61DE137049B8468E8421FF62C5E69B84_Kanban.Column": "New"
+    },
+    "_links": {
+	"self": {
+	    "href": "https://ahaintegration.visualstudio.com/DefaultCollection/_apis/wit/workItems/174"
+	},
+	"workItemUpdates": {
+	    "href": "https://ahaintegration.visualstudio.com/DefaultCollection/_apis/wit/workItems/174/updates"
+	},
+	"workItemRevisions": {
+	    "href": "https://ahaintegration.visualstudio.com/DefaultCollection/_apis/wit/workItems/174/revisions"
+	},
+	"workItemHistory": {
+	    "href": "https://ahaintegration.visualstudio.com/DefaultCollection/_apis/wit/workItems/174/history"
+	},
+	"html": {
+	    "href": "https://ahaintegration.visualstudio.com/web/wi.aspx?pcguid=75fc0e13-fc3c-45a4-9814-c2638a0fbbd4&id=174"
+	},
+	"workItemType": {
+	    "href": "https://ahaintegration.visualstudio.com/DefaultCollection/43d47bf1-9c6c-4387-9945-944f625e60f3/_apis/wit/workItemTypes/Feature"
+	},
+	"fields": {
+	    "href": "https://ahaintegration.visualstudio.com/DefaultCollection/_apis/wit/fields"
+	}
+    },
+    "url": "https://ahaintegration.visualstudio.com/DefaultCollection/_apis/wit/workItems/174"
+}
