@@ -1,3 +1,6 @@
+require 'rubygems'
+require 'bundler/setup'
+
 require 'active_support'
 ActiveSupport::JSON
 
@@ -25,6 +28,7 @@ require 'aha-services/logger'
 require 'services/generic_resource'
 
 require 'services/github/github_resource'
+require 'services/bitbucket/bitbucket_resource'
 require 'services/jira/jira_resource'
 require 'services/jira/jira_mapped_fields'
 require 'services/pivotal_tracker/pivotal_tracker_resource'

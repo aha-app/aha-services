@@ -133,7 +133,7 @@ class AhaServices::GithubIssues < AhaService
 
   def issue_body(description)
     issue_body_parts = []
-    issue_body_parts << description.body if description.body.present?
+    issue_body_parts << html_to_markdown(description.body, true) if description.body.present?
     if description.attachments.present?
       issue_body_parts << attachments_in_body(description.attachments)
     end

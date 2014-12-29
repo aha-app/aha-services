@@ -1,15 +1,25 @@
 class PivotalTrackerFeatureAndRequirementMappingResource < PivotalTrackerProjectDependentResource
 
   def create_feature(feature)
-    feature_mapping = feature_mapping_resource.create_from_feature(feature)
+    if initiative_mapping_resource
+      initiative_mapping = initiative_mapping_resource.find_or_create_from_initiative(feature.initiative)
+    else
+      initiative_mapping = nil
+    end
+    feature_mapping = feature_mapping_resource.create_from_feature(feature, initiative_mapping)
     feature.requirements.each do |requirement|
       requirement_mapping_resource.create_from_requirement(requirement, feature, feature_mapping)
     end
   end
 
   def update_feature(feature)
+    if initiative_mapping_resource
+      initiative_mapping = initiative_mapping_resource.find_or_create_from_initiative(feature.initiative)
+    else
+      initiative_mapping = nil
+    end
     feature_mapping = get_resource(feature.integration_fields)
-    feature_mapping_resource.update_from_feature(feature_mapping, feature)
+    feature_mapping_resource.update_from_feature(feature_mapping, feature, initiative_mapping)
 
     # Create or update each requirement.
     feature.requirements.each do |requirement|
@@ -24,6 +34,12 @@ class PivotalTrackerFeatureAndRequirementMappingResource < PivotalTrackerProject
 
 private
 
+  def initiative_mapping_resource
+    @initiative_mapping_resource ||= (mapping == "epic-story-task") ?
+      PivotalTrackerEpicResource.new(@service, project_id) :
+      nil
+  end
+
   def feature_mapping_resource
     @feature_mapping_resource ||= (mapping == "epic-story") ?
       PivotalTrackerEpicResource.new(@service, project_id) :
@@ -31,7 +47,7 @@ private
   end
 
   def requirement_mapping_resource
-    @requirement_mapping_resource ||= (mapping == "story-task") ?
+    @requirement_mapping_resource ||= (mapping == "story-task" || mapping == "epic-story-task") ?
       PivotalTrackerTaskResource.new(@service, project_id) :
       PivotalTrackerStoryResource.new(@service, project_id)
   end

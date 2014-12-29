@@ -1,14 +1,18 @@
 class PivotalTrackerStoryResource < PivotalTrackerProjectDependentResource
-  def create_from_feature(feature)
-    create_from_resource(feature)
+  def create_from_feature(feature, initiative_mapping = nil)
+    if initiative_mapping
+      create_from_resource(feature, nil, initiative_mapping)
+    else
+      create_from_resource(feature)
+    end
   end
 
   def create_from_requirement(requirement, feature, feature_mapping)
     create_from_resource(requirement, feature, feature_mapping)
   end
 
-  def update_from_feature(feature_mapping, feature)
-    update_from_resource(feature_mapping, feature)
+  def update_from_feature(feature_mapping, feature, initiative_mapping = nil)
+    update_from_resource(feature_mapping, feature, initiative_mapping)
   end
 
   def update_from_requirement(requirement_mapping, requirement, feature_mapping)
@@ -30,6 +34,12 @@ class PivotalTrackerStoryResource < PivotalTrackerProjectDependentResource
     process_response(response, 200) do |updated_story|
       logger.info("Updated story #{story_id}")
     end
+  end
+  
+  def find_by_id(story_id)
+    prepare_request
+    response = http_get "#{api_url}/projects/#{project_id}/stories/#{story_id}"
+    found_resource(response)
   end
 
 protected
@@ -60,7 +70,7 @@ protected
   def create_from_resource(resource, parent_resource = nil, parent_mapping = nil)
     story = {
       name: resource_name(resource),
-      description: append_link(html_to_markdown(resource.description.body), parent_mapping && parent_mapping.id),
+      description: append_link(html_to_markdown(resource.description.body, true), parent_mapping && parent_mapping.id),
       story_type: kind_to_story_type(resource.workflow_kind.try(:id) || parent_resource.workflow_kind.id),
       created_at: resource.created_at,
       external_id: parent_resource ? parent_resource.reference_num : resource.reference_num,
@@ -86,9 +96,22 @@ protected
   def update_from_resource(resource_mapping, resource, parent_mapping = nil)
     story = {
       name: resource_name(resource),
-      description: append_link(html_to_markdown(resource.description.body), parent_mapping && parent_mapping.id)
+      description: append_link(html_to_markdown(resource.description.body, true), parent_mapping && parent_mapping.id)
     }
 
+    if parent_mapping
+      label_id = parent_mapping.label_id || parent_mapping.label.try(:id)
+      if label_id.present?
+        # We need to read the current labels from the story so we can merge our
+        # label.
+        existing_story = find_by_id(resource_mapping.id)
+        
+        story[:label_ids] = existing_story.labels.collect {|l| l.id } | [label_id.to_i]
+        
+        # TODO: Unfortunately PT doesn't make it easy for us to remove the old epic, so now the story will be in two epics.
+      end
+    end
+    
     update(resource_mapping.id, story)
 
     # Add the new attachments.

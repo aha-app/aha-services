@@ -21,6 +21,7 @@ class AhaServices::Jira < AhaService
   internal :feature_status_mapping
   internal :field_mapping
   # internal :resolution_mapping  # TODO: we are not actually using this at the moment.
+  boolean :dont_send_releases, description: "Check to prevent Aha! from creating versions in JIRA and from populating the fixVersions field for issues. For most users this box should not be checked."
   boolean :send_tags, description: "Check to synchronize Aha! tags and JIRA labels. We recommend enabling this for new integrations. Enabling this option once features are synced to JIRA may cause tags in Aha! or labels in JIRA to be removed from a feature if the corresponding label or tag doesn't exist in the other system."
   
   callback_url description: "URL to add to the webhooks section of JIRA. Only one hook is necessary, even if multiple products are integrated with JIRA."
@@ -44,11 +45,11 @@ class AhaServices::Jira < AhaService
   end
 
   def receive_create_release
-    find_or_attach_jira_version(payload.release)
+    find_or_attach_jira_version(payload.release) unless dont_send_releases?
   end
   
   def receive_update_release
-    update_or_attach_jira_version(payload.release)
+    update_or_attach_jira_version(payload.release) unless dont_send_releases?
   end
   
   def receive_create_comment
@@ -67,7 +68,11 @@ class AhaServices::Jira < AhaService
 
 protected
   include JiraMappedFields
-
+  
+  def dont_send_releases?
+    data.dont_send_releases == "1"
+  end
+  
   def new_or_existing_aha_reference_field
     # Create custom field for Aha! reference.
     unless field = field_resource.aha_reference_field
@@ -85,7 +90,7 @@ protected
 
   def integrate_or_update_feature(feature)
     @feature = feature
-    version = find_or_attach_jira_version(feature.release)
+    version = find_or_attach_jira_version(feature.release) unless dont_send_releases?
     issue_info = update_or_attach_jira_issue(feature, feature.initiative, version)
     update_requirements(feature, version, issue_info)
   end
@@ -385,7 +390,7 @@ protected
   end
 
   def version_fields(version, issue_type)
-    if version && version.id && issue_type.has_field_fix_versions
+    if !dont_send_releases? && version && version.id && issue_type.has_field_fix_versions
       { fixVersions: [{ id: version.id }] }
     else
       Hash.new
@@ -470,7 +475,7 @@ protected
   end
 
   def version_update_fields(version, issue_type)
-    if version && version.id && issue_type.has_field_fix_versions
+    if !dont_send_releases? && version && version.id && issue_type.has_field_fix_versions
       { update: { fixVersions: [ { set: [ { id: version.id } ] } ] } }
     else
       Hash.new
