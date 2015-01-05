@@ -433,6 +433,11 @@ protected
     # Don't send updates to JIRA if capacity planning is disabled.
     return Hash.new unless resource.key?('original_estimate')
     
+    if resource.use_requirements_estimates == true
+      # Don't include feature estimate if requirements have estimates.
+      return Hash.new
+    end
+    
     if resource.work_units == 10 and issue_type.has_field_time_tracking # Units are minutes.
       {
         timetracking: {
