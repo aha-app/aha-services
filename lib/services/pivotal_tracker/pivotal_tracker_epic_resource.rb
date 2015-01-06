@@ -56,11 +56,13 @@ class PivotalTrackerEpicResource < PivotalTrackerProjectDependentResource
       description: html_to_markdown(feature.description.body, true)
     }
 
-    update(feature_mapping.id, epic)
+    updated_epic = update(feature_mapping.id, epic)
 
     # Add the new attachments.
     new_attachments = attachment_resource.update(feature, attachment_resource.all_for_epic(feature_mapping.id))
     add_attachments(feature_mapping.id, new_attachments)
+    
+    updated_epic
   end
 
 protected

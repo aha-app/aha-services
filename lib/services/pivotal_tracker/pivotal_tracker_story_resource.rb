@@ -112,11 +112,13 @@ protected
       end
     end
     
-    update(resource_mapping.id, story)
+    updated_story = update(resource_mapping.id, story)
 
     # Add the new attachments.
     new_attachments = attachment_resource.update(resource, attachment_resource.all_for_story(resource_mapping.id))
     add_attachments(resource_mapping.id, new_attachments)
+    
+    updated_story
   end
 
   def kind_to_story_type(kind)
