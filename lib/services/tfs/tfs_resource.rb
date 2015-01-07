@@ -20,6 +20,8 @@ class TFSResource < GenericResource
       else
         return hashie_or_array_of_hashies(response.body)
       end
+    elsif response.status == 302
+      raise_config_error "You must use the alternate credentials rather than your login credentials."
     elsif response.status == 404
       raise AhaService::RemoteError, "Remote resource was not found."
     elsif response.status == 400
