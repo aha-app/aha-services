@@ -30,6 +30,18 @@ class TFSResource < GenericResource
       raise AhaService::RemoteError, "Unhandled error: STATUS=#{response.status} BODY=#{response.body}"
     end
   end
+  
+  def create_attachments(workitem, aha_attachments)
+    existing_files = workitem.relations.select{|relation| relation.rel == "AttachedFile"}.map{|relation| relation.attributes.name} rescue []
+    aha_attachments.each do |aha_attachment|
+      next if existing_files.include?(aha_attachment.file_name)
+      new_attachment = attachment_resource.create aha_attachment
+      workitem_resource.add_attachment workitem, new_attachment, aha_attachment.file_size
+    end
+  rescue AhaService::RemoteError => e
+    logger.error e.message
+  end
+
 protected
   def mstfs_url path
     joiner = (path =~ /\?/) ? "&" : "?"

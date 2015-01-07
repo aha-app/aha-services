@@ -15,6 +15,10 @@ class TFSRequirementMappingResource < TFSResource
       }
     }]
     api.create_integration_fields("requirements", aha_requirement.reference_num, @service.data.integration_id, {id: created_workitem.id, url: created_workitem._links.html.href})
+    
+    # Add attachments
+    create_attachments(workitem, aha_requirement.description.attachments)
+    
     return created_workitem
   end
 
@@ -45,6 +49,9 @@ class TFSRequirementMappingResource < TFSResource
       }
     end
     workitem_resource.update workitem_id, patch_set
+    
+    # Add new attachments
+    create_attachments(workitem, aha_requirement.description.attachments)
   end
 
   def update_aha_requirement aha_requirement, workitem
@@ -67,6 +74,10 @@ class TFSRequirementMappingResource < TFSResource
 protected
   def workitem_resource
     @workitem_resource ||= TFSWorkItemResource.new @service
+  end
+  
+  def attachment_resource
+    @attachment_resource ||= TFSAttachmentResource.new(@service)
   end
 
   def mapped_type

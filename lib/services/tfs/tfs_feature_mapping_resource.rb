@@ -38,10 +38,10 @@ class TFSFeatureMappingResource < TFSResource
     workitem_resource.update workitem.id, patch_set
     # update associated requirements
     aha_feature.requirements.each do |requirement|
-      requirement_mapping_resource.create_or_update @service.data.project, workitem, requirement
+      requirement_mapping_resource.create_or_update(@service.data.project, workitem, requirement)
     end
-    # add new attachments
-    create_attachments workitem, (aha_feature.attachments | aha_feature.description.attachments)
+    # Add new attachments
+    create_attachments(workitem, (aha_feature.attachments | aha_feature.description.attachments))
   end
 
   def update_aha_feature aha_feature, workitem
@@ -62,17 +62,6 @@ class TFSFeatureMappingResource < TFSResource
   end
 
 protected
-  def create_attachments workitem, aha_attachments
-    existing_files = workitem.relations.select{|relation| relation.rel == "AttachedFile"}.map{|relation| relation.attributes.name} rescue []
-    aha_attachments.each do |aha_attachment|
-      next if existing_files.include?(aha_attachment.file_name)
-      new_attachment = attachment_resource.create aha_attachment
-      workitem_resource.add_attachment workitem, new_attachment, aha_attachment.file_size
-    end
-  rescue AhaService::RemoteError => e
-    logger.error e.message
-  end
-
   def create_and_link_requirements project, workitem, requirements
     requirements.each do |requirement|
       requirement_mapping_resource.create_and_link project, workitem, requirement
