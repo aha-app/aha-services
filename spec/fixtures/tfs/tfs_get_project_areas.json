@@ -1,0 +1,11 @@
+{
+    "name": "Aha-Integration",
+    "structureType": "area",
+    "hasChildren": false,
+    "_links": {
+	"self": {
+	    "href": "https://maufl.visualstudio.com/DefaultCollection/43d47bf1-9c6c-4387-9945-944f625e60f3/_apis/wit/classificationNodes/areas"
+	}
+    },
+    "url": "https://maufl.visualstudio.com/DefaultCollection/43d47bf1-9c6c-4387-9945-944f625e60f3/_apis/wit/classificationNodes/areas"
+}

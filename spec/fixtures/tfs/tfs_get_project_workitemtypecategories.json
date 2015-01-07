@@ -1,0 +1,243 @@
+{
+  "count": 14,
+  "value": [
+    {
+      "name": "Bug Category",
+      "referenceName": "Microsoft.BugCategory",
+      "defaultWorkItemType": {
+        "name": "Bug",
+        "url": "https://maufl.visualstudio.com/DefaultCollection/43d47bf1-9c6c-4387-9945-944f625e60f3/_apis/wit/workItemTypes/Bug"
+      },
+      "workItemTypes": [
+        {
+          "name": "Bug",
+          "url": "https://maufl.visualstudio.com/DefaultCollection/43d47bf1-9c6c-4387-9945-944f625e60f3/_apis/wit/workItemTypes/Bug"
+        }
+      ],
+      "url": "https://maufl.visualstudio.com/DefaultCollection/43d47bf1-9c6c-4387-9945-944f625e60f3/_apis/wit/workItemTypeCategories/Microsoft.BugCategory"
+    },
+    {
+      "name": "Feature Category",
+      "referenceName": "Microsoft.FeatureCategory",
+      "defaultWorkItemType": {
+        "name": "Feature",
+        "url": "https://maufl.visualstudio.com/DefaultCollection/43d47bf1-9c6c-4387-9945-944f625e60f3/_apis/wit/workItemTypes/Feature"
+      },
+      "workItemTypes": [
+        {
+          "name": "Feature",
+          "url": "https://maufl.visualstudio.com/DefaultCollection/43d47bf1-9c6c-4387-9945-944f625e60f3/_apis/wit/workItemTypes/Feature"
+        }
+      ],
+      "url": "https://maufl.visualstudio.com/DefaultCollection/43d47bf1-9c6c-4387-9945-944f625e60f3/_apis/wit/workItemTypeCategories/Microsoft.FeatureCategory"
+    },
+    {
+      "name": "Shared Parameter Category",
+      "referenceName": "Microsoft.SharedParameterCategory",
+      "defaultWorkItemType": {
+        "name": "Shared Parameter",
+        "url": "https://maufl.visualstudio.com/DefaultCollection/43d47bf1-9c6c-4387-9945-944f625e60f3/_apis/wit/workItemTypes/Shared%20Parameter"
+      },
+      "workItemTypes": [
+        {
+          "name": "Shared Parameter",
+          "url": "https://maufl.visualstudio.com/DefaultCollection/43d47bf1-9c6c-4387-9945-944f625e60f3/_apis/wit/workItemTypes/Shared%20Parameter"
+        }
+      ],
+      "url": "https://maufl.visualstudio.com/DefaultCollection/43d47bf1-9c6c-4387-9945-944f625e60f3/_apis/wit/workItemTypeCategories/Microsoft.SharedParameterCategory"
+    },
+    {
+      "name": "Shared Step Category",
+      "referenceName": "Microsoft.SharedStepCategory",
+      "defaultWorkItemType": {
+        "name": "Shared Steps",
+        "url": "https://maufl.visualstudio.com/DefaultCollection/43d47bf1-9c6c-4387-9945-944f625e60f3/_apis/wit/workItemTypes/Shared%20Steps"
+      },
+      "workItemTypes": [
+        {
+          "name": "Shared Steps",
+          "url": "https://maufl.visualstudio.com/DefaultCollection/43d47bf1-9c6c-4387-9945-944f625e60f3/_apis/wit/workItemTypes/Shared%20Steps"
+        }
+      ],
+      "url": "https://maufl.visualstudio.com/DefaultCollection/43d47bf1-9c6c-4387-9945-944f625e60f3/_apis/wit/workItemTypeCategories/Microsoft.SharedStepCategory"
+    },
+    {
+      "name": "Test Case Category",
+      "referenceName": "Microsoft.TestCaseCategory",
+      "defaultWorkItemType": {
+        "name": "Test Case",
+        "url": "https://maufl.visualstudio.com/DefaultCollection/43d47bf1-9c6c-4387-9945-944f625e60f3/_apis/wit/workItemTypes/Test%20Case"
+      },
+      "workItemTypes": [
+        {
+          "name": "Test Case",
+          "url": "https://maufl.visualstudio.com/DefaultCollection/43d47bf1-9c6c-4387-9945-944f625e60f3/_apis/wit/workItemTypes/Test%20Case"
+        }
+      ],
+      "url": "https://maufl.visualstudio.com/DefaultCollection/43d47bf1-9c6c-4387-9945-944f625e60f3/_apis/wit/workItemTypeCategories/Microsoft.TestCaseCategory"
+    },
+    {
+      "name": "Requirement Category",
+      "referenceName": "Microsoft.RequirementCategory",
+      "defaultWorkItemType": {
+        "name": "User Story",
+        "url": "https://maufl.visualstudio.com/DefaultCollection/43d47bf1-9c6c-4387-9945-944f625e60f3/_apis/wit/workItemTypes/User%20Story"
+      },
+      "workItemTypes": [
+        {
+          "name": "User Story",
+          "url": "https://maufl.visualstudio.com/DefaultCollection/43d47bf1-9c6c-4387-9945-944f625e60f3/_apis/wit/workItemTypes/User%20Story"
+        }
+      ],
+      "url": "https://maufl.visualstudio.com/DefaultCollection/43d47bf1-9c6c-4387-9945-944f625e60f3/_apis/wit/workItemTypeCategories/Microsoft.RequirementCategory"
+    },
+    {
+      "name": "Code Review Request Category",
+      "referenceName": "Microsoft.CodeReviewRequestCategory",
+      "defaultWorkItemType": {
+        "name": "Code Review Request",
+        "url": "https://maufl.visualstudio.com/DefaultCollection/43d47bf1-9c6c-4387-9945-944f625e60f3/_apis/wit/workItemTypes/Code%20Review%20Request"
+      },
+      "workItemTypes": [
+        {
+          "name": "Code Review Request",
+          "url": "https://maufl.visualstudio.com/DefaultCollection/43d47bf1-9c6c-4387-9945-944f625e60f3/_apis/wit/workItemTypes/Code%20Review%20Request"
+        }
+      ],
+      "url": "https://maufl.visualstudio.com/DefaultCollection/43d47bf1-9c6c-4387-9945-944f625e60f3/_apis/wit/workItemTypeCategories/Microsoft.CodeReviewRequestCategory"
+    },
+    {
+      "name": "Hidden Types Category",
+      "referenceName": "Microsoft.HiddenCategory",
+      "defaultWorkItemType": {
+        "name": "Code Review Request",
+        "url": "https://maufl.visualstudio.com/DefaultCollection/43d47bf1-9c6c-4387-9945-944f625e60f3/_apis/wit/workItemTypes/Code%20Review%20Request"
+      },
+      "workItemTypes": [
+        {
+          "name": "Code Review Request",
+          "url": "https://maufl.visualstudio.com/DefaultCollection/43d47bf1-9c6c-4387-9945-944f625e60f3/_apis/wit/workItemTypes/Code%20Review%20Request"
+        },
+        {
+          "name": "Code Review Response",
+          "url": "https://maufl.visualstudio.com/DefaultCollection/43d47bf1-9c6c-4387-9945-944f625e60f3/_apis/wit/workItemTypes/Code%20Review%20Response"
+        },
+        {
+          "name": "Feedback Request",
+          "url": "https://maufl.visualstudio.com/DefaultCollection/43d47bf1-9c6c-4387-9945-944f625e60f3/_apis/wit/workItemTypes/Feedback%20Request"
+        },
+        {
+          "name": "Feedback Response",
+          "url": "https://maufl.visualstudio.com/DefaultCollection/43d47bf1-9c6c-4387-9945-944f625e60f3/_apis/wit/workItemTypes/Feedback%20Response"
+        },
+        {
+          "name": "Shared Parameter",
+          "url": "https://maufl.visualstudio.com/DefaultCollection/43d47bf1-9c6c-4387-9945-944f625e60f3/_apis/wit/workItemTypes/Shared%20Parameter"
+        },
+        {
+          "name": "Shared Steps",
+          "url": "https://maufl.visualstudio.com/DefaultCollection/43d47bf1-9c6c-4387-9945-944f625e60f3/_apis/wit/workItemTypes/Shared%20Steps"
+        },
+        {
+          "name": "Test Plan",
+          "url": "https://maufl.visualstudio.com/DefaultCollection/43d47bf1-9c6c-4387-9945-944f625e60f3/_apis/wit/workItemTypes/Test%20Plan"
+        },
+        {
+          "name": "Test Suite",
+          "url": "https://maufl.visualstudio.com/DefaultCollection/43d47bf1-9c6c-4387-9945-944f625e60f3/_apis/wit/workItemTypes/Test%20Suite"
+        }
+      ],
+      "url": "https://maufl.visualstudio.com/DefaultCollection/43d47bf1-9c6c-4387-9945-944f625e60f3/_apis/wit/workItemTypeCategories/Microsoft.HiddenCategory"
+    },
+    {
+      "name": "Code Review Response Category",
+      "referenceName": "Microsoft.CodeReviewResponseCategory",
+      "defaultWorkItemType": {
+        "name": "Code Review Response",
+        "url": "https://maufl.visualstudio.com/DefaultCollection/43d47bf1-9c6c-4387-9945-944f625e60f3/_apis/wit/workItemTypes/Code%20Review%20Response"
+      },
+      "workItemTypes": [
+        {
+          "name": "Code Review Response",
+          "url": "https://maufl.visualstudio.com/DefaultCollection/43d47bf1-9c6c-4387-9945-944f625e60f3/_apis/wit/workItemTypes/Code%20Review%20Response"
+        }
+      ],
+      "url": "https://maufl.visualstudio.com/DefaultCollection/43d47bf1-9c6c-4387-9945-944f625e60f3/_apis/wit/workItemTypeCategories/Microsoft.CodeReviewResponseCategory"
+    },
+    {
+      "name": "Feedback Request Category",
+      "referenceName": "Microsoft.FeedbackRequestCategory",
+      "defaultWorkItemType": {
+        "name": "Feedback Request",
+        "url": "https://maufl.visualstudio.com/DefaultCollection/43d47bf1-9c6c-4387-9945-944f625e60f3/_apis/wit/workItemTypes/Feedback%20Request"
+      },
+      "workItemTypes": [
+        {
+          "name": "Feedback Request",
+          "url": "https://maufl.visualstudio.com/DefaultCollection/43d47bf1-9c6c-4387-9945-944f625e60f3/_apis/wit/workItemTypes/Feedback%20Request"
+        }
+      ],
+      "url": "https://maufl.visualstudio.com/DefaultCollection/43d47bf1-9c6c-4387-9945-944f625e60f3/_apis/wit/workItemTypeCategories/Microsoft.FeedbackRequestCategory"
+    },
+    {
+      "name": "Feedback Response Category",
+      "referenceName": "Microsoft.FeedbackResponseCategory",
+      "defaultWorkItemType": {
+        "name": "Feedback Response",
+        "url": "https://maufl.visualstudio.com/DefaultCollection/43d47bf1-9c6c-4387-9945-944f625e60f3/_apis/wit/workItemTypes/Feedback%20Response"
+      },
+      "workItemTypes": [
+        {
+          "name": "Feedback Response",
+          "url": "https://maufl.visualstudio.com/DefaultCollection/43d47bf1-9c6c-4387-9945-944f625e60f3/_apis/wit/workItemTypes/Feedback%20Response"
+        }
+      ],
+      "url": "https://maufl.visualstudio.com/DefaultCollection/43d47bf1-9c6c-4387-9945-944f625e60f3/_apis/wit/workItemTypeCategories/Microsoft.FeedbackResponseCategory"
+    },
+    {
+      "name": "Task Category",
+      "referenceName": "Microsoft.TaskCategory",
+      "defaultWorkItemType": {
+        "name": "Task",
+        "url": "https://maufl.visualstudio.com/DefaultCollection/43d47bf1-9c6c-4387-9945-944f625e60f3/_apis/wit/workItemTypes/Task"
+      },
+      "workItemTypes": [
+        {
+          "name": "Task",
+          "url": "https://maufl.visualstudio.com/DefaultCollection/43d47bf1-9c6c-4387-9945-944f625e60f3/_apis/wit/workItemTypes/Task"
+        }
+      ],
+      "url": "https://maufl.visualstudio.com/DefaultCollection/43d47bf1-9c6c-4387-9945-944f625e60f3/_apis/wit/workItemTypeCategories/Microsoft.TaskCategory"
+    },
+    {
+      "name": "Test Plan Category",
+      "referenceName": "Microsoft.TestPlanCategory",
+      "defaultWorkItemType": {
+        "name": "Test Plan",
+        "url": "https://maufl.visualstudio.com/DefaultCollection/43d47bf1-9c6c-4387-9945-944f625e60f3/_apis/wit/workItemTypes/Test%20Plan"
+      },
+      "workItemTypes": [
+        {
+          "name": "Test Plan",
+          "url": "https://maufl.visualstudio.com/DefaultCollection/43d47bf1-9c6c-4387-9945-944f625e60f3/_apis/wit/workItemTypes/Test%20Plan"
+        }
+      ],
+      "url": "https://maufl.visualstudio.com/DefaultCollection/43d47bf1-9c6c-4387-9945-944f625e60f3/_apis/wit/workItemTypeCategories/Microsoft.TestPlanCategory"
+    },
+    {
+      "name": "Test Suite Category",
+      "referenceName": "Microsoft.TestSuiteCategory",
+      "defaultWorkItemType": {
+        "name": "Test Suite",
+        "url": "https://maufl.visualstudio.com/DefaultCollection/43d47bf1-9c6c-4387-9945-944f625e60f3/_apis/wit/workItemTypes/Test%20Suite"
+      },
+      "workItemTypes": [
+        {
+          "name": "Test Suite",
+          "url": "https://maufl.visualstudio.com/DefaultCollection/43d47bf1-9c6c-4387-9945-944f625e60f3/_apis/wit/workItemTypes/Test%20Suite"
+        }
+      ],
+      "url": "https://maufl.visualstudio.com/DefaultCollection/43d47bf1-9c6c-4387-9945-944f625e60f3/_apis/wit/workItemTypeCategories/Microsoft.TestSuiteCategory"
+    }
+  ]
+}
