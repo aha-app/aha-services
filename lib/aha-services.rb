@@ -35,6 +35,7 @@ require 'services/pivotal_tracker/pivotal_tracker_resource'
 require 'services/pivotal_tracker/pivotal_tracker_project_dependent_resource'
 require 'services/trello/trello_resource'
 require 'services/fogbugz/fogbugz_resource'
+require 'services/tfs/tfs_resource'
 
 require 'services/redmine/redmine_resource'
 require 'services/redmine/redmine_upload_resource'

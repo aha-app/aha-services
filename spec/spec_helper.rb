@@ -6,7 +6,7 @@ $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 # textmate.
 require 'rubygems'
 require 'bundler'
-Bundler.require(:default)
+Bundler.require(:default, :development)
 
 require 'rspec'
 require 'webmock/rspec'
