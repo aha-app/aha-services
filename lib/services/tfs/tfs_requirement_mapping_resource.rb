@@ -17,7 +17,7 @@ class TFSRequirementMappingResource < TFSResource
     api.create_integration_fields("requirements", aha_requirement.reference_num, @service.data.integration_id, {id: created_workitem.id, url: created_workitem._links.html.href})
     
     # Add attachments
-    create_attachments(workitem, aha_requirement.description.attachments)
+    create_attachments(created_workitem, aha_requirement.description.attachments)
     
     return created_workitem
   end
