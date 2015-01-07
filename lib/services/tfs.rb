@@ -1,4 +1,5 @@
 class AhaServices::TFS < AhaService
+  title "Visual Studio TFS"
   caption "Send features and requirements to Microsoft Team Foundation Server"
 
   string :account_name, description: "The name of your Visual Studio subdomain."
