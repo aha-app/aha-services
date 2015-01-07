@@ -2,9 +2,9 @@ class AhaServices::TFS < AhaService
   title "Visual Studio TFS"
   caption "Send features and requirements to Microsoft Team Foundation Server"
 
-  string :account_name, description: "The name of your Visual Studio subdomain."
-  string :user_name, description: "The name of the user used to access Visual Studio Online."
-  password :user_password, description: "The password of the user used to access Visual Studio Online."
+  string :account_name, description: "The name of your Visual Studio subdomain. e.g. if your Visual Studio domain is https://mycompany.visualstudio.com, then enter 'mycompany' here."
+  string :user_name, description: "Enter the 'User name (secondary)' from the alternate credentials in Visual Studio Online. This is not your email address."
+  password :user_password, description: "Enter the password from the alternate credentials in Visual Studio Online."
 
   install_button
 
