@@ -35,7 +35,7 @@ class RallyHierarchicalRequirementResource < RallyResource
 
   def create_from_feature aha_feature
     create map_feature(aha_feature) do |hrequirement|
-      api.create_integration_fields "features", aha_feature.id, @service.data.integration_id, { id: hrequirement.ObjectID, url: hrequirement._ref }
+      api.create_integration_fields "features", aha_feature.id, @service.data.integration_id, { id: hrequirement.ObjectID, formatted_id: hrequirement.FormattedID, url: "https://rally1.rallydev.com/#/detail/userstory/#{hrequirement.ObjectID}" }
       aha_feature.requirements.each{|requirement| create_from_requirement hrequirement, requirement }
       create_attachments hrequirement, (aha_feature.attachments | aha_feature.description.attachments)
     end
@@ -43,7 +43,7 @@ class RallyHierarchicalRequirementResource < RallyResource
 
   def create_from_requirement parent, aha_requirement
     create map_requirement(parent, aha_requirement) do |hrequirement|
-      api.create_integration_fields "requirements", aha_requirement.id, @service.data.integration_id, { id: hrequirement.ObjectID, url: hrequirement._ref }
+      api.create_integration_fields "requirements", aha_requirement.id, @service.data.integration_id, { id: hrequirement.ObjectID, formatted_id: hrequirement.FormattedID, url: "https://rally1.rallydev.com/#/detail/userstory/#{hrequirement.ObjectID}" }
       create_attachments hrequirement, (aha_requirement.attachments | aha_requirement.description.attachments)
     end
   end
@@ -84,19 +84,8 @@ class RallyHierarchicalRequirementResource < RallyResource
     # create user stories which do not yet exist
     new_requirements = aha_requirements.select{|requirement| map_to_objectid(requirement).nil? }
     new_requirements.each{|requirement| create_from_requirement hrequirement, requirement}
-    # delete user stories which have been deleted in Aha!
-    existingIDs = (aha_requirements - new_requirements).map{|requirement| map_to_objectid(requirement)}
-    (childIDs - existingIDs).each{|id| delete(id) }
     # update user stories from requirements which are neither new nor deleted
     (aha_requirements - new_requirements).each{|requirement| update_from_requirement(hrequirement, requirement) }
-  end
-
-  def delete id
-    url = rally_secure_url "/hierarchicalrequirement/#{id}"
-    response = http_delete url
-    process_response response, 200, 201
-  rescue AhaService::RemoteError => e
-    logger.error("Unable to delete user storie with id #{id}: #{e.message}")
   end
 
 protected
