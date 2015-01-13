@@ -13,7 +13,7 @@ class RallyReleaseResource < RallyResource
     response = http_put url, body
     process_response response, 200, 201 do |document|
       rally_release = document.CreateResult.Object
-      api.create_integration_fields "releases", aha_release.id, @service.data.integration_id, { id: rally_release.ObjectID, url: rally_release._ref }
+      api.create_integration_fields "releases", aha_release.id, @service.data.integration_id, { id: rally_release.ObjectID, url: "https://rally1.rallydev.com/#/#{@service.data.project}d/detail/release/#{rally_release.ObjectID}" }
     end
   end
 

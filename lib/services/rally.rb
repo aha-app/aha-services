@@ -1,8 +1,8 @@
 class AhaServices::Rally < AhaService
   caption "Send releases, features and requirements to Rally"
 
-  string :user_name, description: "The name of the user used to access Rally."
-  password :user_password, description: "The password of the user."
+  string :user_name, description: "The username for the Rally account."
+  password :user_password
 
   install_button
 
@@ -11,18 +11,13 @@ class AhaServices::Rally < AhaService
     meta_data.projects.collect {|p| [p.Name, p.ObjectID] }
   }
 
-  internal :feature_status_mapping
-  internal :requirement_status_mapping
-
-  #select :portfolio_item_type, description: "The type of PortfolioItem you want to map ... to.", collection: -> (meta_data,data) {
-  #  meta_data.portfolio_item_types
-  #}
+  # There is no status mapping until Rally supports webhooks.
+  #internal :feature_status_mapping
+  #internal :requirement_status_mapping
 
   def receive_installed
     projects = rally_project_resource.all
     meta_data.projects = projects
-    #portfolio_item_types = rally_portfolio_item_resource.get_all_types
-    #meta_data.portfolio_item_types = portfolio_item_types
   end
 
   def receive_create_release
