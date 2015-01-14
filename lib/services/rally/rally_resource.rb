@@ -1,7 +1,7 @@
 require 'faraday-cookie_jar'
 
 class RallyResource < GenericResource
-  API_URL = "https://rally1.rallydev.com/slm/webservice/v2.0/"
+  API_URL = "https://rally1.rallydev.com/slm/webservice/v2.0"
 
   attr_accessor :security_token
 

@@ -34,15 +34,16 @@ class RallyHierarchicalRequirementResource < RallyResource
   end
 
   def create_from_feature aha_feature
+    release_id = map_to_objectid aha_feature.release
     create map_feature(aha_feature) do |hrequirement|
       api.create_integration_fields "features", aha_feature.id, @service.data.integration_id, { id: hrequirement.ObjectID, formatted_id: hrequirement.FormattedID, url: "https://rally1.rallydev.com/#/detail/userstory/#{hrequirement.ObjectID}" }
-      aha_feature.requirements.each{|requirement| create_from_requirement hrequirement, requirement }
+      aha_feature.requirements.each{|requirement| create_from_requirement hrequirement.ObjectID, release_id, requirement }
       create_attachments hrequirement, (aha_feature.attachments | aha_feature.description.attachments)
     end
   end
 
-  def create_from_requirement parent, aha_requirement
-    create map_requirement(parent, aha_requirement) do |hrequirement|
+  def create_from_requirement parent_id, release_id, aha_requirement
+    create map_requirement(parent_id, release_id, aha_requirement) do |hrequirement|
       api.create_integration_fields "requirements", aha_requirement.id, @service.data.integration_id, { id: hrequirement.ObjectID, formatted_id: hrequirement.FormattedID, url: "https://rally1.rallydev.com/#/detail/userstory/#{hrequirement.ObjectID}" }
       create_attachments hrequirement, (aha_requirement.attachments | aha_requirement.description.attachments)
     end
@@ -63,29 +64,29 @@ class RallyHierarchicalRequirementResource < RallyResource
 
   def update_from_feature aha_feature
     id = map_to_objectid aha_feature
-    current = get id
-    sync_requirements current, aha_feature.requirements
+    release_id = map_to_objectid aha_feature
+    sync_requirements id, release_id, aha_feature.requirements
     update id, map_feature(aha_feature) do |hrequirement|
       rally_attachment_resource.sync_attachments hrequirement, (aha_feature.attachments | aha_feature.description.attachments)
     end
   end
 
-  def update_from_requirement parent, aha_requirement
+  def update_from_requirement parent_id, release_id, aha_requirement
     id = map_to_objectid aha_requirement
-    update id, map_requirement(parent, aha_requirement) do |hrequirement|
+    update id, map_requirement(parent_id, release_id, aha_requirement) do |hrequirement|
       rally_attachment_resource.sync_attachments hrequirement, (aha_requirement.attachments | aha_requirement.description.attachments)
     end
   end
 
-  def sync_requirements hrequirement, aha_requirements
+  def sync_requirements parent_id, release_id, aha_requirements
     # get current children of the user story
     # we do this first so that they do not contain ObjectIDs from children we create in the next step
-    childIDs = get_children(hrequirement.ObjectID).map{|child| child.ObjectID }
+    childIDs = get_children(parent_id).map{|child| child.ObjectID }
     # create user stories which do not yet exist
     new_requirements = aha_requirements.select{|requirement| map_to_objectid(requirement).nil? }
-    new_requirements.each{|requirement| create_from_requirement hrequirement, requirement}
+    new_requirements.each{|requirement| create_from_requirement parent_id, release_id, requirement}
     # update user stories from requirements which are neither new nor deleted
-    (aha_requirements - new_requirements).each{|requirement| update_from_requirement(hrequirement, requirement) }
+    (aha_requirements - new_requirements).each{|requirement| update_from_requirement(parent_id, release_id, requirement) }
   end
 
 protected
@@ -101,10 +102,10 @@ protected
     attributes
   end
 
-  def map_requirement parent, aha_requirement
+  def map_requirement parent_id, release_id, aha_requirement
     {
-      :Parent => parent.ObjectID,
-      :Release => parent.Release,
+      :Parent => parent_id,
+      :Release => release_id,
       :Description => aha_requirement.description.body,
       :Name => aha_requirement.name
     }
