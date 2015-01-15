@@ -1,4 +1,4 @@
-This integration allows you to push features and requirements in Aha! into the Microsoft Visual Studio Team Foundation server.
+This integration allows you to push features and requirements from Aha! to Microsoft Visual Studio Team Foundation server.
 
 This integration uses the REST API and currently only Visual Studio Online is supported. 
 
