@@ -5,7 +5,7 @@ This integration uses the REST API and currently only Visual Studio Online is su
 ## Features
 
 * One Aha! product is associated with one Microsoft Team Fondation project.
-* An feature can be sent to the Mirosoft Team Fondation server using the _Send to Visual Studio TFS_ item in the _Action_ menu on the features page.
+* A feature can be sent to the Mirosoft Team Fondation server using the _Send to Visual Studio TFS_ item in the _Action_ menu on the features page.
 * Requirements are sent to TFS together with the feature.
 * Only the name, description and attachments of features and requirements are sent.
 * If you set up a subscription in TFS the integration can receive updates about name changes, description changes or status changes.
