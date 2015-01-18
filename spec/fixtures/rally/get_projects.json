@@ -1,0 +1,183 @@
+{
+  "QueryResult": {
+    "_rallyAPIMajor": "2",
+    "_rallyAPIMinor": "0",
+    "Errors": [],
+    "Warnings": [],
+    "TotalResultCount": 2,
+    "StartIndex": 1,
+    "PageSize": 20,
+    "Results": [
+      {
+        "_rallyAPIMajor": "2",
+        "_rallyAPIMinor": "0",
+        "_ref": "https://rally1.rallydev.com/slm/webservice/v2.0/project/22098603406",
+        "_refObjectUUID": "b6431455-7543-4383-84bd-7210b592896a",
+        "_objectVersion": "1",
+        "_refObjectName": "Sample Project",
+        "CreationDate": "2014-08-29T18:07:22.867Z",
+        "_CreatedAt": "Aug 29",
+        "ObjectID": 22098603406,
+        "VersionId": "1",
+        "Subscription": {
+          "_rallyAPIMajor": "2",
+          "_rallyAPIMinor": "0",
+          "_ref": "https://rally1.rallydev.com/slm/webservice/v2.0/subscription/22098603174",
+          "_refObjectUUID": "7d264871-cb52-4223-b5ea-bded4ad17d8f",
+          "_refObjectName": "Tech Partner - chris@aha.io",
+          "_type": "Subscription"
+        },
+        "Workspace": {
+          "_rallyAPIMajor": "2",
+          "_rallyAPIMinor": "0",
+          "_ref": "https://rally1.rallydev.com/slm/webservice/v2.0/workspace/22098603316",
+          "_refObjectUUID": "84185cff-aa46-4efc-b3fa-f9f0ead52130",
+          "_refObjectName": "Workspace 1",
+          "_type": "Workspace"
+        },
+        "BuildDefinitions": {
+          "_rallyAPIMajor": "2",
+          "_rallyAPIMinor": "0",
+          "_ref": "https://rally1.rallydev.com/slm/webservice/v2.0/Project/22098603406/BuildDefinitions",
+          "_type": "BuildDefinition",
+          "Count": 1
+        },
+        "Children": {
+          "_rallyAPIMajor": "2",
+          "_rallyAPIMinor": "0",
+          "_ref": "https://rally1.rallydev.com/slm/webservice/v2.0/Project/22098603406/Children",
+          "_type": "Project",
+          "Count": 0
+        },
+        "Description": "",
+        "Editors": {
+          "_rallyAPIMajor": "2",
+          "_rallyAPIMinor": "0",
+          "_ref": "https://rally1.rallydev.com/slm/webservice/v2.0/Project/22098603406/Editors",
+          "_type": "User",
+          "Count": 2
+        },
+        "Iterations": {
+          "_rallyAPIMajor": "2",
+          "_rallyAPIMinor": "0",
+          "_ref": "https://rally1.rallydev.com/slm/webservice/v2.0/Project/22098603406/Iterations",
+          "_type": "Iteration",
+          "Count": 3
+        },
+        "Name": "Sample Project",
+        "Notes": "",
+        "Owner": {
+          "_rallyAPIMajor": "2",
+          "_rallyAPIMinor": "0",
+          "_ref": "https://rally1.rallydev.com/slm/webservice/v2.0/user/22098603310",
+          "_refObjectUUID": "3dcbe21c-e01f-4ee9-962b-1a3259cf14e6",
+          "_refObjectName": "chris",
+          "_type": "User"
+        },
+        "Parent": null,
+        "Releases": {
+          "_rallyAPIMajor": "2",
+          "_rallyAPIMinor": "0",
+          "_ref": "https://rally1.rallydev.com/slm/webservice/v2.0/Project/22098603406/Releases",
+          "_type": "Release",
+          "Count": 6
+        },
+        "SchemaVersion": "d81d6d7ff627be195612f63f62f9fa92",
+        "State": "Open",
+        "TeamMembers": {
+          "_rallyAPIMajor": "2",
+          "_rallyAPIMinor": "0",
+          "_ref": "https://rally1.rallydev.com/slm/webservice/v2.0/Project/22098603406/TeamMembers",
+          "_type": "User",
+          "Count": 0
+        },
+        "_type": "Project"
+      },
+      {
+        "_rallyAPIMajor": "2",
+        "_rallyAPIMinor": "0",
+        "_ref": "https://rally1.rallydev.com/slm/webservice/v2.0/project/25505905999",
+        "_refObjectUUID": "7d28ca74-b762-4ac4-84bc-2b6957e06e00",
+        "_objectVersion": "1",
+        "_refObjectName": "Second project",
+        "CreationDate": "2014-11-17T16:12:11.967Z",
+        "_CreatedAt": "Nov 17",
+        "ObjectID": 25505905999,
+        "VersionId": "1",
+        "Subscription": {
+          "_rallyAPIMajor": "2",
+          "_rallyAPIMinor": "0",
+          "_ref": "https://rally1.rallydev.com/slm/webservice/v2.0/subscription/22098603174",
+          "_refObjectUUID": "7d264871-cb52-4223-b5ea-bded4ad17d8f",
+          "_refObjectName": "Tech Partner - chris@aha.io",
+          "_type": "Subscription"
+        },
+        "Workspace": {
+          "_rallyAPIMajor": "2",
+          "_rallyAPIMinor": "0",
+          "_ref": "https://rally1.rallydev.com/slm/webservice/v2.0/workspace/22098603316",
+          "_refObjectUUID": "84185cff-aa46-4efc-b3fa-f9f0ead52130",
+          "_refObjectName": "Workspace 1",
+          "_type": "Workspace"
+        },
+        "BuildDefinitions": {
+          "_rallyAPIMajor": "2",
+          "_rallyAPIMinor": "0",
+          "_ref": "https://rally1.rallydev.com/slm/webservice/v2.0/Project/25505905999/BuildDefinitions",
+          "_type": "BuildDefinition",
+          "Count": 1
+        },
+        "Children": {
+          "_rallyAPIMajor": "2",
+          "_rallyAPIMinor": "0",
+          "_ref": "https://rally1.rallydev.com/slm/webservice/v2.0/Project/25505905999/Children",
+          "_type": "Project",
+          "Count": 0
+        },
+        "Description": "",
+        "Editors": {
+          "_rallyAPIMajor": "2",
+          "_rallyAPIMinor": "0",
+          "_ref": "https://rally1.rallydev.com/slm/webservice/v2.0/Project/25505905999/Editors",
+          "_type": "User",
+          "Count": 2
+        },
+        "Iterations": {
+          "_rallyAPIMajor": "2",
+          "_rallyAPIMinor": "0",
+          "_ref": "https://rally1.rallydev.com/slm/webservice/v2.0/Project/25505905999/Iterations",
+          "_type": "Iteration",
+          "Count": 0
+        },
+        "Name": "Second project",
+        "Notes": "",
+        "Owner": {
+          "_rallyAPIMajor": "2",
+          "_rallyAPIMinor": "0",
+          "_ref": "https://rally1.rallydev.com/slm/webservice/v2.0/user/22098603310",
+          "_refObjectUUID": "3dcbe21c-e01f-4ee9-962b-1a3259cf14e6",
+          "_refObjectName": "chris",
+          "_type": "User"
+        },
+        "Parent": null,
+        "Releases": {
+          "_rallyAPIMajor": "2",
+          "_rallyAPIMinor": "0",
+          "_ref": "https://rally1.rallydev.com/slm/webservice/v2.0/Project/25505905999/Releases",
+          "_type": "Release",
+          "Count": 1
+        },
+        "SchemaVersion": "d81d6d7ff627be195612f63f62f9fa92",
+        "State": "Open",
+        "TeamMembers": {
+          "_rallyAPIMajor": "2",
+          "_rallyAPIMinor": "0",
+          "_ref": "https://rally1.rallydev.com/slm/webservice/v2.0/Project/25505905999/TeamMembers",
+          "_type": "User",
+          "Count": 0
+        },
+        "_type": "Project"
+      }
+    ]
+  }
+}
