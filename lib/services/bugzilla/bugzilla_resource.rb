@@ -1,12 +1,6 @@
 class BugzillaResource < GenericResource
-  attr_reader :logger
   attr_reader :service
   
-  def initialize service
-    @service = service
-    @logger = AhaLogger.new(STDOUT)
-  end
-
   def faraday_builder b
     b.options.params_encoder = Faraday::FlatParamsEncoder
   end
@@ -28,6 +22,14 @@ class BugzillaResource < GenericResource
     else
       raise AhaService::RemoteError, "Unhandled error: STATUS=#{response.status} BODY=#{response.body}"
     end
+  end
+
+  def get_product
+    service.meta_data.products.find{|p| p.id.to_s == service.data.product }
+  end
+
+  def get_component
+    get_product().components.find{|c| c.id.to_s == service.data.component }
   end
 
   def bugzilla_url path

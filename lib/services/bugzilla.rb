@@ -12,7 +12,7 @@ class AhaServices::Bugzilla < AhaService
   }
 
   select :component, description: "The component in which new bugs will be created", collection: ->(meta_data, data) {
-    product = meta_data.products.find{|p| p.id.to_s == data.product }
+    product = meta_data.products.find{|p| p.id.to_s == data.product } rescue nil
     product.components.map{|c| [c.name, c.id] } rescue []
   }
 
@@ -21,9 +21,17 @@ class AhaServices::Bugzilla < AhaService
     pp meta_data.products
   end
 
+  def receive_create_feature
+    bug_resource.create_from_feature payload.feature 
+  end
+
   protected
 
   def product_resource
     @product_resource ||= BugzillaProductResource.new(self)
+  end
+
+  def bug_resource
+    @bug_resource ||= BugzillaBugResource.new(self)
   end
 end
