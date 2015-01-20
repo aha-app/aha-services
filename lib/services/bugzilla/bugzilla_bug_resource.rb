@@ -5,6 +5,13 @@ class BugzillaBugResource < BugzillaResource
     bug = create payload
     api.create_integration_fields("features", feature.reference_num, @service.data.integration_id, {id: bug.id, url: bug_url(bug.id)})
     (feature.attachments | feature.description.attachments).each {|a| attachment_resource.create bug.id, a }
+    # create bugs for requirements
+    requirement_bugs = feature.requirements.map {|r| create_from_requirement r }
+    # collect their ids
+    ids = requirement_bugs.map {|b| b.id }
+    # make the "feature" bug depend on them
+    update bug.id, { :depends_on => { :set => ids } }
+    bug
   end
 
   def update_from_feature feature
@@ -12,8 +19,17 @@ class BugzillaBugResource < BugzillaResource
     payload = feature_to_bug(feature)
     bug = update bug_id, payload
     update_attachments bug_id, (feature.attachments | feature.description.attachments)
+    bug
   end
 
+  def create_from_requirement requirement
+    payload = requirement_to_bug(requirement)
+    bug = create payload
+    api.create_integration_fields("requirements", requirement.reference_num, @service.data.integration_id, {id: bug.id, url: bug_url(bug.id)})
+    (requirement.attachments | requirement.description.attachments).each {|a| attachment_resource.create bug.id, a }
+    bug
+  end
+  
   private
 
   def bug_url id
@@ -47,11 +63,23 @@ class BugzillaBugResource < BugzillaResource
   end
   
   def feature_to_bug feature
+    common_bug_fields.merge({
+      :summary => feature.name,
+      :description => html_to_markdown(feature.description.body)
+    })
+  end
+
+  def requirement_to_bug requirement
+    common_bug_fields.merge({
+      :summary => requirement.name,
+      :description => html_to_markdown(requirement.description.body),
+    })
+  end
+
+  def common_bug_fields
     {
       :product => get_product().name,
       :component => get_component().name,
-      :summary => feature.name,
-      :description => html_to_markdown(feature.description.body),
       :version => "unspecified",
       :op_sys => "All",
       :platform => "All",
