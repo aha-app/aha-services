@@ -45,4 +45,8 @@ class BugzillaResource < GenericResource
     joiner = (path =~ /\?/) ? "&" : "?"
     "#{service.data.server_url}/rest/#{path}#{joiner}api_key=#{service.data.api_key}"
   end
+
+  def integration_field_id aha_resource
+   aha_resource.integration_fields.find{|f| f.integration_id == service.data.integration_id.to_s and f.name == "id"}.value.to_i rescue nil
+  end
 end

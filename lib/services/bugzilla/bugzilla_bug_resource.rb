@@ -7,6 +7,13 @@ class BugzillaBugResource < BugzillaResource
     (feature.attachments | feature.description.attachments).each {|a| attachment_resource.create bug.id, a }
   end
 
+  def update_from_feature feature
+    bug_id = integration_field_id feature
+    payload = feature_to_bug(feature)
+    bug = update bug_id, payload
+    update_attachments bug_id, (feature.attachments | feature.description.attachments)
+  end
+
   private
 
   def bug_url id
@@ -19,6 +26,26 @@ class BugzillaBugResource < BugzillaResource
     process_response response
   end
 
+  def update id, bug
+    url = bugzilla_url "bug/#{id}"
+    response = http_put url, bug.to_json
+    process_response response
+  end
+
+  def update_attachments bug_id, aha_attachments
+    url = bugzilla_url "bug/#{bug_id}/attachment?exclude_fields=data"
+    bz_attachments = process_response(http_get(url)).bugs[bug_id.to_s]
+    aha_attachments.each do |aha_a|
+      bz_a = bz_attachments.find{|e| e.file_name == aha_a.file_name }
+      if bz_a and bz_a[:size] != aha_a.file_size then
+        # TODO: updating an attachment currently fails in Bugzilla
+        #attachment_resource.update bz_a.id, aha_a
+      elsif bz_a.nil?
+        attachment_resource.create bug_id, aha_a
+      end
+    end
+  end
+  
   def feature_to_bug feature
     {
       :product => get_product().name,

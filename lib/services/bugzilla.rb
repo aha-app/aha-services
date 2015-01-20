@@ -25,6 +25,10 @@ class AhaServices::Bugzilla < AhaService
     bug_resource.create_from_feature payload.feature 
   end
 
+  def receive_update_feature
+    bug_resource.update_from_feature payload.feature
+  end
+
   protected
 
   def product_resource
