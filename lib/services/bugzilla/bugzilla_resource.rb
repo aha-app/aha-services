@@ -4,9 +4,18 @@ class BugzillaResource < GenericResource
   def faraday_builder b
     b.options.params_encoder = Faraday::FlatParamsEncoder
   end
+
+  def self.default_http_options
+    super
+    @@default_http_options[:headers] = {
+      "Content-Type" => "application/json",
+      "Accept" => "application/json"
+    }
+    @@default_http_options
+  end
   
   def process_response(response, *success_codes, &block)
-    success_codes = [200] if success_codes == []
+    success_codes = [200, 201] if success_codes == []
     if success_codes.include?(response.status)
       if block_given?
         yield hashie_or_array_of_hashies(response.body)
