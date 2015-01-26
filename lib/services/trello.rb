@@ -76,11 +76,13 @@ class AhaServices::Trello < AhaService
   end
 
   def create_card_for(feature)
+    due_date = feature.due_date || feature.release.release_date
+    
     card = card_resource.create(
       name: resource_name(feature),
       desc: ReverseMarkdown.convert(feature.description.body),
       pos: data.create_features_at,
-      due: Time.parse(feature.release.release_date).utc,
+      due: due_date ? Time.parse(due_date).utc : nil,
       idList: data.list_for_new_features
     )
     webhook = card_resource.create_webhook(card.id)
@@ -90,11 +92,13 @@ class AhaServices::Trello < AhaService
   end
 
   def update_card(card_id, feature)
+    due_date = feature.due_date || feature.release.release_date
+    
     card_resource
       .update card_id,
         name: resource_name(feature),
         desc: ReverseMarkdown.convert(feature.description.body),
-        due: Time.parse(feature.release.release_date).utc,
+        due: due_date ? Time.parse(due_date).utc : nil,
         idList: data.feature_statuses.invert[feature.workflow_status.id]
   end
 
