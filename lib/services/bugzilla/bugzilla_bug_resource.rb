@@ -19,6 +19,8 @@ class BugzillaBugResource < BugzillaResource
     payload = feature_to_bug(feature)
     bug = update bug_id, payload
     update_attachments bug_id, (feature.attachments | feature.description.attachments)
+    new_blockers = upsert_requirements feature.requirements
+    update bug_id, { :depends_on => { :add => new_blockers } } if new_blockers.size > 0
     bug
   end
 
@@ -27,6 +29,14 @@ class BugzillaBugResource < BugzillaResource
     bug = create payload
     api.create_integration_fields("requirements", requirement.reference_num, @service.data.integration_id, {id: bug.id, url: bug_url(bug.id)})
     (requirement.attachments | requirement.description.attachments).each {|a| attachment_resource.create bug.id, a }
+    bug
+  end
+
+  def update_from_requirement requirement
+    bug_id = integration_field_id(requirement)
+    payload = requirement_to_bug(requirement)
+    bug = update bug_id, payload
+    update_attachments bug_id, (requirement.attachments | requirement.description.attachments)
     bug
   end
   
@@ -42,6 +52,7 @@ class BugzillaBugResource < BugzillaResource
     process_response response
   end
 
+  # TODO: This does not work yet, the REST API returns an strange error
   def update id, bug
     url = bugzilla_url "bug/#{id}"
     response = http_put url, bug.to_json
@@ -60,6 +71,22 @@ class BugzillaBugResource < BugzillaResource
         attachment_resource.create bug_id, aha_a
       end
     end
+  end
+
+  # Update or create new bugs for all requirements
+  # returns the ids of newly created bugs
+  def upsert_requirements requirements
+    ids = []
+    requirements.each do |requirement|
+      bug_id = integration_field_id requirement
+      if bug_id.nil? then
+        bug = create_from_requirement requirement
+        ids << bug.id
+      else
+        update_from_requirement requirement
+      end
+    end
+    ids
   end
   
   def feature_to_bug feature
