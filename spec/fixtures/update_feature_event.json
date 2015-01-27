@@ -97,6 +97,13 @@
         "name": "id",
         "value": "dummy_trello_card_id",
         "service_name": "trello"
+      },
+      {
+        "id": "61280370",
+        "name": "id",
+        "value": "123456",
+        "integration_id": "30071774",
+        "service_name": "bugzilla"
       }
     ],
     "url": "http://watersco.aha.io/features/PROD-2",
@@ -185,6 +192,13 @@
             "name": "checklist_id",
             "value": "dummy_trello_checklist_id",
             "service_name": "trello"
+          },
+          {
+            "id": "61280370",
+            "name": "id",
+            "value": "123456",
+            "integration_id": "30071774",
+            "service_name": "bugzilla"
           }
         ],
         "comments_count": 0

@@ -1,0 +1,94 @@
+{
+    "products": [
+	{
+	    "components": [
+		{
+		    "name": "renamed component",
+		    "id": 6
+		},
+		{
+		    "name": "Salt",
+		    "id": 10
+		},
+		{
+		    "name": "Salt II",
+		    "id": 11
+		},
+		{
+		    "name": "SaltSprinkler",
+		    "id": 7
+		},
+		{
+		    "name": "SpiceDispenser",
+		    "id": 5
+		},
+		{
+		    "name": "VoiceInterface",
+		    "id": 3
+		}
+	    ],
+	    "name": "FoodReplicator",
+	    "id": 2
+	},
+	{
+	    "components": [
+		{
+		    "name": "Comp1",
+		    "id": 8
+		},
+		{
+		    "name": "comp2",
+		    "id": 9
+		}
+	    ],
+	    "name": "MyOwnBadSelf",
+	    "id": 3
+	},
+	{
+	    "components": [
+		{
+		    "name": "Widget Gears",
+		    "id": 26
+		}
+	    ],
+	    "name": "Sam's Widget",
+	    "id": 19
+	},
+	{
+	    "components": [
+		{
+		    "name": "EconomicControl",
+		    "id": 2
+		},
+		{
+		    "name": "PoliticalBackStabbing",
+		    "id": 4
+		},
+		{
+		    "name": "WeatherControl",
+		    "id": 1
+		}
+	    ],
+	    "name": "WorldControl",
+	    "id": 1
+	},
+	{
+	    "components": [
+		{
+		    "name": "Digestive Goo",
+		    "id": 14
+		},
+		{
+		    "name": "Venom",
+		    "id": 13
+		},
+		{
+		    "name": "Web",
+		    "id": 12
+		}
+	    ],
+	    "name": "Ѕpїdєr Séçretíøns",
+	    "id": 4
+	}
+    ]
+}
