@@ -1,7 +1,7 @@
 class BugzillaBugResource < BugzillaResource
 
   def create_from_feature feature
-    payload = feature_to_bug(feature)
+    payload = to_bug(feature)
     bug = create payload
     api.create_integration_fields("features", feature.reference_num, @service.data.integration_id, {id: bug.id, url: bug_url(bug.id)})
     (feature.attachments | feature.description.attachments).each {|a| attachment_resource.create bug.id, a }
@@ -16,7 +16,7 @@ class BugzillaBugResource < BugzillaResource
 
   def update_from_feature feature
     bug_id = integration_field_id feature
-    payload = feature_to_bug(feature)
+    payload = to_bug_update(feature)
     bug = update bug_id, payload
     update_attachments bug_id, (feature.attachments | feature.description.attachments)
     new_blockers = upsert_requirements feature.requirements
@@ -25,7 +25,7 @@ class BugzillaBugResource < BugzillaResource
   end
 
   def create_from_requirement requirement
-    payload = requirement_to_bug(requirement)
+    payload = to_bug(requirement)
     bug = create payload
     api.create_integration_fields("requirements", requirement.reference_num, @service.data.integration_id, {id: bug.id, url: bug_url(bug.id)})
     (requirement.attachments | requirement.description.attachments).each {|a| attachment_resource.create bug.id, a }
@@ -34,7 +34,7 @@ class BugzillaBugResource < BugzillaResource
 
   def update_from_requirement requirement
     bug_id = integration_field_id(requirement)
-    payload = requirement_to_bug(requirement)
+    payload = to_bug_update(requirement)
     bug = update bug_id, payload
     update_attachments bug_id, (requirement.attachments | requirement.description.attachments)
     bug
@@ -52,7 +52,6 @@ class BugzillaBugResource < BugzillaResource
     process_response response
   end
 
-  # TODO: This does not work yet, the REST API returns an strange error
   def update id, bug
     url = bugzilla_url "bug/#{id}"
     response = http_put url, bug.to_json
@@ -89,17 +88,21 @@ class BugzillaBugResource < BugzillaResource
     ids
   end
   
-  def feature_to_bug feature
+  def to_bug resource
     common_bug_fields.merge({
-      :summary => feature.name,
-      :description => html_to_markdown(feature.description.body)
+      :summary => resource.name,
+      :description => html_to_markdown(resource.description.body)
     })
   end
 
-  def requirement_to_bug requirement
+  def to_bug_update resource
     common_bug_fields.merge({
-      :summary => requirement.name,
-      :description => html_to_markdown(requirement.description.body),
+      :summary => resource.name,
+      # This will create a new comment but not update the description, we propably do not want that
+      #:comment => {
+      #  :body => html_to_markdown(resource.description.body),
+      #  :is_markdown => true
+      #}
     })
   end
 
