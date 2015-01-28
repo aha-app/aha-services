@@ -33,12 +33,13 @@ GIT
 PATH
   remote: .
   specs:
-    aha-services (1.12.11)
+    aha-services (1.15.2)
       ClothRed
       activesupport
       aha-api
       crack
       faraday (~> 0.9.0)
+      faraday-cookie_jar
       faraday_middleware (~> 0.9.0)
       hashie (~> 2.1.1)
       html2confluence
@@ -64,8 +65,13 @@ GEM
     crack (0.4.2)
       safe_yaml (~> 1.0.0)
     diff-lcs (1.2.5)
+    domain_name (0.5.23)
+      unf (>= 0.0.5, < 1.0.0)
     faraday (0.9.0)
       multipart-post (>= 1.2, < 3)
+    faraday-cookie_jar (0.0.6)
+      faraday (>= 0.7.4)
+      http-cookie (~> 1.0.0)
     faraday_middleware (0.9.1)
       faraday (>= 0.7.4, < 0.10)
     ffi (1.9.6)
@@ -74,6 +80,8 @@ GEM
     html2markdown (0.0.3)
       nokogiri
     htmlentities (4.3.2)
+    http-cookie (1.0.2)
+      domain_name (~> 0.5)
     i18n (0.6.11)
     json (1.8.1)
     jwt (1.2.0)
@@ -126,6 +134,9 @@ GEM
       hitimes
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
+    unf (0.1.4)
+      unf_ext
+    unf_ext (0.0.6)
     webmock (1.20.2)
       addressable (>= 2.3.6)
       crack (>= 0.3.2)

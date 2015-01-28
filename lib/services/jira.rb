@@ -238,6 +238,7 @@ protected
       .merge!(mapped_custom_fields(@feature, issue_type))
       .merge!(assignee_fields(resource, issue_type))
       .merge!(reporter_fields(resource, issue_type))
+      .merge!(due_date_fields(resource, issue_type))
     
     new_issue = issue_resource.create(issue)
 
@@ -275,6 +276,8 @@ protected
       .merge!(aha_reference_fields(resource, issue_type))
       .merge!(mapped_custom_fields(@feature, issue_type))
       .merge!(assignee_fields(resource, issue_type))
+      .merge!(due_date_fields(resource, issue_type))
+      
     issue.merge!(version_update_fields(version, issue_type))
 
     issue_resource.update(issue_info.id, issue)
@@ -400,6 +403,14 @@ protected
   def label_fields(resource, issue_type)
     if data.send_tags == "1" and resource.tags and issue_type.has_field_labels
       { labels: resource.tags }
+    else
+      Hash.new
+    end
+  end
+  
+  def due_date_fields(resource, issue_type)
+    if resource.due_date
+      { duedate: resource.due_date }
     else
       Hash.new
     end
