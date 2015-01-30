@@ -98,7 +98,7 @@ class BugzillaBugResource < BugzillaResource
   def to_bug_update resource
     common_bug_fields.merge({
       :summary => resource.name,
-      # This will create a new comment but not update the description, we propably do not want that
+      # This will create a new comment but not update the description
       #:comment => {
       #  :body => html_to_markdown(resource.description.body),
       #  :is_markdown => true

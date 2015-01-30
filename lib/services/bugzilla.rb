@@ -18,7 +18,6 @@ class AhaServices::Bugzilla < AhaService
 
   def receive_installed
     meta_data.products = product_resource.get_enterable
-    pp meta_data.products
   end
 
   def receive_create_feature

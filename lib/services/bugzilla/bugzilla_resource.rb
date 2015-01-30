@@ -2,6 +2,7 @@ class BugzillaResource < GenericResource
   attr_reader :service
   
   def faraday_builder b
+    # This is needed to support strange url parameters like ?ids=1&ids=2&ids=3
     b.options.params_encoder = Faraday::FlatParamsEncoder
   end
 

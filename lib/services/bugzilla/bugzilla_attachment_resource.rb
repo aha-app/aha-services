@@ -7,7 +7,7 @@ class BugzillaAttachmentResource < BugzillaResource
       data = file.read()
       # TODO: The documentation states that the data should be base64 encoded if not plain ascii
       # but it seems that it ALWAYS expects it to be encoded
-      data = Base64.strict_encode64(data) unless data.ascii_only?
+      data = Base64.strict_encode64(data) #unless data.ascii_only?
       attachment = {
         :ids => [ bug_id ],
         :file_name => aha_attachment.file_name,
