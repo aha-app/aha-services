@@ -43,14 +43,18 @@ class AhaServices::GithubIssues < AhaService
     return unless issue and action
     results = api.search_integration_fields(data.integration_id, "number", issue.number)['records'] rescue []
     return unless results.size == 1
+    if resource = results[0].requirement then
+      resource_kind = :requirement
+    elsif resource = results[0].feature then
+      resource_kind = :feature
+    else
+      return
+    end
     # TODO: status_mapping does not exist in old github issues integrations
     new_status = data.status_mapping[issue.state]
-    if requirement = results[0].requirement and
-      (requirement.name != issue.title || requirement.workflow_status.id != new_status) then
-      api.put requirement.resource, { :requirement => { :name => issue.title, :workflow_status => new_status } }
-    elsif feature = results[0].feature and
-         (feature.name != issue.title || feature.workflow_status.id != new_status) then
-      api.put feature.resource, { :feature => { :name => issue.title, :workflow_status => new_status } }
+    new_tags = issue.labels.map{|l| l.name }
+    if resource.name != issue.title || resource.workflow_status.id != new_status || Set.new(resource.tags) != Set.new(new_tags)  then
+      api.put resource.resource, { resource_kind => { :name => issue.title, :workflow_status => new_status, :tags => new_tags } }
     end
   end
 
