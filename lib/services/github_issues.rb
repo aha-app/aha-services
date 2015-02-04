@@ -50,11 +50,14 @@ class AhaServices::GithubIssues < AhaService
     else
       return
     end
-    # TODO: status_mapping does not exist in old github issues integrations
-    new_status = data.status_mapping[issue.state]
+    new_status = data.status_mapping.nil? ? nil : data.status_mapping[issue.state]
     new_tags = issue.labels.map{|l| l.name }
-    if resource.name != issue.title || resource.workflow_status.id != new_status || Set.new(resource.tags) != Set.new(new_tags)  then
-      api.put resource.resource, { resource_kind => { :name => issue.title, :workflow_status => new_status, :tags => new_tags } }
+    diff = {}
+    diff[:name] = issue.title if resource.name != issue.title
+    diff[:workflow_status] = new_status if !new_status.nil? and new_status != resource.workflow_status.id
+    diff[:tags] = new_tags if Set.new(resource.tags) != Set.new(new_tags)
+    if diff.size > 0  then
+      api.put resource.resource, { resource_kind => diff }
     end
   end
 
