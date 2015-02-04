@@ -276,7 +276,7 @@ protected
       .merge!(aha_reference_fields(resource, issue_type))
       .merge!(mapped_custom_fields(@feature, issue_type))
       .merge!(assignee_fields(resource, issue_type))
-      .merge!(due_date_fields(resource, issue_type))
+      .merge!(due_date_fields(@feature, issue_type))
       
     issue.merge!(version_update_fields(version, issue_type))
 
