@@ -51,7 +51,7 @@ class AhaServices::GithubIssues < AhaService
       return
     end
     new_status = data.status_mapping.nil? ? nil : data.status_mapping[issue.state]
-    new_tags = issue.labels.map{|l| l.name }
+    new_tags = issue.labels.map{|l| l.name } rescue []
     diff = {}
     diff[:name] = issue.title if resource.name != issue.title
     diff[:workflow_status] = new_status if !new_status.nil? and new_status != resource.workflow_status.id
