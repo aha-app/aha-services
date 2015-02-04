@@ -24,9 +24,9 @@ protected
 
     email = Mail::Address.new(commit.raw_author)
     message = <<-EOF
-      <p>#{email.display_name || email.address} committed to <a href="#{commit_payload.canon_url}/#{commit_payload.repository.absolute_url}">#{commit_payload.repository.name}</a>:</p>
+      <p>#{email.display_name || email.address} committed to <a href="#{commit_payload.canon_url}#{commit_payload.repository.absolute_url}">#{commit_payload.repository.name}</a>:</p>
       <pre>#{commit.message}</pre>
-      <p>Commit: <a href="#{commit_payload.canon_url}/#{commit_payload.repository.absolute_url}/commits/#{commit.raw_node}">#{commit.node}</a></p>
+      <p>Commit: <a href="#{commit_payload.canon_url}#{commit_payload.repository.absolute_url}commits/#{commit.raw_node}">#{commit.node}</a></p>
     EOF
 
     begin
