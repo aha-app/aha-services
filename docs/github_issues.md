@@ -28,6 +28,16 @@ Create the integration in Aha!
 3. Enable the integration.
 4. Test the integration by going to one of your features in Aha! and using the _Send to Github Issues_ item in the _Actions_ menu on the features page. You should then look at your repository in Github and see that the feature (and any requirements) were properly copied to issues. 
 
+To receive updates when an issue is changed on Github you have to setup a webhook for the Github repository.
+
+1. In Aha!, copy the Webhook URL from the Github issues integration settings.
+2. On Github, go to the settings page of the Github repository and click on the _Webhooks & Services_ tab.
+3. Add a new webhook.
+4. Paste the Webhook URL into the _Payload URL_ field. Choose _application/json_ as content type and leave the secret field blank.
+5. Select _Let me select individual events._ and then check only _Issues_.
+6. Finally, click _Add webhook_.
+
+In the Github issues integration settings, you can choose to which Aha! status the "Open" or "Closed" state of an issue should map.
 
 ## Troubleshooting
 
