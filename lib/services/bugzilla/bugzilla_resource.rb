@@ -24,9 +24,11 @@ class BugzillaResource < GenericResource
         return hashie_or_array_of_hashies(response.body)
       end
     elsif response.status == 404
-      raise AhaService::RemoteError, "Remote resource was not found."
+      msg = parse(response.body)
+      raise AhaService::RemoteError, "Remote resource was not found: #{msg['message']}"
     elsif response.status == 400
-      raise AhaService::RemoteError, "The request was not valid."
+      msg = parse(response.body)
+      raise AhaService::RemoteError, "The request was not valid: #{msg['message']}"
     elsif [403, 401].include?(response.status)
       raise_config_error "The API key is invalid or has insufficent rights."
     else
