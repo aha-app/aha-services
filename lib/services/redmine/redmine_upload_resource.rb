@@ -9,6 +9,8 @@ class RedmineUploadResource < RedmineResource
   end
   
   def upload_attachment attachment
+    return unless attachment.download_url
+    
     open attachment.download_url do |downloaded_file|
       # Reset Faraday and switch to multipart to do the file upload.
       http_reset

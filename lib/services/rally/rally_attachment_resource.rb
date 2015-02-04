@@ -1,5 +1,7 @@
 class RallyAttachmentResource < RallyResource
   def create parent, aha_attachment
+    return unless aha_attachment.download_url
+    
     attachmentcontent = rally_attachment_content_resource.create aha_attachment.download_url
     url = rally_secure_url "/attachment/create"
     body = { :Attachment => {

@@ -82,8 +82,8 @@ class AhaServices::Fogbugz < AhaService
       old_attachments = has_attachments(found_fogbugz_case)
     end
 
-    attachments = feature.description.attachments.map do |attachment| 
-      {:filename => attachment.file_name, :file_url => attachment.download_url} unless old_attachments.include?(attachment.file_name)
+    attachments = feature.description.attachments.map do |attachment|
+      {:filename => attachment.file_name, :file_url => attachment.download_url} if !old_attachments.include?(attachment.file_name) && attachment.download_url
     end.compact
 
     if found_fogbugz_case
