@@ -9,6 +9,10 @@ class AhaServices::GithubIssues < AhaService
     meta_data.repos.sort_by(&:name).collect { |repo| [repo.full_name, repo.full_name] }
   end
 
+  internal :status_mapping
+
+  callback_url description: "Use this URL to setup a two-way integration with Github issues."
+
   def receive_installed
     meta_data.repos = repo_resource.all.map { |repo| { full_name: repo['full_name'] } }
   end
@@ -31,6 +35,30 @@ class AhaServices::GithubIssues < AhaService
 
   def receive_update_release
     update_or_attach_github_milestone(payload.release)
+  end
+
+  def receive_webhook
+    action = payload.webhook.action
+    issue = payload.webhook.issue
+    return unless issue and action
+    results = api.search_integration_fields(data.integration_id, "number", issue.number)['records'] rescue []
+    return unless results.size == 1
+    if resource = results[0].requirement then
+      resource_kind = :requirement
+    elsif resource = results[0].feature then
+      resource_kind = :feature
+    else
+      return
+    end
+    new_status = data.status_mapping.nil? ? nil : data.status_mapping[issue.state]
+    new_tags = issue.labels.map{|l| l.name } rescue []
+    diff = {}
+    diff[:name] = issue.title if resource.name != issue.title
+    diff[:workflow_status] = new_status if !new_status.nil? and new_status != resource.workflow_status.id
+    diff[:tags] = new_tags if Set.new(resource.tags) != Set.new(new_tags)
+    if diff.size > 0  then
+      api.put resource.resource, { resource_kind => diff }
+    end
   end
 
   def find_or_attach_github_milestone(release)
