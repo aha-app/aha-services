@@ -409,7 +409,7 @@ protected
   end
   
   def due_date_fields(resource, issue_type)
-    if issue_type.fields.duedate.present? and resource.due_date
+    if issue_type.fields.include?('duedate') and resource.due_date
       { duedate: resource.due_date }
     else
       Hash.new
