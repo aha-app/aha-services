@@ -1,4 +1,4 @@
-This one-way integration allows you to push your features and requirements in Aha! into Github as issues. 
+This two-way integration allows you to push your features and requirements in Aha! into Github as issues and get status updates back.
 
 ## Features
 
