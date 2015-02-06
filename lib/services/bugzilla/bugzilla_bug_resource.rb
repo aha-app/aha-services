@@ -107,15 +107,11 @@ class BugzillaBugResource < BugzillaResource
   end
 
   def common_bug_fields
-    {
+    defaults = @service.meta_data.defaults[get_product().name] || {}
+    defaults.merge({
       :product => get_product().name,
       :component => get_component().name,
-      :version => "unspecified",
-      :op_sys => "All",
-      :platform => "All",
-      :priority => "P1",
-      :severity => "normal"
-    }
+    })
   end
 
   def attachment_resource

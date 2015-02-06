@@ -18,6 +18,7 @@ class AhaServices::Bugzilla < AhaService
 
   def receive_installed
     meta_data.products = product_resource.get_enterable
+    meta_data.defaults = bug_field_resource.get_defaults meta_data.products.map{|p| p.name }
   end
 
   def receive_create_feature
@@ -36,5 +37,9 @@ class AhaServices::Bugzilla < AhaService
 
   def bug_resource
     @bug_resource ||= BugzillaBugResource.new(self)
+  end
+
+  def bug_field_resource
+    @bug_field_resource ||= BugzillaBugFieldResource.new(self)
   end
 end
