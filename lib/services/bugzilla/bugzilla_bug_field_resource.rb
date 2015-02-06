@@ -15,11 +15,11 @@ class BugzillaBugFieldResource < BugzillaResource
           # The visibility_values field contains products for which this value is allowed
           value.visibility_values.each do |product|
             next unless products.include?(product)
-            defaults[product][field.name] ||= value.name
+            defaults[product][field.name] = value.name
           end
         end
       else
-        defaults.each{|product, default| default[field.name] = values[0].name }
+        defaults.each{|product, default| default[field.name] = values.last.name }
       end
     end
     defaults
