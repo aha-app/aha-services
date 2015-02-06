@@ -37,6 +37,7 @@ require 'services/trello/trello_resource'
 require 'services/fogbugz/fogbugz_resource'
 require 'services/tfs/tfs_resource'
 require 'services/rally/rally_resource'
+require 'services/bugzilla/bugzilla_resource'
 
 require 'services/redmine/redmine_resource'
 require 'services/redmine/redmine_upload_resource'

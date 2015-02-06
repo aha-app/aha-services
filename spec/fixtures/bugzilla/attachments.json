@@ -1,0 +1,67 @@
+{
+  "attachments": {},
+  "bugs": {
+    "123456": [
+      {
+        "is_private": 0,
+        "creator": "felix0maurer@googlemail.com",
+        "flags": [],
+        "bug_id": 123456,
+        "last_change_time": "2015-01-20T12:51:14Z",
+        "summary": "Testfile",
+        "content_type": "image/png",
+        "file_name": "Belgium.png",
+        "size": 28228,
+        "id": 3877,
+        "creation_time": "2015-01-20T12:51:14Z",
+        "is_patch": 0,
+        "is_obsolete": 0
+      },
+      {
+        "is_private": 0,
+        "creator": "felix0maurer@googlemail.com",
+        "flags": [],
+        "bug_id": 123456,
+        "last_change_time": "2015-01-20T12:52:47Z",
+        "content_type": "image/png",
+        "summary": "Testfile",
+        "file_name": "Austria.png",
+        "size": 29129,
+        "id": 3878,
+        "creation_time": "2015-01-20T12:52:47Z",
+        "is_patch": 0,
+        "is_obsolete": 0
+      },
+      {
+        "is_private": 0,
+        "creator": "felix0maurer@googlemail.com",
+        "flags": [],
+        "bug_id": 123456,
+        "last_change_time": "2015-01-20T12:51:14Z",
+        "summary": "Testfile",
+        "content_type": "image/png",
+        "file_name": "Finland.png",
+        "size": 28265,
+        "id": 3877,
+        "creation_time": "2015-01-20T12:51:14Z",
+        "is_patch": 0,
+        "is_obsolete": 0
+      },
+      {
+        "is_private": 0,
+        "creator": "felix0maurer@googlemail.com",
+        "flags": [],
+        "bug_id": 123456,
+        "last_change_time": "2015-01-20T12:52:47Z",
+        "summary": "Testfile",
+        "content_type": "image/png",
+        "file_name": "France.png",
+        "file_size": 30193,
+        "id": 3878,
+        "creation_time": "2015-01-20T12:52:47Z",
+        "is_patch": 0,
+        "is_obsolete": 0
+      }
+    ]
+  }
+}
