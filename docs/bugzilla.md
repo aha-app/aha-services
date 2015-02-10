@@ -7,7 +7,7 @@ This integration uses the REST API of Bugzilla version 5.0.
 * One Aha! product is associated with one product and component in Bugzilla.
 * A feature can be sent to Bugzilla using the _Send to Bugzilla_ item in the _Action_ menu on the features page.
 * Requirements are sent to Bugzilla together with the feature.
-* Only the name, description and attachments of features and requirements are sent. Any other fields that are marked as mandatory in Bugzilla will be auoatmatically populated with the last option for the field.
+* Only the name, description and attachments of features and requirements are sent. Any other fields that are marked as mandatory in Bugzilla will be automatically populated with the last option for the field.
 * Bugs created from a requirement will block the bug created from the feature.
 
 ## Configuration
