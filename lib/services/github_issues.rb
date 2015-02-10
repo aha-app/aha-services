@@ -9,6 +9,12 @@ class AhaServices::GithubIssues < AhaService
     meta_data.repos.sort_by(&:name).collect { |repo| [repo.full_name, repo.full_name] }
   end
 
+  select :mapping, collection: [
+           ["Feature -> Issue, Requirement -> Issue","issue-issue"],
+           ["Feature -> Issue, Requirement -> Checklist item", "issue-checklist"]
+         ],
+         description: "Choose how features and requirements in Aha! will map to issues and checklists in GitHub."
+
   internal :status_mapping
 
   callback_url description: "Use this URL to setup a two-way integration with Github issues."
@@ -105,7 +111,7 @@ class AhaServices::GithubIssues < AhaService
   end
 
   def update_requirements(requirements, milestone)
-    if (requirements)
+    if (requirements) and !requirements_to_checklist?
       requirements.each do |requirement|
         update_or_attach_github_issue(requirement, milestone)
       end
@@ -143,7 +149,7 @@ class AhaServices::GithubIssues < AhaService
   def create_issue_for(resource, milestone)
     issue_resource
       .create(title: resource_name(resource),
-              body: issue_body(resource.description),
+              body: issue_body(resource),
               milestone: milestone['number'])
       .tap { |issue| update_labels(issue, resource) }
   end
@@ -151,7 +157,7 @@ class AhaServices::GithubIssues < AhaService
   def update_issue(number, resource)
     issue_resource
       .update(number, title: resource_name(resource),
-                      body: issue_body(resource.description))
+                      body: issue_body(resource))
       .tap { |issue| update_labels(issue, resource) }
   end
 
@@ -159,11 +165,12 @@ class AhaServices::GithubIssues < AhaService
     label_resource.update(issue['number'], resource.tags)
   end
 
-  def issue_body(description)
+  def issue_body(resource)
     issue_body_parts = []
-    issue_body_parts << html_to_markdown(description.body, true) if description.body.present?
-    if description.attachments.present?
-      issue_body_parts << attachments_in_body(description.attachments)
+    issue_body_parts << html_to_markdown(resource.description.body, true) if resource.description.body.present?
+    issue_body_parts << requirements_to_checklist(resource) if resource.requirements.present? and requirements_to_checklist?
+    if resource.description.attachments.present?
+      issue_body_parts << attachments_in_body(resource.description.attachments)
     end
     issue_body_parts.join("\n\n")
   end
@@ -202,4 +209,20 @@ protected
       {number: issue['number'], url: "https://github.com/#{data.repository}/issues/#{issue['number']}"})
   end
 
+  def requirements_to_checklist?
+    data.mapping == "issue-checklist"
+  end
+
+  def requirements_to_checklist resource
+    resource.requirements.map do |requirement|
+      head = "- [ ] #{requirement.name}\n"
+      body = html_to_markdown(requirement.description.body)
+      body += attachments_in_body(requirement.description.attachments) if requirement.description.attachments.present?
+      head + indent(body, "    ")
+    end.join("\n\n")
+  end
+
+  def indent text, prefix
+    text.lines.map{|line| prefix + line }.join("\n")
+  end
 end

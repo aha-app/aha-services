@@ -5,13 +5,14 @@ This two-way integration allows you to push your features and requirements in Ah
 * One Aha! product is associated with one Github respository.
 * Individual features can be sent to Github using the _Send to Github Issues_ item in the _Actions_ menu on the features page.
 * All features in a release (that have not already been implemented or sent to Github previously) can be sent to Github using the _Send to Github Issues_ item in the _Actions_ menu on the release page.
-* When a feature is copied to Github one issue will be created for the feature. If 
-  the feature has requirements then each requirement will also be sent as an issue.
+* When a feature is copied to Github one issue will be created for the feature.
+* There are two ways to map requirements to issues. Each requirement can be mapped to a stand-alone issue, or the requirements can be converted to a checklist within the main issue. If checklists are used, note that there are some significant caveats:
+  * When checklist items are ticked, the status of the corresponding requirement in Aha! will not be updated.
+  * Each time the feature is updated in Github using the _Update Github_ menu item, the entire issue description will be overwritten, reseting the status of any checklist items that are already complete.
 * Only the description of a feature or requirement is sent. No tasks or comments are included. 
 * Attachments of a feature or requirement are also sent.
 * Tags on a feature in Aha! will becomes labels in Github.
 * Aha! releases will be created as milestones in Github.
-* When a feature is sent to Github, its status in Aha! is automatically changed to Ready to develop.
 * After a feature is first sent to Github, changes to the name, description and requirements, can also be sent to Github using the _Update Github_ item in the _Actions_ menu on the features page or by sending all features in a release to Github again. New requirements will also be created in Github, however issues that were created for an existing requirement are not deleted from Github if the requirement is deleted from Aha!. If an attachment is deleted in Aha! the corresponding attachment in Github is not deleted. 
 
 
