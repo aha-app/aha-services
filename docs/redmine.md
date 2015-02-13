@@ -9,7 +9,6 @@ the feature has requirements then each requirement will also be sent as an issue
 * Only the description of a feature or requirement is sent. No tasks or comments are included.
 * Attachments of a feature or requirement are also sent.
 * Aha! releases will be created as versions in Redmine.
-* When a feature is sent to Redmine, its status in Aha! is automatically changed to Ready to develop.
 * After a feature is first sent to Redmine, changes to the name, description and requirements, can also be sent to Redmine using the _Update Redmine_ item in the _Actions_ menu on the features page or by sending all features in a release to Redmine again. New requirements will also be created in Redmine, however issues that were created for an existing requirement are not deleted from Redmine if the requirement is deleted from Aha!. If an attachment is deleted in Aha! the corresponding attachment in Redmine is not deleted.
 
 

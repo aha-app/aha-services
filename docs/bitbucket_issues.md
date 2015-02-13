@@ -10,7 +10,6 @@ This one-way integration allows you to push your features and requirements in Ah
 * Only the description of a feature or requirement is sent. No tasks or comments are included. 
 * Attachments of a feature or requirement are also sent.
 * Aha! releases will be created as milestones in Bitbucket.
-* When a feature is sent to Bitbucket, its status in Aha! is automatically changed to Ready to develop.
 * After a feature is first sent to Bitbucket, changes to the name, description and requirements, can also be sent to Bitbucket using the _Update Bitbucket Issues_ item in the _Actions_ menu on the features page or by sending all features in a release to Bitbucket again. New requirements will also be created in Bitbucket, however issues that were created for an existing requirement are not deleted from Bitbucket if the requirement is deleted from Aha!. If an attachment is deleted in Aha! the corresponding attachment in Bitbucket is not deleted. 
 
 
