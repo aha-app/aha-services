@@ -55,7 +55,7 @@ class GenericResource
   
   def self.default_http_options
     @@default_http_options ||= {
-      :request => {:timeout => 310, :open_timeout => 5},
+      :request => {:timeout => 310, :open_timeout => 25},
       :ssl => {:verify => false, :verify_depth => 5},
       :headers => {}
     }
