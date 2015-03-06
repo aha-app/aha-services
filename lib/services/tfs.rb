@@ -66,6 +66,7 @@ class AhaServices::TFS < AhaService
 
   def receive_webhook
     begin
+      return unless payload.webhook && payload.webhook.resource && payload.webhook.resource._links && payload.webhook.resource._links.parent
       url = payload.webhook.resource._links.parent.href
       workitem = workitem_resource.by_url url
       results = api.search_integration_fields(data.integration_id, "id", workitem.id)['records']
