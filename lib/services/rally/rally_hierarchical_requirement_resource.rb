@@ -94,7 +94,8 @@ protected
     rally_release_id = map_to_objectid aha_feature.release
     attributes = {
       :Description => aha_feature.description.body,
-      :Name => aha_feature.name
+      :Name => aha_feature.name,
+      :Project => @service.data.project
     }
     # Only child leafs belong to a release
     # If this user story will have children, it's not a leaf and will not belong to a release
@@ -107,7 +108,8 @@ protected
       :Parent => parent_id,
       :Release => release_id,
       :Description => aha_requirement.description.body,
-      :Name => aha_requirement.name
+      :Name => aha_requirement.name,
+      :Project => @service.data.project
     }
   end
 
