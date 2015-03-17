@@ -33,7 +33,7 @@ GIT
 PATH
   remote: .
   specs:
-    aha-services (1.16.0)
+    aha-services (1.17.1)
       ClothRed
       activesupport
       aha-api
@@ -109,6 +109,11 @@ GEM
     redcarpet (3.2.0)
     rerun (0.10.0)
       listen (~> 2.7, >= 2.7.3)
+    restforce (1.5.1)
+      faraday (~> 0.9.0)
+      faraday_middleware (>= 0.8.8)
+      hashie (>= 1.2.0, < 4.0)
+      json (>= 1.7.5, < 1.9.0)
     rspec (3.1.0)
       rspec-core (~> 3.1.0)
       rspec-expectations (~> 3.1.0)
@@ -153,6 +158,7 @@ DEPENDENCIES
   pry
   redcarpet
   rerun
+  restforce
   reverse_markdown!
   rspec
   sinatra
