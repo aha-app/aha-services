@@ -102,6 +102,9 @@ protected
       name: resource_name(resource),
       description: append_link(html_to_markdown(resource.description.body, true), parent_mapping && parent_mapping.id)
     }
+    if resource.work_units == 20 # Only send estimates if using story points
+      story[:estimate] = resource.original_estimate
+    end
 
     if parent_mapping
       label_id = parent_mapping.label_id || parent_mapping.label.try(:id)
