@@ -82,6 +82,9 @@ protected
           api.put(resource, { resource_type => { name: value } })
         elsif change_kind == "description"
           api.put(resource, { resource_type => { description: markdown_to_html(value) } })
+        elsif change_kind == "estimate"
+          api.put(resource, { resource_type => { original_estimate: value.to_s + "p" } })
+        # elsif change_kind == "deadline"
         end
       elsif kind == "task" && change_kind == "complete" && value == true
         api.put(resource, {resource_type => { workflow_status: {category: "shipped" }}})

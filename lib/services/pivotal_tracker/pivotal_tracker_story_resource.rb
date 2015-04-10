@@ -76,6 +76,10 @@ protected
       external_id: parent_resource ? parent_resource.reference_num : resource.reference_num,
       integration_id: @service.data.integration.to_i
     }
+    if resource.work_units == 20 # Only send estimates if using story points
+      story[:estimate] = resource.original_estimate
+    end
+    
     file_attachments = attachment_resource.upload(resource.description.attachments | resource.attachments)
     if file_attachments.any?
       story[:comments] = [{file_attachments: file_attachments}]
