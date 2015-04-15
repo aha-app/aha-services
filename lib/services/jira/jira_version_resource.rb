@@ -9,7 +9,7 @@ class JiraVersionResource < JiraResource
     prepare_request
     response = http_get "#{api_url}/project/#{@service.data.project}/versions"
     process_response(response, 200) do |versions|
-      return versions.find { |version| version.name.downcase == name.downcase }
+      return versions.find { |version| version.name.mb_chars.downcase == name.mb_chars.downcase }
     end
   end
 
