@@ -4,7 +4,7 @@ class TFSAttachmentResource < TFSResource
 
   def create aha_attachment
     logger.info("Uploading attachment #{aha_attachment.file_name}")
-    return unless attachment.download_url
+    return unless aha_attachment.download_url
 
     http.headers["Transfer-Encoding"] = "chunked"
     open(aha_attachment.download_url) do |downloaded_file|
