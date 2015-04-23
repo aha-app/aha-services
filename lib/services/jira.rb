@@ -262,10 +262,7 @@ protected
         description: convert_html(resource.description.body)
       }
     )
-    # Disabled until https://jira.atlassian.com/browse/GHS-10333 is fixed.
-    # issue.fields
-    #   .merge!(issue_epic_name_field(issue_type, summary))
-    #   .merge!(issue_epic_link_field(issue_type, parent, initiative))
+    
     #   .merge!(subtask_fields(issue_type.subtask, parent)) # This is not possible for updates.
     # We do still generate the epic link field since it creates the initiative
     # in JIRA, though it doesn't link it.
@@ -282,7 +279,9 @@ protected
     issue.merge!(version_update_fields(version, issue_type))
 
     issue_resource.update(issue_info.id, issue)
-
+    
+    update_epic_link(issue_info.id, issue_type, parent, initiative)
+    
     update_attachments(issue_info.id, resource)
     
     issue_info
@@ -362,6 +361,10 @@ protected
 
   def user_resource
     @user_resource ||= JiraUserResource.new(self)
+  end
+  
+  def greenhopper_epic_resource
+    @greenhopper_epic_resource ||= GreenhopperEpicResource.new(self)
   end
   
   def update_attachments(issue_id, resource)
@@ -480,6 +483,20 @@ protected
       { meta_data.epic_link_field => parent[:key] }
     else
       Hash.new
+    end
+  end
+  
+  def update_epic_link(issue_id, issue_type, parent, initiative)
+    epic_key = nil
+    if data.send_initiatives == "1" && initiative && issue_type.has_field_epic_link
+      epic_key = epic_key_for_initiative(initiative)
+    # Check if parent exists and that it is actually an epic.
+    elsif parent && issue_type.has_field_epic_link && issue_type_by_id(data.feature_issue_type).has_field_epic_name
+      epic_key = parent[:key]
+    end
+    
+    if epic_key
+      greenhopper_epic_resource.add_story(issue_id, epic_key) 
     end
   end
 
