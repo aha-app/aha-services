@@ -26,14 +26,14 @@ GIT
 
 GIT
   remote: https://github.com/k1w1/html2confluence.git
-  revision: 5d3fdbc8fe819982e9c0590bd6702cc6c6670849
+  revision: f3c8ff2db8cd85c8719573184a003ee8e60849fb
   specs:
-    html2confluence (1.3.2)
+    html2confluence (1.3.8)
 
 PATH
   remote: .
   specs:
-    aha-services (1.17.3)
+    aha-services (1.17.8)
       ClothRed
       activesupport
       aha-api
@@ -65,7 +65,7 @@ GEM
     crack (0.4.2)
       safe_yaml (~> 1.0.0)
     diff-lcs (1.2.5)
-    domain_name (0.5.23)
+    domain_name (0.5.24)
       unf (>= 0.0.5, < 1.0.0)
     faraday (0.9.0)
       multipart-post (>= 1.2, < 3)
@@ -141,7 +141,7 @@ GEM
       thread_safe (~> 0.1)
     unf (0.1.4)
       unf_ext
-    unf_ext (0.0.6)
+    unf_ext (0.0.7.1)
     webmock (1.20.2)
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
