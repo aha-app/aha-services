@@ -2,14 +2,14 @@ class GithubRepoResource < GithubResource
   def all
     unless (@repos)
       prepare_request
-      response = github_http_get_paginated("#{API_URL}/user/repos") do |repos|
+      response = github_http_get_paginated("#{@service.server_url}/user/repos") do |repos|
         @repos = repos
       end
       
       # Also get all organization repos.
-      response = github_http_get_paginated("#{API_URL}/user/orgs") do |orgs|
+      response = github_http_get_paginated("#{@service.server_url}/user/orgs") do |orgs|
         orgs.each do |org|
-          response = github_http_get_paginated("#{API_URL}/orgs/#{org['login']}/repos") do |repos|
+          response = github_http_get_paginated("#{@service.server_url}/orgs/#{org['login']}/repos") do |repos|
             @repos.concat(repos)
           end
         end

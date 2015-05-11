@@ -11,6 +11,6 @@ class GithubLabelResource < GithubResource
 private
 
   def github_labels_path(issue_number)
-    "#{API_URL}/repos/#{@service.data.repository}/issues/#{issue_number}/labels"
+    "#{@service.server_url}/repos/#{@service.data.repository}/issues/#{issue_number}/labels"
   end
 end

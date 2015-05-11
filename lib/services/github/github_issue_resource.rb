@@ -25,6 +25,6 @@ class GithubIssueResource < GithubResource
 private
 
   def github_issues_path
-    "#{API_URL}/repos/#{@service.data.repository}/issues"
+    "#{ @service.server_url }/repos/#{@service.data.repository}/issues"
   end
 end
