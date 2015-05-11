@@ -4,6 +4,8 @@ class AhaServices::GithubIssues < AhaService
   
   string :username
   password :password
+  string :server_url, description: "If you are using Github Enterprise enter your server URL here (https://example.com/api/v3). If you are using github.com leave this field empty.",
+    label: "Server URL"
   install_button
   select :repository, collection: -> (meta_data, data) do
     meta_data.repos.sort_by(&:name).collect { |repo| [repo.full_name, repo.full_name] }
@@ -21,6 +23,14 @@ class AhaServices::GithubIssues < AhaService
 
   def receive_installed
     meta_data.repos = repo_resource.all.map { |repo| { full_name: repo['full_name'] } }
+  end
+
+  def server_url
+    if self.data.server_url.present?
+      self.data.server_url
+    else
+      "https://api.github.com"
+    end
   end
 
   def receive_create_feature
