@@ -45,6 +45,14 @@ class TFSResource < GenericResource
   end
 
 protected
+  def description_or_default(body)
+    if body.present?
+      body
+    else
+      "<p></p>"
+    end
+  end
+ 
   def mstfs_url path
     joiner = (path =~ /\?/) ? "&" : "?"
     "https://#{@service.data.account_name}.visualstudio.com/defaultcollection/_apis/#{path}#{joiner}api-version="+self.class::API_VERSION

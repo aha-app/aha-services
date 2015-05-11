@@ -3,8 +3,8 @@ class TFSFeatureMappingResource < TFSResource
   def create project, aha_feature
     # create new workitem in TFS
     created_workitem = workitem_resource.create project, mapped_type, Hash[
-      "System.Title" => aha_feature.name || "",
-      "System.Description" => aha_feature.description.body || "",
+      "System.Title" => aha_feature.name || "Untitled feature",
+      "System.Description" => description_or_default(aha_feature.description.body),
       "System.AreaPath" => @service.data.area,
     ]
     # add integration field to workitem in aha
@@ -45,20 +45,20 @@ class TFSFeatureMappingResource < TFSResource
   end
 
   def update_aha_feature aha_feature, workitem
-      changes = {}
-      if aha_feature.name != workitem.fields["System.Title"]
-        changes[:name] = workitem.fields["System.Title"]
-      end
-      if aha_feature.description.body != workitem.fields["System.Description"]
-        changes[:description] = workitem.fields["System.Description"]
-      end
-      new_status = tfs_to_aha_status workitem.fields["System.State"]
-      if aha_feature.workflow_status.id != new_status
-        changes[:workflow_status] = new_status
-      end
-      if changes.length > 0
-        api.put aha_feature.resource, { :feature => changes }
-      end
+    changes = {}
+    if aha_feature.name != workitem.fields["System.Title"]
+      changes[:name] = workitem.fields["System.Title"]
+    end
+    if aha_feature.description.body != workitem.fields["System.Description"]
+      changes[:description] = workitem.fields["System.Description"]
+    end
+    new_status = tfs_to_aha_status workitem.fields["System.State"]
+    if aha_feature.workflow_status.id != new_status
+      changes[:workflow_status] = new_status
+    end
+    if changes.length > 0
+      api.put aha_feature.resource, { :feature => changes }
+    end
   end
 
 protected
