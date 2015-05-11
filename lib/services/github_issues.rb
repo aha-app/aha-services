@@ -29,7 +29,7 @@ class AhaServices::GithubIssues < AhaService
     if self.data.server_url.present?
       self.data.server_url
     else
-      API_URL
+      "https://api.github.com"
     end
   end
 
