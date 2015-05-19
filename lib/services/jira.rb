@@ -240,6 +240,7 @@ protected
       .merge!(assignee_fields(resource, issue_type))
       .merge!(reporter_fields(resource, issue_type))
       .merge!(due_date_fields(resource, issue_type))
+      .merge!(aha_position_fields(resource, issue_type))
     
     new_issue = issue_resource.create(issue)
 
@@ -275,6 +276,7 @@ protected
       .merge!(mapped_custom_fields(@feature, issue_type))
       .merge!(assignee_fields(resource, issue_type))
       .merge!(due_date_fields(@feature, issue_type))
+      .merge!(aha_position_fields(resource, issue_type))
       
     issue.merge!(version_update_fields(version, issue_type))
 
@@ -423,6 +425,14 @@ protected
   def aha_reference_fields(resource, issue_type)
     if issue_type.has_field_aha_reference
       { meta_data.aha_reference_field => resource.url }
+    else
+      Hash.new
+    end
+  end
+
+  def aha_position_fields(resource, issue_type)
+    if issue_type.fields.include?('aha_position')
+      { aha_position: resource.position }
     else
       Hash.new
     end
