@@ -279,6 +279,7 @@ protected
     issue.merge!(version_update_fields(version, issue_type))
 
     issue_resource.update(issue_info.id, issue)
+
     
     update_epic_link(issue_info.id, issue_type, parent, initiative)
     
@@ -558,6 +559,10 @@ protected
 
   def integrate_initiative_with_jira_issue(initiative, issue)
     integrate_resource_with_jira_issue("initiatives", initiative, issue)
+
+    # Add our newly created integration field so multiple initiatives aren't created, when an initiative is not already synced to jira
+    initiative.integration_fields << Hashie::Mash.new("name" => "key", "value" => issue[:key], "integration_id" => self.data.integration_id.to_s)
+
   rescue AhaApi::BadRequest
     # Failure was probably due to initiative from another product, convert
     # to a more user friendly message.
