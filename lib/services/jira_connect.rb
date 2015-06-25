@@ -6,7 +6,7 @@ class AhaServices::JiraConnect < AhaServices::Jira
   
   install_button
   select :project, collection: ->(meta_data, data) { meta_data.projects.collect{|p| [p.name, p[:key]] } }
-  boolean :send_initiatives, description: "Check to use feature initatives to create Epics in JIRA Agile"
+  boolean :send_initiatives, description: "Check to use feature initiatives to create Epics in JIRA Agile"
   select :feature_issue_type, 
     collection: ->(meta_data, data) { 
       meta_data.issue_type_sets[meta_data.projects.detect {|p| p[:key] == data.project}.issue_types].find_all{|i| !i.subtype}.collect{|p| [p.name, p.id] }
