@@ -27,6 +27,12 @@ class JiraFieldResource < JiraResource
     custom_schema_field("com.pyxis.greenhopper.jira:gh-epic-link")
   end
 
+  def aha_position_field
+    find_in_fields do |field|
+      field.name == "Aha! Position" || field.name == "Aha! Rank"
+    end
+  end
+
   def aha_reference_field
     find_in_fields do |field|
       field.name == "Aha! Reference"
