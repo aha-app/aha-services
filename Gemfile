@@ -18,5 +18,5 @@ gem 'restforce'
 gem 'rerun'
 
 gem 'pry'
-
+gem 'pry-nav'
 
