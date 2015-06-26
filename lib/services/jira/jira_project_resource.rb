@@ -72,6 +72,7 @@ protected
       if issue_type.fields.present?
         {
           'has_field_fix_versions' => issue_type.fields.fixVersions.present?,
+          'has_field_aha_position' => issue_type.fields[meta_data['aha_position_field']].present?,
           'has_field_aha_reference' => issue_type.fields[meta_data['aha_reference_field']].present?,
           'has_field_story_points' => issue_type.fields[meta_data['story_points_field']].present?,
           'has_field_epic_name' => issue_type.fields[meta_data['epic_name_field']].present?,

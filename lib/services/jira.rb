@@ -32,6 +32,7 @@ class AhaServices::Jira < AhaService
     @meta_data = {'epic_name_field' => field_resource.epic_name_field,
       'epic_link_field' => field_resource.epic_link_field,
       'story_points_field' => field_resource.story_points_field,
+      'aha_position_field' => field_resource.aha_position_field,
       'aha_reference_field' => new_or_existing_aha_reference_field}
     @meta_data['projects'] = project_resource.all(meta_data)
     @meta_data['resolutions'] = resolution_resource.all
@@ -431,8 +432,8 @@ protected
   end
 
   def aha_position_fields(resource, issue_type)
-    if issue_type.fields.include?('aha_position')
-      { aha_position: resource.position }
+    if issue_type.has_field_aha_position
+      { meta_data.aha_position_field => resource.position }
     else
       Hash.new
     end
