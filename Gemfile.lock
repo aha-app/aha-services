@@ -157,7 +157,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  ClothRed!
   aha-api!
   aha-services!
   crack
