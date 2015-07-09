@@ -31,9 +31,6 @@ Gem::Specification.new do |s|
   # For Trello integration.
   s.add_dependency "reverse_markdown"
 
-  # For Redmine integration.
-  s.add_dependency "ClothRed"
-
   # For Fogbuz integration
   s.add_dependency "crack"
 

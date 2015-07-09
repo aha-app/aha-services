@@ -13,6 +13,7 @@ gem 'plain-david', github: 'k1w1/plain-david' # HTML to plain text conversion.
 gem 'sinatra'
 gem 'crack'
 gem 'restforce'
+gem 'ClothRed', :git => "https://github.com/schneidmaster/ClothRed.git"
 
 # Auto reload sinatra
 gem 'rerun'
