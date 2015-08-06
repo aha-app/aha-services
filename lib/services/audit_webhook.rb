@@ -5,7 +5,10 @@ class AhaServices::AuditWebhook < AhaService
   string :hook_url
   
   def receive_audit
-    http_post data.hook_url, payload.to_json
+    # We only allow 5 seconds for webhooks.
+    Timeout.timeout(5, TimeoutError) do
+      http_post data.hook_url, payload.to_json
+    end
   end
   
 end
