@@ -1,0 +1,1658 @@
+{
+   "fields" : [
+      {
+         "display_name" : "Bug #",
+         "id" : 1,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "bug_id",
+         "type" : 0,
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "Summary",
+         "id" : 2,
+         "is_custom" : false,
+         "is_mandatory" : true,
+         "is_on_bug_entry" : false,
+         "name" : "short_desc",
+         "type" : 0,
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "Classification",
+         "id" : 50,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "classification",
+         "type" : 2,
+         "value_field" : null,
+         "values" : [
+            {
+               "name" : "Unclassified",
+               "sort_key" : 0,
+               "sortkey" : 0,
+               "visibility_values" : []
+            },
+            {
+               "name" : "Widgets",
+               "sort_key" : 0,
+               "sortkey" : 0,
+               "visibility_values" : []
+            },
+            {
+               "name" : "Mercury",
+               "sort_key" : 16,
+               "sortkey" : 16,
+               "visibility_values" : []
+            }
+         ],
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "Product",
+         "id" : 3,
+         "is_custom" : false,
+         "is_mandatory" : true,
+         "is_on_bug_entry" : false,
+         "name" : "product",
+         "type" : 2,
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "Version",
+         "id" : 4,
+         "is_custom" : false,
+         "is_mandatory" : true,
+         "is_on_bug_entry" : false,
+         "name" : "version",
+         "type" : 0,
+         "value_field" : "product",
+         "values" : [
+            {
+               "is_active" : true,
+               "name" : "1.0",
+               "sort_key" : 0,
+               "sortkey" : 0,
+               "visibility_values" : [
+                  "WorldControl"
+               ]
+            },
+            {
+               "is_active" : true,
+               "name" : "1.0",
+               "sort_key" : 0,
+               "sortkey" : 0,
+               "visibility_values" : [
+                  "FoodReplicator"
+               ]
+            },
+            {
+               "is_active" : true,
+               "name" : "unspecified",
+               "sort_key" : 0,
+               "sortkey" : 0,
+               "visibility_values" : [
+                  "MyOwnBadSelf"
+               ]
+            },
+            {
+               "is_active" : true,
+               "name" : "unspecified",
+               "sort_key" : 0,
+               "sortkey" : 0,
+               "visibility_values" : [
+                  "Ѕpїdєr Séçretíøns"
+               ]
+            },
+            {
+               "is_active" : true,
+               "name" : "unspecified",
+               "sort_key" : 0,
+               "sortkey" : 0,
+               "visibility_values" : [
+                  "Sam's Widget"
+               ]
+            },
+            {
+               "is_active" : true,
+               "name" : "2.0",
+               "sort_key" : 0,
+               "sortkey" : 0,
+               "visibility_values" : [
+                  "WorldControl"
+               ]
+            }
+         ],
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "Platform",
+         "id" : 5,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "rep_platform",
+         "type" : 2,
+         "value_field" : null,
+         "values" : [
+            {
+               "name" : "All",
+               "sort_key" : 100,
+               "sortkey" : 100,
+               "visibility_values" : []
+            },
+            {
+               "name" : "DEC",
+               "sort_key" : 200,
+               "sortkey" : 200,
+               "visibility_values" : []
+            },
+            {
+               "name" : "HP",
+               "sort_key" : 300,
+               "sortkey" : 300,
+               "visibility_values" : []
+            },
+            {
+               "name" : "Macintosh",
+               "sort_key" : 400,
+               "sortkey" : 400,
+               "visibility_values" : []
+            },
+            {
+               "name" : "PC",
+               "sort_key" : 500,
+               "sortkey" : 500,
+               "visibility_values" : []
+            },
+            {
+               "name" : "SGI",
+               "sort_key" : 600,
+               "sortkey" : 600,
+               "visibility_values" : []
+            },
+            {
+               "name" : "Sun",
+               "sort_key" : 700,
+               "sortkey" : 700,
+               "visibility_values" : []
+            },
+            {
+               "name" : "Other",
+               "sort_key" : 800,
+               "sortkey" : 800,
+               "visibility_values" : []
+            }
+         ],
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "URL",
+         "id" : 6,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "bug_file_loc",
+         "type" : 0,
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "OS/Version",
+         "id" : 7,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "op_sys",
+         "type" : 2,
+         "value_field" : null,
+         "values" : [
+            {
+               "name" : "All",
+               "sort_key" : 100,
+               "sortkey" : 100,
+               "visibility_values" : []
+            },
+            {
+               "name" : "Windows 3.1",
+               "sort_key" : 200,
+               "sortkey" : 200,
+               "visibility_values" : []
+            },
+            {
+               "name" : "Windows 95",
+               "sort_key" : 300,
+               "sortkey" : 300,
+               "visibility_values" : []
+            },
+            {
+               "name" : "Windows 98",
+               "sort_key" : 400,
+               "sortkey" : 400,
+               "visibility_values" : []
+            },
+            {
+               "name" : "Windows ME",
+               "sort_key" : 500,
+               "sortkey" : 500,
+               "visibility_values" : []
+            },
+            {
+               "name" : "Windows 2000",
+               "sort_key" : 600,
+               "sortkey" : 600,
+               "visibility_values" : []
+            },
+            {
+               "name" : "Windows NT",
+               "sort_key" : 700,
+               "sortkey" : 700,
+               "visibility_values" : []
+            },
+            {
+               "name" : "Windows XP",
+               "sort_key" : 800,
+               "sortkey" : 800,
+               "visibility_values" : []
+            },
+            {
+               "name" : "Windows Server 2003",
+               "sort_key" : 900,
+               "sortkey" : 900,
+               "visibility_values" : []
+            },
+            {
+               "name" : "Mac System 7",
+               "sort_key" : 1000,
+               "sortkey" : 1000,
+               "visibility_values" : []
+            },
+            {
+               "name" : "Mac System 7.5",
+               "sort_key" : 1100,
+               "sortkey" : 1100,
+               "visibility_values" : []
+            },
+            {
+               "name" : "Mac System 7.6.1",
+               "sort_key" : 1200,
+               "sortkey" : 1200,
+               "visibility_values" : []
+            },
+            {
+               "name" : "Mac System 8.0",
+               "sort_key" : 1300,
+               "sortkey" : 1300,
+               "visibility_values" : []
+            },
+            {
+               "name" : "Mac System 8.5",
+               "sort_key" : 1400,
+               "sortkey" : 1400,
+               "visibility_values" : []
+            },
+            {
+               "name" : "Mac System 8.6",
+               "sort_key" : 1500,
+               "sortkey" : 1500,
+               "visibility_values" : []
+            },
+            {
+               "name" : "Mac System 9.x",
+               "sort_key" : 1600,
+               "sortkey" : 1600,
+               "visibility_values" : []
+            },
+            {
+               "name" : "Mac OS X 10.0",
+               "sort_key" : 1700,
+               "sortkey" : 1700,
+               "visibility_values" : []
+            },
+            {
+               "name" : "Mac OS X 10.1",
+               "sort_key" : 1800,
+               "sortkey" : 1800,
+               "visibility_values" : []
+            },
+            {
+               "name" : "Mac OS X 10.2",
+               "sort_key" : 1900,
+               "sortkey" : 1900,
+               "visibility_values" : []
+            },
+            {
+               "name" : "Linux",
+               "sort_key" : 2000,
+               "sortkey" : 2000,
+               "visibility_values" : []
+            },
+            {
+               "name" : "BSD/OS",
+               "sort_key" : 2100,
+               "sortkey" : 2100,
+               "visibility_values" : []
+            },
+            {
+               "name" : "FreeBSD",
+               "sort_key" : 2200,
+               "sortkey" : 2200,
+               "visibility_values" : []
+            },
+            {
+               "name" : "NetBSD",
+               "sort_key" : 2300,
+               "sortkey" : 2300,
+               "visibility_values" : []
+            },
+            {
+               "name" : "OpenBSD",
+               "sort_key" : 2400,
+               "sortkey" : 2400,
+               "visibility_values" : []
+            },
+            {
+               "name" : "AIX",
+               "sort_key" : 2500,
+               "sortkey" : 2500,
+               "visibility_values" : []
+            },
+            {
+               "name" : "BeOS",
+               "sort_key" : 2600,
+               "sortkey" : 2600,
+               "visibility_values" : []
+            },
+            {
+               "name" : "HP-UX",
+               "sort_key" : 2700,
+               "sortkey" : 2700,
+               "visibility_values" : []
+            },
+            {
+               "name" : "IRIX",
+               "sort_key" : 2800,
+               "sortkey" : 2800,
+               "visibility_values" : []
+            },
+            {
+               "name" : "Neutrino",
+               "sort_key" : 2900,
+               "sortkey" : 2900,
+               "visibility_values" : []
+            },
+            {
+               "name" : "OpenVMS",
+               "sort_key" : 3000,
+               "sortkey" : 3000,
+               "visibility_values" : []
+            },
+            {
+               "name" : "OS/2",
+               "sort_key" : 3100,
+               "sortkey" : 3100,
+               "visibility_values" : []
+            },
+            {
+               "name" : "OSF/1",
+               "sort_key" : 3200,
+               "sortkey" : 3200,
+               "visibility_values" : []
+            },
+            {
+               "name" : "Solaris",
+               "sort_key" : 3300,
+               "sortkey" : 3300,
+               "visibility_values" : []
+            },
+            {
+               "name" : "SunOS",
+               "sort_key" : 3400,
+               "sortkey" : 3400,
+               "visibility_values" : []
+            },
+            {
+               "name" : "MáçØß",
+               "sort_key" : 3450,
+               "sortkey" : 3450,
+               "visibility_values" : []
+            },
+            {
+               "name" : "Other",
+               "sort_key" : 3500,
+               "sortkey" : 3500,
+               "visibility_values" : []
+            }
+         ],
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "Status",
+         "id" : 8,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "bug_status",
+         "type" : 2,
+         "value_field" : null,
+         "values" : [
+            {
+               "can_change_to" : [
+                  {
+                     "comment_required" : false,
+                     "name" : "UNCONFIRMED"
+                  },
+                  {
+                     "comment_required" : false,
+                     "name" : "CONFIRMED"
+                  },
+                  {
+                     "comment_required" : false,
+                     "name" : "IN_PROGRESS"
+                  }
+               ],
+               "is_open" : true,
+               "name" : null,
+               "sort_key" : 0,
+               "sortkey" : 0,
+               "visibility_values" : []
+            },
+            {
+               "can_change_to" : [
+                  {
+                     "comment_required" : false,
+                     "name" : "CONFIRMED"
+                  },
+                  {
+                     "comment_required" : false,
+                     "name" : "IN_PROGRESS"
+                  },
+                  {
+                     "comment_required" : false,
+                     "name" : "RESOLVED"
+                  }
+               ],
+               "is_open" : true,
+               "name" : "UNCONFIRMED",
+               "sort_key" : 100,
+               "sortkey" : 100,
+               "visibility_values" : []
+            },
+            {
+               "can_change_to" : [
+                  {
+                     "comment_required" : false,
+                     "name" : "IN_PROGRESS"
+                  },
+                  {
+                     "comment_required" : false,
+                     "name" : "RESOLVED"
+                  }
+               ],
+               "is_open" : true,
+               "name" : "CONFIRMED",
+               "sort_key" : 200,
+               "sortkey" : 200,
+               "visibility_values" : []
+            },
+            {
+               "can_change_to" : [
+                  {
+                     "comment_required" : false,
+                     "name" : "CONFIRMED"
+                  },
+                  {
+                     "comment_required" : false,
+                     "name" : "RESOLVED"
+                  }
+               ],
+               "is_open" : true,
+               "name" : "IN_PROGRESS",
+               "sort_key" : 300,
+               "sortkey" : 300,
+               "visibility_values" : []
+            },
+            {
+               "can_change_to" : [
+                  {
+                     "comment_required" : false,
+                     "name" : "CONFIRMED"
+                  },
+                  {
+                     "comment_required" : false,
+                     "name" : "VERIFIED"
+                  }
+               ],
+               "is_open" : false,
+               "name" : "RESOLVED",
+               "sort_key" : 500,
+               "sortkey" : 500,
+               "visibility_values" : []
+            },
+            {
+               "can_change_to" : [
+                  {
+                     "comment_required" : false,
+                     "name" : "CONFIRMED"
+                  }
+               ],
+               "is_open" : false,
+               "name" : "VERIFIED",
+               "sort_key" : 600,
+               "sortkey" : 600,
+               "visibility_values" : []
+            }
+         ],
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "Status Whiteboard",
+         "id" : 9,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "status_whiteboard",
+         "type" : 0,
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "Keywords",
+         "id" : 10,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "keywords",
+         "type" : 8,
+         "value_field" : null,
+         "values" : [
+            {
+               "description" : "This bug is funny, stupid, useless, used for testing, etc.",
+               "name" : "funny"
+            },
+            {
+               "description" : "test keyword #1",
+               "name" : "KeyMe"
+            },
+            {
+               "description" : "The same as KeyMe, but with a plus sign on it.",
+               "name" : "KeyMe+"
+            },
+            {
+               "description" : "Very similiar to KeyMe and KeyMe+ (I'm sure you can tell the difference :)",
+               "name" : "KeyMe-"
+            },
+            {
+               "description" : "What were you thinking?!?",
+               "name" : "stupid"
+            }
+         ],
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "Resolution",
+         "id" : 11,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "resolution",
+         "type" : 2,
+         "value_field" : null,
+         "values" : [
+            {
+               "name" : "",
+               "sort_key" : 100,
+               "sortkey" : 100,
+               "visibility_values" : []
+            },
+            {
+               "name" : "FIXED",
+               "sort_key" : 200,
+               "sortkey" : 200,
+               "visibility_values" : []
+            },
+            {
+               "name" : "INVALID",
+               "sort_key" : 300,
+               "sortkey" : 300,
+               "visibility_values" : []
+            },
+            {
+               "name" : "WONTFIX",
+               "sort_key" : 400,
+               "sortkey" : 400,
+               "visibility_values" : []
+            },
+            {
+               "name" : "LATER",
+               "sort_key" : 500,
+               "sortkey" : 500,
+               "visibility_values" : []
+            },
+            {
+               "name" : "REMIND",
+               "sort_key" : 600,
+               "sortkey" : 600,
+               "visibility_values" : []
+            },
+            {
+               "name" : "DUPLICATE",
+               "sort_key" : 700,
+               "sortkey" : 700,
+               "visibility_values" : []
+            },
+            {
+               "name" : "WORKSFORME",
+               "sort_key" : 800,
+               "sortkey" : 800,
+               "visibility_values" : []
+            },
+            {
+               "name" : "MOVED",
+               "sort_key" : 900,
+               "sortkey" : 900,
+               "visibility_values" : []
+            }
+         ],
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "Severity",
+         "id" : 12,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "bug_severity",
+         "type" : 2,
+         "value_field" : null,
+         "values" : [
+            {
+               "name" : "blocker",
+               "sort_key" : 100,
+               "sortkey" : 100,
+               "visibility_values" : []
+            },
+            {
+               "name" : "critical",
+               "sort_key" : 200,
+               "sortkey" : 200,
+               "visibility_values" : []
+            },
+            {
+               "name" : "major",
+               "sort_key" : 300,
+               "sortkey" : 300,
+               "visibility_values" : []
+            },
+            {
+               "name" : "normal",
+               "sort_key" : 400,
+               "sortkey" : 400,
+               "visibility_values" : []
+            },
+            {
+               "name" : "minor",
+               "sort_key" : 500,
+               "sortkey" : 500,
+               "visibility_values" : []
+            },
+            {
+               "name" : "trivial",
+               "sort_key" : 600,
+               "sortkey" : 600,
+               "visibility_values" : []
+            },
+            {
+               "name" : "enhancement",
+               "sort_key" : 700,
+               "sortkey" : 700,
+               "visibility_values" : []
+            }
+         ],
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "Priority",
+         "id" : 13,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "priority",
+         "type" : 2,
+         "value_field" : null,
+         "values" : [
+            {
+               "name" : "P1",
+               "sort_key" : 100,
+               "sortkey" : 100,
+               "visibility_values" : []
+            },
+            {
+               "name" : "P2",
+               "sort_key" : 200,
+               "sortkey" : 200,
+               "visibility_values" : []
+            },
+            {
+               "name" : "P3",
+               "sort_key" : 300,
+               "sortkey" : 300,
+               "visibility_values" : []
+            },
+            {
+               "name" : "P4",
+               "sort_key" : 400,
+               "sortkey" : 400,
+               "visibility_values" : []
+            },
+            {
+               "name" : "P5",
+               "sort_key" : 500,
+               "sortkey" : 500,
+               "visibility_values" : []
+            }
+         ],
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "Component",
+         "id" : 14,
+         "is_custom" : false,
+         "is_mandatory" : true,
+         "is_on_bug_entry" : false,
+         "name" : "component",
+         "type" : 2,
+         "value_field" : "product",
+         "values" : [
+            {
+               "is_active" : true,
+               "name" : "EconomicControl",
+               "sort_key" : 0,
+               "sortkey" : 0,
+               "visibility_values" : [
+                  "WorldControl"
+               ]
+            },
+            {
+               "is_active" : true,
+               "name" : "PoliticalBackStabbing",
+               "sort_key" : 0,
+               "sortkey" : 0,
+               "visibility_values" : [
+                  "WorldControl"
+               ]
+            },
+            {
+               "is_active" : true,
+               "name" : "WeatherControl",
+               "sort_key" : 0,
+               "sortkey" : 0,
+               "visibility_values" : [
+                  "WorldControl"
+               ]
+            },
+            {
+               "is_active" : true,
+               "name" : "renamed component",
+               "sort_key" : 0,
+               "sortkey" : 0,
+               "visibility_values" : [
+                  "FoodReplicator"
+               ]
+            },
+            {
+               "is_active" : true,
+               "name" : "Salt",
+               "sort_key" : 0,
+               "sortkey" : 0,
+               "visibility_values" : [
+                  "FoodReplicator"
+               ]
+            },
+            {
+               "is_active" : true,
+               "name" : "Salt II",
+               "sort_key" : 0,
+               "sortkey" : 0,
+               "visibility_values" : [
+                  "FoodReplicator"
+               ]
+            },
+            {
+               "is_active" : true,
+               "name" : "SaltSprinkler",
+               "sort_key" : 0,
+               "sortkey" : 0,
+               "visibility_values" : [
+                  "FoodReplicator"
+               ]
+            },
+            {
+               "is_active" : true,
+               "name" : "SpiceDispenser",
+               "sort_key" : 0,
+               "sortkey" : 0,
+               "visibility_values" : [
+                  "FoodReplicator"
+               ]
+            },
+            {
+               "is_active" : true,
+               "name" : "VoiceInterface",
+               "sort_key" : 0,
+               "sortkey" : 0,
+               "visibility_values" : [
+                  "FoodReplicator"
+               ]
+            },
+            {
+               "is_active" : true,
+               "name" : "Comp1",
+               "sort_key" : 0,
+               "sortkey" : 0,
+               "visibility_values" : [
+                  "MyOwnBadSelf"
+               ]
+            },
+            {
+               "is_active" : true,
+               "name" : "comp2",
+               "sort_key" : 0,
+               "sortkey" : 0,
+               "visibility_values" : [
+                  "MyOwnBadSelf"
+               ]
+            },
+            {
+               "is_active" : true,
+               "name" : "Digestive Goo",
+               "sort_key" : 0,
+               "sortkey" : 0,
+               "visibility_values" : [
+                  "Ѕpїdєr Séçretíøns"
+               ]
+            },
+            {
+               "is_active" : true,
+               "name" : "Venom",
+               "sort_key" : 0,
+               "sortkey" : 0,
+               "visibility_values" : [
+                  "Ѕpїdєr Séçretíøns"
+               ]
+            },
+            {
+               "is_active" : true,
+               "name" : "Web",
+               "sort_key" : 0,
+               "sortkey" : 0,
+               "visibility_values" : [
+                  "Ѕpїdєr Séçretíøns"
+               ]
+            },
+            {
+               "is_active" : true,
+               "name" : "Widget Gears",
+               "sort_key" : 0,
+               "sortkey" : 0,
+               "visibility_values" : [
+                  "Sam's Widget"
+               ]
+            }
+         ],
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "AssignedTo",
+         "id" : 15,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "assigned_to",
+         "type" : 0,
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "ReportedBy",
+         "id" : 16,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "reporter",
+         "type" : 0,
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "Votes",
+         "id" : 17,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "votes",
+         "type" : 0,
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "QAContact",
+         "id" : 18,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "qa_contact",
+         "type" : 0,
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "CC",
+         "id" : 19,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "cc",
+         "type" : 0,
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "Depends on",
+         "id" : 20,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "dependson",
+         "type" : 0,
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "Blocks",
+         "id" : 21,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "blocked",
+         "type" : 0,
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "Attachment description",
+         "id" : 22,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "attachments.description",
+         "type" : 0,
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "Attachment filename",
+         "id" : 39,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "attachments.filename",
+         "type" : 0,
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "Attachment mime type",
+         "id" : 24,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "attachments.mimetype",
+         "type" : 0,
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "Attachment is patch",
+         "id" : 25,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "attachments.ispatch",
+         "type" : 0,
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "Attachment is obsolete",
+         "id" : 33,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "attachments.isobsolete",
+         "type" : 0,
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "Attachment is private",
+         "id" : 38,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "attachments.isprivate",
+         "type" : 0,
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "Target Milestone",
+         "id" : 26,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "target_milestone",
+         "type" : 0,
+         "value_field" : "product",
+         "values" : [
+            {
+               "is_active" : true,
+               "name" : "---",
+               "sort_key" : 0,
+               "sortkey" : 0,
+               "visibility_values" : [
+                  "WorldControl"
+               ]
+            },
+            {
+               "is_active" : true,
+               "name" : "---",
+               "sort_key" : 0,
+               "sortkey" : 0,
+               "visibility_values" : [
+                  "FoodReplicator"
+               ]
+            },
+            {
+               "is_active" : true,
+               "name" : "---",
+               "sort_key" : 0,
+               "sortkey" : 0,
+               "visibility_values" : [
+                  "MyOwnBadSelf"
+               ]
+            },
+            {
+               "is_active" : true,
+               "name" : "---",
+               "sort_key" : 0,
+               "sortkey" : 0,
+               "visibility_values" : [
+                  "Ѕpїdєr Séçretíøns"
+               ]
+            },
+            {
+               "is_active" : true,
+               "name" : "---",
+               "sort_key" : 0,
+               "sortkey" : 0,
+               "visibility_values" : [
+                  "Sam's Widget"
+               ]
+            },
+            {
+               "is_active" : true,
+               "name" : "M1",
+               "sort_key" : 0,
+               "sortkey" : 0,
+               "visibility_values" : [
+                  "FoodReplicator"
+               ]
+            },
+            {
+               "is_active" : true,
+               "name" : "World 2.0",
+               "sort_key" : 0,
+               "sortkey" : 0,
+               "visibility_values" : [
+                  "WorldControl"
+               ]
+            }
+         ],
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "Creation date",
+         "id" : 54,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "creation_ts",
+         "type" : 0,
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "Last changed date",
+         "id" : 27,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "delta_ts",
+         "type" : 0,
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "Comment",
+         "id" : 29,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "longdesc",
+         "type" : 0,
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "Alias",
+         "id" : 37,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "alias",
+         "type" : 0,
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "Ever Confirmed",
+         "id" : 35,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "everconfirmed",
+         "type" : 0,
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "Reporter Accessible",
+         "id" : 36,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "reporter_accessible",
+         "type" : 0,
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "CC Accessible",
+         "id" : 32,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "cclist_accessible",
+         "type" : 0,
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "Group",
+         "id" : 40,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "bug_group",
+         "type" : 0,
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "Estimated Hours",
+         "id" : 44,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "estimated_time",
+         "type" : 0,
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "Remaining Hours",
+         "id" : 45,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "remaining_time",
+         "type" : 0,
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "Deadline",
+         "id" : 52,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "deadline",
+         "type" : 5,
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "Commenter",
+         "id" : 53,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "commenter",
+         "type" : 0,
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "Flags",
+         "id" : 41,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "flagtypes.name",
+         "type" : 0,
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "Flag Requestee",
+         "id" : 51,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "requestees.login_name",
+         "type" : 0,
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "Flag Setter",
+         "id" : 43,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "setters.login_name",
+         "type" : 0,
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "Hours Worked",
+         "id" : 46,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "work_time",
+         "type" : 0,
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "Percentage Complete",
+         "id" : 47,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "percentage_complete",
+         "type" : 0,
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "Content",
+         "id" : 48,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "content",
+         "type" : 0,
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "Attachment data",
+         "id" : 55,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "attach_data.thedata",
+         "type" : 0,
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "Days since bug changed",
+         "id" : 28,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "days_elapsed",
+         "type" : 0,
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "Time Since Assignee Touched",
+         "id" : 49,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "owner_idle_time",
+         "type" : 0,
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "Attachment creator",
+         "id" : 57,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "attachments.submitter",
+         "type" : 0,
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "Comment is private",
+         "id" : 58,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "longdescs.isprivate",
+         "type" : 0,
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "Large text box",
+         "id" : 59,
+         "is_custom" : true,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : true,
+         "name" : "cf_large_text",
+         "type" : 4,
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "free text",
+         "id" : 60,
+         "is_custom" : true,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : true,
+         "name" : "cf_free_text",
+         "type" : 1,
+         "visibility_field" : "priority",
+         "visibility_values" : [
+            "P1"
+         ]
+      },
+      {
+         "display_name" : "A multiple-select box",
+         "id" : 61,
+         "is_custom" : true,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : true,
+         "name" : "cf_mulitple_select",
+         "type" : 3,
+         "value_field" : "cf_drop_down",
+         "values" : [
+            {
+               "name" : "Always Appears",
+               "sort_key" : 0,
+               "sortkey" : 0,
+               "visibility_values" : []
+            },
+            {
+               "name" : "Option 1",
+               "sort_key" : 0,
+               "sortkey" : 0,
+               "visibility_values" : [
+                  "Show Option 1"
+               ]
+            },
+            {
+               "name" : "Option 2",
+               "sort_key" : 0,
+               "sortkey" : 0,
+               "visibility_values" : [
+                  "Show Option 2"
+               ]
+            },
+            {
+               "name" : "Option 3",
+               "sort_key" : 0,
+               "sortkey" : 0,
+               "visibility_values" : [
+                  "Show Option 3 & 4"
+               ]
+            },
+            {
+               "name" : "Option 4",
+               "sort_key" : 0,
+               "sortkey" : 0,
+               "visibility_values" : [
+                  "Show Option 3 & 4"
+               ]
+            },
+            {
+               "name" : "Option 5",
+               "sort_key" : 0,
+               "sortkey" : 0,
+               "visibility_values" : [
+                  "Platform All: Show Option 5"
+               ]
+            },
+            {
+               "name" : "Also Always Appears",
+               "sort_key" : 10,
+               "sortkey" : 10,
+               "visibility_values" : []
+            },
+            {
+               "name" : "Third Value, Always",
+               "sort_key" : 100,
+               "sortkey" : 100,
+               "visibility_values" : []
+            }
+         ],
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "Drop Down List",
+         "id" : 62,
+         "is_custom" : true,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : true,
+         "name" : "cf_drop_down",
+         "type" : 2,
+         "value_field" : "rep_platform",
+         "values" : [
+            {
+               "name" : "---",
+               "sort_key" : 0,
+               "sortkey" : 0,
+               "visibility_values" : []
+            },
+            {
+               "name" : "Show Option 1",
+               "sort_key" : 0,
+               "sortkey" : 0,
+               "visibility_values" : []
+            },
+            {
+               "name" : "Show Option 2",
+               "sort_key" : 0,
+               "sortkey" : 0,
+               "visibility_values" : []
+            },
+            {
+               "name" : "Show Option 3 & 4",
+               "sort_key" : 0,
+               "sortkey" : 0,
+               "visibility_values" : []
+            },
+            {
+               "name" : "Platform All: Show Option 5",
+               "sort_key" : 100,
+               "sortkey" : 100,
+               "visibility_values" : [
+                  "All"
+               ]
+            }
+         ],
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "Date Time",
+         "id" : 63,
+         "is_custom" : true,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : true,
+         "name" : "cf_date",
+         "type" : 5,
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "See Also",
+         "id" : 64,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "see_also",
+         "type" : 7,
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "Number of Comments",
+         "id" : 65,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "longdescs.count",
+         "type" : 0,
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "Bug ID Field",
+         "id" : 66,
+         "is_custom" : true,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : true,
+         "name" : "cf_bug_id",
+         "type" : 6,
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "Personal Tags",
+         "id" : 67,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "tag",
+         "type" : 8,
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "Comment Tag",
+         "id" : 68,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "comment_tag",
+         "type" : 0,
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "Last Visit",
+         "id" : 69,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "last_visit_ts",
+         "type" : 5,
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "AssignedToName",
+         "id" : 70,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "assigned_to_realname",
+         "type" : 0,
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "ReportedByName",
+         "id" : 71,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "reporter_realname",
+         "type" : 0,
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "QAContactName",
+         "id" : 72,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "qa_contact_realname",
+         "type" : 0,
+         "visibility_field" : null,
+         "visibility_values" : []
+      },
+      {
+         "display_name" : "Duplicate of",
+         "id" : 73,
+         "is_custom" : false,
+         "is_mandatory" : false,
+         "is_on_bug_entry" : false,
+         "name" : "dupe_of",
+         "type" : 0,
+         "visibility_field" : null,
+         "visibility_values" : []
+      }
+   ]
+}
