@@ -88,10 +88,6 @@ describe AhaServices::Jira do
       
     # Upload new attachments.
     stub_request(:post, "#{base_url}/issue/10009/attachments").
-      with(:body => "-------------RubyMultipartPost\r\nContent-Disposition: form-data; name=\"file\"; filename=\"Belgium.png\"\r\nContent-Length: 6\r\nContent-Type: image/png\r\nContent-Transfer-Encoding: binary\r\n\r\nbbbbbb\r\n-------------RubyMultipartPost--\r\n\r\n").
-      to_return(:status => 200, :body => "", :headers => {})
-    stub_request(:post, "#{base_url}/issue/10009/attachments").
-      with(:body => "-------------RubyMultipartPost\r\nContent-Disposition: form-data; name=\"file\"; filename=\"France.png\"\r\nContent-Length: 6\r\nContent-Type: image/png\r\nContent-Transfer-Encoding: binary\r\n\r\ndddddd\r\n-------------RubyMultipartPost--\r\n\r\n").
       to_return(:status => 200, :body => "", :headers => {})
     stub_request(:put, "http://u:p@foo.com/a/rest/greenhopper/1.0/epics/APP-1/add").
       with(:body => "{\"ignoreEpics\":true,\"issueKeys\":[\"10009\"]}").

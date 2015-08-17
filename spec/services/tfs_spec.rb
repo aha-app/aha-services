@@ -85,6 +85,10 @@ describe AhaServices::TFS do
                            .to_return(:status => 201, :headers => {}, :body => '{"id":"6b2266bf-a155-4582-a475-ca4da68193ef","url": "'+api_url+'/wit/attachments/6b2266bf-a155-4582-a475-ca4da68193ef?fileName=Austria.png"}')
       @upload_belgium = stub_request(:post, "#{api_url}/wit/attachments?api-version=1.0&fileName=Belgium.png")
                            .to_return(:status => 201, :headers => {}, :body => '{"id":"2ef0af3f-88e4-45f3-9f73-6d089aae0053","url": "'+api_url+'/wit/attachments/2ef0af3f-88e4-45f3-9f73-6d089aae0053?fileName=Belgium.png"}')
+      @upload_finland = stub_request(:post, "#{api_url}/wit/attachments?api-version=1.0&fileName=Finland.png")
+                           .to_return(:status => 201, :headers => {}, :body => '{"id":"2ef0af3f-88e4-45f3-9f73-6d089aae0053","url": "'+api_url+'/wit/attachments/2ef0af3f-88e4-45f3-9f73-6d089aae0053?fileName=Finland.png"}')
+      @upload_france = stub_request(:post, "#{api_url}/wit/attachments?api-version=1.0&fileName=France.png")
+                           .to_return(:status => 201, :headers => {}, :body => '{"id":"2ef0af3f-88e4-45f3-9f73-6d089aae0053","url": "'+api_url+'/wit/attachments/2ef0af3f-88e4-45f3-9f73-6d089aae0053?fileName=France.png"}')
       @link_attachment = stub_request(:patch, "#{api_url}/wit/workitems/174?api-version=1.0")
                          .to_return(:status => 200, :headers => {}, :body => "")
     end
@@ -94,7 +98,7 @@ describe AhaServices::TFS do
       expect(@create_workitem_feature).to have_been_requested.once
       expect(@integrate_feature).to have_been_requested.once
       expect(@create_workitem_requirement).to have_been_requested.once
-      expect(@link_workitem).to have_been_requested.once
+      expect(@link_workitem).to have_been_requested.times 3
       expect(@integrate_requirement).to have_been_requested.once
       expect(@upload_austria).to have_been_requested.once
       expect(@upload_belgium).to have_been_requested.once
