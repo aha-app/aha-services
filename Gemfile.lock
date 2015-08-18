@@ -167,6 +167,3 @@ DEPENDENCIES
   rspec
   sinatra
   webmock
-
-BUNDLED WITH
-   1.10.5

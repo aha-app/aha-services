@@ -41,7 +41,7 @@ class AhaServices::Fogbugz < AhaService
     rescue AhaApi::NotFound
       return # Ignore cases that we don't have Aha! features for.
     end
-    
+
     if results
       results.each do |result|
         if result.feature
