@@ -65,7 +65,6 @@ GEM
     coderay (1.1.0)
     crack (0.4.2)
       safe_yaml (~> 1.0.0)
-    database_cleaner (1.4.1)
     diff-lcs (1.2.5)
     domain_name (0.5.24)
       unf (>= 0.0.5, < 1.0.0)
@@ -157,7 +156,6 @@ DEPENDENCIES
   aha-api!
   aha-services!
   crack
-  database_cleaner
   html2confluence!
   plain-david!
   pry
