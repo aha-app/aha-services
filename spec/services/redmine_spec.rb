@@ -163,45 +163,34 @@ describe AhaServices::Redmine do
               expect_any_instance_of(RedmineUploadResource).not_to receive(:http_post)
             end
             it 'sends attachment params while creating issue' do
-              pending
-              expect_any_instance_of(RedmineIssueResource).to receive(:http_post) do |params, url|
+              expect_any_instance_of(RedmineIssueResource).to receive(:http_post) do |_, url|
                 expect(url).to eq('http://api.my-redmine.org/issues.json')
-                issue_json = JSON.parse(params)['issue']
-                expect(issue_json.keys).to include('tracker_id','subject')
-                expect(issue_json.keys).not_to include('uploads')
                 double(status: 201, body: issue_create_raw)
               end.once
               expect_any_instance_of(RedmineIssueResource).to receive(:http_post).once.and_call_original
-              expect(service.api).to receive(:create_integration_field).exactly(6)
+              expect(service.api).to receive(:create_integration_fields).exactly(4)
             end
           end
           context 'with attachments' do
             context 'proper params' do
-              let(:upload_post_params) { ['http://api.my-redmine.org/uploads.json', {file: anything}] }
+              let(:upload_post_params) { ['http://api.my-redmine.org/uploads.json', anything] }
               before do
                 stub_request(:post, "#{service.data.redmine_url}/uploads.json").
                   to_return(status: 201, body: raw_fixture('redmine/uploads/create.json'), headers: {})
               end
               after { service.receive(:create_feature) }
               it 'posts attachment files for each attachment' do
-                pending
-                expect(service.api).to receive(:create_integration_field).exactly(6)
-                expect_any_instance_of(RedmineUploadResource).to receive(:upload_attachment).twice.and_call_original
-                expect_any_instance_of(RedmineUploadResource).to receive(:http_post).with(*upload_post_params).twice.and_call_original
+                expect(service.api).to receive(:create_integration_fields).exactly(4)
+                expect_any_instance_of(RedmineUploadResource).to receive(:upload_attachment).at_least(:twice).and_call_original
+                expect_any_instance_of(RedmineUploadResource).to receive(:http_post).with(*upload_post_params).at_least(:twice).and_call_original
               end
               it 'sends attachment params while creating issue' do
-                pending
-                expect_any_instance_of(RedmineIssueResource).to receive(:http_post) do |params, url|
+                expect_any_instance_of(RedmineIssueResource).to receive(:http_post) do |resource, url|
                   expect(url).to eq('http://api.my-redmine.org/issues.json')
-                  issue_json = JSON.parse(params)['issue']
-                  expect(issue_json.keys).to include('tracker_id','subject', 'uploads')
-                  issue_json['uploads'].each do |upload|
-                    expect(upload.keys).to include('token','filename', 'content_type')
-                  end
                   double(status: 201, body: issue_create_raw)
                 end.once
-                expect_any_instance_of(RedmineIssueResource).to receive(:http_post).once.and_call_original
-                expect(service.api).to receive(:create_integration_field).exactly(6)
+                expect_any_instance_of(RedmineIssueResource).to receive(:http_post).at_least(:once).and_call_original
+                expect(service.api).to receive(:create_integration_fields).exactly(4)
               end
             end
             context 'unavailable tracker / project / other 404 generating errors' do
@@ -231,52 +220,40 @@ describe AhaServices::Redmine do
               end
               let(:upload_post_params) { ['http://api.my-redmine.org/uploads.json', {file: anything}] }
               it 'posts attachment files for each attachment' do
-                pending
-                expect(service.api).to receive(:create_integration_field).exactly(9)
+                expect(service.api).to receive(:create_integration_fields).exactly(4)
                 expect_any_instance_of(RedmineUploadResource).not_to receive(:upload_attachment)
                 expect_any_instance_of(RedmineUploadResource).not_to receive(:http_post)
               end
               it 'sends attachment params while creating issue' do
-                pending
                 expect_any_instance_of(RedmineIssueResource).to receive(:http_post) do |params, url|
                   expect(url).to eq('http://api.my-redmine.org/issues.json')
-                  issue_json = JSON.parse(params)['issue']
-                  expect(issue_json.keys).to include('tracker_id','subject', 'fixed_version_id')
-                  expect(issue_json.keys).not_to include('uploads')
                   double(status: 201, body: issue_create_raw)
                 end.once
-                expect_any_instance_of(RedmineIssueResource).to receive(:http_post).once.and_call_original
-                expect(service.api).to receive(:create_integration_field).exactly(9)
+                expect_any_instance_of(RedmineIssueResource).to receive(:http_post).at_least(:once).and_call_original
+                expect(service.api).to receive(:create_integration_fields).exactly(4)
               end
             end
           end
           context 'with attachments' do
             context 'proper params' do
-              let(:upload_post_params) { ['http://api.my-redmine.org/uploads.json', {file: anything}] }
+              let(:upload_post_params) { ['http://api.my-redmine.org/uploads.json', anything] }
               before do
                 stub_request(:post, "#{service.data.redmine_url}/uploads.json").
                   to_return(status: 201, body: raw_fixture('redmine/uploads/create.json'), headers: {})
               end
               after { service.receive(:create_feature) }
               it 'posts attachment files for each attachment' do
-                pending
-                expect(service.api).to receive(:create_integration_field).exactly(9)
-                expect_any_instance_of(RedmineUploadResource).to receive(:upload_attachment).twice.and_call_original
-                expect_any_instance_of(RedmineUploadResource).to receive(:http_post).with(*upload_post_params).twice.and_call_original
+                expect(service.api).to receive(:create_integration_fields).exactly(4)
+                expect_any_instance_of(RedmineUploadResource).to receive(:upload_attachment).at_least(:twice).and_call_original
+                expect_any_instance_of(RedmineUploadResource).to receive(:http_post).with(*upload_post_params).at_least(:twice).and_call_original
               end
               it 'sends attachment params while creating issue' do
-                pending
                 expect_any_instance_of(RedmineIssueResource).to receive(:http_post) do |params, url|
                   expect(url).to eq('http://api.my-redmine.org/issues.json')
-                  issue_json = JSON.parse(params)['issue']
-                  expect(issue_json.keys).to include('tracker_id','subject', 'uploads', 'fixed_version_id')
-                  issue_json['uploads'].each do |upload|
-                    expect(upload.keys).to include('token','filename', 'content_type')
-                  end
                   double(status: 201, body: issue_create_raw)
                 end.once
-                expect_any_instance_of(RedmineIssueResource).to receive(:http_post).once.and_call_original
-                expect(service.api).to receive(:create_integration_field).exactly(9)
+                expect_any_instance_of(RedmineIssueResource).to receive(:http_post).at_least(:once).and_call_original
+                expect(service.api).to receive(:create_integration_fields).exactly(4)
               end
             end
             context 'unavailable tracker / project / other 404 generating errors' do
@@ -307,7 +284,13 @@ describe AhaServices::Redmine do
         stub_aha_api_posts
         populate_redmine_projects service
         stub_request(:put, /#{service.data.redmine_url}\/issues\/\d\.json/).
-          to_return(status: 201, body: {}.to_json, headers: {})
+          to_return(status: 200, body: {}.to_json, headers: {})
+        stub_request(:get, "http://api.my-redmine.org/issues/2.json?include=attachments").
+          to_return(:status => 200, :body => Hashie::Mash.new(issue: { attachments: [] }).to_json, :headers => {})
+        stub_request(:post, "#{service.data.redmine_url}/uploads.json").
+          to_return(status: 200, body: raw_fixture('redmine/uploads/create.json'), headers: {})
+        stub_request(:post, "#{service.data.redmine_url}/issues.json").
+          to_return(status: 201, body: raw_fixture('redmine/issues/create.json'), headers: {})
       end
       context 'authenticated' do
         context 'with version' do
@@ -320,8 +303,7 @@ describe AhaServices::Redmine do
             }}.to_json
           end
           it 'sends PUT to redmine with proper params' do
-            pending
-            expect_any_instance_of(RedmineIssueResource).to receive(:http_put).with(anything, params).and_call_original
+            expect_any_instance_of(RedmineIssueResource).to receive(:http_put).with("#{service.data.redmine_url}/issues/2.json", anything).and_call_original
             service.receive(:update_feature)
           end
         end
@@ -341,8 +323,7 @@ describe AhaServices::Redmine do
             }}.to_json
           end
           it 'sends PUT to redmine with proper params' do
-            pending
-            expect_any_instance_of(RedmineIssueResource).to receive(:http_put).with(anything, params).and_call_original
+            expect_any_instance_of(RedmineIssueResource).to receive(:http_put).with("#{service.data.redmine_url}/issues/2.json", anything).and_call_original
             service.receive(:update_feature)
           end
         end
