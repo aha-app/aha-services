@@ -28,6 +28,8 @@ module Networking
 
   # Override this to install additional middleware.
   def faraday_builder(builder)
+    builder.request :restrict_ip_addresses, deny_rfc6890: true,
+                                            allow_localhost: false
   end
 
   # Reset the HTTP connection so it can be recreated with new options.
