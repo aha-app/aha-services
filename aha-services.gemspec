@@ -39,6 +39,8 @@ Gem::Specification.new do |s|
 
   s.add_dependency "aha-api"
 
+  s.add_dependency "faraday-restrict-ip-addresses", '~> 0.1.0'
+
   s.files        = Dir.glob("{lib}/**/*") + %w(LICENSE README.md)
   s.require_path = 'lib'
 end
