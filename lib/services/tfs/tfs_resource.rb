@@ -4,6 +4,7 @@ class TFSResource < GenericResource
 
   def faraday_builder b
     b.basic_auth(@service.data.user_name, @service.data.user_password)
+    b.request(:tfs_ntlm, @service.data.user_name, @service.data.user_password)
   end
 
   def self.default_http_options
@@ -55,11 +56,52 @@ protected
  
   def mstfs_url path
     joiner = (path =~ /\?/) ? "&" : "?"
-    "https://#{@service.data.account_name}.visualstudio.com/defaultcollection/_apis/#{path}#{joiner}api-version="+self.class::API_VERSION
+    "#{url_prefix}/_apis/#{path}#{joiner}api-version="+self.class::API_VERSION
   end
 
   def mstfs_project_url project, path
     joiner = (path =~ /\?/) ? "&" : "?"
-    "https://#{@service.data.account_name}.visualstudio.com/defaultcollection/#{project}/_apis/#{path}#{joiner}api-version="+self.class::API_VERSION
+    "#{url_prefix}/#{project}/_apis/#{path}#{joiner}api-version="+self.class::API_VERSION
+  end
+  
+  def url_prefix
+    if @service.data.account_name =~ /https?:/
+      @service.data.account_name
+    else
+      "https://#{@service.data.account_name}.visualstudio.com/defaultcollection"
+    end
+  end
+  
+end
+
+
+class TfsNtlm < Faraday::Middleware
+
+  def initialize(app, username, password)
+    @app = app
+    @username = username
+    @password = password
+  end
+
+  def call(env)
+    response = handshake(env)
+    return response unless response.status == 401
+
+    env[:request_headers]['Authorization'] = header(response)
+    @app.call(env)
+  end
+    
+  def handshake(env)
+    env_without_body = env.dup
+    #env_without_body.delete(:body) #unless @opts[:keep_body_on_handshake]
+    env[:request_headers]['Authorization'] = 'NTLM ' + NTLM.negotiate.to_base64
+    @app.call(env_without_body)
+  end
+  
+  def header(response)
+    challenge = response.headers['www-authenticate'][/NTLM (.*)/, 1].unpack('m').first rescue nil
+    'NTLM ' + NTLM.authenticate(challenge, @username, nil, @password).to_base64
   end
 end
+
+Faraday::Request.register_middleware :tfs_ntlm => lambda { TfsNtlm }

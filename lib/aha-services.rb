@@ -6,6 +6,7 @@ ActiveSupport::JSON
 
 require 'net/http'
 require 'net/https'
+require 'ntlm/http'
 require 'pp'
 
 require 'faraday'
@@ -14,6 +15,8 @@ require 'ipaddr'
 require 'socket'
 require 'hashie'
 require 'aha-api'
+
+require 'byebug'
 
 require 'aha-services/version'
 require 'aha-services/networking'
