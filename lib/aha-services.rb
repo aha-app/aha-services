@@ -6,7 +6,8 @@ ActiveSupport::JSON
 
 require 'net/http'
 require 'net/https'
-require 'ntlm/http'
+require 'net/http/persistent'
+require 'rubyntlm'
 require 'pp'
 
 require 'faraday'

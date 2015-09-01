@@ -3,13 +3,14 @@ class TFSResource < GenericResource
   API_VERSION = "1.0"
 
   def faraday_builder b
-    b.basic_auth(@service.data.user_name, @service.data.user_password)
+    #b.basic_auth(@service.data.user_name, @service.data.user_password)
     b.request(:tfs_ntlm, @service.data.user_name, @service.data.user_password)
   end
 
   def self.default_http_options
     super
     @@default_http_options[:headers]["Content-Type"] = "application/json"
+    @@default_http_options[:adapter] = :net_http_persistent
     @@default_http_options
   end
 
@@ -78,7 +79,7 @@ end
 class TfsNtlm < Faraday::Middleware
 
   def initialize(app, username, password)
-    @app = app
+    super app
     @username = username
     @password = password
   end
@@ -88,19 +89,31 @@ class TfsNtlm < Faraday::Middleware
     return response unless response.status == 401
 
     env[:request_headers]['Authorization'] = header(response)
+    puts "Response: " + env[:request_headers]['Authorization']
     @app.call(env)
   end
     
   def handshake(env)
     env_without_body = env.dup
-    #env_without_body.delete(:body) #unless @opts[:keep_body_on_handshake]
-    env[:request_headers]['Authorization'] = 'NTLM ' + NTLM.negotiate.to_base64
+    env_without_body.delete(:body)
+      
+    ntlm_message_type1 = Net::NTLM::Message::Type1.new
+    %w(workstation domain).each do |a|
+      ntlm_message_type1.send("#{a}=",'')
+      ntlm_message_type1.enable(a.to_sym)
+    end
+    
+    env_without_body[:request_headers]['Authorization'] = 'NTLM ' + ntlm_message_type1.encode64
+    puts "Handshake: "  +  env_without_body[:request_headers]['Authorization']
     @app.call(env_without_body)
   end
   
   def header(response)
-    challenge = response.headers['www-authenticate'][/NTLM (.*)/, 1].unpack('m').first rescue nil
-    'NTLM ' + NTLM.authenticate(challenge, @username, nil, @password).to_base64
+    challenge = response.headers['www-authenticate'][/NTLM (.+)/, 1]
+    
+    ntlm_message = Net::NTLM::Message.decode64(challenge)
+    
+    'NTLM ' + ntlm_message.response({user: @username, password: @password, domain: ''}, {:ntlmv2 => true}).encode64
   end
 end
 
