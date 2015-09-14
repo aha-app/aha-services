@@ -34,11 +34,13 @@ class AhaServices::TFS < AhaService
   }
 
   internal :feature_status_mapping
-
+  
+  internal :feature_default_fields
+  
   select :requirement_mapping, collection: -> (meta_data, data) {
     project = meta_data.projects[data.project] rescue nil
     return [] unless project
-    meta_data.workflow_sets[project.workflow].requirement_mappings.collect do |name, wit|
+    meta_data.workflow_sets[project.workflow].feature_mappings.collect do |name, wit|
       [name, name]
     end
   }
@@ -49,7 +51,7 @@ class AhaServices::TFS < AhaService
 
   def receive_installed
     meta_data.projects = project_resource.all
-    workitemtype_resource.determin_possible_workflows(meta_data)
+    workitemtype_resource.determine_possible_workflows(meta_data)
     classification_nodes_resource.get_areas_for_all_projects(meta_data)
   end
 
