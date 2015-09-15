@@ -64,6 +64,10 @@ class AhaServices::Jira < AhaService
     issue_resource.find_by_id(issue_id, expand: "renderedFields")
   end
 
+  def get_attachment(attachment)
+    attachment_resource.download(attachment)
+  end
+
   def search_issues(params)
     issue_resource.search(params)
   end

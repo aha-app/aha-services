@@ -223,7 +223,11 @@ module Networking
   end
 
   def reportable_http_env(env, time)
-    "#{env[:method].to_s.upcase} #{env[:url]} -- (#{"%.02fs" % [Time.now - time]}) #{env[:status]} #{env[:body]} #{env[:response_headers].inspect}"
+    if env[:response_headers]["content-type"] =~ /^text\// || env[:response_headers]["content-type"].starts_with?("application/json")
+      "#{env[:method].to_s.upcase} #{env[:url]} -- (#{"%.02fs" % [Time.now - time]}) #{env[:status]} #{env[:body]} #{env[:response_headers].inspect}"
+    else
+      "#{env[:method].to_s.upcase} #{env[:url]} -- (#{"%.02fs" % [Time.now - time]}) #{env[:status]} <binary:#{env[:body].bytesize}bytes> #{env[:response_headers].inspect}"
+    end
   end
 
   class HttpReporter < ::Faraday::Response::Middleware
