@@ -158,7 +158,9 @@ module Networking
   # Returns a Faraday::Response instance.
   def http_method(method, url = nil, body = nil, headers = nil)
     block = Proc.new if block_given?
-
+    
+    @service.logger.debug("Sending #{method} request to #{url}")
+    
     check_ssl do
       http.send(method) do |req|
         req.url(verify_url(url))    if url
