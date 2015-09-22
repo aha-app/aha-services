@@ -4,7 +4,7 @@ class TFSResource < GenericResource
 
   def faraday_builder b
     #b.basic_auth(@service.data.user_name, @service.data.user_password)
-    b.request(:tfs_ntlm, @service.data.user_name, @service.data.user_password)
+    b.request(:tfs_ntlm, self, @service.data.user_name, @service.data.user_password)
   end
 
   def self.default_http_options
@@ -79,8 +79,9 @@ end
 
 class TfsNtlm < Faraday::Middleware
 
-  def initialize(app, username, password)
+  def initialize(app, service, username, password)
     super app
+    @service = service
     @username = username
     @password = password
   end
@@ -95,7 +96,8 @@ class TfsNtlm < Faraday::Middleware
     
   def handshake(env)
     env_without_body = env.dup
-    env_without_body.delete(:body)
+    env_without_body[:request_headers] = env[:request_headers].dup
+    env_without_body.clear_body
       
     ntlm_message_type1 = Net::NTLM::Message::Type1.new
     %w(workstation domain).each do |a|
