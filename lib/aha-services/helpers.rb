@@ -1,3 +1,4 @@
+require 'pry'
 require 'plain-david'
 require 'redcarpet'
 
@@ -35,11 +36,17 @@ module Helpers
     ReverseMarkdown.convert(html, unknown_tags: 
     :bypass, github_flavored: github_style)
   end
+  
+  def html_to_slack_markdown(html)
+    html = html.gsub(/<ins[^>]*>([^<]*)<\/ins>/) {"*#{$1.gsub("\n", "*\n*")}*"}.gsub(/\*\*$/, '').gsub(/\n$/, '')
+    html_to_plain(html)
+  end
 
   def markdown_to_html(markdown)
     converter = Redcarpet::Markdown.new(AhaTableRender.new, autolink: true, tables: true)
     converter.render(markdown)
   end
+  
   
   def reference_num_to_resource_type(reference_num)
     if reference_num =~ /-R-\d+$/ or reference_num =~ /-R-PL$/

@@ -25,23 +25,35 @@ class AhaServices::Slack < AhaService
         audit.description
       end
       
-    send_message(fallback: "#{user} #{audit.description}",
-      pretext: "#{user} #{link}",
+    send_message(
       username: "Aha!",
       icon_url: "https://secure.aha.io/assets/logos/aha_square_300.png",
-      fields: audit.changes.collect do |change|
-        {
-          title: change.field_name,
-          value: html_to_plain(change.value),
-          short: false
-        }
-      end)
+      attachments: [
+        fallback: "#{user} #{audit.description}",
+        pretext: "*#{user}* #{link}",
+        color: "good",
+        mrkdwn_in: ["pretext", "text", "fields"],
+        fields: audit.changes.collect do |change|
+          {
+            title: change.field_name,
+            value: html_to_slack_markdown(change.value),
+            short: is_wide_field(change.field_name)
+            
+          }
+        end
+      ]
+    )
   end
     
   
 protected
 
+  def is_wide_field(field_name)
+    !["Descripition", "Theme", "Body"].include?(field_name)
+  end
+
   def send_message(message)
+    puts message.to_json
     http.headers['Content-Type'] = 'application/json'
     response = http_post(data.webhook_url, message.to_json)
     if [200, 201, 204].include?(response.status)
