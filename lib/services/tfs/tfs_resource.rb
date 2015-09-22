@@ -27,7 +27,8 @@ class TFSResource < GenericResource
     elsif response.status == 404
       raise AhaService::RemoteError, "Remote resource was not found."
     elsif response.status == 400
-      raise AhaService::RemoteError, "The request was not valid."
+      errors = parse(response.body)
+      raise AhaService::RemoteError, errors["message"]
     elsif [403, 401].include?(response.status)
       raise_config_error "Credentials are invalid or have insufficent rights."
     else
@@ -89,7 +90,6 @@ class TfsNtlm < Faraday::Middleware
     return response unless response.status == 401
 
     env[:request_headers]['Authorization'] = header(response)
-    puts "Response: " + env[:request_headers]['Authorization']
     @app.call(env)
   end
     
@@ -104,7 +104,6 @@ class TfsNtlm < Faraday::Middleware
     end
     
     env_without_body[:request_headers]['Authorization'] = 'NTLM ' + ntlm_message_type1.encode64
-    puts "Handshake: "  +  env_without_body[:request_headers]['Authorization']
     @app.call(env_without_body)
   end
   
