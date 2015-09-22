@@ -66,7 +66,7 @@ class TFSFeatureMappingResource < TFSResource
 
 protected
   def add_default_fields(body)
-    (@service.data.field_mapping || []).each do |field_mapping|
+    (@service.data.feature_default_fields || []).each do |field_mapping|
       next unless field_mapping.is_a? Hashie::Mash
       
       body[field_mapping.field] = field_mapping.value

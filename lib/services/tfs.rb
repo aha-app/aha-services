@@ -34,7 +34,6 @@ class AhaServices::TFS < AhaService
   }
 
   internal :feature_status_mapping
-  
   internal :feature_default_fields
   
   select :requirement_mapping, collection: -> (meta_data, data) {
@@ -46,6 +45,7 @@ class AhaServices::TFS < AhaService
   }
 
   internal :requirement_status_mapping
+  internal :requirement_default_fields
 
   callback_url description: "This url will be used to receive updates from TFS."
 
