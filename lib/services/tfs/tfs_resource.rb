@@ -3,8 +3,11 @@ class TFSResource < GenericResource
   API_VERSION = "1.0"
 
   def faraday_builder b
-    #b.basic_auth(@service.data.user_name, @service.data.user_password)
-    b.request(:tfs_ntlm, self, @service.data.user_name, @service.data.user_password)
+    if @service.class.service_name == "tfs_on_premise"
+      b.request(:tfs_ntlm, self, @service.data.user_name, @service.data.user_password)
+    else
+      b.basic_auth(@service.data.user_name, @service.data.user_password)
+    end
   end
 
   def self.default_http_options
@@ -67,8 +70,8 @@ protected
   end
   
   def url_prefix
-    if @service.data.account_name =~ /https?:/
-      @service.data.account_name
+    if @service.class.service_name == "tfs_on_premise"
+      @service.data.server_url
     else
       "https://#{@service.data.account_name}.visualstudio.com/defaultcollection"
     end
