@@ -2,61 +2,60 @@ module TfsCommon
   include Schema
   extend Schema::ClassMethods
 
-#  title "Visual Studio Online TFS"
-#  caption "Send features and requirements to Microsoft Team Foundation Server"
+  def self.included(klass)
+    # Hook into the class's schema so that all items are combined.
+    @klass_schema = klass.schema()
+    def self.schema
+      @klass_schema
+    end
+
+    #
+    # Common schema items.
+    #
+    
+    install_button
+
+    select :project, description: "The project you want to create new workitems in.",
+      collection: ->(meta_data, data) {
+      return [] if meta_data.nil? or meta_data.projects.nil?
+      meta_data.projects.collect do |id, project|
+        [project.name, project.id]
+      end
+    }
+
+    select :area, description: "The area of the project you want to create new workitems in.", collection: ->(meta_data, data) {
+      return [] if meta_data.nil? or meta_data.projects.nil? or data.project.nil?
+      project = meta_data.projects[data.project]
+      return [] if project.nil? or project.areas.nil?
+      project.areas.collect do |area|
+        [area, area]
+      end
+    }
+
+    select :feature_mapping, collection: -> (meta_data, data) {
+      project = meta_data.projects[data.project] rescue nil
+      return [] unless project
+      meta_data.workflow_sets[project.workflow].feature_mappings.collect do |name, wit|
+        [name, name]
+      end
+    }
+
+    internal :feature_status_mapping
+    internal :feature_default_fields
   
-def self.included(klass)
-  
-  @klass_schema = klass.schema()
-  
-  def self.schema
-    @klass_schema
+    select :requirement_mapping, collection: -> (meta_data, data) {
+      project = meta_data.projects[data.project] rescue nil
+      return [] unless project
+      meta_data.workflow_sets[project.workflow].feature_mappings.collect do |name, wit|
+        [name, name]
+      end
+    }
+
+    internal :requirement_status_mapping
+    internal :requirement_default_fields
+
+    callback_url description: "This url will be used to receive updates from TFS."
   end
-  
-  #string :account_name, description: "The name of your Visual Studio subdomain. e.g. if your Visual Studio domain is https://mycompany.visualstudio.com, then enter 'mycompany' here."
-  install_button
-
-  select :project, description: "The project you want to create new workitems in.",
-    collection: ->(meta_data, data) {
-    return [] if meta_data.nil? or meta_data.projects.nil?
-    meta_data.projects.collect do |id, project|
-      [project.name, project.id]
-    end
-  }
-
-  select :area, description: "The area of the project you want to create new workitems in.", collection: ->(meta_data, data) {
-    return [] if meta_data.nil? or meta_data.projects.nil? or data.project.nil?
-    project = meta_data.projects[data.project]
-    return [] if project.nil? or project.areas.nil?
-    project.areas.collect do |area|
-      [area, area]
-    end
-  }
-
-  select :feature_mapping, collection: -> (meta_data, data) {
-    project = meta_data.projects[data.project] rescue nil
-    return [] unless project
-    meta_data.workflow_sets[project.workflow].feature_mappings.collect do |name, wit|
-      [name, name]
-    end
-  }
-
-  internal :feature_status_mapping
-  internal :feature_default_fields
-  
-  select :requirement_mapping, collection: -> (meta_data, data) {
-    project = meta_data.projects[data.project] rescue nil
-    return [] unless project
-    meta_data.workflow_sets[project.workflow].feature_mappings.collect do |name, wit|
-      [name, name]
-    end
-  }
-
-  internal :requirement_status_mapping
-  internal :requirement_default_fields
-
-  callback_url description: "This url will be used to receive updates from TFS."
-end
   
   def receive_installed
     meta_data.projects = project_resource.all

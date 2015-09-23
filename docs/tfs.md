@@ -1,15 +1,15 @@
-This integration allows you to push features and requirements from Aha! to Microsoft Visual Studio Team Foundation server.
+This integration allows you to push features and requirements from Aha! to Microsoft Visual Studio Online (VSO).
 
-This integration uses the REST API and currently only Visual Studio Online is supported. 
+This integration works with the online version of Visual Studio. If you run Team Foundation Server on-premise then use the separate _Team Foundation Server_ integration instead.
 
 ## Features
 
-* One Aha! product is associated with one Microsoft Team Fondation project.
-* A feature can be sent to the Mirosoft Team Fondation server using the _Send to Visual Studio TFS_ item in the _Action_ menu on the features page.
-* Requirements are sent to TFS together with the feature.
+* One Aha! product is associated with one VSO project.
+* A feature can be sent to VSO using the _Send to Visual Studio Online_ item in the _Action_ menu on the features page.
+* Requirements are sent to VSO together with the feature.
 * Only the name, description and attachments of features and requirements are sent.
-* If you set up a subscription in TFS the integration can receive updates about name changes, description changes or status changes.
-* The mapping of TFS states to Aha! workflow statuses is configurable.
+* If you set up a subscription in VSO the integration can receive updates about name changes, description changes or status changes.
+* The mapping of VSO states to Aha! workflow statuses is configurable.
 
 ## Configuration
 
@@ -26,12 +26,12 @@ Next create the integration in Aha!
 2. Enter the alternate credentials you created in Visual Studio Online.
 3. Click the _Test connection_ button.
 4. On success, you should be able to choose a project from Visual Studio Online. You also must select an area of this project where features and requirements should be created.
-5. Select the workitemtype to which features should be mapped. Then select for each TFS state to which Aha! workflow status it should be mapped.
+5. Select the workitemtype to which features should be mapped. Then select for each VSO state to which Aha! workflow status it should be mapped.
 6. Repeat step 5 for requirements.
-7. Enable the integration and test it by going to one of your features in Aha! and using the _Send to Visual Studio TFS_ item in the _Action_ menu.
+7. Enable the integration and test it by going to one of your features in Aha! and using the _Send to Visual Studio Online_ item in the _Action_ menu.
 8. The feature should now appear in your Visual Studio Online project together with its requirements.
 
-If you want to be able to receive updates from TFS you must setup a subscription.
+If you want to be able to receive updates from VSO you must setup a subscription.
 
 1. Copy the Webhook URL from the configuration page.
 2. In your Visual Studio Online account, go to the project you want to integrate with.
