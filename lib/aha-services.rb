@@ -17,8 +17,6 @@ require 'socket'
 require 'hashie'
 require 'aha-api'
 
-require 'byebug'
-
 require 'aha-services/version'
 require 'aha-services/networking'
 require 'aha-services/schema'
