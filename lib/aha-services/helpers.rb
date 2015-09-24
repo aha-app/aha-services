@@ -1,4 +1,3 @@
-require 'pry'
 require 'plain-david'
 require 'redcarpet'
 
@@ -38,7 +37,7 @@ module Helpers
   end
   
   def html_to_slack_markdown(html)
-    html = html.gsub(/<ins[^>]*>([^<]*)<\/ins>/) {"*#{$1.gsub("\n", "*\n*")}*"}.gsub(/\*\*$/, '').gsub(/\n$/, '')
+    html = html.gsub(/<ins[^>]*>([^<]*)<\/ins>/) {" *#{$1.gsub("\n", "*\n*").strip}* "}.gsub(/\*\*$/, '').gsub(/\n$/, '')
     html_to_plain(html)
   end
 

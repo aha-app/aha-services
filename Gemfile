@@ -17,6 +17,3 @@ gem 'restforce'
 # Auto reload sinatra
 gem 'rerun'
 
-gem 'pry'
-gem 'pry-nav'
-
