@@ -7,6 +7,8 @@ class AhaServices::HipChat < AhaService
   string :room_name, description: "The name or API ID of the room messages should be sent to."
   install_button
   
+  audit_filter
+  
   def receive_installed
     send_message("Aha! integration installed successfully. Make sure you enable the integration!")
   end

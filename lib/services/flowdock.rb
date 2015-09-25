@@ -5,6 +5,8 @@ class AhaServices::Flowdock < AhaService
     description: "The API token for the Flow you want to send Aha! activity to."
   install_button
   
+  audit_filter
+  
   def receive_installed
     send_message("Aha! integration installed successfully", nil, 
       "Make sure you enable the integration!", "Aha!", "support@aha.io")
