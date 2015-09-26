@@ -8,19 +8,16 @@ module Networking
   def http(options = {})
     @http ||= begin
       self.class.default_http_options.each do |key, sub_options|
-        sub_hash = options[key] ||= {}
-        sub_options.each do |sub_key, sub_value|
-          sub_hash[sub_key] ||= sub_value
-        end
+        options[key] ||= sub_options
       end
-      options[:ssl][:ca_file] ||= ca_file
-      
+
       encoding = options.delete(:encoding)
+      adapter = options.delete(:adapter)
       
       Faraday.new(options) do |b|
-        b.request encoding || :url_encoded
+        b.request (encoding || :url_encoded)
         faraday_builder(b)
-        b.adapter *(options[:adapter] || :net_http)
+        b.adapter (adapter || :net_http)
         b.use(HttpReporter, self)
       end
     end
@@ -33,14 +30,6 @@ module Networking
   # Reset the HTTP connection so it can be recreated with new options.
   def http_reset
     @http = nil
-  end
-
-  # Gets the path to the SSL Certificate Authority certs.  These were taken
-  # from: http://curl.haxx.se/ca/cacert.pem
-  #
-  # Returns a String path.
-  def ca_file
-    @ca_file ||= File.expand_path('../../config/cacert.pem', __FILE__)
   end
 
   # Public: Makes an HTTP GET call.
@@ -158,7 +147,9 @@ module Networking
   # Returns a Faraday::Response instance.
   def http_method(method, url = nil, body = nil, headers = nil)
     block = Proc.new if block_given?
-
+    
+    @logger.debug("Sending #{method} request to #{url}")
+    
     check_ssl do
       http.send(method) do |req|
         req.url(verify_url(url))    if url
@@ -223,7 +214,11 @@ module Networking
   end
 
   def reportable_http_env(env, time)
-    "#{env[:method].to_s.upcase} #{env[:url]} -- (#{"%.02fs" % [Time.now - time]}) #{env[:status]} #{env[:body]} #{env[:response_headers].inspect}"
+    if env[:response_headers]["content-type"] =~ /^text\// || env[:response_headers]["content-type"].try(:starts_with?, "application/json")
+      "#{env[:method].to_s.upcase} #{env[:url]} -- (#{"%.02fs" % [Time.now - time]}) #{env[:status]} #{env[:body]} #{env[:response_headers].inspect}"
+    else
+      "#{env[:method].to_s.upcase} #{env[:url]} -- (#{"%.02fs" % [Time.now - time]}) #{env[:status]} <binary:#{env[:body].bytesize}bytes> #{env[:response_headers].inspect}"
+    end
   end
 
   class HttpReporter < ::Faraday::Response::Middleware

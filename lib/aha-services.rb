@@ -6,6 +6,8 @@ ActiveSupport::JSON
 
 require 'net/http'
 require 'net/https'
+require 'net/http/persistent'
+require 'rubyntlm'
 require 'pp'
 
 require 'faraday'
@@ -35,6 +37,7 @@ require 'services/pivotal_tracker/pivotal_tracker_resource'
 require 'services/pivotal_tracker/pivotal_tracker_project_dependent_resource'
 require 'services/trello/trello_resource'
 require 'services/fogbugz/fogbugz_resource'
+require 'services/tfs/tfs_common'
 require 'services/tfs/tfs_resource'
 require 'services/rally/rally_resource'
 require 'services/bugzilla/bugzilla_resource'

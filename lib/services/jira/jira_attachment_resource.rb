@@ -1,4 +1,5 @@
 require 'open-uri'
+require "stringio"
 
 class JiraAttachmentResource < JiraResource
   def all_for_issue(issue_id)
@@ -7,6 +8,12 @@ class JiraAttachmentResource < JiraResource
     process_response(response, 200) do |issue|
       return issue.fields.try(:attachment) || []
     end
+  end
+
+  def download(attachment)
+    prepare_request
+    response = http_get attachment["content"]
+    return StringIO.new(response.body)
   end
 
   def upload(attachment, issue_id)
