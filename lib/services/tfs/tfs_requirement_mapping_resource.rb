@@ -1,11 +1,14 @@
 class TFSRequirementMappingResource < TFSResource
 
   def create_and_link project, parent, aha_requirement
-    created_workitem = workitem_resource.create project, mapped_type, Hash[
+    body = {
       "System.Title" => aha_requirement.name || "Untitled requirement",
       "System.Description" => description_or_default(aha_requirement.description.body),
       "System.AreaPath" => @service.data.area,
-    ]
+    }
+    add_default_fields(body)
+    
+    created_workitem = workitem_resource.create project, mapped_type, body
     workitem_resource.update created_workitem.id, [{
       :op => :add,
       :path => "/relations/-",
@@ -72,6 +75,14 @@ class TFSRequirementMappingResource < TFSResource
   end
 
 protected
+  def add_default_fields(body)
+    (@service.data.requirement_default_fields || []).each do |field_mapping|
+      next unless field_mapping.is_a? Hashie::Mash
+    
+      body[field_mapping.field] = field_mapping.value
+    end
+  end
+
   def workitem_resource
     @workitem_resource ||= TFSWorkItemResource.new @service
   end

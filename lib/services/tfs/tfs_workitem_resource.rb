@@ -30,9 +30,7 @@ class TFSWorkItemResource < TFSResource
         :rel => :AttachedFile,
         :url => attachment.url,
         :attributes => {
-          # This does currently not work and I don't know why
-          # I reported a bug but I can't find it anymore ...
-          #:resourceSize => size.to_s
+          :resourceSize => size.to_s
         }
       }
     }]
