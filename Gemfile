@@ -13,7 +13,11 @@ gem 'plain-david', github: 'k1w1/plain-david' # HTML to plain text conversion.
 gem 'sinatra'
 gem 'crack'
 gem 'restforce'
+gem 'net-http-persistent'
+gem 'rubyntlm'
 
 # Auto reload sinatra
 gem 'rerun'
 
+# Development proxy debugging.
+gem 'byebug'
