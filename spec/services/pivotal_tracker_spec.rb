@@ -14,16 +14,6 @@ describe AhaServices::PivotalTracker do
   def stub_pivotal_attachment_uploads
     # Upload attachments
     stub_request(:post, "https://www.pivotaltracker.com/services/v5/projects/202020/uploads").
-      with(:body => "-------------RubyMultipartPost\r\nContent-Disposition: form-data; name=\"file\"; filename=\"Austria.png\"\r\nContent-Length: 6\r\nContent-Type: image/png\r\nContent-Transfer-Encoding: binary\r\n\r\naaaaaa\r\n-------------RubyMultipartPost--\r\n\r\n").
-      to_return(:status => 200, :body => "", :headers => {})
-    stub_request(:post, "https://www.pivotaltracker.com/services/v5/projects/202020/uploads").
-      with(:body => "-------------RubyMultipartPost\r\nContent-Disposition: form-data; name=\"file\"; filename=\"Belgium.png\"\r\nContent-Length: 6\r\nContent-Type: image/png\r\nContent-Transfer-Encoding: binary\r\n\r\nbbbbbb\r\n-------------RubyMultipartPost--\r\n\r\n").
-      to_return(:status => 200, :body => "", :headers => {})
-    stub_request(:post, "https://www.pivotaltracker.com/services/v5/projects/202020/uploads").
-      with(:body => "-------------RubyMultipartPost\r\nContent-Disposition: form-data; name=\"file\"; filename=\"Finland.png\"\r\nContent-Length: 6\r\nContent-Type: image/png\r\nContent-Transfer-Encoding: binary\r\n\r\ncccccc\r\n-------------RubyMultipartPost--\r\n\r\n").
-      to_return(:status => 200, :body => "", :headers => {})
-    stub_request(:post, "https://www.pivotaltracker.com/services/v5/projects/202020/uploads").
-      with(:body => "-------------RubyMultipartPost\r\nContent-Disposition: form-data; name=\"file\"; filename=\"France.png\"\r\nContent-Length: 6\r\nContent-Type: image/png\r\nContent-Transfer-Encoding: binary\r\n\r\ndddddd\r\n-------------RubyMultipartPost--\r\n\r\n").
       to_return(:status => 200, :body => "", :headers => {})
   end
 
