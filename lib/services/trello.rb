@@ -98,8 +98,7 @@ class AhaServices::Trello < AhaService
       .update card_id,
         name: resource_name(feature),
         desc: ReverseMarkdown.convert(feature.description.body),
-        due: due_date ? Time.parse(due_date).utc : nil,
-        idList: data.feature_statuses.invert[feature.workflow_status.id]
+        due: due_date ? Time.parse(due_date).utc : nil
   end
 
   def existing_checklist_item_integrated_with(requirement)

@@ -113,7 +113,7 @@ describe AhaServices::Fogbugz do
     service.stub(:payload).and_return(mock_payload)
 
     service.should_receive(:fetch_case).with('20').and_return(fogbugz_case['case'])
-    service.should_receive(:find_resource_with_case).with(fogbugz_case['case']).and_return(Hashie::Mash.new(feature: feature))
+    service.should_receive(:find_resource_with_case).with(fogbugz_case['case']).and_return(Hashie::Mash.new(records: [{ feature: feature }]))
     service.should_receive(:update_resource).with('https://aha.aha.io/api/v1/feature/NBT-1-4', 'feature', fogbugz_case['case']).and_return(nil)
     service.receive(:webhook)
   end

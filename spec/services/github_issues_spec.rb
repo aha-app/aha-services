@@ -372,15 +372,15 @@ describe AhaServices::GithubIssues do
   describe "#issue_body" do
     context "when the description no attachments" do
       context "without body" do
-        let(:description) { Hashie::Mash.new() }
+        let(:resource) { Hashie::Mash.new( description: {}) }
         it "returns an empty string" do
-          expect(service.issue_body(description)).to eq ""
+          expect(service.issue_body(resource)).to eq ""
         end
       end
       context "with a body" do
-        let(:description) { Hashie::Mash.new(body: "Issue name") }
+        let(:resource) { Hashie::Mash.new( description: { body: "Issue name" }) }
         it "returns the body" do
-          expect(service.issue_body(description)).to eq "Issue name"
+          expect(service.issue_body(resource)).to eq "Issue name\n\n"
         end
       end
     end
@@ -390,16 +390,16 @@ describe AhaServices::GithubIssues do
         service.stub(:attachments_in_body).and_return("name1 (url1)")
       end
       context "without body" do
-        let(:description) { Hashie::Mash.new(attachments: attachments) }
+        let(:resource) { Hashie::Mash.new( description: { attachments: attachments }) }
         it "returns the attachments string" do
-          expect(service.issue_body(description)).to eq "name1 (url1)"
+          expect(service.issue_body(resource)).to eq "name1 (url1)"
         end
       end
       context "with a body" do
-        let(:description) { Hashie::Mash.new(body: "Issue name", attachments: attachments) }
+        let(:resource) { Hashie::Mash.new( description: { body: "Issue name", attachments: attachments }) }
         it "returns the body followed by the attachments string" do
-          expect(service.issue_body(description))
-            .to eq "Issue name\n\nname1 (url1)"
+          expect(service.issue_body(resource))
+            .to eq "Issue name\n\n\n\nname1 (url1)"
         end
       end
     end

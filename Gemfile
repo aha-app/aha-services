@@ -14,9 +14,14 @@ gem 'sinatra'
 gem 'crack'
 gem 'restforce'
 gem 'ClothRed', :git => "https://github.com/schneidmaster/ClothRed.git"
+gem 'net-http-persistent'
+gem 'rubyntlm'
 
 # Auto reload sinatra
 gem 'rerun'
+
+# Development proxy debugging.
+gem 'byebug'
 
 gem 'pry'
 gem 'pry-nav'
