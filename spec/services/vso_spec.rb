@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe AhaServices::TFS do
+describe AhaServices::VSO do
   let(:account_name) { "ahaintegration" }
   let(:project_id) { "43d47bf1-9c6c-4387-9945-944f625e60f3" }
 
@@ -10,9 +10,9 @@ describe AhaServices::TFS do
   let(:aha_api_url) { "https://a.aha.io/api/v1" }
 
   let :service do
-    AhaServices::TFS.new({
+    AhaServices::VSO.new({
       'account_name' => account_name,
-      'project' => project_id,
+      'project' => project_id
     }, nil, {})
   end
 
@@ -41,7 +41,7 @@ describe AhaServices::TFS do
                         to_return(:status => 200, :body => raw_fixture("tfs/tfs_get_project_areas.json"))
     end
     it "raises configuration error" do
-      service = AhaServices::TFS.new({
+      service = AhaServices::VSO.new({
         'account_name' => account_name,
         'project' => project_id
       }, nil, {})
@@ -63,9 +63,12 @@ describe AhaServices::TFS do
 
   describe "recieving new feature" do
     let(:service) do
-      AhaServices::TFS.new(
-        {'account_name' => account_name, 'project' => project_id, 'integration_id' => 111},
-        json_fixture('create_feature_event.json'))
+      AhaServices::VSO.new(
+        {
+          'account_name' => account_name, 
+          'project' => project_id, 
+          'integration_id' => 111
+        }, json_fixture('create_feature_event.json'))
     end
 
     before do
