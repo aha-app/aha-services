@@ -130,7 +130,7 @@ protected
 
   def kind_to_story_type(kind)
     if @service.data.feature_kinds
-      @service.data.feature_kinds[kind]
+      @service.data.feature_kinds[kind] || "feature"
     else
       "feature"
     end

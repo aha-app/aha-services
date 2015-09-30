@@ -1,12 +1,15 @@
 class TFSFeatureMappingResource < TFSResource
 
   def create project, aha_feature
-    # create new workitem in TFS
-    created_workitem = workitem_resource.create project, mapped_type, Hash[
+    body = {
       "System.Title" => aha_feature.name || "Untitled feature",
       "System.Description" => description_or_default(aha_feature.description.body),
-      "System.AreaPath" => @service.data.area,
-    ]
+      "System.AreaPath" => @service.data.area
+    }
+    add_default_fields(body)
+    
+    # create new workitem in TFS
+    created_workitem = workitem_resource.create project, mapped_type, body
     # add integration field to workitem in aha
     api.create_integration_fields("features", aha_feature.reference_num, @service.data.integration_id, {id: created_workitem.id, url: created_workitem._links.html.href})
     # create a workitem in TFS for each requirement
@@ -62,6 +65,14 @@ class TFSFeatureMappingResource < TFSResource
   end
 
 protected
+  def add_default_fields(body)
+    (@service.data.feature_default_fields || []).each do |field_mapping|
+      next unless field_mapping.is_a? Hashie::Mash
+      
+      body[field_mapping.field] = field_mapping.value
+    end
+  end
+
   def create_and_link_requirements project, workitem, requirements
     requirements.each do |requirement|
       requirement_mapping_resource.create_and_link project, workitem, requirement

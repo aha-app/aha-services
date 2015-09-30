@@ -172,7 +172,7 @@ class AhaServices::GithubIssues < AhaService
   end
 
   def update_labels(issue, resource)
-    label_resource.update(issue['number'], resource.tags)
+    label_resource.update(issue['number'], resource.tags) unless resource.tags.nil?
   end
 
   def issue_body(resource)
