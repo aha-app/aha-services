@@ -78,7 +78,7 @@ module TfsCommon
     begin
       return unless payload.webhook && payload.webhook.resource && payload.webhook.resource._links && payload.webhook.resource._links.parent
       url = payload.webhook.resource._links.parent.href
-      return if test_webook(url)
+      return if test_webhook(url)
       
       workitem = workitem_resource.by_url(remap_url(url))
       results = api.search_integration_fields(data.integration_id, "id", workitem.id)['records']
@@ -96,7 +96,7 @@ module TfsCommon
 protected
   
   # Check if this is a test servicehook, in which case we ignore it.
-  def test_workhook(url)
+  def test_webhook(url)
     logger.info("Received test webhook")
     URI(url).host == "fabrikam-fiber-inc.visualstudio.com"
   end
