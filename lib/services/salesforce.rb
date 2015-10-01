@@ -12,7 +12,11 @@ class AhaServices::Salesforce < AhaService
     client.user_info
   rescue Exception => e
     logger.debug("Salesforce authentication problem #{e.class}: #{e.message} #{e.backtrace.join("\n")}")
-    raise ConfigurationError, "Unable to authenticate"
+    if e.message.include? 'The REST API is not enabled for this Organization.'
+      raise ConfigurationError, "The REST API is not enabled for this Organization."
+    else
+      raise ConfigurationError, "Unable to authenticate"
+    end
   end
     
   def client
