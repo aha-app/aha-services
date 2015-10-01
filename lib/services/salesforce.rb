@@ -15,7 +15,7 @@ class AhaServices::Salesforce < AhaService
     if e.message.include? 'The REST API is not enabled for this Organization.'
       raise ConfigurationError, "The REST API is not enabled for this Organization."
     else
-      raise ConfigurationError, "Unable to authenticate"
+      raise ConfigurationError, "Authentication failed. Please verify the settings are correct."
     end
   end
     
