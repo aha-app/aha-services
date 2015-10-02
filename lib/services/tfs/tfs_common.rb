@@ -78,7 +78,9 @@ module TfsCommon
     begin
       return unless payload.webhook && payload.webhook.resource && payload.webhook.resource._links && payload.webhook.resource._links.parent
       url = payload.webhook.resource._links.parent.href
-      workitem = workitem_resource.by_url url
+      return if test_webhook(url)
+      
+      workitem = workitem_resource.by_url(remap_url(url))
       results = api.search_integration_fields(data.integration_id, "id", workitem.id)['records']
       return if results.length != 1
       if results[0].feature then
@@ -92,6 +94,27 @@ module TfsCommon
   end
 
 protected
+  
+  # Check if this is a test servicehook, in which case we ignore it.
+  def test_webhook(url)
+    logger.info("Received test webhook")
+    URI(url).host == "fabrikam-fiber-inc.visualstudio.com"
+  end
+
+  # On premise TFS servers frequently use DNS names that are only valid inside
+  # the LAN. We need to remap to make the address valid for external use. 
+  def remap_url(original_url)
+    return original_url if self.class.service_name == "tfs"
+    
+    server_uri = URI(data.server_url)
+    
+    uri = URI(original_url)
+    uri.scheme = server_uri.scheme
+    uri.host = server_uri.host
+    uri.port = server_uri.port
+    uri.to_s
+  end
+  
   def project_resource
     @project_resource ||= TFSProjectResource.new(self)
   end

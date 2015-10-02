@@ -20,14 +20,14 @@ def stub_redmine_projects more_projects=true
   trackers_index_raw = raw_fixture('redmine/trackers/index.json')
   issue_priorities_index_raw = raw_fixture('redmine/enumerations/issue_priorities.json')
 
-  stub_request(:get, "#{service.data.redmine_url}/projects.json").
+  stub_request(:get, "#{service.data.redmine_url}/projects.json?limit=200").
     to_return(status: 200, body: projects_index_raw, headers: {})
   stub_request(:get, "#{service.data.redmine_url}/projects/1/versions.json").
-    to_return(status: 200, body: {}, headers: {})
+    to_return(status: 200, body: {}.to_json, headers: {})
   stub_request(:get, "#{service.data.redmine_url}/projects/2/versions.json").
-    to_return(status: 200, body: {}, headers: {})
+    to_return(status: 200, body: {}.to_json, headers: {})
   stub_request(:get, "#{service.data.redmine_url}/projects/3/versions.json").
-    to_return(status: 200, body: {}, headers: {})
+    to_return(status: 200, body: {}.to_json, headers: {})
     
   stub_request(:get, "#{service.data.redmine_url}/trackers.json").
     to_return(:status => 200, :body => trackers_index_raw, :headers => {})
@@ -44,11 +44,11 @@ def stub_redmine_projects_and_versions more_projects=true, more_versions=true
   stub_request(:get, "#{service.data.redmine_url}/projects.json").
     to_return(status: 200, body: projects_index_raw, headers: {})
   stub_request(:get, "#{service.data.redmine_url}/projects/1/versions.json").
-    to_return(status: 200, body: {}, headers: {})
+    to_return(status: 200, body: {}.to_json, headers: {})
   stub_request(:get, "#{service.data.redmine_url}/projects/2/versions.json").
     to_return(status: 200, body: versions_index_raw, headers: {})
   stub_request(:get, "#{service.data.redmine_url}/projects/3/versions.json").
-    to_return(status: 200, body: {}, headers: {})
+    to_return(status: 200, body: {}.to_json, headers: {})
 end
 
 def populate_redmine_projects service, more_projects=true

@@ -31,9 +31,12 @@ describe AhaServices::Jira do
       with(:body => "{\"name\":\"Summer\",\"description\":\"Created from Aha! \",\"releaseDate\":null,\"released\":null,\"project\":\"DEMO\"}").
       to_return(:status => 201, :body => "{\"id\":\"666\"}", :headers => {})
     # Call back into Aha! for release.
-    stub_request(:post, "https://a.aha.io/api/v1/releases/PROD-R-1/integrations/jira/fields").
+    stub_request(:post, "https://a.aha.io/api/v1/releases/PROD-R-1/integrations/fields").
       with(:body => {:integration_field => {:name => "id", :value => "666"}}).
       to_return(:status => 201, :body => "", :headers => {})
+    # Link to user picker
+    stub_request(:get, "http://u:p@foo.com/a/rest/api/2/user/picker?query=watersco@gmail.com").
+      to_return(:status => 200, :body => raw_fixture('jira/jira_user.json'))
   end
   
   it "can receive new features" do
@@ -54,11 +57,11 @@ describe AhaServices::Jira do
       to_return(:status => 201)
 
     # Call back into Aha! for feature
-    stub_request(:post, "https://a.aha.io/api/v1/features/5886067808745625353/integrations/jira/fields").
+    stub_request(:post, "https://a.aha.io/api/v1/features/5886067808745625353/integrations/fields").
       with(:body => {:integration_fields => [{:name => "url", :value => "http://foo.com/a/browse/DEMO-10"}, {:name => "id", :value => "10009"}, {:name => "key", :value => "DEMO-10"}]}).
       to_return(:status => 201, :body => "", :headers => {})
     # Call back into Aha! for requirement
-    stub_request(:post, "https://a.aha.io/api/v1/requirements/5886072825272941795/integrations/jira/fields").
+    stub_request(:post, "https://a.aha.io/api/v1/requirements/5886072825272941795/integrations/fields").
       with(:body => {:integration_fields => [{:name => "url", :value => "http://foo.com/a/browse/DEMO-10"}, {:name => "id", :value => "10009"}, {:name => "key", :value => "DEMO-10"}]}).
       to_return(:status => 201, :body => "", :headers => {})
     
@@ -85,11 +88,10 @@ describe AhaServices::Jira do
       
     # Upload new attachments.
     stub_request(:post, "#{base_url}/issue/10009/attachments").
-      with(:body => "-------------RubyMultipartPost\r\nContent-Disposition: form-data; name=\"file\"; filename=\"Belgium.png\"\r\nContent-Length: 6\r\nContent-Type: image/png\r\nContent-Transfer-Encoding: binary\r\n\r\nbbbbbb\r\n-------------RubyMultipartPost--\r\n\r\n").
       to_return(:status => 200, :body => "", :headers => {})
-    stub_request(:post, "#{base_url}/issue/10009/attachments").
-      with(:body => "-------------RubyMultipartPost\r\nContent-Disposition: form-data; name=\"file\"; filename=\"France.png\"\r\nContent-Length: 6\r\nContent-Type: image/png\r\nContent-Transfer-Encoding: binary\r\n\r\ndddddd\r\n-------------RubyMultipartPost--\r\n\r\n").
-      to_return(:status => 200, :body => "", :headers => {})
+    stub_request(:put, "http://u:p@foo.com/a/rest/greenhopper/1.0/epics/APP-1/add").
+      with(:body => "{\"ignoreEpics\":true,\"issueKeys\":[\"10009\"]}").
+      to_return(:status => 204, :body => "", :headers => {})
   
   
     AhaServices::Jira.new(service_params,
@@ -475,7 +477,7 @@ describe AhaServices::Jira do
     it "calls issue_resource.create and create_link_for_issue,\
         and then returns the newly created issue" do
       service.stub(:issue_type_by_parent)
-        .and_return(Hashie::Mash.new(name: 'Story', subtask: false))
+        .and_return(Hashie::Mash.new(name: 'Story', subtask: false, fields: []))
       issue_resource.should_receive(:create).and_return({key: 'New issue', id: 1})
       service.should_receive(:create_link_for_issue).and_return(nil)
       expect(service.send(:create_issue_for, resource, nil, nil, nil))
@@ -495,7 +497,7 @@ describe AhaServices::Jira do
     it "calls issue_resource.update and update_attachments,\
         and then returns the issue_info object" do
       service.stub(:issue_type_by_parent)
-        .and_return(Hashie::Mash.new(name: 'Story', subtask: false))
+        .and_return(Hashie::Mash.new(name: 'Story', subtask: false, fields: []))
       issue_resource.should_receive(:update)
       service.should_receive(:update_attachments).and_return(nil)
       expect(service.send(:update_issue, issue_info, resource, nil, nil, nil))
@@ -738,6 +740,7 @@ describe AhaServices::Jira do
     context "when units are points" do
       let(:resource) do
         Hashie::Mash.new({ work_units: 20,
+                           original_estimate: 20,
                            remaining_estimate: 100 })
       end
       context "when issue type has a story points field" do
@@ -746,7 +749,7 @@ describe AhaServices::Jira do
           service.stub(:meta_data)
             .and_return(Hashie::Mash.new({ story_points_field: 'story_points' }))
           expect(time_tracking_fields).to eq(
-            service.meta_data.story_points_field => resource.remaining_estimate
+            service.meta_data.story_points_field => resource.original_estimate
           )
         end
       end
@@ -923,11 +926,11 @@ describe AhaServices::Jira do
 
     it "adds the assignee when valid" do
       resource = json_fixture("create_feature_event_assignee.json")
-      service.stub(:issue_type_by_id).and_return(Hashie::Mash.new(id: 239509))
-      user_resource.should_receive(:picker).with("watersco@gmail.com").and_return(Hashie::Mash.new("name" => "chris","emailAddress" => "watersco@gmail.com"))
+      service.stub(:issue_type_by_id).and_return(Hashie::Mash.new(id: 239509, fields: []))
+      user_resource.should_receive(:picker).exactly(2).times.with("watersco@gmail.com").and_return(Hashie::Mash.new("name" => "chris","emailAddress" => "watersco@gmail.com"))
 
       issue_resource.should_receive(:create).
-        with(Hashie::Mash.new(fields: {assignee: {name: 'chris'}, description: "", issuetype: {id: 239509}, summary: "Feature with attachments"})).
+        with(Hashie::Mash.new(fields: {assignee: {name: 'chris'}, description: "", issuetype: {id: 239509}, reporter: {name: 'chris'}, summary: "Feature with attachments"})).
         and_return(Hashie::Mash.new(id: 53498, key: 'key'))
 
       service.send(:create_issue_for, Hashie::Mash.new(resource['feature']), initiative, version, nil)

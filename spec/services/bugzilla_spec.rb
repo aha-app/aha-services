@@ -31,6 +31,8 @@ describe AhaServices::Bugzilla do
                                     to_return(:status => 200, :body => raw_fixture("bugzilla/product_enterable.json"))
       @stub_get_products_components = stub_request(:get, "#{server_url}/rest/product?api_key=#{api_key}&ids=2&ids=3&ids=19&ids=1&ids=4&include_fields=id,name,components.id,components.name").
                                       to_return(:status => 200, :body => raw_fixture("bugzilla/products.json"))
+      @stub_get_bug_field = stub_request(:get, "#{server_url}/rest/field/bug?api_key=#{api_key}").
+                            to_return(:status => 200, :body => raw_fixture("bugzilla/fields.json"))
     end
 
     it "fetches products and components" do

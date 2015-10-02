@@ -1,6 +1,6 @@
 The Salesforce integration allows users in Salesforce to create new ideas in Aha! from Salesforce opportunities and cases. 
 
-This integration allows Aha! to communicate to Salesforce to create links between Salesforce records and Aha! ideas. The integration also allows Aha! to update Salesforce when ideas are modified in Aha! - changes to the name of an idea or the status of an idea will immedaitely update Salesforce.
+This integration allows Aha! to communicate to Salesforce to create links between Salesforce records and Aha! ideas. The integration also allows Aha! to update Salesforce when ideas are modified in Aha! - changes to the name of an idea or the status of an idea will immediately update Salesforce.
 
 ## Configuration
 

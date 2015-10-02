@@ -107,7 +107,12 @@ class BugzillaBugResource < BugzillaResource
   end
 
   def common_bug_fields
-    defaults = @service.meta_data.defaults[get_product().name] || {}
+    defaults = 
+      if @service.meta_data && @service.meta_data.defaults
+        @service.meta_data.defaults[get_product().name]
+      else
+        {}
+      end
     defaults.merge({
       :product => get_product().name,
       :component => get_component().name,

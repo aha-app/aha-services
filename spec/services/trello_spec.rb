@@ -125,23 +125,26 @@ describe AhaServices::Trello do
     service.stub(:payload).and_return(update_feature_event)
     updated_feature = update_feature_event.feature
 
-    get_card = stub_request(:get, trello_url("cards/#{card_id}"))
-      .to_return(status: 200, body: {id: card_id}.to_json)
-    save_card = stub_request(:put, trello_url("cards/#{card_id}"))
-      .to_return(status: 200)
-    get_checklist_item = stub_request(:get, trello_url("checklists/#{checklist_id}/checkitems/#{checklist_item_id}"))
-      .to_return(status: 200, body: {id: checklist_item_id}.to_json)
-    save_checklist_item = stub_request(:put, trello_url("cards/#{card_id}/checklist/#{checklist_id}/checkItem/#{checklist_item_id}"))
-      .with(body: {
-        idChecklistCurrent: checklist_id,
-        idCheckItem: checklist_item_id,
-        name: "Requirement 1. First requirement  \n, changed\n\n"
-      }.to_json)
-      .to_return(status: 200)
-    get_attachments = stub_request(:get, trello_url("cards/#{card_id}/attachments"))
-      .to_return(status: 200, body: [{url: "Finland.png", bytes: 28265}].to_json)
-    create_attachments = stub_request(:post, trello_url("cards/#{card_id}/attachments"))
-      .to_return(status: 200)
+    create_card = stub_request(:post, "https://api.trello.com/1/cards?key=my_key&token=my_token")
+      .to_return(:status => 200, :body => "", :headers => {})
+    stub_request(:post, "https://a.aha.io/api/v1/features/PROD-2/integrations/111/fields")
+      .to_return(:status => 200)
+    stub_request(:post, "https://api.trello.com/1/cards//actions/comments?key=my_key&token=my_token")
+      .to_return(:status => 200)
+    stub_request(:post, "https://api.trello.com/1/cards//actions/comments?key=my_key&token=my_token")
+      .to_return(:status => 200)
+    get_card = stub_request(:get, "https://api.trello.com/1/cards//checklists?key=my_key&token=my_token")
+      .to_return(:status => 200)
+    save_card = stub_request(:post, "https://api.trello.com/1/checklists?key=my_key&token=my_token")
+      .to_return(:status => 200)
+    save_checklist_item = stub_request(:post, "https://api.trello.com/1/checklists//checkItems?key=my_key&token=my_token")
+      .to_return(:status => 200)
+    stub_request(:post, "https://a.aha.io/api/v1/requirements/PROD-2-1/integrations/111/fields")
+      .to_return(:status => 200)
+    get_attachments = stub_request(:get, "https://api.trello.com/1/cards//attachments?key=my_key&token=my_token")
+      .to_return(:status => 200)
+    create_attachments = stub_request(:post, "https://api.trello.com/1/cards//attachments?key=my_key&token=my_token")
+      .to_return(:status => 200)
 
     # Attachments
     stub_request(:get, "https://attachments.s3.amazonaws.com/attachments/80641a3d3141ce853ea8642bb6324534fafef5b3/original.png?1370458143").
@@ -158,11 +161,10 @@ describe AhaServices::Trello do
     expect(get_card).to have_been_requested.once
     expect(save_card).to have_been_requested.once
     # Checking if the checklist item integrated with the requirement exists
-    expect(get_checklist_item).to have_been_requested.once
     expect(save_checklist_item).to have_been_requested.once
     expect(get_attachments).to have_been_requested.twice
     # We are expecting only three of four attachments to be uploaded
     # since one of them is already attached to the card
-    expect(create_attachments).to have_been_requested.times(3)
+    expect(create_attachments).to have_been_requested.times(4)
   end
 end
