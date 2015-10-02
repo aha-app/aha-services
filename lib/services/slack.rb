@@ -33,7 +33,6 @@ class AhaServices::Slack < AhaService
       attachments: [
         fallback: "#{user} #{audit.description}",
         pretext: "*#{user}* #{link}",
-        color: "good",
         mrkdwn_in: ["pretext", "text", "fields"],
         fields: audit.changes.collect do |change|
           {
