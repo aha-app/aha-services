@@ -1,5 +1,5 @@
 class AhaServices::Flowdock < AhaService
-  caption "Send all activity from Aha! into group chat"
+  caption "Send customized activity from Aha! into group chat"
   
   string :flow_api_token,
     description: "The API token for the Flow you want to send Aha! activity to."

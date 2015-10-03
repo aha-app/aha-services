@@ -37,7 +37,7 @@ module Helpers
   end
   
   def html_to_slack_markdown(html)
-    html = html.gsub(/\n$/, '')#.gsub(/<ins[^>]*>([^<]*)<\/ins>/) {" *#{$1.gsub("\n", "*\n*").strip}* "}.gsub(/\*\*$/, '')
+    html = (html || "").to_s.gsub(/\n$/, '')#.gsub(/<ins[^>]*>([^<]*)<\/ins>/) {" *#{$1.gsub("\n", "*\n*").strip}* "}.gsub(/\*\*$/, '')
     html_to_plain(html)
   end
 
