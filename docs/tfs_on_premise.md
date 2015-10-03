@@ -21,7 +21,7 @@ To configure this integration, first create the integration in Aha!
 1. Enter the URL of your TFS server, including the collection name, but without a trailing slash.
 2. Enter your TFS username and password.
 3. Click the _Test connection_ button.
-4. On success, you should be able to choose which TFS to integration with. You also must select an area of this project where features and requirements should be created.
+4. On success, you should be able to choose which project to integrate with. You also must select an area of this project where features and requirements should be created.
 5. Select the workitemtype to which features should be mapped. Then select for each TFS state to which Aha! workflow status it should be mapped.
 6. Repeat step 5 for requirements.
 7. Enable the integration and test it by going to one of your features in Aha! and using the _Send to Team Foundation Server_ item in the _Action_ menu.
