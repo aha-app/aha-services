@@ -5,55 +5,61 @@ class JiraProjectResource < JiraResource
     @status_sets = {}
     
     prepare_request
-    response = http_get("#{api_url}/issue/createmeta?expand=projects.issuetypes.fields")
+    response = http_get("#{api_url}/project")
     projects = []
-    process_response(response, 200) do |meta|
-      meta.projects.each do |project|
-        issue_types = project.issuetypes.collect do |issue_type|
-          {'id' => issue_type.id, 'name'=> issue_type.name}
-            .merge(issue_field_capabilities(meta_data, issue_type))
-            .merge(issue_fields(issue_type))
-        end
-
-        # Get the statuses.
-        status_response = http_get "#{api_url}/project/#{project['key']}/statuses"
-        if status_response.status == 404
-          # In Jira 5.0 the status is not associated with each issue type.
-          statuses = []
-          status_response = http_get "#{api_url}/status"
-          process_response(status_response, 200) do |status_meta|
-            status_meta.each do |status|
-              statuses << {'id' => status.id, 'name' => status.name}
+    process_response(response, 200) do |projects_data|
+      projects_data.each do |raw_project|
+        response = http_get("#{api_url}/issue/createmeta?projectIds=#{raw_project.id}&expand=projects.issuetypes.fields")
+      
+        process_response(response, 200) do |meta|
+          meta.projects.each do |project|
+            issue_types = project.issuetypes.collect do |issue_type|
+              {'id' => issue_type.id, 'name'=> issue_type.name}
+                .merge(issue_field_capabilities(meta_data, issue_type))
+                .merge(issue_fields(issue_type))
             end
-          end
-          statuses_hash = statuses.hash.to_s
-          @status_sets[statuses_hash] ||= statuses
-          issue_types.each do |issue_type|
-            issue_type['statuses'] = statuses_hash
-          end
-        elsif status_response.status == 400
-          # This happens because of some corruption in the server. The
-          # project is present but can't return statuses. See ticket #4577.
-        else
-          process_response(status_response, 200) do |status_meta|
-            status_meta.each do |status_issue_type|
+            
+            # Get the statuses.
+            status_response = http_get "#{api_url}/project/#{project['key']}/statuses"
+            if status_response.status == 404
+              # In Jira 5.0 the status is not associated with each issue type.
               statuses = []
-              status_issue_type.statuses.each do |status|
-                statuses << {'id' => status.id, 'name' => status.name}
+              status_response = http_get "#{api_url}/status"
+              process_response(status_response, 200) do |status_meta|
+                status_meta.each do |status|
+                  statuses << {'id' => status.id, 'name' => status.name}
+                end
               end
               statuses_hash = statuses.hash.to_s
               @status_sets[statuses_hash] ||= statuses
+              issue_types.each do |issue_type|
+                issue_type['statuses'] = statuses_hash
+              end
+            elsif status_response.status == 400
+              # This happens because of some corruption in the server. The
+              # project is present but can't return statuses. See ticket #4577.
+            else
+              process_response(status_response, 200) do |status_meta|
+                status_meta.each do |status_issue_type|
+                  statuses = []
+                  status_issue_type.statuses.each do |status|
+                    statuses << {'id' => status.id, 'name' => status.name}
+                  end
+                  statuses_hash = statuses.hash.to_s
+                  @status_sets[statuses_hash] ||= statuses
               
-              issue_type = issue_types.find { |i| i['id'] == status_issue_type.id }
-              issue_type['statuses'] = statuses_hash if issue_type
+                  issue_type = issue_types.find { |i| i['id'] == status_issue_type.id }
+                  issue_type['statuses'] = statuses_hash if issue_type
+                end
+              end
             end
+            
+            issue_types_hash = issue_types.hash.to_s
+            @issue_type_sets[issue_types_hash] ||= issue_types
+            projects << {'id' => project.id, 'key' => project[:key],
+              'name' => project.name, 'issue_types' => issue_types_hash}
           end
         end
-
-        issue_types_hash = issue_types.hash.to_s
-        @issue_type_sets[issue_types_hash] ||= issue_types
-        projects << {'id' => project.id, 'key' => project[:key],
-          'name' => project.name, 'issue_types' => issue_types_hash}
       end
     end
     
