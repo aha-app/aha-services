@@ -38,6 +38,9 @@ class JiraProjectResource < JiraResource
             elsif status_response.status == 400
               # This happens because of some corruption in the server. The
               # project is present but can't return statuses. See ticket #4577.
+            elsif status_response.status == 500
+              # I don't know why this happens, but we shouldn't abort.
+              logger.warn("/project/statuses call returned 500 error for #{project['key']} - ignoring")
             else
               process_response(status_response, 200) do |status_meta|
                 status_meta.each do |status_issue_type|
