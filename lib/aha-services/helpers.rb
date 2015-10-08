@@ -1,5 +1,6 @@
 require 'plain-david'
 require 'redcarpet'
+require 'byebug'
 
 # Use a custom table renderer to match Aha table style, so incoming markdown is transformed correctly
 class AhaTableRender < Redcarpet::Render::HTML
@@ -37,7 +38,7 @@ module Helpers
   end
   
   def html_to_slack_markdown(html)
-    html = (html || "").to_s.gsub(/\n$/, '')#.gsub(/<ins[^>]*>([^<]*)<\/ins>/) {" *#{$1.gsub("\n", "*\n*").strip}* "}.gsub(/\*\*$/, '')
+    html = (html || "").to_s.gsub(/\n$/, '').gsub(/<del[^>]*>([^<]*)<\/del>/, '')#.gsub(/<ins[^>]*>([^<]*)<\/ins>/) {" *#{$1.gsub("\n", "*\n*").strip}* "}.gsub(/\*\*$/, '')
     html_to_plain(html)
   end
 
