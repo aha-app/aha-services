@@ -1,6 +1,5 @@
 require 'plain-david'
 require 'redcarpet'
-require 'byebug'
 
 # Use a custom table renderer to match Aha table style, so incoming markdown is transformed correctly
 class AhaTableRender < Redcarpet::Render::HTML
