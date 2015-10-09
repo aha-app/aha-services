@@ -1,6 +1,5 @@
 require 'plain-david'
 require 'redcarpet'
-
 # Use a custom table renderer to match Aha table style, so incoming markdown is transformed correctly
 class AhaTableRender < Redcarpet::Render::HTML
   def table(header, body)
@@ -37,8 +36,14 @@ module Helpers
   end
   
   def html_to_slack_markdown(html)
-    html = (html || "").to_s.gsub(/\n$/, '').gsub(/<del[^>]*>([^<]*)<\/del>/, '')#.gsub(/<ins[^>]*>([^<]*)<\/ins>/) {" *#{$1.gsub("\n", "*\n*").strip}* "}.gsub(/\*\*$/, '')
-    html_to_plain(html)
+    html = (html || "").to_s.gsub(/\n$/, '').gsub(/<del[^>]*>([^<]*)<\/del>/, '')
+    html = html.gsub( html_link_pattern ) do |match|
+      link = Regexp.last_match[1]
+      text = Regexp.last_match[2]
+      slack_link(link, text)
+    end
+    # Keep slack links though plain 
+    html_to_plain(html.gsub("<http", "#alink#alink#")).gsub("#alink#alink#", "<http")
   end
 
   def markdown_to_html(markdown)
@@ -71,6 +76,18 @@ private
     body = HTMLEntities.new.decode(body) # Decode HTML entities.
     trailer = "..." if body.length > 200
     "#{body[0..200]}#{trailer}"
+  end
+
+  def html_link_pattern
+      / <a (?:.*?) href=['"](.+?)['"] (?:.*?)> (.+?) <\/a> /x
+  end
+
+  def slack_link(link, text = nil)
+    out = "<#{link}"
+    out << "|#{text}" if text && !text.empty?
+    out << ">"
+
+    return out
   end
 
 end
