@@ -23,7 +23,7 @@ class AhaServices::HipChat < AhaService
         "Aha!"
       end
 
-    fields = audit.changes.collect { |change| "<b>#{change.field_name}</b> #{html_to_plain(change.value)}<br/>" }
+    fields = audit.changes.collect { |change| "<b>#{change.field_name}</b> #{html_to_hipchat_markdown(change.value)}<br/>" }
     link = if audit.auditable_url
         "<a href='#{audit.auditable_url}'>#{audit.description}</a>"
       else

@@ -7,9 +7,10 @@ Send a log of activity from Aha! to a Slack channel. Configure the integration f
 Configure integration in Slack
 
 1. In Slack, go to the integrations section of the account configuration.
-2. Create a new `Incoming WebHooks` integration.
-3. Choose or create a channel for the Aha! activity to be sent to.
-4. Copy the value of the `Your Unique Webhook URL` field.
+2. Click the _Make your own integration link_ 
+3. Create a new `Incoming WebHooks` integration.
+4. Choose or create a channel for the Aha! activity to be sent to.
+5. Copy the value of the `Your Unique Webhook URL` field.
 
 Create the integration in Aha!
 
