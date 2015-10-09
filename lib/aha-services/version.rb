@@ -1,3 +1,3 @@
 module AhaServices
-  VERSION = "1.18.16"
+  VERSION = "1.18.17"
 end
