@@ -34,7 +34,7 @@ module Helpers
 
   def links_to_keys(html)
     keys = {}
-    html.gsub( html_link_pattern ) do |match|
+    html = html.gsub( html_link_pattern ) do |match|
       link = Regexp.last_match[1]
       text = Regexp.last_match[2]
       key_id = SecureRandom.hex
