@@ -12,8 +12,9 @@ Configure a flow in Flowdock
 Create the integration in Aha!
 
 1. Enter the token from step 4 above into the _Flow API token_ field.
-3. Click the _Test connection_ button. After a short delay you should see a message appear in your Flowdock flow in the room you selected.
-4. Enable the integration.
+2. Click the _Test connection_ button. After a short delay you should see a message appear in your Flowdock flow in the room you selected.
+3. Enable the integration.
+4. Consider renaming this integration with your flowdock room name for easy future reference. Perhaps something like: "Flowdock: Customers." You can do this by clicking the _Flowdock_ text in the heading of this page.
 
 ## Troubleshooting
 

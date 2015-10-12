@@ -17,6 +17,7 @@ Create the integration in Aha!
 2. Enter the name of the room from step 1 into the _Room name_ field. You must enter the room name exactly as it appears in HipChat.
 3. Click the _Test connection_ button. After a short delay you should see a message appear in your HipChat client in the room you selected.
 4. Enable the integration.
+5. Consider renaming this integration with your HipChat room name for easy future reference. Perhaps something like: "HipChat: Customers." You can do this by clicking the _HipChat_ text in the heading of this page.
 
 ## Troubleshooting
 

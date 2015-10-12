@@ -15,8 +15,9 @@ Configure integration in Slack
 Create the integration in Aha!
 
 1. Enter the URL from step 4 above in the _Webhook url_ field.
-3. Click the _Test connection_ button. After a short delay you should see a message appear in your Slack client in the channel you selected.
-4. Enable the integration.
+2. Click the _Test connection_ button. After a short delay you should see a message appear in your Slack client in the channel you selected.
+3. Enable the integration.
+4. Consider renaming this integration with your slack channel name for easy future reference. Perhaps something like: "Slack: #customers." You can do this by clicking the _Slack_ text in the heading of this page.
 
 ## Troubleshooting
 
