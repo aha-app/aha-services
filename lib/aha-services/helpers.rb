@@ -73,6 +73,7 @@ module Helpers
     html, keys = links_to_keys(html)
     html_to_plain(html)
     html = keys_to_links_slack(html, keys)
+    HTMLEntities.new.decode(html)
   end
 
   def html_to_hipchat_markdown(html)
@@ -81,6 +82,7 @@ module Helpers
     html, keys = links_to_keys(html)
     html_to_plain(html)
     html = keys_to_links(html, keys)
+    HTMLEntities.new.decode(html)
   end
 
   def markdown_to_html(markdown)
