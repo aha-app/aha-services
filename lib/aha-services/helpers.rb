@@ -68,7 +68,7 @@ module Helpers
   end
   
   def html_to_slack_markdown(html)
-    html = (html || "").to_s.gsub(/\n$/, '').gsub(/<del[^>]*>([^<]*)<\/del>/, '')
+    html = (html || "").to_s.gsub(/\n$/, '').gsub(/<del[^>]*>([^<]*)<\/del>/, '').gsub("<ins>", "").gsub("</ins>", "")
     # Keep slack links though plain
     html, keys = links_to_keys(html)
     html_to_plain(html)
@@ -77,7 +77,7 @@ module Helpers
   end
 
   def html_to_hipchat_markdown(html)
-    html = (html || "").to_s.gsub(/\n$/, '').gsub(/<del[^>]*>([^<]*)<\/del>/, '')
+    html = (html || "").to_s.gsub(/\n$/, '').gsub(/<del[^>]*>([^<]*)<\/del>/, '').gsub("<ins>", "").gsub("</ins>", "")
 
     html, keys = links_to_keys(html)
     html_to_plain(html)
