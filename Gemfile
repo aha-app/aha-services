@@ -21,7 +21,3 @@ gem 'rerun'
 
 # Development proxy debugging.
 gem 'byebug'
-
-gem 'pry'
-gem 'pry-nav'
-

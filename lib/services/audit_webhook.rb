@@ -4,6 +4,8 @@ class AhaServices::AuditWebhook < AhaService
 
   string :hook_url
   
+  audit_filter
+  
   def receive_audit
     # We only allow 5 seconds for webhooks.
     Timeout.timeout(5, TimeoutError) do

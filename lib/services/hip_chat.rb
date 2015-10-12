@@ -1,11 +1,13 @@
 class AhaServices::HipChat < AhaService
   title "HipChat"
-  caption "Send all activity from Aha! into group chat"
+  caption "Send customized activity from Aha! into group chat"
   
   string :auth_token,
     description: "An authentication token from HipChat. For best security you should use a 'Room Notification Token'."
   string :room_name, description: "The name or API ID of the room messages should be sent to."
   install_button
+  
+  audit_filter
   
   def receive_installed
     send_message("Aha! integration installed successfully. Make sure you enable the integration!")
@@ -21,7 +23,7 @@ class AhaServices::HipChat < AhaService
         "Aha!"
       end
 
-    fields = audit.changes.collect { |change| "<b>#{change.field_name}</b> #{html_to_plain(change.value)}<br/>" }
+    fields = audit.changes.collect { |change| "<b>#{change.field_name}</b> #{html_to_hipchat_markdown(change.value)}<br/>" }
     link = if audit.auditable_url
         "<a href='#{audit.auditable_url}'>#{audit.description}</a>"
       else

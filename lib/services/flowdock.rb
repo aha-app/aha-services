@@ -1,9 +1,11 @@
 class AhaServices::Flowdock < AhaService
-  caption "Send all activity from Aha! into group chat"
+  caption "Send customized activity from Aha! into group chat"
   
   string :flow_api_token,
     description: "The API token for the Flow you want to send Aha! activity to."
   install_button
+  
+  audit_filter
   
   def receive_installed
     send_message("Aha! integration installed successfully", nil, 
