@@ -13,7 +13,7 @@ class AhaServices::GithubCommitHook < AhaService
     
     (commit_payload.commits || []).each do |commit|
       next unless commit.distinct
-      commit.message.scan(/([A-Z]+-[0-9]+(?:-[0-9]+)?)/) do |m|
+      commit.message.scan(/([A-Z][A-Z0-9]*-[0-9]+(?:-[0-9]+)?)/) do |m|
         m.each do |ref|
           comment_on_record(commit_payload, ref, commit)
         end
