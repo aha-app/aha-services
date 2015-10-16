@@ -63,7 +63,7 @@ class AddJiraUser < Faraday::Middleware
 
   def call(env)
     uri = env[:url]
-    uri.query = [uri.query, "user_id=#{@user_id}"].compact.join('&')
+    uri.query = [uri.query, "user_id=#{URI.escape(@user_id)}"].compact.join('&')
 
     @app.call(env)
   end
