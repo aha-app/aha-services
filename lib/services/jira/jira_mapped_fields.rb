@@ -46,13 +46,6 @@ module JiraMappedFields
       aha_type_to_array(aha_type, aha_value, jira_type_info)
     when "priority"
       {name: aha_type_to_string(aha_type, aha_value)}
-    when "user"
-      username = aha_type_to_string(aha_type, aha_value)
-      if username.nil? || username.blank?
-        nil
-      else
-        {name: username}
-      end
     else
       logger.debug("Using default field type mapping for '#{aha_type}' to '#{jira_type_info.type}'")
       aha_value
