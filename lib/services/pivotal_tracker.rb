@@ -34,7 +34,7 @@ class AhaServices::PivotalTracker < AhaService
 
   def receive_webhook
     payload.changes.each do |change|
-      next unless %w(epic story task).include? change.kind
+      next unless %w(story task).include? change.kind
 
       begin
         results = api.search_integration_fields(data.integration_id, "id", change.id)['records']
@@ -89,8 +89,6 @@ protected
         api.put(resource, {resource_type => { workflow_status: {category: "shipped" }}})
       elsif kind == "task" && change_kind == "complete" && value == false
         api.put(resource, {resource_type => { workflow_status: {category: "initial" }}})
-      elsif kind == "epic" && change_kind == "name"
-        api.put(resource, { resource_type => { name: value } })
       end
     end
   end
