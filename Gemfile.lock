@@ -34,7 +34,7 @@ GIT
 PATH
   remote: .
   specs:
-    aha-services (1.18.19)
+    aha-services (1.18.24)
       ClothRed
       activesupport
       aha-api
@@ -66,7 +66,7 @@ GEM
     crack (0.4.2)
       safe_yaml (~> 1.0.0)
     diff-lcs (1.2.5)
-    domain_name (0.5.25)
+    domain_name (0.5.24)
       unf (>= 0.0.5, < 1.0.0)
     faraday (0.9.0)
       multipart-post (>= 1.2, < 3)
