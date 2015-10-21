@@ -34,7 +34,7 @@ GIT
 PATH
   remote: .
   specs:
-    aha-services (1.18.24)
+    aha-services (1.18.25)
       ClothRed
       activesupport
       aha-api
