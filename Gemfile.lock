@@ -7,6 +7,14 @@ GIT
       htmlentities
 
 GIT
+  remote: https://github.com/JeremyGeros/html2confluence.git
+  revision: a1b7f357982c21e4d6d43a45279b2356c5252434
+  branch: patch-1
+  specs:
+    html2confluence (1.3.12)
+      nokogiri
+
+GIT
   remote: https://github.com/JeremyGeros/reverse_markdown.git
   revision: af66e655727b998627eddf2ec57aaf55e359ec2b
   specs:
@@ -24,17 +32,10 @@ GIT
       hashie
       multi_json
 
-GIT
-  remote: https://github.com/k1w1/html2confluence.git
-  revision: 1f96c3d9dd89287be9779eeeb3edbed2cdf3dac7
-  specs:
-    html2confluence (1.3.9)
-      nokogiri
-
 PATH
   remote: .
   specs:
-    aha-services (1.18.19)
+    aha-services (1.18.25)
       ClothRed
       activesupport
       aha-api

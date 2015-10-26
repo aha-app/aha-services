@@ -394,7 +394,7 @@ protected
   end
 
   def attachments_match(aha_attachment, jira_attachment)
-    aha_attachment.file_name == jira_attachment.filename and
+    aha_attachment.file_name == jira_attachment.filename &&
       aha_attachment.file_size.to_i == jira_attachment[:size].to_i
   end
 
