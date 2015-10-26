@@ -11,7 +11,6 @@ Bundler.require(:default, :development)
 require 'rspec'
 require 'webmock/rspec'
 require 'aha-services'
-require 'pry'
 require 'services/github/github_resource'
 require 'services/github/github_repo_resource'
 require 'services/github/github_milestone_resource'

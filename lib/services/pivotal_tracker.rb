@@ -34,7 +34,7 @@ class AhaServices::PivotalTracker < AhaService
 
   def receive_webhook
     payload.changes.each do |change|
-      next unless change.kind == "story" || change.kind == "task"
+      next unless %w(story task).include? change.kind
 
       begin
         results = api.search_integration_fields(data.integration_id, "id", change.id)['records']
