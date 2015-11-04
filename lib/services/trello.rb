@@ -80,7 +80,7 @@ class AhaServices::Trello < AhaService
     
     card = card_resource.create(
       name: resource_name(feature),
-      desc: ReverseMarkdown.convert(feature.description.body),
+      desc: reverse_markdown_convert(feature.description.body),
       pos: data.create_features_at,
       due: due_date ? Time.parse(due_date).utc : nil,
       idList: data.list_for_new_features
@@ -97,7 +97,7 @@ class AhaServices::Trello < AhaService
     card_resource
       .update card_id,
         name: resource_name(feature),
-        desc: ReverseMarkdown.convert(feature.description.body),
+        desc: reverse_markdown_convert(feature.description.body),
         due: due_date ? Time.parse(due_date).utc : nil
   end
 
@@ -161,6 +161,10 @@ class AhaServices::Trello < AhaService
 
 protected
 
+  def reverse_markdown_convert(text)
+    Nokogiri::HTML.fragment(ReverseMarkdown.convert(text)).to_s
+  end
+
   def board_resource
     @board_resource ||= TrelloBoardResource.new(self)
   end
@@ -182,7 +186,7 @@ protected
   end
 
   def checklist_item_name(requirement)
-    [requirement.name, ReverseMarkdown.convert(requirement.description.body)]
+    [requirement.name, reverse_markdown_convert(requirement.description.body)]
       .compact.join(". ")
   end
   
