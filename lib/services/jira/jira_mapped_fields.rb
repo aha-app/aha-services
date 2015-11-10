@@ -37,6 +37,8 @@ module JiraMappedFields
         {value: v}
       elsif jira_type_info.editor == "com.atlassian.jira.plugin.system.customfieldtypes:radiobuttons"
         {value: v}
+      elsif jira_type_info.editor == "com.intenso.jira.plugin.dynamic-forms:dynamic-select-customfield"
+        {value: v}
       else
         v
       end
