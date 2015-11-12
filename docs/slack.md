@@ -4,10 +4,11 @@ Send a log of activity from Aha! to a Slack channel. Configure the integration f
 
 ## Configuration
 
-1. Click on the _Add to Slack_ button. This will take you to Slack to choose which channel Aha! activities should appear in.
+1. Click on the _Add to Slack_ button. This will take you to Slack to choose which channel Aha! activities should appear in. You will be able to select from a list of existing channels, so if you would like activity to appear in a new channel, you must create that in Slack first.
 2. Click the _Test connection_ button. After a short delay you should see a message appear in your Slack client in the channel you selected.
-3. Enable the integration.
-4. Consider renaming this integration with your slack channel name for easy future reference. Perhaps something like: "Slack: #customers." You can do this by clicking the _Slack_ text in the heading of this page.
+3. Customize the channel by selecting the activities which you would like to appear in your Slack channel.
+4. Enable the integration.
+5. Consider renaming this integration with your slack channel name for easy future reference. Perhaps something like: "Slack: #customers." You can do this by clicking the _Slack_ text in the heading of this page.
 
 ## Troubleshooting
 
