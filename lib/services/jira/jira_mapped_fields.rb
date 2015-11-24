@@ -48,6 +48,8 @@ module JiraMappedFields
       aha_type_to_array(aha_type, aha_value, jira_type_info)
     when "priority"
       {name: aha_type_to_string(aha_type, aha_value)}
+    when "option"
+      {value: aha_type_to_string(aha_type, aha_value)}
     else
       logger.debug("Using default field type mapping for '#{aha_type}' to '#{jira_type_info.type}'")
       aha_value
@@ -89,7 +91,10 @@ module JiraMappedFields
         values
       end
     when "option"
-      if jira_type_info.editor == "com.atlassian.jira.plugin.system.customfieldtypes:multicheckboxes"
+      multicheckboxes = "com.atlassian.jira.plugin.system.customfieldtypes:multicheckboxes"
+      multiselect = "com.atlassian.jira.plugin.system.customfieldtypes:multiselect"
+      case jira_type_info.editor
+      when multicheckboxes, multiselect
         values.collect {|v| {value: v} }
       else
         values
