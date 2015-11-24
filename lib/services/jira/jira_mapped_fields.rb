@@ -88,6 +88,12 @@ module JiraMappedFields
       else
         values
       end
+    when "option"
+      if jira_type_info.editor == "com.atlassian.jira.plugin.system.customfieldtypes:multicheckboxes"
+        values.collect {|v| {value: v} }
+      else
+        values
+      end
     else
       values
     end
