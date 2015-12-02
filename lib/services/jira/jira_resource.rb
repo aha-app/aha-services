@@ -12,6 +12,22 @@ class JiraResource < GenericResource
     end
   end
 
+  def better_error_messages value
+    case value
+    when "Option id 'null' is not valid"
+      "The option sent from Aha! did not match any options for the JIRA Field. Are you sure the options are identical?"
+    when /Option id '([^']*)' is not valid/
+      "The option sent from Aha! (#{$1}) did not match an option in the corresponding JIRA Field. Are you sure you want to map to a JIRA options field?"
+    else
+      value
+    end
+  end
+
+  def error_message_for_field k, v
+    field_name = meta_data.fields[k]["name"] rescue k
+    "#{field_name}: #{better_error_messages(v)}"
+  end
+
   def process_response(response, *success_codes, &block)
     if success_codes.include?(response.status)
       yield hashie_or_array_of_hashies(response.body) if block_given?
@@ -20,7 +36,7 @@ class JiraResource < GenericResource
     elsif response.status == 400
       errors = parse(response.body)
       error_string = errors["errorMessages"].join(", ") +
-        errors["errors"].map {|k, v| "#{k}: #{v}" }.join(", ")
+        errors["errors"].map {|k, v| error_message_for_field(k,v) }.join(", ")
       raise AhaService::RemoteError, "Data not accepted: #{error_string}"
     else
       raise AhaService::RemoteError, "Unhandled error: STATUS=#{response.status} BODY=#{response.body}"
