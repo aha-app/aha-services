@@ -23,13 +23,13 @@ module JiraMappedFields
     
     field = resource.custom_fields.find {|field| field['key'] == aha_field}
     if field
-      aha_type_to_jira_type(field.value, field.type, jira_type_info)
+      aha_type_to_jira_type(field.value, field.type, jira_type_info, aha_field)
     else
       nil
     end
   end
   
-  def aha_type_to_jira_type(aha_value, aha_type, jira_type_info)
+  def aha_type_to_jira_type(aha_value, aha_type, jira_type_info, aha_field)
     case jira_type_info.type
     when "string"
       v = aha_type_to_string(aha_type, aha_value)
@@ -43,15 +43,15 @@ module JiraMappedFields
         v
       end
     when "number"
-      aha_type_to_number(aha_type, aha_value)
+      aha_type_to_number(aha_type, aha_value, jira_type_info, aha_field)
     when "array"
       aha_type_to_array(aha_type, aha_value, jira_type_info)
     when "priority"
-      {name: aha_type_to_string(aha_type, aha_value)}
+      {name: aha_type_to_string(aha_type, aha_value, aha_field)}
     when "option"
-      {value: aha_type_to_string(aha_type, aha_value)}
+      {value: aha_type_to_string(aha_type, aha_value, aha_field)}
     else
-      logger.debug("Using default field type mapping for '#{aha_type}' to '#{jira_type_info.type}'")
+      logger.debug("Using default field type mapping for Aha field '#{aha_field}' with value '#{aha_type}' to '#{jira_type_info.type}'")
       aha_value
     end
   end
@@ -68,8 +68,13 @@ module JiraMappedFields
     end
   end
   
-  def aha_type_to_number(aha_type, aha_value)
-    aha_value.to_i
+  def aha_type_to_number(aha_type, aha_value, jira_type_info)
+    value = aha_value.to_f
+    unless value.to_s == aha_value
+      aha_field = data
+      logger.warn "Aha! Field '#{aha_field}' with value '#{aha_value}' does not map cleanly to a number for JIRA field '#{jira_type_info.name}'"
+    end
+    value
   end
   
   def aha_type_to_array(aha_type, aha_value, jira_type_info)

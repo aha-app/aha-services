@@ -12,20 +12,17 @@ class JiraResource < GenericResource
     end
   end
 
-  def better_error_messages value
+  def error_message_for_field key, value
+    jira_field_name = @service.meta_data.fields[key]["name"] rescue key
+    aha_field_name = @service.data.field_mapping.grep(Hash).detect{|m| m["jira_field"] == key }["aha_field"]
     case value.strip
     when "Option id 'null' is not valid"
-      "The value sent from Aha! ('#{value}') did not match any options for the JIRA Field. Are you sure the options are identical?"
+      "The value sent from the Aha! field '#{aha_field_name}' did not match any options for the JIRA Field '#{jira_field_name}'. Are you sure the options are identical?"
     when /Option value '([^']*)' is not valid/, /Option id '([^']*)' is not valid/
-      "The value sent from Aha! ('#{$1}') did not match any options for the JIRA Field. Are you sure the options are identical?"
+      "The value sent from the Aha! field '#{aha_field_name}' ('#{$1}') did not match any options for the JIRA Field '#{jira_field_name}'. Are you sure the options are identical?"
     else
-      value
+      "'#{field_name}': #{value}"
     end
-  end
-
-  def error_message_for_field k, v
-    field_name = @service.meta_data.fields[k]["name"] rescue k
-    "'#{field_name}': #{better_error_messages(v)}"
   end
 
   def process_response(response, *success_codes, &block)
