@@ -27,7 +27,7 @@ class JiraResource < GenericResource
     when /Option value '([^']*)' is not valid/, /Option id '([^']*)' is not valid/
       "The value sent from the Aha! field '#{aha_field_name}' ('#{$1}') did not match any options for the JIRA Field '#{jira_field_name}'. Are you sure the options are identical?"
     else
-      "'#{field_name}': #{value}"
+      "'#{key}': #{value}"
     end
   end
 
