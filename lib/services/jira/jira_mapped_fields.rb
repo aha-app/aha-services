@@ -47,9 +47,9 @@ module JiraMappedFields
     when "array"
       aha_type_to_array(aha_type, aha_value, jira_type_info)
     when "priority"
-      {name: aha_type_to_string(aha_type, aha_value, aha_field)}
+      {name: aha_type_to_string(aha_type, aha_value)}
     when "option"
-      {value: aha_type_to_string(aha_type, aha_value, aha_field)}
+      {value: aha_type_to_string(aha_type, aha_value)}
     else
       logger.debug("Using default field type mapping for Aha field '#{aha_field}' with value '#{aha_type}' to '#{jira_type_info.type}'")
       aha_value
@@ -68,10 +68,9 @@ module JiraMappedFields
     end
   end
   
-  def aha_type_to_number(aha_type, aha_value, jira_type_info)
+  def aha_type_to_number(aha_type, aha_value, jira_type_info, aha_field)
     value = aha_value.to_f
     unless value.to_s == aha_value
-      aha_field = data
       logger.warn "Aha! Field '#{aha_field}' with value '#{aha_value}' does not map cleanly to a number for JIRA field '#{jira_type_info.name}'"
     end
     value
