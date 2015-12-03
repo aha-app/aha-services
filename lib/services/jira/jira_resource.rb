@@ -14,7 +14,13 @@ class JiraResource < GenericResource
 
   def error_message_for_field key, value
     jira_field_name = @service.meta_data.fields[key]["name"] rescue key
-    aha_field_name = @service.data.field_mapping.grep(Hash).detect{|m| m["jira_field"] == key }["aha_field"]
+    field_info = @service.data.field_mapping.grep(Hash).detect{|m| m["jira_field"] == key }
+    if field_info
+      aha_field_name = field_info["aha_field"]
+    else
+      aha_field_name = "None"
+    end
+    
     case value.strip
     when "Option id 'null' is not valid"
       "The value sent from the Aha! field '#{aha_field_name}' did not match any options for the JIRA Field '#{jira_field_name}'. Are you sure the options are identical?"
