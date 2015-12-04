@@ -88,13 +88,7 @@ module JiraMappedFields
     case jira_type_info.sub_type
     when "component"
       values.collect {|v| {name: v} }
-    when "string"
-      if jira_type_info.editor == "com.atlassian.jira.plugin.system.customfieldtypes:multiselect"
-        values.collect {|v| {value: v} }
-      else
-        values
-      end
-    when "option"
+    when "option", "string"
       multicheckboxes = "com.atlassian.jira.plugin.system.customfieldtypes:multicheckboxes"
       multiselect = "com.atlassian.jira.plugin.system.customfieldtypes:multiselect"
       case jira_type_info.editor
