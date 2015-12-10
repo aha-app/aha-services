@@ -3,7 +3,7 @@ This bi-directional integration allows you to push your completed features and r
 Note there are two separate integrations with JIRA. Both have the same basic functionality, they differ in how they are authenticated and the installation procedure. You only need to enable one. At this time, we recommend that you use the first JIRA approach unless you already have set up the second.
 
 1. JIRA (RECOMMENDED) - this integration uses the username and password of a JIRA user to authenticate with JIRA. It can be used with downloaded or on-demand versions of JIRA.
-2. JIRA via Connect - this integration uses an Add-on that is installed into your JIRA instance by an administrator. It can only be used with JIRA on-demand.
+2. JIRA via Connect - this integration uses an Add-on that is installed into your JIRA instance by an administrator. It can only be used with JIRA on-demand and is restricted to integration with a single JIRA server.  
 
 ## Aha! to JIRA workflow
 
