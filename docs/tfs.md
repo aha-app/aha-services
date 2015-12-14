@@ -1,4 +1,4 @@
-This integration allows you to push features and requirements from Aha! to Microsoft Visual Studio Team Services (VSTS) - previously called Visual Studio Online (VSTS).
+This integration allows you to push features and requirements from Aha! to Microsoft Visual Studio Team Services (VSTS) - previously called Visual Studio Online (VSO).
 
 This integration works with the online version of Visual Studio. If you run Team Foundation Server on-premise then use the separate _Team Foundation Server_ integration instead.
 
