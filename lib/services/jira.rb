@@ -9,7 +9,11 @@ class AhaServices::Jira < AhaService
   password :password
   install_button
   select :project, collection: ->(meta_data, data) { meta_data.projects.collect{|p| [p.name, p[:key]] } }
-  boolean :send_initiatives, description: "Check to use feature initiatives to create Epics in JIRA Agile"
+  boolean :send_initiatives, description: "Check to use feature initiatives to automatically create Epics in JIRA Agile"
+  select :initiative_issue_type,
+    collection: ->(meta_data, data) {
+      meta_data.issue_type_sets[meta_data.projects.detect {|p| p[:key] == data.project}.issue_types].find_all{|i| !i.subtype}.collect{|p| [p.name, p.id] }
+    }, description: "JIRA issue type that will be used when sending features. If you are using JIRA Agile then we recommend 'Epic'."
   select :feature_issue_type, 
     collection: ->(meta_data, data) { 
       meta_data.issue_type_sets[meta_data.projects.detect {|p| p[:key] == data.project}.issue_types].find_all{|i| !i.subtype}.collect{|p| [p.name, p.id] }
@@ -44,6 +48,14 @@ class AhaServices::Jira < AhaService
   
   def receive_update_feature
     integrate_or_update_feature(payload.feature)
+  end
+  
+  def receive_create_initiative
+    create_or_update_initiative(payload.initiative)
+  end
+
+  def receive_update_initiative
+    create_or_update_initiative(payload.initiative)
   end
 
   def receive_create_release
@@ -193,9 +205,39 @@ protected
   def epic_key_for_initiative(initiative)
     if epic_key = get_integration_field(initiative.integration_fields, 'key')
       epic_key
-    elsif issue_type = epic_issue_type
+    elsif issue_type = initiative_issue_type
       create_issue_for_initiative(initiative, issue_type)[:key]
     end
+  end
+
+  def create_or_update_initiative(initiative)
+    issue_info = get_existing_issue_info(initiative)
+    if issue_info
+      update_issue_for_initiative(issue_info, initiative)
+    elsif initiative_issue_type
+      create_issue_for_initiative(initiative, initiative_issue_type)
+    else
+      logger.error("Could not create initiative #{initiative.id} because no Issue Type was found for Initiatives.")
+    end
+  end
+
+  def update_issue_for_initiative(issue_info, initiative)
+    logger.info("Updating issue #{issue_info[:key]} for initiative #{initiative.id}")
+
+    issue = Hashie::Mash.new({
+      fields: {
+        summary: resource_name(initiative),
+        description: convert_html(initiative.description.body),
+      }
+    })
+
+    issue.fields.merge!(aha_reference_fields(initiative, initiative_issue_type))
+    issue_resource.update(issue_info.id, issue)
+    initiative.attachments ||= [] # initiatives aren't sent with attachments of their own
+    update_attachments(issue_info.id, initiative)
+    logger.info "Updated initiative issue #{issue_info[:key]}"
+
+    issue
   end
   
   def create_issue_for_initiative(initiative, issue_type)
@@ -215,7 +257,7 @@ protected
     upload_attachments(initiative.description.attachments, new_issue.id)
     integrate_initiative_with_jira_issue(initiative, new_issue)
 
-    logger.info("Created issue #{new_issue[:key]}")
+    logger.info("Created initiative issue #{new_issue[:key]}")
 
     new_issue
   end
@@ -545,6 +587,14 @@ protected
     issue_type = issue_types.find {|type| type.id.to_s == id.to_s }
     raise AhaService::RemoteError, "Integration needs to be reconfigured, issue types have changed, can't find issue type '#{id}'" if issue_type.nil?
     issue_type
+  end
+
+  def initiative_issue_type
+    if data.initiative_issue_type.blank?
+      epic_issue_type
+    else
+      issue_type_by_id(data.initiative_issue_type)
+    end
   end
 
   def epic_issue_type
