@@ -1,0 +1,65 @@
+{
+  "event": "create_initiative",
+  "initiative": {
+    "id": "6228244575441171387",
+    "name": "Alex's New Initiative with updates",
+    "status": "not_started",
+    "effort": 95,
+    "value": 90,
+    "created_at": "2015-12-14T20:49:53Z",
+    "updated_at": "2015-12-15T18:06:23Z",
+    "url": "http://reallybigaha.lvh.me:3000/initiatives/6228244575441171387",
+    "resource": "http://reallybigaha.lvh.me:3000/api/v1/initiatives/6228244575441171387",
+    "description": {
+      "id": "6228244575437724343",
+      "body": "<p>Hit the 25% milestone! And things. With some updates to the description.</p>",
+      "created_at": "2015-12-14T20:49:53Z",
+      "attachments": [
+        {
+          "id": "6228573526979907080",
+          "download_url": "http://reallybigaha.lvh.me:3000/attachments/token/985a225d84eb862798b4b7a2dbbd98f14a272f9323b2d780eb6afb98485bafd1.download",
+          "created_at": "2015-12-15T18:06:23Z",
+          "file_size": 6228,
+          "content_type": "image/jpeg",
+          "file_name": "138.jpg"
+        }
+      ]
+    },
+    "comments_count": 0,
+    "features": [
+
+    ],
+    "releases": [
+
+    ],
+    "integration_fields": [
+      {
+        "id": "6228284007534025729",
+        "name": "key",
+        "value": "ALEXDEV-32",
+        "integration_id": 6076123504490867273,
+        "service_name": "jira",
+        "created_at": "2015-12-14T23:22:54Z"
+      },
+      {
+        "id": "6228284007535372421",
+        "name": "id",
+        "value": "19502",
+        "integration_id": 6076123504490867273,
+        "service_name": "jira",
+        "created_at": "2015-12-14T23:22:54Z"
+      },
+      {
+        "id": "6228284003244541347",
+        "name": "url",
+        "value": "https://bigaha.atlassian.net/browse/ALEXDEV-32",
+        "integration_id": 6076123504490867273,
+        "service_name": "jira",
+        "created_at": "2015-12-14T23:22:53Z"
+      }
+    ],
+    "custom_fields": [
+
+    ]
+  }
+}

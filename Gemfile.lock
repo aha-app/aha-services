@@ -35,7 +35,7 @@ GIT
 PATH
   remote: .
   specs:
-    aha-services (1.18.28)
+    aha-services (1.18.43)
       ClothRed
       activesupport
       aha-api
@@ -86,7 +86,7 @@ GEM
       domain_name (~> 0.5)
     i18n (0.6.11)
     json (1.8.1)
-    jwt (1.5.1)
+    jwt (1.5.2)
     listen (2.7.11)
       celluloid (>= 0.15.2)
       rb-fsevent (>= 0.9.3)

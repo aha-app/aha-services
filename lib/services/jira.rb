@@ -1,6 +1,7 @@
 require 'html2confluence'
 
 class AhaServices::Jira < AhaService
+  include AhaServices::JiraInitiatives
   title "JIRA"
   caption "Send features to JIRA issue tracking (supports on-premise and on-demand)"
   
@@ -14,6 +15,7 @@ class AhaServices::Jira < AhaService
     collection: ->(meta_data, data) {
       meta_data.issue_type_sets[meta_data.projects.detect {|p| p[:key] == data.project}.issue_types].find_all{|i| !i.subtype}.collect{|p| [p.name, p.id] }
     }, description: "JIRA issue type that will be used when sending features. If you are using JIRA Agile then we recommend 'Epic'."
+  internal :initiative_field_mapping
   select :feature_issue_type, 
     collection: ->(meta_data, data) { 
       meta_data.issue_type_sets[meta_data.projects.detect {|p| p[:key] == data.project}.issue_types].find_all{|i| !i.subtype}.collect{|p| [p.name, p.id] }
@@ -208,58 +210,6 @@ protected
     elsif issue_type = initiative_issue_type
       create_issue_for_initiative(initiative, issue_type)[:key]
     end
-  end
-
-  def create_or_update_initiative(initiative)
-    issue_info = get_existing_issue_info(initiative)
-    if issue_info
-      update_issue_for_initiative(issue_info, initiative)
-    elsif initiative_issue_type
-      create_issue_for_initiative(initiative, initiative_issue_type)
-    else
-      logger.error("Could not create initiative #{initiative.id} because no Issue Type was found for Initiatives.")
-    end
-  end
-
-  def update_issue_for_initiative(issue_info, initiative)
-    logger.info("Updating issue #{issue_info[:key]} for initiative #{initiative.id}")
-
-    issue = Hashie::Mash.new({
-      fields: {
-        summary: resource_name(initiative),
-        description: convert_html(initiative.description.body),
-      }
-    })
-
-    issue.fields.merge!(aha_reference_fields(initiative, initiative_issue_type))
-    issue_resource.update(issue_info.id, issue)
-    initiative.attachments ||= [] # initiatives aren't sent with attachments of their own
-    update_attachments(issue_info.id, initiative)
-    logger.info "Updated initiative issue #{issue_info[:key]}"
-
-    issue
-  end
-  
-  def create_issue_for_initiative(initiative, issue_type)
-    logger.info("Creating issue for initiative #{initiative.id}")
-    
-    issue = Hashie::Mash.new(
-      fields: {
-        summary: resource_name(initiative),
-        description: convert_html(initiative.description.body),
-        issuetype: { id: issue_type.id },
-        meta_data.epic_name_field => initiative.name
-      }
-    )
-    issue.fields.merge!(aha_reference_fields(initiative, issue_type))
-
-    new_issue = issue_resource.create(issue)
-    upload_attachments(initiative.description.attachments, new_issue.id)
-    integrate_initiative_with_jira_issue(initiative, new_issue)
-
-    logger.info("Created initiative issue #{new_issue[:key]}")
-
-    new_issue
   end
 
   def create_issue_for(resource, initiative, version, parent)

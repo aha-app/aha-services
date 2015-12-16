@@ -14,7 +14,8 @@ class JiraResource < GenericResource
 
   def error_message_for_field key, value
     jira_field_name = @service.meta_data.fields[key]["name"] rescue key
-    field_info = @service.data.field_mapping.grep(Hash).detect{|m| m["jira_field"] == key }
+    field_mappings = @service.data.field_mapping || []
+    field_info = field_mappings.grep(Hash).detect{|m| m["jira_field"] == key }
     if field_info
       aha_field_name = field_info["aha_field"]
     else
