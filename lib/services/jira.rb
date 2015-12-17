@@ -15,6 +15,7 @@ class AhaServices::Jira < AhaService
     collection: ->(meta_data, data) {
       meta_data.issue_type_sets[meta_data.projects.detect {|p| p[:key] == data.project}.issue_types].find_all{|i| !i.subtype}.collect{|p| [p.name, p.id] }
     }, description: "JIRA issue type that will be used when sending features. If you are using JIRA Agile then we recommend 'Epic'."
+  internal :initiative_status_mapping
   internal :initiative_field_mapping
   select :feature_issue_type, 
     collection: ->(meta_data, data) { 
@@ -391,6 +392,7 @@ protected
   end
 
   def upload_attachments(attachments, issue_id)
+    attachments ||= []
     attachments.each do |attachment|
       attachment_resource.upload(attachment, issue_id)
     end

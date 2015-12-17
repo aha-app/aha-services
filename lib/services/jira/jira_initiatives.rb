@@ -15,9 +15,15 @@ module AhaServices::JiraInitiatives
     
     issue = initiative_fields(initiative: initiative)
 
+    if issue_type["name"] == "Epic"
+      # Attempting to set the "Epic Name" field on anything other than an epic causes errors.
+      issue.fields.merge!({
+        meta_data.epic_name_field => initiative.name
+      })
+    end
+
     issue.fields.merge!({
-      issuetype: { id: issue_type.id },
-      meta_data.epic_name_field => initiative.name
+      issuetype: { id: issue_type.id }
     })
 
     new_issue = issue_resource.create(issue)
