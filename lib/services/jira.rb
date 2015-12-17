@@ -369,7 +369,7 @@ protected
   end
   
   def update_attachments(issue_id, resource)
-    aha_attachments = resource.attachments.dup | resource.description.attachments.dup
+    aha_attachments = (resource.attachments || []).dup | (resource.description.attachments || []).dup
 
     # Create any attachments that didn't already exist.
     upload_attachments(new_aha_attachments(aha_attachments, issue_id), issue_id)
