@@ -31,6 +31,7 @@ require 'services/generic_resource'
 
 require 'services/github/github_resource'
 require 'services/bitbucket/bitbucket_resource'
+require 'services/jira/jira_initiatives'
 require 'services/jira/jira_resource'
 require 'services/jira/jira_mapped_fields'
 require 'services/pivotal_tracker/pivotal_tracker_resource'
