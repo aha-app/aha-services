@@ -2,8 +2,8 @@ This bi-directional integration allows you to push your completed features and r
 
 Note there are two separate integrations with JIRA. Both have the same basic functionality, they differ in how they are authenticated and the installation procedure. You only need to enable one. At this time, we recommend that you use the first JIRA approach unless you already have set up the second.
 
-1. JIRA (RECOMMENDED) - this integration uses the username and password of a JIRA user to authenticate with JIRA. It can be used with downloaded or on-demand versions of JIRA.
-2. JIRA via Connect - this integration uses an Add-on that is installed into your JIRA instance by an administrator. It can only be used with JIRA on-demand and is restricted to integration with a single JIRA server.  
+1. JIRA (RECOMMENDED) - this integration uses the username and password of a JIRA user to authenticate with JIRA. It can be used with downloaded or cloud versions of JIRA.
+2. JIRA via Connect - this integration uses an Add-on that is installed into your JIRA instance by an administrator. It can only be used with JIRA cloud and is restricted to integration with a single JIRA server.  
 
 
 ## Aha! to JIRA workflow
@@ -24,7 +24,7 @@ The integration supports features and requirements being sent from Aha! to JIRA 
 
 You need to be a Product Owner in Aha! and an Administrator in JIRA to set up this integration.
 
-This integration works with both the on-demand and on premise versions of JIRA. Note that if you are running the downloaded, on premise version of JIRA you will need to create a [firewall exception](http://support.aha.io/entries/40842777) so Aha! can make calls to the JIRA API. The exception should forward requests to the internal JIRA server.
+This integration works with both the cloud and on premise versions of JIRA. Note that if you are running the downloaded, on premise version of JIRA you will need to create a [firewall exception](http://support.aha.io/entries/40842777) so Aha! can make calls to the JIRA API. The exception should forward requests to the internal JIRA server.
 
 Please carefully follow these instructions to ensure that the integration is properly configured.
 

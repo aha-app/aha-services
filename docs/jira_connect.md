@@ -2,8 +2,8 @@ This bi-directional integration allows you to push your completed features and r
 
 Note there are two separate integrations with JIRA. Both have the same basic functionality, they differ in how they are authenticated and the installation procedure. You only need to enable one. At this time, we recommend that you use the first JIRA approach unless you already have set up the second.
 
-1. JIRA (RECOMMENDED) - this integration uses the username and password of a JIRA user to authenticate with JIRA. It can be used with downloaded or on-demand versions of JIRA.
-2. JIRA via Connect - this integration uses an Add-on that is installed into your JIRA instance by an administrator. It can only be used with JIRA on-demand and is restricted to integration with a single JIRA server.  
+1. JIRA (RECOMMENDED) - this integration uses the username and password of a JIRA user to authenticate with JIRA. It can be used with downloaded or cloud versions of JIRA.
+2. JIRA via Connect - this integration uses an Add-on that is installed into your JIRA instance by an administrator. It can only be used with JIRA cloud and is restricted to integration with a single JIRA server.  
 
 ## Aha! to JIRA workflow
 
@@ -23,11 +23,11 @@ The integration supports features and requirements being sent from Aha! to JIRA 
 
 You need to be a Product Owner in Aha! and an Administrator in JIRA to set up this integration.
 
-This integration only works with the on-demand version of JIRA. 
+This integration only works with the cloud version of JIRA. 
 
 Please carefully follow these instructions to ensure that the integration is properly configured.
 
-1. Log into your JIRA On-demand instance. Under _Administration_ -> _Add-ons_ use the _Find new add-ons_ screen to find the _Aha! Product Roadmaps_ add-on and install it.
+1. Log into your JIRA Cloud instance. Under _Administration_ -> _Add-ons_ use the _Find new add-ons_ screen to find the _Aha! Product Roadmaps_ add-on and install it.
 2. Click on the _Configure_ button to configure the _Aha! Product Roadmaps_ add-on.
 3. Enter the sub-domain of your Aha! instance and save.
 4. Log into Aha! and find the _Account settings_ -> _Integrations_ -> _JIRA via Connect_ page for the product you want to integrate with JIRA.
