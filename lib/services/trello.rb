@@ -80,9 +80,9 @@ class AhaServices::Trello < AhaService
     
     card = card_resource.create(
       name: resource_name(feature),
-      desc: ReverseMarkdown.convert(feature.description.body),
+      desc: reverse_markdown_convert(feature.description.body),
       pos: data.create_features_at,
-      due: due_date ? Time.parse(due_date).utc : nil,
+      due: end_of_work_day(due_date),
       idList: data.list_for_new_features
     )
     webhook = card_resource.create_webhook(card.id)
@@ -91,14 +91,22 @@ class AhaServices::Trello < AhaService
     card
   end
 
+  def end_of_work_day(date_string)
+    if date_string
+      Time.parse(date_string).utc.beginning_of_day + 17.hours
+    else
+      nil
+    end
+  end
+
   def update_card(card_id, feature)
     due_date = feature.due_date || feature.release.release_date
     
     card_resource
       .update card_id,
         name: resource_name(feature),
-        desc: ReverseMarkdown.convert(feature.description.body),
-        due: due_date ? Time.parse(due_date).utc : nil
+        desc: reverse_markdown_convert(feature.description.body),
+        due: end_of_work_day(due_date)
   end
 
   def existing_checklist_item_integrated_with(requirement)
@@ -161,6 +169,10 @@ class AhaServices::Trello < AhaService
 
 protected
 
+  def reverse_markdown_convert(text)
+    Nokogiri::HTML.parse(ReverseMarkdown.convert(text)).text
+  end
+
   def board_resource
     @board_resource ||= TrelloBoardResource.new(self)
   end
@@ -182,7 +194,7 @@ protected
   end
 
   def checklist_item_name(requirement)
-    [requirement.name, ReverseMarkdown.convert(requirement.description.body)]
+    [requirement.name, reverse_markdown_convert(requirement.description.body)]
       .compact.join(". ")
   end
   

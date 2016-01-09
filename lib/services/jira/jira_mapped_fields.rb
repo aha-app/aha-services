@@ -23,13 +23,13 @@ module JiraMappedFields
     
     field = resource.custom_fields.find {|field| field['key'] == aha_field}
     if field
-      aha_type_to_jira_type(field.value, field.type, jira_type_info)
+      aha_type_to_jira_type(field.value, field.type, jira_type_info, aha_field)
     else
       nil
     end
   end
   
-  def aha_type_to_jira_type(aha_value, aha_type, jira_type_info)
+  def aha_type_to_jira_type(aha_value, aha_type, jira_type_info, aha_field)
     case jira_type_info.type
     when "string"
       v = aha_type_to_string(aha_type, aha_value)
@@ -37,17 +37,21 @@ module JiraMappedFields
         {value: v}
       elsif jira_type_info.editor == "com.atlassian.jira.plugin.system.customfieldtypes:radiobuttons"
         {value: v}
+      elsif jira_type_info.editor == "com.intenso.jira.plugin.dynamic-forms:dynamic-select-customfield"
+        {value: v}
       else
         v
       end
     when "number"
-      aha_type_to_number(aha_type, aha_value)
+      aha_type_to_number(aha_type, aha_value, jira_type_info, aha_field)
     when "array"
       aha_type_to_array(aha_type, aha_value, jira_type_info)
     when "priority"
       {name: aha_type_to_string(aha_type, aha_value)}
+    when "option"
+      {value: aha_type_to_string(aha_type, aha_value)}
     else
-      logger.debug("Using default field type mapping for '#{aha_type}' to '#{jira_type_info.type}'")
+      logger.debug("Using default field type mapping for Aha field '#{aha_field}' with value '#{aha_type}' to '#{jira_type_info.type}'")
       aha_value
     end
   end
@@ -64,8 +68,12 @@ module JiraMappedFields
     end
   end
   
-  def aha_type_to_number(aha_type, aha_value)
-    aha_value.to_i
+  def aha_type_to_number(aha_type, aha_value, jira_type_info, aha_field)
+    value = aha_value.to_f
+    unless value.to_s == aha_value
+      logger.warn "Aha! Field '#{aha_field}' with value '#{aha_value}' does not map cleanly to a number for JIRA field '#{jira_type_info.name}'"
+    end
+    value
   end
   
   def aha_type_to_array(aha_type, aha_value, jira_type_info)
@@ -80,8 +88,11 @@ module JiraMappedFields
     case jira_type_info.sub_type
     when "component"
       values.collect {|v| {name: v} }
-    when "string"
-      if jira_type_info.editor == "com.atlassian.jira.plugin.system.customfieldtypes:multiselect"
+    when "option", "string"
+      multicheckboxes = "com.atlassian.jira.plugin.system.customfieldtypes:multicheckboxes"
+      multiselect = "com.atlassian.jira.plugin.system.customfieldtypes:multiselect"
+      case jira_type_info.editor
+      when multicheckboxes, multiselect
         values.collect {|v| {value: v} }
       else
         values

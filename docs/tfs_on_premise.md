@@ -1,6 +1,6 @@
 This integration allows you to push features and requirements from Aha! to Microsoft Team Foundation Server 2015 (TFS).
 
-This integration works with the on-premise version of TFS. If you use Visual Studio Online then use the separate _Visual Studio Online_ integration instead.
+This integration works with the on-premise version of TFS. If you use Visual Studio Team Services then use the separate _Visual Studio Team Services_ integration instead.
 
 ## Features
 
