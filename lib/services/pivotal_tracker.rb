@@ -2,6 +2,8 @@ class AhaServices::PivotalTracker < AhaService
   caption "Send features to Pivotal Tracker agile boards"
   
   string :api_token, description: "API token from user profile screen at www.pivotaltracker.com"
+  string :server_url, description: "If you are using Pivotal Tracker Private Cloud enter your server URL here (https://example.com/). If you are using pivotaltracker.com leave this field empty.",
+    label: "Server URL"
   install_button
   select :project, collection: -> (meta_data, data) { meta_data.projects.collect { |p| [p.name, p.id] } },
     description: "Tracker project that this Aha! product will integrate with."
@@ -22,6 +24,14 @@ class AhaServices::PivotalTracker < AhaService
 
   def receive_installed
     meta_data.projects = project_resource.all
+  end
+
+  def server_url
+    if self.data.server_url.present?
+      self.data.server_url
+    else
+      nil
+    end
   end
 
   def receive_create_feature

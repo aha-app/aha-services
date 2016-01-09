@@ -2,7 +2,11 @@ class PivotalTrackerResource < GenericResource
   API_URL = "https://www.pivotaltracker.com/services/v5"
 
   def api_url
-    API_URL
+    if @service.server_url
+      File.join(@service.server_url, "/services/v5")
+    else
+      API_URL
+    end
   end
 
   def prepare_request
