@@ -1,6 +1,6 @@
 class AhaServices::PivotalTracker < AhaService
   caption "Send features to Pivotal Tracker agile boards"
-  
+  string :api_host, description: "API host for your on-premesis pivotal tracker installation. If you are using www.pivotaltracker.com, leave this blank."
   string :api_token, description: "API token from user profile screen at www.pivotaltracker.com"
   install_button
   select :project, collection: -> (meta_data, data) { meta_data.projects.collect { |p| [p.name, p.id] } },
