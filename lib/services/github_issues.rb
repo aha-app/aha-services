@@ -109,15 +109,15 @@ class AhaServices::GithubIssues < AhaService
 
   def create_milestone_for(release)
     milestone_resource.create title: release.name,
-                              description: "Created from Aha! #{release.url}",
-                              due_on: release.release_date,
-                              state: release.released ? "closed" : "open"
+      description: "Created from Aha! #{release.url}",
+      due_on: release.release_date.try(:to_time).try(:iso8601),
+      state: release.released ? "closed" : "open"
   end
 
   def update_milestone(number, release)
     milestone_resource.update number, title: release.name,
-                                      due_on: release.release_date,
-                                      state: release.released ? "closed" : "open"
+      due_on: release.release_date.try(:to_time).try(:iso8601),
+      state: release.released ? "closed" : "open"
   end
 
   def update_requirements(requirements, milestone)

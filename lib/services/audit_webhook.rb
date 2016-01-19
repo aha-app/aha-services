@@ -7,6 +7,8 @@ class AhaServices::AuditWebhook < AhaService
   audit_filter
   
   def receive_audit
+    http.headers['Content-Type'] = 'application/json'
+    
     # We only allow 5 seconds for webhooks.
     Timeout.timeout(5, TimeoutError) do
       http_post data.hook_url, payload.to_json
