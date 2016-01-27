@@ -241,11 +241,13 @@ protected
       .merge!(issue_epic_link_field(issue_type, parent, initiative))
       .merge!(subtask_fields(issue_type.subtask, parent))
       .merge!(time_tracking_fields(resource, issue_type))
-      .merge!(mapped_custom_fields(@feature, issue_type))
       .merge!(assignee_fields(resource, issue_type))
       .merge!(reporter_fields(resource, issue_type))
-      .merge!(due_date_fields(resource, issue_type))
       .merge!(aha_position_fields(resource, issue_type))
+
+    # Use the custom fields from @feature to populate requirements, to solve for required custom fields on create
+    issue.fields.merge!(mapped_custom_fields(@feature, issue_type))
+    issue.fields.merge!(due_date_fields(@feature, issue_type))
     
     new_issue = issue_resource.create(issue)
 
@@ -278,10 +280,16 @@ protected
       .merge!(label_fields(resource, issue_type))
       .merge!(time_tracking_fields(resource, issue_type))
       .merge!(aha_reference_fields(resource, issue_type))
-      .merge!(mapped_custom_fields(@feature, issue_type))
       .merge!(assignee_fields(resource, issue_type))
-      .merge!(due_date_fields(@feature, issue_type))
       .merge!(aha_position_fields(resource, issue_type))
+
+    if @feature == resource
+      # Only update custom_fields and due dates for features, not requirements.
+      # This will cause an issue with two-way field syncing if we constantly overwrite requirements' custom fields
+      issue.fields
+        .merge!(mapped_custom_fields(@feature, issue_type))
+        .merge!(due_date_fields(@feature, issue_type))
+    end
       
     issue.merge!(version_update_fields(version, issue_type))
 
