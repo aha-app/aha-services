@@ -6,6 +6,12 @@ class GreenhopperEpicResource < JiraResource
     process_response(response, 204, 200)
   end
 
+  def remove_story(issue_id, epic_key) 
+    prepare_request
+    response = http_put "#{api_url}/epics/remove", {issueKeys: [issue_id]}.to_json
+    process_response(response, 204, 200)
+  end
+
 protected
 
   def api_url

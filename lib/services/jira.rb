@@ -287,7 +287,6 @@ protected
 
     issue_resource.update(issue_info.id, issue)
 
-    
     update_epic_link(issue_info.id, issue_type, parent, initiative)
     
     update_attachments(issue_info.id, resource)
@@ -510,9 +509,17 @@ protected
     elsif parent && issue_type.has_field_epic_link && issue_type_by_id(data.feature_issue_type).has_field_epic_name
       epic_key = parent[:key]
     end
-    
     if epic_key
       greenhopper_epic_resource.add_story(issue_id, epic_key) 
+    elsif data.send_initiatives == "1" && initiative.nil? && issue_type.has_field_epic_link
+      begin
+        issue_data = get_issue(issue_id)
+        if issue_data && (epic_key = issue_data.fields[meta_data.epic_link_field])
+          greenhopper_epic_resource.remove_story(issue_id, epic_key) 
+        end
+      rescue Exception => e
+        logger.debug("Error removing epic from issue. #{e.class}: #{e.message} #{e.backtrace.join("\n")}")
+      end
     end
   end
 
