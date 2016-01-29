@@ -72,6 +72,21 @@ class AhaServices::Jira < AhaService
     issue_resource.search(params)
   end
 
+  def issue_type_by_id(id)
+    raise AhaService::RemoteError, "Integration has not been configured" if meta_data.projects.nil?
+    project = meta_data.projects.find {|project| project[:key] == data.project }
+    raise AhaService::RemoteError, "Integration has not been configured, can't find project '#{data.project}'" if project.nil?
+    issue_types = meta_data.issue_type_sets[project.issue_types]
+    issue_type = issue_types.find {|type| type.id.to_s == id.to_s }
+    raise AhaService::RemoteError, "Integration needs to be reconfigured, issue types have changed, can't find issue type '#{id}'" if issue_type.nil?
+    issue_type
+  end
+
+  def update_issue_fields(issue_id, issue)
+    issue_resource.update(issue_id, issue)
+  end
+
+
 protected
   include JiraMappedFields
   
@@ -552,15 +567,6 @@ protected
     issue_type_by_id(issue_type_id)
   end
 
-  def issue_type_by_id(id)
-    raise AhaService::RemoteError, "Integration has not been configured" if meta_data.projects.nil?
-    project = meta_data.projects.find {|project| project[:key] == data.project }
-    raise AhaService::RemoteError, "Integration has not been configured, can't find project '#{data.project}'" if project.nil?
-    issue_types = meta_data.issue_type_sets[project.issue_types]
-    issue_type = issue_types.find {|type| type.id.to_s == id.to_s }
-    raise AhaService::RemoteError, "Integration needs to be reconfigured, issue types have changed, can't find issue type '#{id}'" if issue_type.nil?
-    issue_type
-  end
 
   def epic_issue_type
     raise AhaService::RemoteError, "Integration has not been configured" if meta_data.projects.nil?
