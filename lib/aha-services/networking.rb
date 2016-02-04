@@ -160,6 +160,9 @@ module Networking
         block.call req if block
       end
     end
+  rescue Exception => e
+    @logger.debug("Error in #{method} request to #{url}: #{e.message}, body: #{body.inspect}")
+    raise e
   end
 
   #
