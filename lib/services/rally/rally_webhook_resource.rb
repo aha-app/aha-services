@@ -68,7 +68,7 @@ class RallyWebhookResource < RallyResource
     process_response(response)
   end
 
-  def destroy_webhook
+  def destroy_webhook webhook
     response = http_delete_no_basic(webhook_url("/#{webhook.ObjectUUID}"))
     process_response(response)
   end
@@ -84,11 +84,7 @@ class RallyWebhookResource < RallyResource
   end
 
   def webhook_is_disabled
-    if @service.data.integration_enabled.nil?
-      false
-    else
-      !@service.data.integration_enabled
-    end
+    !@service.data.integration_enabled
   end
 
   def hash_for_webhook
@@ -102,8 +98,7 @@ class RallyWebhookResource < RallyResource
         "Operator" => "=",
         "Value" => selected_project_uuid
       ],
-      "Disabled" => webhook_is_disabled
-    }
+      "Disabled" => webhook_is_disabled }
   end
 end
 
