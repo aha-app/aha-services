@@ -28,7 +28,7 @@ module AhaServices::RallyWebhook
   end
 
   def update_record_from_webhook(payload)
-    results = api.search_integration_fields(data.integration_id, "id", payload.ObjectID)
+    results = api.search_integration_fields(data.integration_id, "id", payload.message.object_id)
 
     results.each do |result|
       if result.feature
@@ -42,11 +42,17 @@ module AhaServices::RallyWebhook
       end
 
       logger.info "Received webhook to update #{resource_type}:#{resource.id}"
-      api.put(resource.resource, { resource_type => {
-        description: payload.Description,
-        name: payload.Name,
-        workflow_status: map_status(payload.Status)
-      }})
+
+      mapped_payload = Hash[ payload.message.state.map do |uuid, attribute|
+        [attribute.Name, attribute.Value]
+      end ]
+
+      update_hash = {}
+      update_hash[:description] = mapped_payload["Description"] if mapped_payload["Description"]
+      update_hash[:name] = mapped_payload["Name"] if mapped_payload["Name"]
+      update_hash[:workflow_status] = map_status(mapped_payload["Status"]) if mapped_payload["Status"]
+
+      api.put(resource.resource, { resource_type => update_hash })
     end
   rescue Api::NotFound
   end

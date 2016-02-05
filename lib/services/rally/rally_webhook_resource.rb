@@ -1,5 +1,6 @@
 class RallyWebhookResource < RallyResource
   WEBHOOK_URL = "https://rally1.rallydev.com/notifications/api/v2/webhook"
+	PROJECT_FIELD_UUID = "ae8ecc9f-b9a0-42a4-a6e3-c83d7f8a7070"
 
   # Rally requires you to pass in a key to access their API. You get the key by
   # setting basic auth and calling a certain endpoint.
@@ -40,16 +41,14 @@ class RallyWebhookResource < RallyResource
     "#{WEBHOOK_URL}#{path}#{joiner}key=#{self.security_token}"
   end
 
-  def search_for_webhook(callback_url)
+  def all_webhooks
     process_response(http_get_no_basic(webhook_url("?start=1&pageSize=200"))) do |document|
-      document.Results.each do |result|
-        if result.TargetUrl == callback_url
-          return result
-        end
-      end
+      return document.Results
     end
+  end
 
-    return nil
+  def search_for_webhook(callback_url)
+    all_webhooks.detect {|webhook| webhook.TargetUrl == callback_url}
   end
 
   def update_webhook webhook
@@ -94,7 +93,7 @@ class RallyWebhookResource < RallyResource
       "TargetUrl" => @service.data.callback_url,
       "Name" => "Aha! Rally Integration #{@service.data.integration_id}",
       "Expressions" => [
-        "AttributeID" => @service.meta_data.project_field_uuid,
+        "AttributeID" => PROJECT_FIELD_UUID,
         "Operator" => "=",
         "Value" => selected_project_uuid
       ],

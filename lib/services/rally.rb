@@ -20,9 +20,6 @@ class AhaServices::Rally < AhaService
   def receive_installed
     projects = rally_project_resource.all
     meta_data.projects = projects
-
-    type_definitions = rally_type_resource.get_type_definitions
-    meta_data.project_field_uuid = type_definitions.Project
   end
 
   def receive_updated
@@ -72,10 +69,6 @@ protected
 
   def rally_portfolio_item_resource
     @rally_portfolio_item_resource ||= RallyPortfolioItemResource.new self
-  end
-
-  def rally_type_resource
-    @rally_type_resource ||= RallyTypeResource.new self
   end
 
   def rally_webhook_resource
