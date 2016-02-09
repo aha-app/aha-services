@@ -72,6 +72,10 @@ class RallyWebhookResource < RallyResource
     process_response(response)
   end
 
+  def webhook_is_disabled
+    !@service.data.integration_enabled
+  end
+
   def selected_project_uuid
     project = @service.meta_data.projects.detect{|project| project.ObjectID == @service.data.project.to_i }
     
@@ -80,10 +84,6 @@ class RallyWebhookResource < RallyResource
     else
       raise_config_error "Attempted to create or update a webhook without a project selected."
     end
-  end
-
-  def webhook_is_disabled
-    !@service.data.integration_enabled
   end
 
   def hash_for_webhook

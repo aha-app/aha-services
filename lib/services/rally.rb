@@ -7,11 +7,20 @@ class AhaServices::Rally < AhaService
   install_button
 
   select :project, description: "The Rally project that this Aha! product will integrate with.", collection: -> (meta_data,data) {
-    return [] unless meta_data and meta_data.projects
+    return [] unless meta_data && meta_data.projects
     meta_data.projects.collect {|p| [p.Name, p.ObjectID] }
   }
 
   include AhaServices::RallyWebhook
+
+  select :feature_and_requirement_type, description: "What type of items will be created in rally for features and requirements.", collection: -> (meta_data, data) {
+    return [] unless meta_data && meta_data.type_definitions
+    type_definitions = meta_data.type_definitions
+    user_stories = Hashie::Mash.new({Name: "User Story", ElementName: "UserStory"})
+    2.times { type_definitions.unshift(user_stories) }
+
+    meta_data.type_definitions.each_cons(2).collect {|r, f| ["Feature->#{f.Name}, Requirement->#{r.Name}", "#{f.ElementName}::#{r.ElementName}"] }
+  }
 
   # There is no status mapping until Rally supports webhooks.
   #internal :feature_status_mapping
@@ -20,6 +29,23 @@ class AhaServices::Rally < AhaService
   def receive_installed
     projects = rally_project_resource.all
     meta_data.projects = projects
+    meta_data.type_definitions = rally_portfolio_item_resource.get_all_portfolio_items
+  end
+
+  def feature_element_name
+    @_feature_element_name ||= if data.feature_and_requirement_type.present?
+      data.feature_and_requirement_type.split("::").first
+    else
+      "UserStory"
+    end
+  end
+
+  def requirement_element_name
+    @_requirement_element_name ||= if data.feature_and_requirement_type.present?
+      data.feature_and_requirement_type.split("::").last
+    else
+      "UserStory"
+    end
   end
 
   def receive_updated
