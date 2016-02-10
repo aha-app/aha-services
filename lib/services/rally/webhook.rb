@@ -57,14 +57,20 @@ module AhaServices::RallyWebhook
       update_hash = {}
       update_hash[:description] = new_state["Description"] if new_state["Description"]
       update_hash[:name] = new_state["Name"] if new_state["Name"]
-      if new_state["State"] && (new_status = status_mappings[new_state["State"]["name"]])
-        update_hash[:workflow_status] = new_status
+      status = extract_status new_state, status_mappings
+      if status
+        update_hash[:workflow_status] = status
       end
 
       api.put(resource.resource, { resource_type => update_hash })
     end
   rescue AhaApi::NotFound
     logger.warn "No record found for reference: #{new_state.ObjectID}"
+  end
+
+  def extract_status new_state, status_mappings
+    (new_state["State"] && (status_mappings[new_state["State"]["name"]])) || 
+      (new_state["ScheduleState"] && (status_mappings[new_state["ScheduleState"]["name"]]))
   end
 end
 
