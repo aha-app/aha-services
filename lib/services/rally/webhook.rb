@@ -50,9 +50,11 @@ module AhaServices::RallyWebhook
       logger.info "Received webhook to update #{resource_type}:#{resource.id}"
 
       update_hash = {}
-      update_hash[:description] = mapped_payload["Description"] if mapped_payload["Description"]
-      update_hash[:name] = mapped_payload["Name"] if mapped_payload["Name"]
-      update_hash[:workflow_status] = map_status(status_mapping[mapped_payload["State"]["name"]]) if mapped_payload["State"]
+      update_hash[:description] = new_state["Description"] if new_state["Description"]
+      update_hash[:name] = new_state["Name"] if new_state["Name"]
+      if new_state["State"] && (new_status = map_status(status_mapping[new_state["State"]["name"]]))
+        update_hash[:workflow_status] = new_status
+      end
 
       api.put(resource.resource, { resource_type => update_hash })
     end
