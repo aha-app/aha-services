@@ -34,7 +34,7 @@ module AhaServices::RallyWebhook
       if value.is_a? Hashie::Mash
         value = value.name
       end
-      [attribute.name, attribute.value]
+      [attribute.name, value]
     end ])
 
     results = api.search_integration_fields(data.integration_id, "id", new_state.ObjectID)["records"] rescue []
