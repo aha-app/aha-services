@@ -38,11 +38,11 @@ module AhaServices::RallyWebhook
       if result.feature
         resource = result.feature
         resource_type = "feature"
-        status_mappings = @service.data.feature_statuses
+        status_mappings = data.feature_statuses
       elsif result.requirement
         resource = result.requirement
         resource_type = "requirement"
-        status_mappings = @service.data.requirement_statuses
+        status_mappings = data.requirement_statuses
       else
         logger.info "Unhandled resource type for webhook: #{result.inspect}"
       end
