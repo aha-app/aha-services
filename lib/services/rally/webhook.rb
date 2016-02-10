@@ -38,11 +38,11 @@ module AhaServices::RallyWebhook
       if result.feature
         resource = result.feature
         resource_type = "feature"
-        status_mappings = @service.data.feature_status_mapping
+        status_mappings = @service.data.feature_statuses
       elsif result.requirement
         resource = result.requirement
         resource_type = "requirement"
-        status_mappings = @service.data.requirement_status_mapping
+        status_mappings = @service.data.requirement_statuses
       else
         logger.info "Unhandled resource type for webhook: #{result.inspect}"
       end
@@ -52,16 +52,11 @@ module AhaServices::RallyWebhook
       update_hash = {}
       update_hash[:description] = mapped_payload["Description"] if mapped_payload["Description"]
       update_hash[:name] = mapped_payload["Name"] if mapped_payload["Name"]
-      update_hash[:workflow_status] = map_status(status_mapping, mapped_payload["State"]["name"]) if mapped_payload["State"]
+      update_hash[:workflow_status] = map_status(status_mapping[mapped_payload["State"]["name"]]) if mapped_payload["State"]
 
       api.put(resource.resource, { resource_type => update_hash })
     end
   rescue Api::NotFound
-  end
-
-  def map_status(status_mapping, status)
-    aha_status, _ = status_mapping.detect {|(_, rally_status)| rally_status == status }
-    aha_status
   end
 end
 
