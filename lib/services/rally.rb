@@ -32,6 +32,7 @@ class AhaServices::Rally < AhaService
     meta_data.projects = projects
     meta_data.type_definitions = rally_portfolio_item_resource.get_all_portfolio_items
     meta_data.state_definitions = rally_state_resource.get_all_states
+    meta_data.install_successful = true
   end
 
   def feature_element_name
@@ -51,11 +52,15 @@ class AhaServices::Rally < AhaService
   end
 
   def receive_updated
-    create_or_update_webhook
+    if meta_data.install_successful && data.project.to_i
+      create_or_update_webhook
+    end
   end
 
   def receive_destroyed
-    destroy_webhook
+    if meta_data.install_successful && data.project.to_i
+      destroy_webhook
+    end
   end
 
   def receive_webhook
