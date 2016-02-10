@@ -29,6 +29,11 @@ module AhaServices::RallyWebhook
 
   def update_record_from_webhook(payload)
     new_state = Hashie::Mash.new(Hash[ payload.message.state.map do |_, attribute|
+      value = attribute.value
+      # User story webhooks get passed back as a status object, with a nested value
+      if value.is_a? Hashie::Mash
+        value = value.name
+      end
       [attribute.name, attribute.value]
     end ])
 
