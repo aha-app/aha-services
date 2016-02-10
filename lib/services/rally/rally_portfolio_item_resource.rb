@@ -3,7 +3,7 @@ class RallyPortfolioItemResource < RallyResource
     path = "/typedefinition?" + {
       start: 1,
       pagesize: 200,
-      query: "(TypePath contains PortfolioItem) and (Ordinal >= 0)",
+      query: "((TypePath contains PortfolioItem) AND (Ordinal >= 0))",
       fetch: "true"
     }.to_query
 
