@@ -19,17 +19,19 @@ class AhaServices::Rally < AhaService
     user_stories = Hashie::Mash.new({Name: "User Story", ElementName: "UserStory"})
     2.times { type_definitions.unshift(user_stories) }
 
-    meta_data.type_definitions.each_cons(2).collect {|r, f| ["Feature->#{f.Name}, Requirement->#{r.Name}", "#{f.ElementName}::#{r.ElementName}"] }
+    meta_data.type_definitions.each_cons(2).collect {|r, f| ["Feature -> #{f.Name}, Requirement -> #{r.Name}", "#{f.ElementName}::#{r.ElementName}"] }
   }
 
-  # There is no status mapping until Rally supports webhooks.
-  #internal :feature_status_mapping
-  #internal :requirement_status_mapping
+  internal :feature_status_mapping
+  internal :requirement_status_mapping
+
+  callback_url description: "URL Rally will call to update Aha!. This is automatically configured by Aha! in Rally for the selected project."
 
   def receive_installed
     projects = rally_project_resource.all
     meta_data.projects = projects
     meta_data.type_definitions = rally_portfolio_item_resource.get_all_portfolio_items
+    meta_data.state_definitions = rally_state_resource.get_all_states
   end
 
   def feature_element_name
@@ -99,5 +101,9 @@ protected
 
   def rally_webhook_resource
     @rally_webhook_resource ||= RallyWebhookResource.new self
+  end
+
+  def rally_state_resource
+    @rally_state_resource ||= RallyStateResource.new self
   end
 end

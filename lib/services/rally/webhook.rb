@@ -28,38 +28,40 @@ module AhaServices::RallyWebhook
   end
 
   def update_record_from_webhook(payload)
-    results = api.search_integration_fields(data.integration_id, "id", payload.message.object_id)
+    new_state = Hashie::Mash.new(Hash[ payload.message.state.map do |_, attribute|
+      [attribute.name, attribute.value]
+    end ])
+
+    results = api.search_integration_fields(data.integration_id, "id", new_state.ObjectID)
 
     results.each do |result|
       if result.feature
         resource = result.feature
         resource_type = "feature"
+        status_mappings = @service.data.feature_status_mapping
       elsif result.requirement
         resource = result.requirement
         resource_type = "requirement"
+        status_mappings = @service.data.requirement_status_mapping
       else
         logger.info "Unhandled resource type for webhook: #{result.inspect}"
       end
 
       logger.info "Received webhook to update #{resource_type}:#{resource.id}"
 
-      mapped_payload = Hash[ payload.message.state.map do |uuid, attribute|
-        [attribute.Name, attribute.Value]
-      end ]
-
       update_hash = {}
       update_hash[:description] = mapped_payload["Description"] if mapped_payload["Description"]
       update_hash[:name] = mapped_payload["Name"] if mapped_payload["Name"]
-      update_hash[:workflow_status] = map_status(mapped_payload["Status"]) if mapped_payload["Status"]
+      update_hash[:workflow_status] = map_status(status_mapping, mapped_payload["State"]["name"]) if mapped_payload["State"]
 
       api.put(resource.resource, { resource_type => update_hash })
     end
   rescue Api::NotFound
   end
 
-  def map_status(status)
-    #TODO
-    status
+  def map_status(status_mapping, status)
+    aha_status, _ = status_mapping.detect {|(_, rally_status)| rally_status == status }
+    aha_status
   end
 end
 
