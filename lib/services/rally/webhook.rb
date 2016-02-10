@@ -56,7 +56,8 @@ module AhaServices::RallyWebhook
 
       api.put(resource.resource, { resource_type => update_hash })
     end
-  rescue Api::NotFound
+  rescue AhaApi::NotFound
+    logger.warn "No record found for reference: #{new_state.ObjectID}"
   end
 end
 
