@@ -32,7 +32,7 @@ module AhaServices::RallyWebhook
       [attribute.name, attribute.value]
     end ])
 
-    results = api.search_integration_fields(data.integration_id, "id", new_state.ObjectID)
+    results = api.search_integration_fields(data.integration_id, "id", new_state.ObjectID)["records"] rescue []
 
     results.each do |result|
       if result.feature
