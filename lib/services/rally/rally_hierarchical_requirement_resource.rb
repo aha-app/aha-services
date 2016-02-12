@@ -97,38 +97,26 @@ protected
       :Name => aha_feature.name,
       :Project => @service.data.project
     }
-    include_release_if_exists(attributes, rally_release_id)
+    # Only child leafs belong to a release
+    # If this user story will have children, it's not a leaf and will not belong to a release
+    attributes[:Release] = rally_release_id unless aha_feature.requirements.length > 0
     attributes
   end
 
   def map_requirement parent_id, release_id, aha_requirement
-    attributes = {
+    {
       :Parent => parent_id,
+      :Release => release_id,
       :Description => aha_requirement.description.body,
       :Name => aha_requirement.name,
       :Project => @service.data.project
     }
-
-    include_release_if_exists(attributes, release_id)
-    attributes
   end
 
   def create_attachments parent, aha_attachments
     aha_attachments.each do |aha_attachment|
       rally_attachment_resource.create parent, aha_attachment
     end
-  end
-
-  # Rally will fail the API call if we attempt to assign this to a release that does not exist.
-  def include_release_if_exists attributes, release_id
-    release_exists = release_id && rally_release_resource.by_id(release_id) rescue false
-    if release_exists
-      attributes[:Release] = release_id
-    end
-  end
-
-  def rally_release_resource
-    @rally_release_resource ||= RallyReleaseResource.new @service
   end
 
   def rally_attachment_resource
