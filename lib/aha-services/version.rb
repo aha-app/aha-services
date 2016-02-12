@@ -1,3 +1,4 @@
 module AhaServices
-  VERSION = "1.19.55"
+  # Bump Minor for every change to master
+  VERSION = "1.20.56"
 end
