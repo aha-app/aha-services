@@ -25,7 +25,7 @@ class AhaServices::Rally < AhaService
   internal :feature_status_mapping
   internal :requirement_status_mapping
 
-  callback_url description: "URL Rally will call to update Aha!. This is automatically configured by Aha! in Rally for the selected project."
+  callback_url description: "URL Rally will call to update Aha!. This is webhook is automatically installed in Rally for the selected project."
 
   def receive_installed
     projects = rally_project_resource.all

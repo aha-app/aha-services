@@ -8,6 +8,7 @@ This integration allows you to push features and requirements from Aha! to Rally
 * Only the name, description and attachments of features and requirements are sent.
 * Releases in Aha! will created releases in Rally.
 * When requirements are sent to Rally they will be scheduled in the release that they belong to. 
+* Changes in Rally will be immediately reflected in Aha! via the webhook. Aha! will automatically install the necessary webhook when the integration is configured.
 
 ## Configuration
 
