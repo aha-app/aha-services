@@ -13,7 +13,7 @@ class AhaServices::Rally < AhaService
 
   include AhaServices::RallyWebhook
 
-  select :feature_and_requirement_type, description: "What type of items will be created in rally for features and requirements.", collection: -> (meta_data, data) {
+  select :feature_and_requirement_type, description: "Choose how Aha! features and requirements will map to Rally portfolio items or user stories.", collection: -> (meta_data, data) {
     return [] unless meta_data && meta_data.type_definitions
     type_definitions = meta_data.type_definitions
     user_stories = Hashie::Mash.new({Name: "User Story", ElementName: "UserStory"})
