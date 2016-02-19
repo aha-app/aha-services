@@ -178,10 +178,11 @@ protected
       :Project => @service.data.project
     }
 
-    if @service.feature_element_name == "UserStory"
-      mapping[:Parent] = parent_id.to_i
-    else
+    # The only time we should include the PortfolioItem field is when we are mapping across the hierarchicalRequirement boundary.
+    if (@service.feature_element_name != "UserStory" && @service.requirement_element_name == "UserStory")
       mapping[:PortfolioItem] = parent_id.to_i
+    else
+      mapping[:Parent] = parent_id.to_i
     end
     mapping
   end
