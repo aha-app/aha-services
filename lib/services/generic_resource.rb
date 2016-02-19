@@ -1,4 +1,4 @@
-require 'crack/xml'
+require 'crack'
 
 class GenericResource
 

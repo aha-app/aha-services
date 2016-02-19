@@ -164,15 +164,12 @@ protected
       :Name => aha_feature.name,
       :Project => @service.data.project
     }
-    # Only child leafs belong to a release
-    # If this user story will have children, it's not a leaf and will not belong to a release
-    attributes[:Release] = rally_release_id unless aha_feature.requirements.length > 0
+    include_release_if_exists(aha_feature, attributes, rally_release_id)
     attributes
   end
 
   def map_requirement parent_id, release_id, aha_requirement
     mapping = {
-      :Release => release_id.to_i,
       :Description => aha_requirement.description.body,
       :Name => aha_requirement.name,
       :Project => @service.data.project
@@ -184,6 +181,7 @@ protected
     else
       mapping[:Parent] = parent_id.to_i
     end
+    include_release_if_exists(aha_requirement, mapping, release_id)
     mapping
   end
 
@@ -191,6 +189,21 @@ protected
     aha_attachments.each do |aha_attachment|
       rally_attachment_resource.create parent, aha_attachment
     end
+  end
+
+  # Rally will fail the API call if we attempt to assign this to a release that does not exist.
+  # Rally will also fail the API call if we attempt to set Release for a feature that is not a leaf node.
+  def include_release_if_exists aha_model, attributes, release_id
+    return if (aha_model.requirements.try(:length) || 0) > 0 # do not send if we know for a fact this is not a leaf
+    children_count = get_children(map_to_objectid(aha_model)).length rescue 0
+    return if children_count > 0 # do not send if rally has children for this resource
+    release_exists = release_id && rally_release_resource.by_id(release_id) rescue false
+    return unless release_exists # do not send if rally does not know the release (This means the user deleted it)
+    attributes[:Release] = release_id
+  end
+
+  def rally_release_resource
+    @rally_release_resource ||= RallyReleaseResource.new @service
   end
 
   def rally_attachment_resource
