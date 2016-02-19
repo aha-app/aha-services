@@ -31,7 +31,7 @@ protected
       :Name => aha_release.name,
       :Project => @service.data.project,
       :ReleaseDate => Date.parse(aha_release.release_date || Date.today.to_s).rfc3339(),
-      :ReleaseStartDate => aha_release.created_at,
+      :ReleaseStartDate => Date.parse(aha_release.start_date || Date.today.to_s).rfc3339(),
       :State => "Planning",
       :Theme => aha_release.theme.body
     }

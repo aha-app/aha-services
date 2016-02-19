@@ -9,7 +9,7 @@ class RallyProjectResource < RallyResource
       process_response response do |document|
         total_results = document.QueryResult.TotalResultCount
         start += document.QueryResult.PageSize
-        projects.concat(document.QueryResult.Results.map{|project| project.slice("ObjectID", "_ref", "Name") })
+        projects.concat(document.QueryResult.Results.map{|project| project.slice("ObjectID", "_ref", "Name", "_refObjectUUID") })
       end
       break if start >= total_results
     end

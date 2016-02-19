@@ -27,8 +27,7 @@ class RallyAttachmentResource < RallyResource
     logger.error "Could not fully delete attachment or attachment content: #{e.message}"
   end
 
-  def sync_attachments hrequirement, aha_attachments
-    rally_attachments = rally_hierarchical_requirement_resource.get_attachments hrequirement.ObjectID
+  def sync_attachments parent, aha_attachments, rally_attachments
     # determine attachments not yet created in Rally
     new_attachments = aha_attachments.select{|attachment| not rally_attachments.map{|a| a.Name}.include?(attachment.file_name) }
     # determine attachments which allready are in Rally but have changed in Aha!
@@ -43,16 +42,12 @@ class RallyAttachmentResource < RallyResource
     end
     # create all new and changed attachments
     (new_attachments | changed_attachments).each do |aha_attachment|
-      create hrequirement, aha_attachment
+      create parent, aha_attachment
     end
   end
 
 protected
   def rally_attachment_content_resource
     @rally_attachment_content_resource ||= RallyAttachmentContentResource.new @service
-  end
-
-  def rally_hierarchical_requirement_resource
-    @rally_hierarchical_requirement_resource ||= RallyHierarchicalRequirementResource.new @service
   end
 end

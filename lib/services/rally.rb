@@ -7,17 +7,64 @@ class AhaServices::Rally < AhaService
   install_button
 
   select :project, description: "The Rally project that this Aha! product will integrate with.", collection: -> (meta_data,data) {
-    return [] unless meta_data and meta_data.projects
+    return [] unless meta_data && meta_data.projects
     meta_data.projects.collect {|p| [p.Name, p.ObjectID] }
   }
 
-  # There is no status mapping until Rally supports webhooks.
-  #internal :feature_status_mapping
-  #internal :requirement_status_mapping
+  include AhaServices::RallyWebhook
+
+  select :feature_and_requirement_type, description: "Choose how Aha! features and requirements will map to Rally portfolio items or user stories.", collection: -> (meta_data, data) {
+    return [] unless meta_data && meta_data.type_definitions
+    type_definitions = meta_data.type_definitions
+    user_stories = Hashie::Mash.new({Name: "User Story", ElementName: "UserStory"})
+    2.times { type_definitions.unshift(user_stories) }
+
+    meta_data.type_definitions.each_cons(2).collect {|r, f| ["Feature -> #{f.Name}, Requirement -> #{r.Name}", "#{f.ElementName}::#{r.ElementName}"] }
+  }
+
+  internal :feature_status_mapping
+  internal :requirement_status_mapping
+
+  callback_url description: "URL Rally will call to update Aha!. This is webhook is automatically installed in Rally for the selected project."
 
   def receive_installed
     projects = rally_project_resource.all
     meta_data.projects = projects
+    meta_data.type_definitions = rally_portfolio_item_resource.get_all_portfolio_items
+    meta_data.state_definitions = rally_state_resource.get_all_states
+    meta_data.install_successful = true
+  end
+
+  def feature_element_name
+    @_feature_element_name ||= if data.feature_and_requirement_type.present?
+      data.feature_and_requirement_type.split("::").first
+    else
+      "UserStory"
+    end
+  end
+
+  def requirement_element_name
+    @_requirement_element_name ||= if data.feature_and_requirement_type.present?
+      data.feature_and_requirement_type.split("::").last
+    else
+      "UserStory"
+    end
+  end
+
+  def receive_updated
+    if meta_data.install_successful && data.project.to_i
+      create_or_update_webhook
+    end
+  end
+
+  def receive_destroyed
+    if meta_data.install_successful && data.project.to_i
+      destroy_webhook
+    end
+  end
+
+  def receive_webhook
+    update_record_from_webhook(payload)
   end
 
   def receive_create_release
@@ -55,5 +102,13 @@ protected
 
   def rally_portfolio_item_resource
     @rally_portfolio_item_resource ||= RallyPortfolioItemResource.new self
+  end
+
+  def rally_webhook_resource
+    @rally_webhook_resource ||= RallyWebhookResource.new self
+  end
+
+  def rally_state_resource
+    @rally_state_resource ||= RallyStateResource.new self
   end
 end
