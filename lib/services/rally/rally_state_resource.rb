@@ -18,6 +18,8 @@ class RallyStateResource < RallyResource
     process_response(http_get(rally_secure_url(path))) do |response|
       return response.QueryResult.Results.map {|state| [state.TypeDef["_refObjectName"], state.Name]}
     end
+  rescue 
+    []
   end
 
   def user_story_states
