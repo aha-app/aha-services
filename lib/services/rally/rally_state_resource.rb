@@ -16,7 +16,7 @@ class RallyStateResource < RallyResource
     }.to_query
 
     process_response(http_get(rally_secure_url(path))) do |response|
-      return response.QueryResult.Results.map {|state| [state.TypeDef["_refObjectName"], state.Name]}
+      return response.QueryResult.Results.map {|state| state.TypeDef && [state.TypeDef["_refObjectName"], state.Name]}.compact
     end
   rescue 
     []
