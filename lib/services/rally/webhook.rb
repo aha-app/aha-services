@@ -69,6 +69,7 @@ module AhaServices::RallyWebhook
   end
 
   def extract_status new_state, status_mappings
+    status_mappings ||= {}
     (new_state["State"] && (status_mappings[new_state["State"]])) || 
       (new_state["ScheduleState"] && (status_mappings[new_state["ScheduleState"]]))
   end
