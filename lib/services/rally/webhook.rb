@@ -57,6 +57,10 @@ module AhaServices::RallyWebhook
       update_hash = {}
       update_hash[:description] = new_state["Description"] if new_state["Description"]
       update_hash[:name] = new_state["Name"] if new_state["Name"]
+      if resource_type == "feature"
+        update_hash[:start_date] = Date.parse(new_state["PlannedStartDate"]) if new_state["PlannedStartDate"]
+        update_hash[:due_date] = Date.parse(new_state["PlannedEndDate"]) if new_state["PlannedEndDate"]
+      end
       status = extract_status new_state, status_mappings
       if status
         update_hash[:workflow_status] = status
