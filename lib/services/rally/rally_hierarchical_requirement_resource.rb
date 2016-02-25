@@ -164,6 +164,12 @@ protected
       :Name => aha_feature.name,
       :Project => @service.data.project
     }
+
+    if @service.feature_element_name != "UserStory"
+      attributes[:PlannedStartDate] = aha_feature.start_date
+      attributes[:PlannedEndDate] = aha_feature.due_date
+    end
+
     include_release_if_exists(aha_feature, attributes, rally_release_id)
     attributes
   end
