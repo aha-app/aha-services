@@ -1,5 +1,3 @@
-require 'clothred'
-
 class RedmineIssueResource < RedmineResource
   
   def create(payload_fragment: nil, parent_id: nil, version_id: nil)

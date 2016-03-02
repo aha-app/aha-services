@@ -22,6 +22,12 @@ GIT
       nokogiri
 
 GIT
+  remote: https://github.com/aha-app/ClothRed
+  revision: 0b3aac2e0587e7081495417cf71cec018d3cf078
+  specs:
+    ClothRed (0.5.0)
+
+GIT
   remote: https://github.com/aha-app/aha-api
   revision: 1166580dad08835dd6c953a5a2f24a537bcc867a
   specs:
@@ -35,8 +41,7 @@ GIT
 PATH
   remote: .
   specs:
-    aha-services (1.18.51)
-      ClothRed
+    aha-services (1.20.73)
       activesupport
       aha-api
       crack
@@ -53,7 +58,6 @@ PATH
 GEM
   remote: http://rubygems.org/
   specs:
-    ClothRed (0.4.1)
     activesupport (4.1.7)
       i18n (~> 0.6, >= 0.6.9)
       json (~> 1.7, >= 1.7.7)
@@ -67,7 +71,7 @@ GEM
     crack (0.4.2)
       safe_yaml (~> 1.0.0)
     diff-lcs (1.2.5)
-    domain_name (0.5.25)
+    domain_name (0.5.20160216)
       unf (>= 0.0.5, < 1.0.0)
     faraday (0.9.0)
       multipart-post (>= 1.2, < 3)
@@ -139,7 +143,7 @@ GEM
       thread_safe (~> 0.1)
     unf (0.1.4)
       unf_ext
-    unf_ext (0.0.7.1)
+    unf_ext (0.0.7.2)
     webmock (1.20.2)
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
@@ -148,6 +152,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  ClothRed!
   aha-api!
   aha-services!
   byebug
