@@ -23,6 +23,7 @@ class TFSWorkItemResource < TFSResource
   end
 
   def add_attachment workitem, attachment, size
+    return unless attachment.respond_to? :url
     patch_set = [{
       :op => :add,
       :path => "/relations/-",

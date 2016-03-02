@@ -39,6 +39,7 @@ require 'services/trello/trello_resource'
 require 'services/fogbugz/fogbugz_resource'
 require 'services/tfs/tfs_common'
 require 'services/tfs/tfs_resource'
+require 'services/rally/webhook'
 require 'services/rally/rally_resource'
 require 'services/bugzilla/bugzilla_resource'
 
