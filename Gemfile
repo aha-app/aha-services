@@ -15,7 +15,7 @@ gem 'crack'
 gem 'restforce'
 gem 'net-http-persistent'
 gem 'rubyntlm'
-gem 'ClothRed', :git => "https://github.com/aha-app/ClothRed"
+gem 'ClothRed', :git => "https://github.com/aha-app/ClothRed", require: "clothred"
 
 # Auto reload sinatra
 gem 'rerun'
