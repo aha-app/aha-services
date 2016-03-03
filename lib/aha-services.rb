@@ -11,7 +11,7 @@ require 'rubyntlm'
 require 'pp'
 
 require 'faraday'
-Bundler.require(:default)
+require 'clothred'
 require 'faraday_middleware'
 require 'ipaddr'
 require 'socket'
