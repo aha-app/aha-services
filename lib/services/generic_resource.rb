@@ -57,7 +57,8 @@ class GenericResource
     @@default_http_options ||= {
       :request => {:timeout => 310, :open_timeout => 25},
       :ssl => {:verify => false, :verify_depth => 5},
-      :headers => {}
+      :headers => {"Accept-Encoding" => "identity"} # Ruby 2.0+ has a problem dealing with deflate headers. Avoiding them entirely until
+        # https://bugs.ruby-lang.org/issues/11268 can be resolved in whatever ruby version we're using
     }
   end
 
