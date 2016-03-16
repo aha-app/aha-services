@@ -27,11 +27,15 @@ class RallyReleaseResource < RallyResource
 
 protected
   def map_release aha_release
+    start_date = aha_release.start_date || Date.today
+    release_date = aha_release.release_date || Date.today
+
+    start_date = [start_date, release_date].min # Never send a start date after the release date
     release = {
       :Name => aha_release.name,
       :Project => @service.data.project,
-      :ReleaseDate => Date.parse(aha_release.release_date || Date.today.to_s).rfc3339(),
-      :ReleaseStartDate => Date.parse(aha_release.start_date || Date.today.to_s).rfc3339(),
+      :ReleaseDate => Date.parse(release_date).rfc3339(),
+      :ReleaseStartDate => Date.parse(start_date).rfc3339(),
       :State => "Planning",
       :Theme => aha_release.theme.body
     }
