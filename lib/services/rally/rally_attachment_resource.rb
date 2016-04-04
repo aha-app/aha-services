@@ -10,9 +10,8 @@ class RallyAttachmentResource < RallyResource
       :ContentType => aha_attachment.content_type,
       :Name => aha_attachment.file_name,
       :Size => aha_attachment.file_size
-    }}
-    maybe_add_workspace_to_object(body[:Attachment])
-    response = http_put url, body.to_json
+    }}.to_json
+    response = http_put url, body
     process_response response do |document|
       return document.CreateResult.Object
     end

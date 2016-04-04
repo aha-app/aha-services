@@ -1,6 +1,6 @@
 class RallyReleaseResource < RallyResource
   def by_id id
-    url = rally_url_without_workspace "/release/#{id}"
+    url = rally_url "/release/#{id}"
     response = http_get url
     process_response response do |document|
       return document.Release
@@ -39,9 +39,5 @@ protected
       :State => "Planning",
       :Theme => aha_release.theme.body
     }
-
-    maybe_add_workspace_to_object(release)
-
-    release
   end
 end

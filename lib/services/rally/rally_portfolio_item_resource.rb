@@ -1,6 +1,6 @@
 class RallyPortfolioItemResource < RallyResource
   def get_all_portfolio_items
-    path = "/typedefinitions?" + {
+    path = "/typedefinition?" + {
       start: 1,
       pagesize: 200,
       query: "((TypePath contains PortfolioItem) AND (Ordinal >= 0))",

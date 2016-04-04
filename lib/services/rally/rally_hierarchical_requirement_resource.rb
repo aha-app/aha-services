@@ -9,7 +9,7 @@ class RallyHierarchicalRequirementResource < RallyResource
   end
 
   def get id, element_name
-    url = rally_url_without_workspace(object_path(id, element_name))
+    url = rally_url(object_path(id, element_name))
     process_response http_get(url) do |document|
       if element_name == "UserStory"
         return document.HierarchicalRequirement
@@ -28,14 +28,14 @@ class RallyHierarchicalRequirementResource < RallyResource
   end
 
   def get_children id, element_name
-    url = rally_url_without_workspace(portfolio_item_or_hr_path(id, element_name) + "/Children")
+    url = rally_url(portfolio_item_or_hr_path(id, element_name) + "/Children")
     process_response http_get(url) do |document|
       return document.QueryResult.Results
     end
   end
 
   def get_attachments id, element_name
-    url = rally_url_without_workspace(portfolio_item_or_hr_path(id, element_name) + "/Attachments")
+    url = rally_url(portfolio_item_or_hr_path(id, element_name) + "/Attachments")
     process_response http_get(url) do |document|
       return document.QueryResult.Results
     end
@@ -51,12 +51,11 @@ class RallyHierarchicalRequirementResource < RallyResource
 
   def create hrequirement, element_name
     body = {}
-    url = rally_secure_url_without_workspace(create_path(element_name))
+    url = rally_secure_url(create_path(element_name))
     payload_key = element_name
     if element_name == "UserStory"
       payload_key = "HierarchicalRequierement"
     end
-
     body[payload_key] = hrequirement
     response = http_put url, body.to_json
     process_response response, 200, 201 do |document|
@@ -69,7 +68,7 @@ class RallyHierarchicalRequirementResource < RallyResource
 
   def update id, hrequirement, element_name
     body = {}
-    url = rally_secure_url_without_workspace(object_path(id, element_name))
+    url = rally_secure_url(object_path(id, element_name))
     payload_key = element_name
     if element_name == "UserStory"
       payload_key = "HierarchicalRequierement"
@@ -171,8 +170,6 @@ protected
       attributes[:PlannedEndDate] = aha_feature.due_date
     end
 
-    maybe_add_workspace_to_object(attributes)
-
     include_release_if_exists(aha_feature, attributes, rally_release_id)
     attributes
   end
@@ -183,8 +180,6 @@ protected
       :Name => aha_requirement.name,
       :Project => @service.data.project
     }
-
-    maybe_add_workspace_to_object(mapping)
 
     # The only time we should include the PortfolioItem field is when we are mapping across the hierarchicalRequirement boundary.
     if (@service.feature_element_name != "UserStory" && @service.requirement_element_name == "UserStory")
