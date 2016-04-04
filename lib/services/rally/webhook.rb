@@ -40,6 +40,8 @@ module AhaServices::RallyWebhook
     results = api.search_integration_fields(data.integration_id, "id", new_state.ObjectID)["records"] rescue []
 
     results.each do |result|
+      resource = nil
+      resource_type = nil
       if result.feature
         resource = result.feature
         resource_type = "feature"
@@ -51,6 +53,8 @@ module AhaServices::RallyWebhook
       else
         logger.info "Unhandled resource type for webhook: #{result.inspect}"
       end
+
+      next unless resource
 
       logger.info "Received webhook to update #{resource_type}:#{resource.id}"
 
