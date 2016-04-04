@@ -76,7 +76,9 @@ class AhaServices::Trello < AhaService
   end
 
   def create_card_for(feature)
-    due_date = feature.due_date || feature.release.release_date
+    due_date = unless feature.release.parking_lot
+      feature.due_date || feature.release.release_date
+    end
     
     card = card_resource.create(
       name: resource_name(feature),
