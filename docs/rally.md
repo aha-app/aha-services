@@ -18,9 +18,11 @@ Create the integration in Aha!
 
 1. Enter your Rally username and password.
 2. Click the _Test connection_ button.
-3. On success, you should be able to choose one of your Rally projects that this Aha! product should integrate with. The list of projects that you see is controlled by the "Default Workspace" you have configured in your Rally user profile. If you are not seeing the projects you expect it is probably because your default workspace is not set.
-4. Enable the integration.
-5. Test the integration by going to one of your features in Aha! and using the _Send to Rally_ item in the _Actions_ menu on the features page. You should then look at your project in Rally and see that the feature (and any requirements) were properly converted to user stories. 
+3. On success you will be able to choose a Rally workspace. After choosing the workspace, click the _Test connection_ button again to populate the list of projects in that workspace.
+4. Choose the project to integrate with. 
+5. Based on the project you will be able to choose the mapping between Aha! and Rally resources.
+6. Enable the integration.
+7. Test the integration by going to one of your features in Aha! and using the _Send to Rally_ item in the _Actions_ menu on the features page. You should then look at your project in Rally and see that the feature (and any requirements) were properly converted to user stories. 
 
 ## Troubleshooting
 
