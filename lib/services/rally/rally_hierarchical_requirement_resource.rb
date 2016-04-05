@@ -88,17 +88,17 @@ class RallyHierarchicalRequirementResource < RallyResource
 
   def human_url_for_feature(id)
     if @service.feature_element_name == "UserStory"
-      "https://rally1.rallydev.com/#/detail/userstory/#{id}"
+      "https://rally1.rallydev.com/#/#{@service.data.project}d/detail/userstory/#{id}"
     else
-      "https://rally1.rallydev.com/#/detail/portfolioitem/#{@service.feature_element_name.downcase}/#{id}"
+      "https://rally1.rallydev.com/#/#{@service.data.project}d/detail/portfolioitem/#{@service.feature_element_name.downcase}/#{id}"
     end
   end
 
   def human_url_for_requirement(id)
     if @service.requirement_element_name == "UserStory"
-      "https://rally1.rallydev.com/#/detail/userstory/#{id}"
+      "https://rally1.rallydev.com/#/#{@service.data.project}d/detail/userstory/#{id}"
     else
-      "https://rally1.rallydev.com/#/detail/portfolioitem/#{@service.requirement_element_name.downcase}/#{id}"
+      "https://rally1.rallydev.com/#/#{@service.data.project}d/detail/portfolioitem/#{@service.requirement_element_name.downcase}/#{id}"
     end
   end
 
