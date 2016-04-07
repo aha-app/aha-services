@@ -28,12 +28,14 @@ module AhaServices::RallyWebhook
   end
 
   def update_record_from_webhook(payload)
+    raw_state_map = {}
     new_state = Hashie::Mash.new(Hash[ payload.message.state.map do |_, attribute|
       value = attribute.value
       # User story webhooks get passed back as a status object, with a nested value
       if value.is_a? Hashie::Mash
         value = value.name
       end
+      rawStateMap[attribute.name] = value
       [attribute.name, value]
     end ])
 
@@ -61,6 +63,9 @@ module AhaServices::RallyWebhook
       update_hash = {}
       update_hash[:description] = new_state["Description"] if new_state["Description"]
       update_hash[:name] = new_state["Name"] if new_state["Name"]
+      if raw_state_map["Owner"] && raw_state_map["Owner"]["ref"]
+        update_hash[:assigned_to_user] = {"email" => rally_user_resource.email_from_ref(raw_state_map["Owner"]["ref"])}
+      end
       if resource_type == "feature"
         update_hash[:start_date] = Date.parse(new_state["PlannedStartDate"]) if new_state["PlannedStartDate"]
         update_hash[:due_date] = Date.parse(new_state["PlannedEndDate"]) if new_state["PlannedEndDate"]
@@ -80,6 +85,10 @@ module AhaServices::RallyWebhook
     status_mappings ||= {}
     (new_state["State"] && (status_mappings[new_state["State"]])) || 
       (new_state["ScheduleState"] && (status_mappings[new_state["ScheduleState"]]))
+  end
+
+  def rally_user_resource
+    @rally_user_resource ||= RallyUserResource.new self
   end
 end
 

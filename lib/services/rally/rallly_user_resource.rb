@@ -6,4 +6,10 @@ class RallyUserResource < RallyResource
       return user["_ref"] if user
     end
   end
+
+  def email_from_ref(reference)
+    process_response(http_get(reference)) do |document|
+      return document.User.EmailAddress rescue nil
+    end
+  end
 end
