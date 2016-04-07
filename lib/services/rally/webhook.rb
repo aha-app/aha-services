@@ -31,11 +31,11 @@ module AhaServices::RallyWebhook
     raw_state_map = {}
     new_state = Hashie::Mash.new(Hash[ payload.message.state.map do |_, attribute|
       value = attribute.value
+      raw_state_map[attribute.name] = value
       # User story webhooks get passed back as a status object, with a nested value
       if value.is_a? Hashie::Mash
         value = value.name
       end
-      raw_state_map[attribute.name] = value
       [attribute.name, value]
     end ])
 
