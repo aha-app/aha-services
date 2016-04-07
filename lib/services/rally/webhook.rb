@@ -35,7 +35,7 @@ module AhaServices::RallyWebhook
       if value.is_a? Hashie::Mash
         value = value.name
       end
-      rawStateMap[attribute.name] = value
+      raw_state_map[attribute.name] = value
       [attribute.name, value]
     end ])
 
