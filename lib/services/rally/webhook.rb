@@ -65,6 +65,8 @@ module AhaServices::RallyWebhook
       update_hash[:name] = new_state["Name"] if new_state["Name"]
       if raw_state_map["Owner"] && raw_state_map["Owner"]["ref"]
         update_hash[:assigned_to_user] = {"email" => rally_user_resource.email_from_ref(raw_state_map["Owner"]["ref"])}
+      else
+        update_hash[:assigned_to_user] = nil
       end
       if resource_type == "feature"
         update_hash[:start_date] = Date.parse(new_state["PlannedStartDate"]) if new_state["PlannedStartDate"]
