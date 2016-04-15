@@ -172,9 +172,18 @@ protected
     end
 
     maybe_add_workspace_to_object(attributes)
+    maybe_add_owner_to_object(attributes, aha_feature)
 
     include_release_if_exists(aha_feature, attributes, rally_release_id)
     attributes
+  end
+
+  def maybe_add_owner_to_object(attributes, aha_object)
+    if aha_object.assigned_to_user.try(:email) && user_id = rally_user_resource.user_id_for_email(aha_object.assigned_to_user.email)
+      attributes[:Owner] = user_id
+    elsif aha_object.created_by_user.try(:email) && user_id = rally_user_resource.user_id_for_email(aha_object.created_by_user.email)
+      attributes[:Owner] = user_id
+    end
   end
 
   def map_requirement parent_id, release_id, aha_requirement
@@ -185,6 +194,7 @@ protected
     }
 
     maybe_add_workspace_to_object(mapping)
+    maybe_add_owner_to_object(mapping, aha_requirement)
 
     # The only time we should include the PortfolioItem field is when we are mapping across the hierarchicalRequirement boundary.
     if (@service.feature_element_name != "UserStory" && @service.requirement_element_name == "UserStory")
@@ -215,6 +225,10 @@ protected
 
   def rally_release_resource
     @rally_release_resource ||= RallyReleaseResource.new @service
+  end
+
+  def rally_user_resource
+    @rally_user_resource ||= RallyUserResource.new @service
   end
 
   def rally_attachment_resource
