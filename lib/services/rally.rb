@@ -6,7 +6,12 @@ class AhaServices::Rally < AhaService
 
   install_button
 
-  select :project, description: "The Rally project that this Aha! product will integrate with.", collection: -> (meta_data,data) {
+  select :workspace, description: "The Rally workspace containing the product Aha! will integrate with. After changing the workspace click the 'Test Connection' button to retrieve the projects for the workspace.", collection: -> (meta_data, data) {
+    return [] unless meta_data && meta_data.workspaces
+    meta_data.workspaces.collect{|p| [p.Name, p.ObjectID]}
+  }
+
+  select :project, description: "The Rally project that this Aha! product will integrate with. Click 'Test Connection' to refresh this list.", collection: -> (meta_data,data) {
     return [] unless meta_data && meta_data.projects
     meta_data.projects.collect {|p| [p.Name, p.ObjectID] }
   }
@@ -30,6 +35,7 @@ class AhaServices::Rally < AhaService
   def receive_installed
     projects = rally_project_resource.all
     meta_data.projects = projects
+    meta_data.workspaces = rally_workspace_resource.all
     meta_data.type_definitions = rally_portfolio_item_resource.get_all_portfolio_items
     meta_data.state_definitions = rally_state_resource.get_all_states
     meta_data.install_successful = true
@@ -94,6 +100,10 @@ protected
 
   def rally_project_resource
     @rally_project_resource ||= RallyProjectResource.new self
+  end
+
+  def rally_workspace_resource
+    @rally_workspace_resource ||= RallyWorkspaceResource.new self
   end
 
   def rally_hierarchical_requirement_resource

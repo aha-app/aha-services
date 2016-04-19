@@ -9,7 +9,7 @@ class RallyHierarchicalRequirementResource < RallyResource
   end
 
   def get id, element_name
-    url = rally_url(object_path(id, element_name))
+    url = rally_url_without_workspace(object_path(id, element_name))
     process_response http_get(url) do |document|
       if element_name == "UserStory"
         return document.HierarchicalRequirement
@@ -28,14 +28,14 @@ class RallyHierarchicalRequirementResource < RallyResource
   end
 
   def get_children id, element_name
-    url = rally_url(portfolio_item_or_hr_path(id, element_name) + "/Children")
+    url = rally_url_without_workspace(portfolio_item_or_hr_path(id, element_name) + "/Children")
     process_response http_get(url) do |document|
       return document.QueryResult.Results
     end
   end
 
   def get_attachments id, element_name
-    url = rally_url(portfolio_item_or_hr_path(id, element_name) + "/Attachments")
+    url = rally_url_without_workspace(portfolio_item_or_hr_path(id, element_name) + "/Attachments")
     process_response http_get(url) do |document|
       return document.QueryResult.Results
     end
@@ -51,11 +51,12 @@ class RallyHierarchicalRequirementResource < RallyResource
 
   def create hrequirement, element_name
     body = {}
-    url = rally_secure_url(create_path(element_name))
+    url = rally_secure_url_without_workspace(create_path(element_name))
     payload_key = element_name
     if element_name == "UserStory"
       payload_key = "HierarchicalRequierement"
     end
+
     body[payload_key] = hrequirement
     response = http_put url, body.to_json
     process_response response, 200, 201 do |document|
@@ -68,7 +69,7 @@ class RallyHierarchicalRequirementResource < RallyResource
 
   def update id, hrequirement, element_name
     body = {}
-    url = rally_secure_url(object_path(id, element_name))
+    url = rally_secure_url_without_workspace(object_path(id, element_name))
     payload_key = element_name
     if element_name == "UserStory"
       payload_key = "HierarchicalRequierement"
@@ -87,17 +88,17 @@ class RallyHierarchicalRequirementResource < RallyResource
 
   def human_url_for_feature(id)
     if @service.feature_element_name == "UserStory"
-      "https://rally1.rallydev.com/#/detail/userstory/#{id}"
+      "https://rally1.rallydev.com/#/#{@service.data.project}d/detail/userstory/#{id}"
     else
-      "https://rally1.rallydev.com/#/detail/portfolioitem/#{@service.feature_element_name.downcase}/#{id}"
+      "https://rally1.rallydev.com/#/#{@service.data.project}d/detail/portfolioitem/#{@service.feature_element_name.downcase}/#{id}"
     end
   end
 
   def human_url_for_requirement(id)
     if @service.requirement_element_name == "UserStory"
-      "https://rally1.rallydev.com/#/detail/userstory/#{id}"
+      "https://rally1.rallydev.com/#/#{@service.data.project}d/detail/userstory/#{id}"
     else
-      "https://rally1.rallydev.com/#/detail/portfolioitem/#{@service.requirement_element_name.downcase}/#{id}"
+      "https://rally1.rallydev.com/#/#{@service.data.project}d/detail/portfolioitem/#{@service.requirement_element_name.downcase}/#{id}"
     end
   end
 
@@ -170,8 +171,19 @@ protected
       attributes[:PlannedEndDate] = aha_feature.due_date
     end
 
+    maybe_add_workspace_to_object(attributes)
+    maybe_add_owner_to_object(attributes, aha_feature)
+
     include_release_if_exists(aha_feature, attributes, rally_release_id)
     attributes
+  end
+
+  def maybe_add_owner_to_object(attributes, aha_object)
+    if aha_object.assigned_to_user.try(:email) && user_id = rally_user_resource.user_id_for_email(aha_object.assigned_to_user.email)
+      attributes[:Owner] = user_id
+    elsif aha_object.created_by_user.try(:email) && user_id = rally_user_resource.user_id_for_email(aha_object.created_by_user.email)
+      attributes[:Owner] = user_id
+    end
   end
 
   def map_requirement parent_id, release_id, aha_requirement
@@ -180,6 +192,9 @@ protected
       :Name => aha_requirement.name,
       :Project => @service.data.project
     }
+
+    maybe_add_workspace_to_object(mapping)
+    maybe_add_owner_to_object(mapping, aha_requirement)
 
     # The only time we should include the PortfolioItem field is when we are mapping across the hierarchicalRequirement boundary.
     if (@service.feature_element_name != "UserStory" && @service.requirement_element_name == "UserStory")
@@ -210,6 +225,10 @@ protected
 
   def rally_release_resource
     @rally_release_resource ||= RallyReleaseResource.new @service
+  end
+
+  def rally_user_resource
+    @rally_user_resource ||= RallyUserResource.new @service
   end
 
   def rally_attachment_resource
