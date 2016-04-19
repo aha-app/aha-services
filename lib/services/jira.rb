@@ -37,10 +37,15 @@ class AhaServices::Jira < AhaService
       'story_points_field' => field_resource.story_points_field,
       'aha_position_field' => field_resource.aha_position_field,
       'aha_reference_field' => new_or_existing_aha_reference_field}
-    @meta_data['projects'] = project_resource.all(meta_data)
+    @meta_data["projects"] = project_resource.list
+    if data.project
+      project_id = @meta_data["projects"].detect{|project| project['key'] == data.project}["id"]
+      project_resource.fetch_expanded_data_for_project(project_id, @meta_data)
+    end
+    # @meta_data['projects'] = project_resource.all(meta_data)
     @meta_data['resolutions'] = resolution_resource.all
   end
-  
+
   def receive_create_feature
     integrate_or_update_feature(payload.feature)
   end
