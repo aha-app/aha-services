@@ -16,9 +16,9 @@ GIT
 
 GIT
   remote: https://github.com/JeremyGeros/reverse_markdown.git
-  revision: 3135578422e22e0adfa991bc9ea9fbde9e06cfe5
+  revision: 5660e9b69d46bf6a550bf6e26ed69f40d1d702fd
   specs:
-    reverse_markdown (0.6.5)
+    reverse_markdown (0.6.6)
       nokogiri
 
 GIT

@@ -385,9 +385,9 @@ describe AhaServices::GithubIssues do
       end
 
       context "with a github todo in the body" do
-        let(:resource) { Hashie::Mash.new( description: { body: "[ ] Todo" }) }
+        let(:resource) { Hashie::Mash.new( description: { body: "<ul><li>[ ] Todo<br></li></ul>" }) }
         it "returns the body" do
-          expect(service.issue_body(resource)).to eq "[ ] Todo\n\n"
+          expect(service.issue_body(resource)).to eq "- [ ] Todo\n\n"
         end
       end
     end
