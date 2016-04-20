@@ -38,8 +38,8 @@ class AhaServices::Jira < AhaService
       'aha_position_field' => field_resource.aha_position_field,
       'aha_reference_field' => new_or_existing_aha_reference_field}
     @meta_data["projects"] = project_resource.list
-    if data.project
-      project_id = @meta_data["projects"].detect{|project| project['key'] == data.project}["id"]
+    if data.project && projects = @meta_data["projects"].detect{|project| project['key'] == data.project}
+      project_id = projects["id"]
       project_resource.fetch_expanded_data_for_project(project_id, @meta_data)
     end
     # @meta_data['projects'] = project_resource.all(meta_data)
