@@ -58,7 +58,7 @@ module JiraMappedFields
   
   def aha_type_to_string(aha_type, aha_value)
     case aha_type
-    when "html"
+    when "html", "note"
       convert_html(aha_value)
     when "array"
       aha_value.join(",")
