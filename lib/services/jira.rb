@@ -8,7 +8,8 @@ class AhaServices::Jira < AhaService
   string :username, description: "Use your JIRA username from the JIRA profile page, not your email address."
   password :password
   install_button
-  select :project, collection: ->(meta_data, data) { meta_data.projects.collect{|p| [p.name, p[:key]] } }
+  select :project, collection: ->(meta_data, data) { meta_data.projects.collect{|p| [p.name, p[:key]] } },
+    configure_button: "Load project data"
   boolean :send_initiatives, description: "Check to use feature initiatives to create Epics in JIRA Agile"
   select :feature_issue_type, 
     collection: ->(meta_data, data) { 
@@ -38,12 +39,27 @@ class AhaServices::Jira < AhaService
       'aha_position_field' => field_resource.aha_position_field,
       'aha_reference_field' => new_or_existing_aha_reference_field}
     @meta_data["projects"] = project_resource.list
-    if data.project && projects = @meta_data["projects"].detect{|project| project['key'] == data.project}
-      project_id = projects["id"]
-      project_resource.fetch_expanded_data_for_project(project_id, @meta_data)
-    end
     # @meta_data['projects'] = project_resource.all(meta_data)
     @meta_data['resolutions'] = resolution_resource.all
+  end
+
+  def receive_configured
+    Rails.logger.info "configured payload: #{payload.inspect}"
+    case payload[:field]
+    when "attribute_project"
+      if data.project && projects = @meta_data["projects"].detect{|project| project['key'] == data.project}
+        project_id = projects["id"]
+        project_resource.fetch_expanded_data_for_project(project_id, @meta_data)
+      end
+      @meta_data["configuration"] = {
+        "attribute_project" => {
+          "message" => "Configuration successful for project #{data.project}",
+          "success" => true
+        }
+      }
+      Rails.logger.info "configured meta data: #{@meta_data.to_hash.inspect}"
+      @meta_data
+    end
   end
 
   def receive_create_feature
