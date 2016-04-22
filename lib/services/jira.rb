@@ -494,7 +494,7 @@ protected
       return Hash.new
     end
     
-    if resource.work_units == 10 and issue_type.has_field_time_tracking # Units are minutes.
+    if resource.work_units == 10 and issue_type.has_field_time_tracking and resource.original_estimate <= 20000 and resource.remaining_estimate <= 20000 # Units are minutes. Ensure estimates are below the max limit for Jira
       {
         timetracking: {
           originalEstimate: resource.original_estimate,
