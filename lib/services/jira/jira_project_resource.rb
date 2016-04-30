@@ -10,6 +10,7 @@ class JiraProjectResource < JiraResource
   end
 
   def populate_project_data(project_id, meta_data)
+    prepare_request
     response = http_get("#{api_url}/issue/createmeta?projectIds=#{project_id}&expand=projects.issuetypes.fields")
     process_response(response, 200) do |meta|
       meta.projects.each do |project|
