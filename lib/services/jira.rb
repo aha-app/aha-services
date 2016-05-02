@@ -45,20 +45,27 @@ class AhaServices::Jira < AhaService
   end
 
   def receive_configured
-    Rails.logger.info "configured payload: #{payload.inspect}"
     case payload[:field]
     when "attribute_project"
+      @meta_data = {'epic_name_field' => field_resource.epic_name_field,
+        'epic_link_field' => field_resource.epic_link_field,
+        'story_points_field' => field_resource.story_points_field,
+        'aha_position_field' => field_resource.aha_position_field,
+        'aha_reference_field' => new_or_existing_aha_reference_field}
+
+      @meta_data['resolutions'] = resolution_resource.all
+
       if data.project && projects = @meta_data["projects"].detect{|project| project['key'] == data.project}
         project_id = projects["id"]
         project_resource.fetch_expanded_data_for_project(project_id, @meta_data)
       end
+
       @meta_data["configuration"] = {
         "attribute_project" => {
           "message" => "Loaded configuration for project #{data.project}",
           "success" => true
         }
       }
-      Rails.logger.info "configured meta data: #{@meta_data.to_hash.inspect}"
       @meta_data
     end
   end
