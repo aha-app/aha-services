@@ -186,7 +186,7 @@ protected
     version = find_or_attach_jira_version(@feature.release) unless dont_send_releases?
     issue_info = get_existing_issue_info(@feature)
     jira_requirement = update_or_attach_jira_issue(requirement, nil, version, issue_info)
-    logger.info("Created/Updated issue #{jira_requirement.key} with requirement #{requirement.reference_num}")
+    logger.info("Created/Updated issue #{jira_requirement[:key]} with requirement #{requirement.reference_num}")
   end
 
   def get_existing_issue_info(resource)
