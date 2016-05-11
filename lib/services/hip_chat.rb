@@ -2,6 +2,7 @@ class AhaServices::HipChat < AhaService
   title "HipChat"
   caption "Send customized activity from Aha! into group chat"
   
+  string :api_host, description: "API host for your on-premise HipChat installation such as 'hipchat.mycompany.com'. If you are using the cloud-hosted version of HipChat, leave this blank."
   string :auth_token,
     description: "An authentication token from HipChat. For best security you should use a 'Room Notification Token'."
   string :room_name, description: "The name or API ID of the room messages should be sent to."
@@ -38,9 +39,13 @@ class AhaServices::HipChat < AhaService
     
 protected
 
+  def api_host
+    data.api_host.blank? ? "api.hipchat.com" : data.api_host
+  end
+
   def send_message(message)
     http.headers['Content-Type'] = 'application/json'
-    response = http_post("https://api.hipchat.com/v2/room/#{URI::encode(data.room_name)}/notification?auth_token=#{data.auth_token}", 
+    response = http_post("https://#{api_host}/v2/room/#{URI::encode(data.room_name)}/notification?auth_token=#{data.auth_token}", 
       {message: message, message_format: 'html'}.to_json)
     if [200, 201, 204].include?(response.status)
       return

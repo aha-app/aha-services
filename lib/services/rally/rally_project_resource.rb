@@ -4,12 +4,12 @@ class RallyProjectResource < RallyResource
     start = 1
     total_results = 0
     loop do 
-      url = rally_url "/project?fetch=true&pagesize=100&start=#{start}"
+      url = rally_url "/projects?fetch=true&pagesize=100&start=#{start}"
       response = http_get url
       process_response response do |document|
         total_results = document.QueryResult.TotalResultCount
         start += document.QueryResult.PageSize
-        projects.concat(document.QueryResult.Results.map{|project| project.slice("ObjectID", "_ref", "Name") })
+        projects.concat(document.QueryResult.Results.map{|project| project.slice("ObjectID", "_ref", "Name", "_refObjectUUID") })
       end
       break if start >= total_results
     end

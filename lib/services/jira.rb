@@ -22,7 +22,10 @@ class AhaServices::Jira < AhaService
   internal :field_mapping
   # internal :resolution_mapping  # TODO: we are not actually using this at the moment.
   boolean :dont_send_releases, description: "Check to prevent Aha! from creating versions in JIRA and from populating the fixVersions field for issues. For most users this box should not be checked."
+  
   boolean :dont_auto_import, description: "Check to prevent Aha! from automatically importing issues that are related to an issue that is already linked to Aha!"
+  boolean :only_auto_import_mapped_issue_types, description: "Check to prevent Aha! from from automatically importing issue types that are not mapped to Features or Requirements"
+
   boolean :send_tags, description: "Check to synchronize Aha! tags and JIRA labels. We recommend enabling this for new integrations. Enabling this option once features are synced to JIRA may cause tags in Aha! or labels in JIRA to be removed from a feature if the corresponding label or tag doesn't exist in the other system."
   
   callback_url description: "The webhook enables updates from JIRA to Aha! Follow the instructions above to install this webhook in JIRA. Only one hook is necessary, even if multiple products are integrated with JIRA."
@@ -79,6 +82,21 @@ class AhaServices::Jira < AhaService
   def search_issues(params)
     issue_resource.search(params)
   end
+
+  def issue_type_by_id(id)
+    raise AhaService::RemoteError, "Integration has not been configured" if meta_data.projects.nil?
+    project = meta_data.projects.find {|project| project[:key] == data.project }
+    raise AhaService::RemoteError, "Integration has not been configured, can't find project '#{data.project}'" if project.nil?
+    issue_types = meta_data.issue_type_sets[project.issue_types]
+    issue_type = issue_types.find {|type| type.id.to_s == id.to_s }
+    raise AhaService::RemoteError, "Integration needs to be reconfigured, issue types have changed, can't find issue type '#{id}'" if issue_type.nil?
+    issue_type
+  end
+
+  def update_issue_fields(issue_id, issue)
+    issue_resource.update(issue_id, issue)
+  end
+
 
 protected
   include JiraMappedFields
@@ -257,11 +275,13 @@ protected
       .merge!(issue_epic_link_field(issue_type, parent, initiative))
       .merge!(subtask_fields(issue_type.subtask, parent))
       .merge!(time_tracking_fields(resource, issue_type))
-      .merge!(mapped_custom_fields(@feature, issue_type))
       .merge!(assignee_fields(resource, issue_type))
       .merge!(reporter_fields(resource, issue_type))
-      .merge!(due_date_fields(resource, issue_type))
       .merge!(aha_position_fields(resource, issue_type))
+
+    # Use the custom fields from @feature to populate requirements, to solve for required custom fields on create
+    issue.fields.merge!(mapped_custom_fields(@feature, issue_type))
+    issue.fields.merge!(due_date_fields(@feature, issue_type))
     
     new_issue = issue_resource.create(issue)
 
@@ -294,16 +314,21 @@ protected
       .merge!(label_fields(resource, issue_type))
       .merge!(time_tracking_fields(resource, issue_type))
       .merge!(aha_reference_fields(resource, issue_type))
-      .merge!(mapped_custom_fields(@feature, issue_type))
       .merge!(assignee_fields(resource, issue_type))
-      .merge!(due_date_fields(@feature, issue_type))
       .merge!(aha_position_fields(resource, issue_type))
+
+    if @feature == resource
+      # Only update custom_fields and due dates for features, not requirements.
+      # This will cause an issue with two-way field syncing if we constantly overwrite requirements' custom fields
+      issue.fields
+        .merge!(mapped_custom_fields(@feature, issue_type))
+        .merge!(due_date_fields(@feature, issue_type))
+    end
       
     issue.merge!(version_update_fields(version, issue_type))
 
     issue_resource.update(issue_info.id, issue)
 
-    
     update_epic_link(issue_info.id, issue_type, parent, initiative)
     
     update_attachments(issue_info.id, resource)
@@ -526,9 +551,17 @@ protected
     elsif parent && issue_type.has_field_epic_link && issue_type_by_id(data.feature_issue_type).has_field_epic_name
       epic_key = parent[:key]
     end
-    
     if epic_key
       greenhopper_epic_resource.add_story(issue_id, epic_key) 
+    elsif data.send_initiatives == "1" && initiative.nil? && issue_type.has_field_epic_link
+      begin
+        issue_data = get_issue(issue_id)
+        if issue_data && (epic_key = issue_data.fields[meta_data.epic_link_field])
+          greenhopper_epic_resource.remove_story(issue_id, epic_key) 
+        end
+      rescue Exception => e
+        logger.debug("Error removing epic from issue. #{e.class}: #{e.message} #{e.backtrace.join("\n")}")
+      end
     end
   end
 
@@ -553,15 +586,6 @@ protected
     issue_type_by_id(issue_type_id)
   end
 
-  def issue_type_by_id(id)
-    raise AhaService::RemoteError, "Integration has not been configured" if meta_data.projects.nil?
-    project = meta_data.projects.find {|project| project[:key] == data.project }
-    raise AhaService::RemoteError, "Integration has not been configured, can't find project '#{data.project}'" if project.nil?
-    issue_types = meta_data.issue_type_sets[project.issue_types]
-    issue_type = issue_types.find {|type| type.id.to_s == id.to_s }
-    raise AhaService::RemoteError, "Integration needs to be reconfigured, issue types have changed, can't find issue type '#{id}'" if issue_type.nil?
-    issue_type
-  end
 
   def epic_issue_type
     raise AhaService::RemoteError, "Integration has not been configured" if meta_data.projects.nil?

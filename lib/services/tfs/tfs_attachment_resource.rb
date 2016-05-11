@@ -15,6 +15,7 @@ class TFSAttachmentResource < TFSResource
 
   rescue AhaService::RemoteError => e
     logger.error("Failed to upload attachment : #{e.message}")
+    return nil
   end
 
 end
