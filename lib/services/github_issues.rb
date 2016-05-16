@@ -226,14 +226,15 @@ protected
 
   def requirements_to_checklist resource
     resource.requirements.map do |requirement|
-      head = "- [ ] #{requirement.name}\n"
+      status = (requirement.workflow_status.try(:complete) || false) ? "x" : " "
+      head = "- [#{status}] #{requirement.name}\n"
       body = html_to_markdown(requirement.description.body, true)
       body += attachments_in_body(requirement.description.attachments) if requirement.description.attachments.present?
       head + indent(body, "    ")
-    end.join("\n\n")
+    end.join("\n").gsub(/\n+/m, "\n")
   end
 
   def indent text, prefix
-    text.lines.map{|line| prefix + line }.join("\n")
+    text.lines.map{|line| prefix + line.chomp }.join("\n")
   end
 end
