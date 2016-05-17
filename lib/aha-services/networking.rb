@@ -150,7 +150,7 @@ module Networking
   def http_method(method, url = nil, body = nil, headers = nil)
     block = Proc.new if block_given?
     
-    @logger.debug("Sending #{method} request to #{url}")
+    @logger.debug("Sending #{method} request to #{url} with body: #{body} and headers: #{headers}")
     
     check_ssl do
       http.send(method) do |req|
@@ -160,6 +160,9 @@ module Networking
         block.call req if block
       end
     end
+  rescue Exception => e
+    @logger.debug("Error in #{method} request to #{url}: #{e.message}, body: #{body.inspect}")
+    raise e
   end
 
   #

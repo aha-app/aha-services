@@ -23,7 +23,6 @@ Gem::Specification.new do |s|
   s.add_dependency "simple_oauth", '>= 0.1', '< 0.3'
   s.add_dependency "activesupport"
   s.add_dependency "htmlentities"
-  s.add_dependency "ClothRed"
 
   # For Jira integration.
   s.add_dependency "jwt"

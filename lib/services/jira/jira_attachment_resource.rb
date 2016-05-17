@@ -12,6 +12,7 @@ class JiraAttachmentResource < JiraResource
 
   def download(attachment)
     prepare_request
+    http.headers['X-Atlassian-Token'] = 'nocheck'
     response = http_get attachment["content"]
     return StringIO.new(response.body)
   end

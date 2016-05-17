@@ -2,7 +2,7 @@ This two-way integration allows you to push your features and requirements in Ah
 
 ## Features
 
-* One Aha! product is associated with one Github respository.
+* One Aha! product can be associated with one or many Github repositories. If the association is one to many, you need to set up different integrations for each product - repository mapping.
 * Individual features can be sent to Github using the _Send to Github Issues_ item in the _Actions_ menu on the features page.
 * All features in a release (that have not already been implemented or sent to Github previously) can be sent to Github using the _Send to Github Issues_ item in the _Actions_ menu on the release page.
 * When a feature is copied to Github one issue will be created for the feature.

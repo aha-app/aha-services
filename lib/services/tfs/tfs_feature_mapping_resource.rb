@@ -75,7 +75,7 @@ protected
 
   def create_and_link_requirements project, workitem, requirements
     requirements.each do |requirement|
-      requirement_mapping_resource.create_and_link project, workitem, requirement
+      requirement_mapping_resource.create_or_update project, workitem, requirement
     end
   rescue AhaService::RemoteError => e
     logger.error e.message

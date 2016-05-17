@@ -7,7 +7,7 @@ class PivotalTrackerFeatureAndRequirementMappingResource < PivotalTrackerProject
       initiative_mapping = nil
     end
     feature_mapping = feature_mapping_resource.create_from_feature(feature, initiative_mapping)
-    feature.requirements.each do |requirement|
+    requirement_list(feature).each do |requirement|
       requirement_mapping_resource.create_from_requirement(requirement, feature, feature_mapping)
     end
   end
@@ -22,7 +22,7 @@ class PivotalTrackerFeatureAndRequirementMappingResource < PivotalTrackerProject
     feature_mapping_resource.update_from_feature(feature_mapping, feature, initiative_mapping)
 
     # Create or update each requirement.
-    feature.requirements.each do |requirement|
+    requirement_list(feature).each do |requirement|
       requirement_mapping = get_resource(requirement.integration_fields)
       if requirement_mapping.present?
         requirement_mapping_resource.update_from_requirement(requirement_mapping, requirement, feature_mapping)
@@ -33,7 +33,16 @@ class PivotalTrackerFeatureAndRequirementMappingResource < PivotalTrackerProject
   end
 
 private
-
+  
+  def requirement_list(feature)
+    if mapping == "story-task" || mapping == "epic-story-task"
+      feature.requirements
+    else
+      # If requirements will be stories then create in reverse order.
+      feature.requirements.reverse
+    end
+  end
+  
   def initiative_mapping_resource
     @initiative_mapping_resource ||= (mapping == "epic-story-task") ?
       PivotalTrackerEpicResource.new(@service, project_id) :

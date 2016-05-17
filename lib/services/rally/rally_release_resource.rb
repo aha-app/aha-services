@@ -1,6 +1,6 @@
 class RallyReleaseResource < RallyResource
   def by_id id
-    url = rally_url "/release/#{id}"
+    url = rally_url_without_workspace "/release/#{id}"
     response = http_get url
     process_response response do |document|
       return document.Release
@@ -27,13 +27,21 @@ class RallyReleaseResource < RallyResource
 
 protected
   def map_release aha_release
+    start_date = aha_release.start_date || Date.today.to_s
+    release_date = aha_release.release_date || Date.today.to_s
+
+    start_date = [start_date, release_date].min # Never send a start date after the release date
     release = {
       :Name => aha_release.name,
       :Project => @service.data.project,
-      :ReleaseDate => Date.parse(aha_release.release_date).rfc3339(),
-      :ReleaseStartDate => aha_release.created_at,
+      :ReleaseDate => Date.parse(release_date).rfc3339(),
+      :ReleaseStartDate => Date.parse(start_date).rfc3339(),
       :State => "Planning",
       :Theme => aha_release.theme.body
     }
+
+    maybe_add_workspace_to_object(release)
+
+    release
   end
 end
