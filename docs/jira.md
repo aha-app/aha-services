@@ -75,6 +75,7 @@ This integration supports sending the following items:
     </tr>
   </tbody>
 </table>
+<br/>
 
 Depending on whether you are using JIRA Agile or standard Agile, below are details regarding feature mapping:
 
