@@ -176,6 +176,7 @@ class AhaServices::GithubIssues < AhaService
   end
 
   def issue_body(resource)
+
     issue_body_parts = []
     issue_body_parts << html_to_markdown(resource.description.body, true) if resource.description.body.present?
     issue_body_parts << requirements_to_checklist(resource) if resource.requirements.present? and requirements_to_checklist?
@@ -225,14 +226,15 @@ protected
 
   def requirements_to_checklist resource
     resource.requirements.map do |requirement|
-      head = "- [ ] #{requirement.name}\n"
-      body = html_to_markdown(requirement.description.body)
+      status = (requirement.workflow_status.try(:complete) || false) ? "x" : " "
+      head = "- [#{status}] #{requirement.name}\n"
+      body = html_to_markdown(requirement.description.body, true)
       body += attachments_in_body(requirement.description.attachments) if requirement.description.attachments.present?
       head + indent(body, "    ")
-    end.join("\n\n")
+    end.join("\n").gsub(/\n+/m, "\n")
   end
 
   def indent text, prefix
-    text.lines.map{|line| prefix + line }.join("\n")
+    text.lines.map{|line| prefix + line.chomp }.join("\n")
   end
 end

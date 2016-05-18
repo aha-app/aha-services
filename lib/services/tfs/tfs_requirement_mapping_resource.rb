@@ -28,7 +28,23 @@ class TFSRequirementMappingResource < TFSResource
   def create_or_update project, parent, aha_requirement
     integration_field = aha_requirement.integration_fields.find {|field| field.name == "id" and field.integration_id.to_i == @service.data.integration_id}
     if integration_field
-      update integration_field.value, aha_requirement
+      workitem = update integration_field.value, aha_requirement
+      relation = workitem.relations.find { |rel| rel.rel == "System.LinkTypes.Hierarchy-Reverse" && rel.url != parent.url }
+
+      if relation
+        workitem_resource.update workitem.id, [{
+          op: "remove",
+          path: "/relations/#{workitem.relations.index(relation)}"  
+        }]
+        workitem_resource.update workitem.id, [{
+          :op => :add,
+          :path => "/relations/-",
+          :value => {
+            :rel => "System.LinkTypes.Hierarchy-Reverse",
+            :url => parent.url,
+          }
+        }]
+      end
     else
       create_and_link project, parent, aha_requirement
     end
@@ -55,6 +71,8 @@ class TFSRequirementMappingResource < TFSResource
     
     # Add new attachments
     create_attachments(workitem, aha_requirement.description.attachments)
+
+    workitem
   end
 
   def update_aha_requirement aha_requirement, workitem
