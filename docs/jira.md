@@ -23,7 +23,7 @@ This integration supports sending the following items:
   </thead>
   <tbody>
     <tr>
-      <td>
+      <td valign="top">
         <ul>
           <li>Feature name</li>
 
@@ -51,7 +51,7 @@ This integration supports sending the following items:
         </ul>
       </td>
 
-      <td>
+      <td valign="top">
         <ul>
           <li>Release name</li>
 
@@ -61,7 +61,7 @@ This integration supports sending the following items:
         </ul>
       </td>
 
-      <td>
+      <td valign="top">
         <ul>
           <li>Status updates</li>
         </ul>
