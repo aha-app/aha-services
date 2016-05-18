@@ -8,7 +8,10 @@ class AhaServices::Jira < AhaService
   string :username, description: "Use your JIRA username from the JIRA profile page, not your email address."
   password :password
   install_button
-  select :project, collection: ->(meta_data, data) { meta_data.projects.collect{|p| [p.name, p[:key]] } }
+  select :project, collection: ->(meta_data, data) { meta_data.projects.collect{|p| [p.name, p[:key]] } },
+    description: "Choose the JIRA project to integrate with, then click 'Load project data' to fetch the configuration for that project.",
+    configure_button: "Load project data",
+    configure_button_highlight_if: -> (meta_data, data) { meta_data["configuration"]["attribute_project"]["project"] != data["project"] rescue true }
   boolean :send_initiatives, description: "Check to use feature initiatives to create Epics in JIRA Agile"
   select :feature_issue_type, 
     collection: ->(meta_data, data) { 
@@ -37,10 +40,39 @@ class AhaServices::Jira < AhaService
       'story_points_field' => field_resource.story_points_field,
       'aha_position_field' => field_resource.aha_position_field,
       'aha_reference_field' => new_or_existing_aha_reference_field}
-    @meta_data['projects'] = project_resource.all(meta_data)
+    @meta_data["projects"] = project_resource.list
+    # @meta_data['projects'] = project_resource.all(meta_data)
     @meta_data['resolutions'] = resolution_resource.all
   end
-  
+
+  def receive_configured
+    case payload[:field]
+    when "attribute_project"
+      @meta_data ||= {}
+      @meta_data['epic_name_field'] ||= field_resource.epic_name_field
+      @meta_data['epic_link_field'] ||= field_resource.epic_link_field
+      @meta_data['story_points_field'] ||= field_resource.story_points_field
+      @meta_data['aha_position_field'] ||= field_resource.aha_position_field
+      @meta_data['aha_reference_field'] ||= new_or_existing_aha_reference_field
+      @meta_data["projects"] ||= project_resource.list
+      @meta_data['resolutions'] ||= resolution_resource.all
+
+      if data.project && projects = @meta_data["projects"].detect{|project| project['key'] == data.project}
+        project_id = projects["id"]
+        project_resource.fetch_expanded_data_for_project(project_id, @meta_data)
+      end
+
+      @meta_data["configuration"] = {
+        "attribute_project" => {
+          "project" => data.project,
+          "message" => "Loaded configuration for project #{data.project}",
+          "success" => true
+        }
+      }
+      @meta_data
+    end
+  end
+
   def receive_create_feature
     integrate_or_update_feature(payload.feature)
   end

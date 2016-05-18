@@ -5,7 +5,9 @@ class AhaServices::JiraConnect < AhaServices::Jira
   caption "Send features to JIRA (supports cloud only)"
   
   install_button
-  select :project, collection: ->(meta_data, data) { meta_data.projects.collect{|p| [p.name, p[:key]] } }
+  select :project, collection: ->(meta_data, data) { meta_data.projects.collect{|p| [p.name, p[:key]] } },
+    description: "Choose the JIRA project to integrate with, then click 'Load project data' to fetch the configuration for that project.",
+    configure_button: "Load project data"
   boolean :send_initiatives, description: "Check to use feature initiatives to create Epics in JIRA Agile"
   select :feature_issue_type, 
     collection: ->(meta_data, data) { 
