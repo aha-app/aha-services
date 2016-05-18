@@ -5,6 +5,12 @@ Note there are two separate integrations with JIRA, we recommend that you use th
 1. JIRA (RECOMMENDED) - This integration uses the username and password of a JIRA user to authenticate with JIRA. It can be used with on premise or cloud versions of JIRA.
 2. JIRA via Connect - This integration uses an Add-on that is installed into your JIRA instance by an administrator. It can only be used with JIRA cloud and is restricted to integration with a single JIRA server.
 
+
+## Aha! to JIRA workflow
+Aha! is for the "why" and "what" and JIRA is for the "how."
+Do your product strategy, roadmapping, and feature definition in Aha! and push the items to JIRA for engineering to build.
+Aha! comes first and JIRA second. We then keep the features up-to-date in Aha! as engineering does their work. 
+
 ## Integration functionality
 
 The JIRA integration is our most robust development tool integration. For a successful integration, it is very important to understand that the [integration workflow](http://support.aha.io/hc/en-us/articles/202001127) is based off of starting in Aha!
@@ -70,7 +76,12 @@ This integration supports sending the following items:
   </tbody>
 </table>
 
-There is also a set of advanced functionality unique to the JIRA integration, such as the ability to have content created in JIRA populate into Aha! automatically. Read more [here](http://support.aha.io/hc/en-us/articles/204452355).
+Depending on whether you are using JIRA Agile or standard Agile, below are details regarding feature mapping:
+
+- If you use JIRA Agile, [read this for feature mapping](http://support.aha.io/entries/40551483)
+- If you use JIRA, [read this for feature mapping](http://support.aha.io/entries/40843667)
+
+There is also a set of advanced functionality unique to the JIRA integration, such as the ability to have content created in JIRA populate into Aha! automatically. Read more here.
 
 ## Integration configuration
 
