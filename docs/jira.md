@@ -111,4 +111,4 @@ A few common issues and their answers are below:
 - [Updates from JIRA are not being reflected in Aha!](http://support.aha.io/hc/en-us/articles/204700139)
 - [Why is an Aha! field not being sent to JIRA?](http://support.aha.io/hc/en-us/articles/204837595)
 - [Do I need to add multiple webhooks to JIRA?](http://support.aha.io/hc/en-us/articles/206582153)
-- [Event ‘installed’ failed due to an unhandled error](http://support.aha.io/hc/en-us/articles/205401466)
+- [Event ‘installed’ failed due to an unhandled error](http://support.aha.io/hc/en-us/articles/205401465)
