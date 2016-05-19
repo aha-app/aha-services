@@ -1,17 +1,18 @@
-require 'spec_helper'
+require "spec_helper"
 
 describe AhaServices::JiraConnect do
   context "can be installed" do
-    
     it "handles installed event" do
       stub_request(:get, "http://foo.com/a/rest/api/2/issue/createmeta?expand=projects.issuetypes.fields&user_id=chris").
-        to_return(:status => 200, :body => raw_fixture('jira/jira_createmeta.json'), :headers => {})
+        to_return(status: 200, body: raw_fixture("jira/jira_createmeta.json"), headers: {})
       stub_request(:get, "http://foo.com/a/rest/api/2/project/APPJ/statuses?user_id=chris").
-        to_return(:status => 200, :body => raw_fixture('jira/jira_project_statuses.json'), :headers => {})
+        to_return(status: 200, body: raw_fixture("jira/jira_project_statuses.json"), headers: {})
       stub_request(:get, "http://foo.com/a/rest/api/2/resolution?user_id=chris").
-        to_return(:status => 200, :body => raw_fixture('jira/jira_resolutions.json'), :headers => {})
+        to_return(status: 200, body: raw_fixture("jira/jira_resolutions.json"), headers: {})
       stub_request(:get, "http://foo.com/a/rest/api/2/field?user_id=chris").
-        to_return(:status => 200, :body => raw_fixture('jira/jira_field.json'), :headers => {})
+        to_return(status: 200, body: raw_fixture("jira/jira_field.json"), headers: {})
+      stub_request(:get, "http://foo.com/a/rest/api/2/project?user_id=chris").
+        to_return(status: 200, body: raw_fixture("jira/jira_createmeta.json"), headers: {})
 
       private_key = <<-EOF
 -----BEGIN RSA PRIVATE KEY-----
@@ -24,12 +25,20 @@ uUGJ+z3RwLiM3QIgXDcBdyc+l5Grs8St5WyaIl4Lc/n+/WzRu016WxqUZBMCIFZd
 AP8se1NO6bEg8WfYO7jYic+ppDHLssu0a5xvo1z8
 -----END RSA PRIVATE KEY-----
 EOF
+
       service = AhaServices::JiraConnect.new(
-        {'server_url' => 'http://foo.com/a', 'api_version' => 'a', 
-          'consumer_key' => 'io.aha.connect', 'consumer_secret' => private_key, 'user_id' => 'chris'},
-        nil)
+        {
+          "server_url" => "http://foo.com/a",
+          "api_version" => "a",
+          "consumer_key" => "io.aha.connect",
+          "consumer_secret" => private_key,
+          "user_id" => "chris"
+        },
+        nil
+      )
+
       service.receive(:installed)
-      service.meta_data["projects"][0]["key"].should == "APPJ"
+      expect(service.meta_data["projects"][0]["key"]).to be "APPJ"
     end
   end
 end
