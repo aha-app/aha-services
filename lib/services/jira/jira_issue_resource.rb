@@ -30,4 +30,13 @@ class JiraIssueResource < JiraResource
       return issue
     end
   end
+  
+  def set_rank(issue_id, relative_issue_id, positon = :before) 
+    prepare_request
+    
+    response = http_put "#{@service.data.server_url}/rest/agile/1.0/issue/rank", 
+      {issues: [issue_id], rankBeforeIssue: relative_issue_id}.to_json
+    
+    process_response(response, 204)
+  end
 end

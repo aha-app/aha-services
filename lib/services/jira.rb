@@ -242,6 +242,9 @@ protected
     issue = create_issue_for(resource, initiative, version, parent)
     integrate_resource_with_jira_issue(reference_num_to_resource_type(resource.reference_num), resource, issue)
 
+    # Put the issue in the correct order.
+    set_issue_rank(issue, resource)    
+
     # Add attachments.
     upload_attachments(resource.description.attachments, issue.id)
     upload_attachments(resource.attachments, issue.id)
@@ -613,6 +616,14 @@ protected
     else
       Hash.new
     end
+  end
+  
+  def set_issue_rank(issue, resource)
+    # Call back into Aha! to find another issue to rank relative to.
+    adjacent_info = api.adjacent_integration_fields(
+      reference_num_to_resource_type(resource.reference_num), resource.id, data.integration_id)
+    logger.debug("ADJACENT: #{adjacent_info.inspect}")
+    issue_resource.set_rank(issue[:key], "10101", positon = :before) 
   end
   
   def issue_type_by_parent(parent)
