@@ -1,6 +1,17 @@
-require 'spec_helper'
+require "spec_helper"
 
-# Sends releases, features, and requirepemnts to Rally
+# The following operations are supported:
+#
+# * Installing the service
+# * Retreiving the list of projects
+# * Retreiving a specific project
+# * Retreiving the list of work item type categories for a project
+# * Retreiving the list of work item types for a project
+# * Creating a work item feature
+# * Creating a work item requirement
+# * Creating a work item user story
+# * Uploading attachments
+#
 describe AhaServices::TFS do
   def stub_requests
     # TODO - Copied these URLs from VSO. Validate that they're correct for TFS.
@@ -35,10 +46,11 @@ describe AhaServices::TFS do
   it "can be installed" do
     stub_requests
 
-    service = AhaServices::VSO.new({
-      account_name: @account_name,
-      project: @project_id
-    }, nil, {})
+    service = AhaServices::VSO.new(
+      { account_name: @account_name, project: @project_id },
+      nil,
+      {}
+    )
 
     service.receive(:installed)
     expect(service.meta_data[:projects]).to have_key(@project_id)
