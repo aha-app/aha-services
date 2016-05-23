@@ -621,9 +621,11 @@ protected
   def set_issue_rank(issue, resource)
     # Call back into Aha! to find another issue to rank relative to.
     adjacent_info = api.adjacent_integration_fields(
-      reference_num_to_resource_type(resource.reference_num), resource.id, data.integration_id)
-    logger.debug("ADJACENT: #{adjacent_info.inspect}")
-    issue_resource.set_rank(issue[:key], "10101", positon = :before) 
+      reference_num_to_resource_type(resource.reference_num), resource.id, data.integration_id).first
+    if adjacent_info
+      adjacent_issue_id = get_integration_field(adjacent_info.integration_fields, 'id')    
+      issue_resource.set_rank(issue[:key], adjacent_issue_id, adjacent_info.direction == "before" ? :before : :after) 
+    end
   end
   
   def issue_type_by_parent(parent)

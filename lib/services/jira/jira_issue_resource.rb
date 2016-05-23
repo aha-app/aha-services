@@ -31,12 +31,21 @@ class JiraIssueResource < JiraResource
     end
   end
   
-  def set_rank(issue_id, relative_issue_id, positon = :before) 
+  def set_rank(issue_id, relative_issue_id, position = :before) 
     prepare_request
     
+    rank_info = {issues: [issue_id]}
+    if position == :after
+      rank_info[:rankBeforeIssue] = relative_issue_id
+    else
+      rank_info[:rankAfterIssue] = relative_issue_id
+    end
+    
     response = http_put "#{@service.data.server_url}/rest/agile/1.0/issue/rank", 
-      {issues: [issue_id], rankBeforeIssue: relative_issue_id}.to_json
+      rank_info.to_json
     
     process_response(response, 204)
+  rescue Exception => e
+    logger.debug("Unable to rank issue #{e.class}: #{e.message} #{e.backtrace.join("\n")}")
   end
 end
