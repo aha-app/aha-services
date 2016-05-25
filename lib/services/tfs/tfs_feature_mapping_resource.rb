@@ -37,7 +37,7 @@ class TFSFeatureMappingResource < TFSResource
         :value => aha_feature.description.body
       }
     end
-    if workitem.fields["Microsoft.VSTS.Scheduling.Effort"] != aha_feature.original_estimate then
+    if workitem.fields.key?("Microsoft.VSTS.Scheduling.Effort") && workitem.fields["Microsoft.VSTS.Scheduling.Effort"] != aha_feature.original_estimate then
       patch_set << {
           :op => :replace,
           :path => "/fields/Microsoft.VSTS.Scheduling.Effort",
@@ -66,7 +66,7 @@ class TFSFeatureMappingResource < TFSResource
     if aha_feature.workflow_status.id != new_status
       changes[:workflow_status] = new_status
     end
-    if aha_feature.original_estimate != workitem.fields["Microsoft.VSTS.Scheduling.Effort"]
+    if workitem.fields.key?("Microsoft.VSTS.Scheduling.Effort") && aha_feature.original_estimate != workitem.fields["Microsoft.VSTS.Scheduling.Effort"]
       changes[:original_estimate] = workitem.fields["Microsoft.VSTS.Scheduling.Effort"]
     end
     if changes.length > 0
