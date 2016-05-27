@@ -104,6 +104,7 @@ class AhaServices::Jira < AhaService
     raise AhaService::RemoteError, "Integration has not been configured" if meta_data.projects.nil?
     project = meta_data.projects.find {|project| project[:key] == data.project }
     raise AhaService::RemoteError, "Integration has not been configured, can't find project '#{data.project}'" if project.nil?
+    raise AhaService::RemoteError, "Integration has not been configured, project data not loaded" if meta_data.issue_type_sets.nil?
     issue_types = meta_data.issue_type_sets[project.issue_types]
     issue_type = issue_types.find {|type| type.id.to_s == id.to_s }
     raise AhaService::RemoteError, "Integration needs to be reconfigured, issue types have changed, can't find issue type '#{id}'" if issue_type.nil?
