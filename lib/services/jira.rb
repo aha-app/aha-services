@@ -34,29 +34,14 @@ class AhaServices::Jira < AhaService
   callback_url description: "The webhook enables updates from JIRA to Aha! Follow the instructions above to install this webhook in JIRA. Only one hook is necessary, even if multiple products are integrated with JIRA."
     
   def receive_installed
-    # Get custom field mappings.
-    @meta_data = {'epic_name_field' => field_resource.epic_name_field,
-      'epic_link_field' => field_resource.epic_link_field,
-      'story_points_field' => field_resource.story_points_field,
-      'aha_position_field' => field_resource.aha_position_field,
-      'aha_reference_field' => new_or_existing_aha_reference_field}
-    @meta_data["projects"] = project_resource.list
-    # @meta_data['projects'] = project_resource.all(meta_data)
-    @meta_data['resolutions'] = resolution_resource.all
+    get_common_configuration
   end
 
   def receive_configured
     case payload[:field]
     when "attribute_project"
-      @meta_data ||= {}
-      @meta_data['epic_name_field'] ||= field_resource.epic_name_field
-      @meta_data['epic_link_field'] ||= field_resource.epic_link_field
-      @meta_data['story_points_field'] ||= field_resource.story_points_field
-      @meta_data['aha_position_field'] ||= field_resource.aha_position_field
-      @meta_data['aha_reference_field'] ||= new_or_existing_aha_reference_field
-      @meta_data["projects"] ||= project_resource.list
-      @meta_data['resolutions'] ||= resolution_resource.all
-
+      get_common_configuration
+      
       if data.project && projects = @meta_data["projects"].detect{|project| project['key'] == data.project}
         project_id = projects["id"]
         project_resource.fetch_expanded_data_for_project(project_id, @meta_data)
@@ -132,6 +117,17 @@ class AhaServices::Jira < AhaService
 
 protected
   include JiraMappedFields
+  
+  def get_common_configuration
+    @meta_data ||= {}
+    @meta_data['epic_name_field'] ||= field_resource.epic_name_field
+    @meta_data['epic_link_field'] ||= field_resource.epic_link_field
+    @meta_data['story_points_field'] ||= field_resource.story_points_field
+    @meta_data['aha_position_field'] ||= field_resource.aha_position_field
+    @meta_data['aha_reference_field'] ||= new_or_existing_aha_reference_field
+    @meta_data["projects"] ||= project_resource.list
+    @meta_data['resolutions'] ||= resolution_resource.all
+  end
   
   def dont_send_releases?
     data.dont_send_releases == "1"
