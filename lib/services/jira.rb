@@ -121,13 +121,13 @@ protected
   
   def get_common_configuration
     @meta_data ||= {}
-    @meta_data['epic_name_field'] ||= field_resource.epic_name_field
-    @meta_data['epic_link_field'] ||= field_resource.epic_link_field
-    @meta_data['story_points_field'] ||= field_resource.story_points_field
-    @meta_data['aha_position_field'] ||= field_resource.aha_position_field
-    @meta_data['aha_reference_field'] ||= new_or_existing_aha_reference_field
-    @meta_data["projects"] ||= project_resource.list
-    @meta_data['resolutions'] ||= resolution_resource.all
+    @meta_data['epic_name_field'] = field_resource.epic_name_field
+    @meta_data['epic_link_field'] = field_resource.epic_link_field
+    @meta_data['story_points_field'] = field_resource.story_points_field
+    @meta_data['aha_position_field'] = field_resource.aha_position_field
+    @meta_data['aha_reference_field'] = new_or_existing_aha_reference_field
+    @meta_data["projects"] = project_resource.list
+    @meta_data['resolutions'] = resolution_resource.all
   end
   
   def dont_send_releases?
