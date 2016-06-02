@@ -38,6 +38,22 @@ class AhaServices::Rally < AhaService
     meta_data.workspaces = rally_workspace_resource.all
     meta_data.type_definitions = rally_portfolio_item_resource.get_all_portfolio_items
     meta_data.state_definitions = rally_state_resource.get_all_states
+
+    meta_data.custom_fields = {
+      "UserStory" => rally_portfolio_item_resource.get_all_requirement_custom_fields
+    }
+
+    meta_data.type_definitions.each do |definition|
+      meta_data.custom_fields[definition.Name] = definition.CustomFields
+    end
+
+    ####
+    #   select_tag :feature_fields_map, options: @integration_data.custom_fields[@integration.user_data.feature_type]
+    #
+    #
+    ##
+    #
+    #
     meta_data.install_successful = true
   end
 
