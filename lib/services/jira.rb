@@ -115,6 +115,24 @@ class AhaServices::Jira < AhaService
     issue_resource.update(issue_id, issue)
   end
 
+  def catch_common_errors
+    yield
+  rescue SocketError => e
+    if e.message =~ /getaddrinfo/
+      raise AhaService::RemoteError, "Aha! could not resolve a DNS record for your JIRA server. Please ensure that the address you have entered is reachable from outside of your network."
+    end
+  end
+
+  %i{receive_installed receive_configured receive_create_feature receive_update_feature receive_create_requirement receive_update_requirement receive_create_release receive_update_release receive_create_comment}.each do |method|
+    define_method "#{method}_with_catch_common_errors".intern do
+      catch_common_errors do
+        self.send "#{method}_without_catch_common_errors".intern
+      end
+    end
+    
+    alias_method "#{method}_without_catch_common_errors".intern, method
+    alias_method method, "#{method}_with_catch_common_errors".intern
+  end
 
 protected
   include JiraMappedFields
