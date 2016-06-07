@@ -37,13 +37,6 @@ class TFSFeatureMappingResource < TFSResource
         :value => aha_feature.description.body
       }
     end
-    if workitem.fields["Microsoft.VSTS.Scheduling.Effort"] != aha_feature.original_estimate then
-      patch_set << {
-          :op => :replace,
-          :path => "/fields/Microsoft.VSTS.Scheduling.Effort",
-          :value => aha_feature.original_estimate
-      }
-    end
     # update the feature
     workitem_resource.update workitem.id, patch_set
     # update associated requirements
@@ -65,9 +58,6 @@ class TFSFeatureMappingResource < TFSResource
     new_status = tfs_to_aha_status workitem.fields["System.State"]
     if aha_feature.workflow_status.id != new_status
       changes[:workflow_status] = new_status
-    end
-    if aha_feature.original_estimate != workitem.fields["Microsoft.VSTS.Scheduling.Effort"]
-      changes[:original_estimate] = workitem.fields["Microsoft.VSTS.Scheduling.Effort"]
     end
     if changes.length > 0
       api.put aha_feature.resource, { :feature => changes }

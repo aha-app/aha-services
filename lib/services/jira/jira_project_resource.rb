@@ -59,7 +59,7 @@ class JiraProjectResource < JiraResource
         end
         
         issue_types_hash = issue_types.hash.to_s
-        @issue_type_sets[issue_types_hash] ||= issue_types
+        @issue_type_sets[issue_types_hash] = issue_types
         meta_data["projects"].each do |m_project|
           if m_project['key'] == project[:key]
             m_project["issue_types"] = issue_types_hash
