@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # This class deals with either PortfolioItems or UserStories
 class RallyHierarchicalRequirementResource < RallyResource
   def object_path(id, element_name)
@@ -85,7 +86,6 @@ class RallyHierarchicalRequirementResource < RallyResource
     logger.error("Failed to update user story #{id}: #{e.message}")
   end
 
-
   def human_url_for_feature(id)
     if @service.feature_element_name == "UserStory"
       "https://rally1.rallydev.com/#/#{@service.data.project}d/detail/userstory/#{id}"
@@ -105,8 +105,8 @@ class RallyHierarchicalRequirementResource < RallyResource
   def create_from_feature(aha_feature)
     release_id = map_to_objectid aha_feature.release
     create map_feature(aha_feature), @service.feature_element_name do |hrequirement|
-      api.create_integration_fields "features", aha_feature.id, @service.data.integration_id, { id: hrequirement.ObjectID, formatted_id: hrequirement.FormattedID, url: human_url_for_feature(hrequirement.ObjectID) }
-      aha_feature.requirements.each{|requirement| create_from_requirement hrequirement.ObjectID, release_id, requirement }
+      api.create_integration_fields "features", aha_feature.id, @service.data.integration_id, id: hrequirement.ObjectID, formatted_id: hrequirement.FormattedID, url: human_url_for_feature(hrequirement.ObjectID)
+      aha_feature.requirements.each { |requirement| create_from_requirement hrequirement.ObjectID, release_id, requirement }
       create_attachments hrequirement, (aha_feature.attachments | aha_feature.description.attachments)
     end
   end
@@ -115,7 +115,7 @@ class RallyHierarchicalRequirementResource < RallyResource
     mapped_requirement = map_requirement(parent_id, release_id, aha_requirement)
     @service.logger.debug "Mapped requirement for create: #{mapped_requirement.inspect}"
     create(mapped_requirement, @service.requirement_element_name) do |hrequirement|
-      api.create_integration_fields "requirements", aha_requirement.id, @service.data.integration_id, { id: hrequirement.ObjectID, formatted_id: hrequirement.FormattedID, url: human_url_for_requirement(hrequirement.ObjectID) }
+      api.create_integration_fields "requirements", aha_requirement.id, @service.data.integration_id, id: hrequirement.ObjectID, formatted_id: hrequirement.FormattedID, url: human_url_for_requirement(hrequirement.ObjectID)
       create_attachments hrequirement, (aha_requirement.attachments | aha_requirement.description.attachments)
     end
   end
@@ -151,20 +151,20 @@ class RallyHierarchicalRequirementResource < RallyResource
   end
 
   def sync_requirements(parent_id, release_id, aha_requirements)
-    old_requirements, new_requirements = aha_requirements.partition{|requirement| map_to_objectid(requirement) }
+    old_requirements, new_requirements = aha_requirements.partition { |requirement| map_to_objectid(requirement) }
 
-    new_requirements.each{|requirement| create_from_requirement(parent_id, release_id, requirement) }
-    old_requirements.each{|requirement| update_from_requirement(parent_id, release_id, requirement) }
+    new_requirements.each { |requirement| create_from_requirement(parent_id, release_id, requirement) }
+    old_requirements.each { |requirement| update_from_requirement(parent_id, release_id, requirement) }
   end
 
-protected
+  protected
 
   def map_feature(aha_feature)
     rally_release_id = map_to_objectid aha_feature.release
     attributes = {
-      :Description => aha_feature.description.body,
-      :Name => aha_feature.name,
-      :Project => @service.data.project
+      Description: aha_feature.description.body,
+      Name: aha_feature.name,
+      Project: @service.data.project
     }
     attributes = merge_default_fields(@service.data.feature_default_fields, attributes)
 
@@ -190,9 +190,9 @@ protected
 
   def map_requirement(parent_id, release_id, aha_requirement)
     attributes = {
-      :Description => aha_requirement.description.body,
-      :Name => aha_requirement.name,
-      :Project => @service.data.project
+      Description: aha_requirement.description.body,
+      Name: aha_requirement.name,
+      Project: @service.data.project
     }
     attributes = merge_default_fields(@service.data.requirement_default_fields, attributes)
 
@@ -200,7 +200,7 @@ protected
     maybe_add_owner_to_object(attributes, aha_requirement)
 
     # The only time we should include the PortfolioItem field is when we are mapping across the hierarchicalRequirement boundary.
-    if (@service.feature_element_name != "UserStory" && @service.requirement_element_name == "UserStory")
+    if @service.feature_element_name != "UserStory" && @service.requirement_element_name == "UserStory"
       attributes[:PortfolioItem] = parent_id.to_i
     else
       attributes[:Parent] = parent_id.to_i
@@ -229,10 +229,13 @@ protected
   # Rally will also fail the API call if we attempt to set Release for a feature that is not a leaf node.
   def include_release_if_exists(aha_model, attributes, release_id)
     return if (aha_model.requirements.try(:length) || 0) > 0 # do not send if we know for a fact this is not a leaf
+
     children_count = get_children(map_to_objectid(aha_model)).length rescue 0
     return if children_count > 0 # do not send if rally has children for this resource
+
     release_exists = release_id && rally_release_resource.by_id(release_id) rescue false
     return unless release_exists # do not send if rally does not know the release (This means the user deleted it)
+
     attributes[:Release] = release_id
   end
 
