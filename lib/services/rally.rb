@@ -28,7 +28,9 @@ class AhaServices::Rally < AhaService
   }
 
   internal :feature_status_mapping
+  internal :feature_default_fields
   internal :requirement_status_mapping
+  internal :requirement_default_fields
 
   callback_url description: "URL Rally will call to update Aha!. This is webhook is automatically installed in Rally for the selected project."
 
