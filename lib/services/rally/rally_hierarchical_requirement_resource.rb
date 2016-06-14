@@ -158,6 +158,7 @@ class RallyHierarchicalRequirementResource < RallyResource
   end
 
 protected
+
   def map_feature aha_feature
     rally_release_id = map_to_objectid aha_feature.release
     attributes = {
@@ -165,6 +166,7 @@ protected
       :Name => aha_feature.name,
       :Project => @service.data.project
     }
+    attributes = merge_default_fields(attributes)
 
     if @service.feature_element_name != "UserStory"
       attributes[:PlannedStartDate] = aha_feature.start_date
@@ -176,6 +178,16 @@ protected
 
     include_release_if_exists(aha_feature, attributes, rally_release_id)
     attributes
+  end
+
+  def merge_default_fields(attributes)
+    results = {}
+    (@service.data.feature_default_fields || []).each do |field_mapping|
+      next unless field_mapping.is_a? Hashie::Mash
+      results[field_mapping.field] = field_mapping.value
+    end
+
+    results.merge(attributes)
   end
 
   def maybe_add_owner_to_object(attributes, aha_object)
