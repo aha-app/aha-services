@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 # This class deals with either PortfolioItems or UserStories
 class RallyHierarchicalRequirementResource < RallyResource
   def object_path(id, element_name)
