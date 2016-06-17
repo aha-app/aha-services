@@ -115,19 +115,44 @@ class AhaServices::Jira < AhaService
     issue_resource.update(issue_id, issue)
   end
 
+  def catch_common_errors
+    yield
+  rescue SocketError => e
+    if e.message =~ /getaddrinfo/
+      raise AhaService::RemoteError, "Aha! could not resolve a DNS record for your JIRA server. Please ensure that the address you have entered is reachable from outside of your network."
+    end
+  end
+
+  %i{receive_installed receive_configured receive_create_feature receive_update_feature receive_create_requirement receive_update_requirement receive_create_release receive_update_release receive_create_comment}.each do |method|
+    define_method "#{method}_with_catch_common_errors".intern do
+      catch_common_errors do
+        self.send "#{method}_without_catch_common_errors".intern
+      end
+    end
+    
+    alias_method "#{method}_without_catch_common_errors".intern, method
+    alias_method method, "#{method}_with_catch_common_errors".intern
+  end
 
 protected
   include JiraMappedFields
   
   def get_common_configuration
     @meta_data ||= {}
-    @meta_data['epic_name_field'] ||= field_resource.epic_name_field
-    @meta_data['epic_link_field'] ||= field_resource.epic_link_field
-    @meta_data['story_points_field'] ||= field_resource.story_points_field
-    @meta_data['aha_position_field'] ||= field_resource.aha_position_field
-    @meta_data['aha_reference_field'] ||= new_or_existing_aha_reference_field
-    @meta_data["projects"] ||= project_resource.list
-    @meta_data['resolutions'] ||= resolution_resource.all
+    @meta_data['epic_name_field'] = field_resource.epic_name_field
+    @meta_data['epic_link_field'] = field_resource.epic_link_field
+    @meta_data['story_points_field'] = field_resource.story_points_field
+    @meta_data['aha_position_field'] = field_resource.aha_position_field
+    @meta_data['aha_reference_field'] = new_or_existing_aha_reference_field
+    old_projects = Hash[@meta_data.fetch("projects", []).map {|project| [project["id"].to_s, project] }]
+    @meta_data["projects"] = project_resource.list
+    @meta_data["projects"].each do |project|
+      # since issue types is fetched in another step, don't lose that configuration data when re-installing
+      if issue_types = old_projects.fetch(project["id"].to_s, {})["issue_types"]
+        project["issue_types"] = issue_types
+      end
+    end
+    @meta_data['resolutions'] = resolution_resource.all
   end
   
   def dont_send_releases?
