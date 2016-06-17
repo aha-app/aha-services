@@ -49,13 +49,6 @@ class AhaServices::Rally < AhaService
       meta_data.custom_fields[definition.Name] = definition.CustomFields
     end
 
-    ####
-    #   select_tag :feature_fields_map, options: @integration_data.custom_fields[@integration.user_data.feature_type]
-    #
-    #
-    ##
-    #
-    #
     meta_data.install_successful = true
   end
 
