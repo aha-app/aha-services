@@ -214,7 +214,7 @@ protected
     if self.data.server_url.present?
       self.data.server_url.gsub(/api\/v3\/?/, '')
     else
-      "https://github.com/"
+      "https://github.com"
     end
   end
 
