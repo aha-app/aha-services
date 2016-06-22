@@ -212,7 +212,7 @@ protected
 
   def server_link_url
     if self.data.server_url.present?
-      self.data.server_url.gsub(/api\/v3\/?/, '')
+      self.data.server_url.gsub(/api\/v\d\/?/, '')
     else
       "https://github.com"
     end
