@@ -210,14 +210,22 @@ protected
     @label_resource ||= GithubLabelResource.new(self)
   end
 
+  def server_link_url
+    if self.data.server_url.present?
+      self.data.server_url.gsub(/api\/v3\/?/, '')
+    else
+      "https://github.com/"
+    end
+  end
+
   def integrate_release_with_github_milestone(release, milestone)
     api.create_integration_fields("releases", release.reference_num, data.integration_id, 
-      {number: milestone['number'], url: "https://github.com/#{data.repository}/issues?milestone=#{milestone['number']}"})
+      {number: milestone['number'], url: "#{server_link_url}/#{data.repository}/issues?milestone=#{milestone['number']}"})
   end
 
   def integrate_resource_with_github_issue(resource, issue)
     api.create_integration_fields(reference_num_to_resource_type(resource.reference_num), resource.reference_num, data.integration_id, 
-      {number: issue['number'], url: "https://github.com/#{data.repository}/issues/#{issue['number']}"})
+      {number: issue['number'], url: "#{server_link_url}/#{data.repository}/issues/#{issue['number']}"})
   end
 
   def requirements_to_checklist?
