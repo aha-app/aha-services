@@ -8,7 +8,10 @@ class AhaServices::Jira < AhaService
   string :username, description: "Use your JIRA username from the JIRA profile page, not your email address."
   password :password
   install_button
-  select :project, collection: ->(meta_data, data) { meta_data.projects.collect{|p| [p.name, p[:key]] } }
+  select :project, collection: ->(meta_data, data) { meta_data.projects.collect{|p| [p.name, p[:key]] } },
+    description: "Choose the JIRA project to integrate with, then click 'Load project data' to fetch the configuration for that project.",
+    configure_button: "Load project data",
+    configure_button_highlight_if: -> (meta_data, data) { meta_data["configuration"]["attribute_project"]["project"] != data["project"] rescue true }
   boolean :send_initiatives, description: "Check to use feature initiatives to create Epics in JIRA Agile"
   select :feature_issue_type, 
     collection: ->(meta_data, data) { 
@@ -31,22 +34,44 @@ class AhaServices::Jira < AhaService
   callback_url description: "The webhook enables updates from JIRA to Aha! Follow the instructions above to install this webhook in JIRA. Only one hook is necessary, even if multiple products are integrated with JIRA."
     
   def receive_installed
-    # Get custom field mappings.
-    @meta_data = {'epic_name_field' => field_resource.epic_name_field,
-      'epic_link_field' => field_resource.epic_link_field,
-      'story_points_field' => field_resource.story_points_field,
-      'aha_position_field' => field_resource.aha_position_field,
-      'aha_reference_field' => new_or_existing_aha_reference_field}
-    @meta_data['projects'] = project_resource.all(meta_data)
-    @meta_data['resolutions'] = resolution_resource.all
+    get_common_configuration
   end
-  
+
+  def receive_configured
+    case payload[:field]
+    when "attribute_project"
+      get_common_configuration
+      
+      if data.project && projects = @meta_data["projects"].detect{|project| project['key'] == data.project}
+        project_id = projects["id"]
+        project_resource.fetch_expanded_data_for_project(project_id, @meta_data)
+      end
+
+      @meta_data["configuration"] = {
+        "attribute_project" => {
+          "project" => data.project,
+          "message" => "Loaded configuration for project #{data.project}",
+          "success" => true
+        }
+      }
+      @meta_data
+    end
+  end
+
   def receive_create_feature
     integrate_or_update_feature(payload.feature)
   end
   
   def receive_update_feature
     integrate_or_update_feature(payload.feature)
+  end
+
+  def receive_create_requirement
+    integrate_or_update_requirement(payload.requirement)
+  end
+
+  def receive_update_requirement
+    integrate_or_update_requirement(payload.requirement)
   end
 
   def receive_create_release
@@ -79,6 +104,7 @@ class AhaServices::Jira < AhaService
     raise AhaService::RemoteError, "Integration has not been configured" if meta_data.projects.nil?
     project = meta_data.projects.find {|project| project[:key] == data.project }
     raise AhaService::RemoteError, "Integration has not been configured, can't find project '#{data.project}'" if project.nil?
+    raise AhaService::RemoteError, "Integration has not been configured, project data not loaded" if meta_data.issue_type_sets.nil?
     issue_types = meta_data.issue_type_sets[project.issue_types]
     issue_type = issue_types.find {|type| type.id.to_s == id.to_s }
     raise AhaService::RemoteError, "Integration needs to be reconfigured, issue types have changed, can't find issue type '#{id}'" if issue_type.nil?
@@ -89,9 +115,45 @@ class AhaServices::Jira < AhaService
     issue_resource.update(issue_id, issue)
   end
 
+  def catch_common_errors
+    yield
+  rescue SocketError => e
+    if e.message =~ /getaddrinfo/
+      raise AhaService::RemoteError, "Aha! could not resolve a DNS record for your JIRA server. Please ensure that the address you have entered is reachable from outside of your network."
+    end
+  end
+
+  %i{receive_installed receive_configured receive_create_feature receive_update_feature receive_create_requirement receive_update_requirement receive_create_release receive_update_release receive_create_comment}.each do |method|
+    define_method "#{method}_with_catch_common_errors".intern do
+      catch_common_errors do
+        self.send "#{method}_without_catch_common_errors".intern
+      end
+    end
+    
+    alias_method "#{method}_without_catch_common_errors".intern, method
+    alias_method method, "#{method}_with_catch_common_errors".intern
+  end
 
 protected
   include JiraMappedFields
+  
+  def get_common_configuration
+    @meta_data ||= {}
+    @meta_data['epic_name_field'] = field_resource.epic_name_field
+    @meta_data['epic_link_field'] = field_resource.epic_link_field
+    @meta_data['story_points_field'] = field_resource.story_points_field
+    @meta_data['aha_position_field'] = field_resource.aha_position_field
+    @meta_data['aha_reference_field'] = new_or_existing_aha_reference_field
+    old_projects = Hash[@meta_data.fetch("projects", []).map {|project| [project["id"].to_s, project] }]
+    @meta_data["projects"] = project_resource.list
+    @meta_data["projects"].each do |project|
+      # since issue types is fetched in another step, don't lose that configuration data when re-installing
+      if issue_types = old_projects.fetch(project["id"].to_s, {})["issue_types"]
+        project["issue_types"] = issue_types
+      end
+    end
+    @meta_data['resolutions'] = resolution_resource.all
+  end
   
   def dont_send_releases?
     data.dont_send_releases == "1"
@@ -173,6 +235,14 @@ protected
     end
   end
 
+  def integrate_or_update_requirement(requirement)
+    @feature = requirement.feature
+    version = find_or_attach_jira_version(@feature.release) unless dont_send_releases?
+    issue_info = get_existing_issue_info(@feature)
+    jira_requirement = update_or_attach_jira_issue(requirement, nil, version, issue_info)
+    logger.info("Created/Updated issue #{jira_requirement[:key]} with requirement #{requirement.reference_num}")
+  end
+
   def get_existing_issue_info(resource)
     if id = get_integration_field(resource.integration_fields, 'id') and
       key = get_integration_field(resource.integration_fields, 'key')
@@ -193,6 +263,9 @@ protected
   def attach_issue_to(resource, initiative, version, parent = nil)
     issue = create_issue_for(resource, initiative, version, parent)
     integrate_resource_with_jira_issue(reference_num_to_resource_type(resource.reference_num), resource, issue)
+
+    # Put the issue in the correct order.
+    set_issue_rank(issue, resource)    
 
     # Add attachments.
     upload_attachments(resource.description.attachments, issue.id)
@@ -564,6 +637,16 @@ protected
       { update: { fixVersions: [ { set: [ { id: version.id } ] } ] } }
     else
       Hash.new
+    end
+  end
+  
+  def set_issue_rank(issue, resource)
+    # Call back into Aha! to find another issue to rank relative to.
+    adjacent_info = api.adjacent_integration_fields(
+      reference_num_to_resource_type(resource.reference_num), resource.id, data.integration_id).first
+    if adjacent_info
+      adjacent_issue_id = get_integration_field(adjacent_info.integration_fields, 'id')    
+      issue_resource.set_rank(issue[:key], adjacent_issue_id, adjacent_info.direction == "before" ? :before : :after) 
     end
   end
   

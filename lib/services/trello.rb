@@ -2,7 +2,7 @@ require "reverse_markdown"
 
 class AhaServices::Trello < AhaService
   caption "Send features to a Trello board"
-  
+
   oauth_button request_token_url: "https://trello.com/1/OAuthGetRequestToken",
     access_token_url: "https://trello.com/1/OAuthGetAccessToken",
     authorize_url: "https://trello.com/1/OAuthAuthorizeToken",
@@ -79,7 +79,7 @@ class AhaServices::Trello < AhaService
     due_date = unless feature.release.parking_lot
       feature.due_date || feature.release.release_date
     end
-    
+
     card = card_resource.create(
       name: resource_name(feature),
       desc: reverse_markdown_convert(feature.description.body),
@@ -95,7 +95,7 @@ class AhaServices::Trello < AhaService
 
   def end_of_work_day(date_string)
     if date_string
-      Time.parse(date_string).utc.beginning_of_day + 17.hours
+      Time.parse(date_string).utc.beginning_of_day + (17*60*60)
     else
       nil
     end
@@ -103,7 +103,7 @@ class AhaServices::Trello < AhaService
 
   def update_card(card_id, feature)
     due_date = feature.due_date || feature.release.release_date
-    
+
     card_resource
       .update card_id,
         name: resource_name(feature),
@@ -164,7 +164,7 @@ class AhaServices::Trello < AhaService
       attachment_resource.upload(attachment, card.id)
     end
   end
-  
+
   def create_card_webhook(card_id)
     card_resource.create_webhook(card_id)
   end
@@ -199,14 +199,14 @@ protected
     [requirement.name, reverse_markdown_convert(requirement.description.body)]
       .compact.join(". ")
   end
-  
+
   def webhook_feature_url(card_id)
     begin
       result = api.search_integration_fields(data.integration_id, "id", card_id)['records'].first
     rescue AhaApi::NotFound
       return nil # Ignore cards that we don't have Aha! features for.
     end
-    
+
     if result && result.feature
       resource = result.feature
     elsif result && result.requirement
@@ -215,10 +215,10 @@ protected
       logger.info("Unhandled resource type")
       return nil
     end
-    
+
     resource.resource
   end
-  
+
   def integrate_feature_with_trello_card(feature, card)
     api.create_integration_fields(
       "features",

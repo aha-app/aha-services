@@ -35,7 +35,9 @@ class AhaServices::Fogbugz < AhaService
 
   def receive_webhook
     fogbugz_case = fetch_case(payload.case_number)
-
+    # Do nothing if we can't find the case.
+    return if fogbugz_case.nil?
+    
     begin
       results = find_resource_with_case(fogbugz_case)['records']
     rescue AhaApi::NotFound
