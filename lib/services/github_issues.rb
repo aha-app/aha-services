@@ -210,7 +210,7 @@ protected
     @label_resource ||= GithubLabelResource.new(self)
   end
 
-  def g
+  def server_display_url
     if self.data.server_url.present?
       self.data.server_url.gsub(/api\/v\d\/?/, '')
     else
