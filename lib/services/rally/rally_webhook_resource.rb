@@ -86,18 +86,39 @@ class RallyWebhookResource < RallyResource
     end
   end
 
+  def project_and_recursive_children project_uuid
+    projects = @service.meta_data.projects
+
+    return_projects = []
+
+    return_projects << projects.detect {|project| project["_refObjectUUID"] == project_uuid }
+
+    projects.select {|project| project["ParentUUID"] == project_uuid }.each do |child_project|
+      return_projects.concat(project_and_recursive_children(child_project["_refObjectUUID"]))
+    end
+
+    return_projects
+  end
+
   def hash_for_webhook
+    expressions = project_and_recursive_children(selected_project_uuid).map do |project|
+      {
+        "AttributeID" => PROJECT_FIELD_UUID,
+        "Operator" => "=",
+        "Value" => project["_refObjectUUID"]
+      }
+    end
+
+    Rails.logger.info "EXPRESSIONS: #{expressions.inspect}"
+
     {
       "AppName" => "Aha!",
       "AppUrl" => "http://www.aha.io",
       "TargetUrl" => @service.data.callback_url,
       "Name" => "Aha! Rally Integration #{@service.data.integration_id}",
-      "Expressions" => [
-        "AttributeID" => PROJECT_FIELD_UUID,
-        "Operator" => "=",
-        "Value" => selected_project_uuid
-      ],
-      "Disabled" => webhook_is_disabled }
+      "Expressions" => expressions,
+      "Disabled" => webhook_is_disabled
+    }
   end
 end
 
