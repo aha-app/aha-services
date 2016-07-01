@@ -4,7 +4,7 @@ class AhaServices::GithubIssues < AhaService
   
   string :username
   password :password
-  string :server_url, description: "If you are using Github Enterprise enter your server URL here (https://example.com/api/v3). If you are using github.com leave this field empty.",
+  string :server_url, description: "If you are using Github Enterprise enter your server URL without a trailing slash (https://example.com/api/v3). If you are using github.com leave this field empty.",
     label: "Server URL"
   install_button
   select :repository, collection: -> (meta_data, data) do
