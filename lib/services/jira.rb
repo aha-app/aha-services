@@ -120,6 +120,8 @@ class AhaServices::Jira < AhaService
   rescue SocketError => e
     if e.message =~ /getaddrinfo/
       raise AhaService::RemoteError, "Aha! could not resolve a DNS record for your JIRA server. Please ensure that the address you have entered is reachable from outside of your network."
+    else
+      raise # Reraise the exception.
     end
   end
 
