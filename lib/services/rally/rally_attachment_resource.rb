@@ -1,4 +1,12 @@
 class RallyAttachmentResource < RallyResource
+  def all(rally_object)
+     process_response(http_get(rally_object.Attachments._ref + "?pagesize=200")).QueryResult.Results
+  end
+
+  def get_content(attachment)
+    Base64.decode64(process_response(http_get(attachment.Content._ref)).AttachmentContent.Content)
+  end
+
   def create parent, aha_attachment
     return unless aha_attachment.download_url
     

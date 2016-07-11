@@ -14,7 +14,7 @@ class RallyHierarchicalRequirementResource < RallyResource
       if element_name == "UserStory"
         return document.HierarchicalRequirement
       else
-        return document["Portfol"]
+        return document[element_name]
       end
     end
   end
