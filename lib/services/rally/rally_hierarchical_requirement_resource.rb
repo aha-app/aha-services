@@ -4,7 +4,7 @@ class RallyHierarchicalRequirementResource < RallyResource
     if element_name == "UserStory"
       "/hierarchicalrequirement/#{id}"
     else
-      "/portfolioitem/#{element_name.downcase}/#{id}"
+      "/portfolioitem/#{id}"
     end
   end
 
@@ -19,23 +19,15 @@ class RallyHierarchicalRequirementResource < RallyResource
     end
   end
 
-  def portfolio_item_or_hr_path(id, element_name)
-    if element_name == "UserStory"
-      "/hierarchicalrequirement/#{id}"
-    else
-      "/portfolioitem/#{id}"
-    end
-  end
-
   def get_children(id, element_name)
-    url = rally_url_without_workspace(portfolio_item_or_hr_path(id, element_name) + "/Children")
+    url = rally_url_without_workspace(object_path(id, element_name) + "/Children")
     process_response http_get(url) do |document|
       return document.QueryResult.Results
     end
   end
 
   def get_attachments(id, element_name)
-    url = rally_url_without_workspace(portfolio_item_or_hr_path(id, element_name) + "/Attachments")
+    url = rally_url_without_workspace(object_path(id, element_name) + "/Attachments")
     process_response http_get(url) do |document|
       return document.QueryResult.Results
     end
