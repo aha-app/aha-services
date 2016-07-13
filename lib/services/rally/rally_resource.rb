@@ -5,6 +5,10 @@ class RallyResource < GenericResource
 
   attr_accessor :security_token
 
+  def sanitize_portfolio_item_url(url)
+    url.gsub(%r{portfolioitem/\w+/}, "portfolioitem/")
+  end
+
   def faraday_builder b
     b.headers['Accept'] = "application/json"
     b.headers['Content-Type'] = "application/json"

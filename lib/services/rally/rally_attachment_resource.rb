@@ -1,6 +1,6 @@
 class RallyAttachmentResource < RallyResource
   def all(rally_object)
-     process_response(http_get(rally_object.Attachments._ref + "?pagesize=200")).QueryResult.Results
+     process_response(http_get(sanitize_portfolio_item_url(rally_object.Attachments._ref) + "?pagesize=200")).QueryResult.Results
   end
 
   def get_content(attachment)
