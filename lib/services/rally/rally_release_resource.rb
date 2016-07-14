@@ -18,9 +18,9 @@ class RallyReleaseResource < RallyResource
   end
 
   def update aha_release
-    id = aha_release.integration_fields.find{|field| field.integration_id == @service.data.integration_id.to_s and field.name == "id"}.value
+    id = @service.get_integration_field(aha_release.integration_fields, "id")
     body = { :Release =>  map_release(aha_release) }.to_json
-    url = rally_secure_url "/release/#{id}"
+    url = rally_secure_url_without_workspace "/release/#{id}"
     response = http_post url, body
     process_response response
   end
