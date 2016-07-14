@@ -28,7 +28,7 @@ class RallyReleaseResource < RallyResource
 protected
   def map_release aha_release
     release_date = Date.parse(aha_release.release_date) rescue Date.today
-    start_date = Date.parse(aha_release.start_date || release_date) rescue Date.today
+    start_date = Date.parse(aha_release.start_date) rescue release_date
 
     start_date = [start_date, (release_date - 1.day)].min # Never send a start date after the release date
     release = {
