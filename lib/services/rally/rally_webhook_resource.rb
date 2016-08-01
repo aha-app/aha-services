@@ -42,41 +42,37 @@ class RallyWebhookResource < RallyResource
   end
 
   def all_webhooks
-    process_response(http_get_no_basic(webhook_url("?start=1&pageSize=200"))) do |document|
-      return document.Results
+    results = []
+    start = 1
+    pagesize = 20
+    total = 2
+
+    while start < total
+      process_response(http_get_no_basic(webhook_url("?start=#{start}&pagesize=#{pagesize}"))) do |document|
+        results.concat document.Results
+        total = document.TotalResultCount
+      end
+      start += pagesize
     end
+    results
   end
 
   def search_for_webhooks(callback_url)
     all_webhooks.select {|webhook| webhook.TargetUrl == callback_url}
   end
 
-  def upsert_webhooks webhooks
-    projects = project_and_recursive_children(selected_project_uuid)
-
-    existing_webhooks = []
-    trash_webhooks = []
-
-    webhooks.each do |webhook|
-      if project = projects.reject!{|p| p["_refObjectUUID"] == webhook.Expressions.first.value }
-        existing_webhooks << [project.first, webhook]
-      else
-        trash_webhooks << [webhook]
-      end
-    end
-
-    new_webhook_projects = projects
-
-    existing_webhooks.each do |(project, webhook)|
-      update_webhook project, webhook
-    end
-
-    new_webhook_projects.each do |project|
-      create_webhook project
-    end
-
-    trash_webhooks.each do |webhook|
+  def destroy_webhooks
+    search_for_webhooks(@service.data.callback_url).each do |webhook|
       destroy_webhook webhook
+    end
+  end
+
+  def upsert_webhooks
+    destroy_webhooks
+
+    projects = project_and_recursive_children(selected_project_uuid)
+    projects.each do |project|
+      create_webhook project
     end
   end
 

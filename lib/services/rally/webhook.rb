@@ -1,14 +1,10 @@
 module AhaServices::RallyWebhook
   def create_or_update_webhooks
-    current_webhooks = rally_webhook_resource.search_for_webhooks(data.callback_url)
-    rally_webhook_resource.upsert_webhooks current_webhooks
+    rally_webhook_resource.upsert_webhooks
   end
 
   def destroy_webhooks
-    current_webhooks = rally_webhook_resource.search_for_webhooks(data.callback_url)
-    current_webhooks.each do |webhook|
-      rally_webhook_resource.destroy_webhook(current_webhook)
-    end
+    rally_webhook_resource.destroy_webhooks
   end
 
   def update_record_from_webhook(payload)
