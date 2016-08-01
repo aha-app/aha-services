@@ -47,21 +47,50 @@ class RallyWebhookResource < RallyResource
     end
   end
 
-  def search_for_webhook(callback_url)
-    all_webhooks.detect {|webhook| webhook.TargetUrl == callback_url}
+  def search_for_webhooks(callback_url)
+    all_webhooks.select {|webhook| webhook.TargetUrl == callback_url}
   end
 
-  def update_webhook webhook
+  def upsert_webhooks webhooks
+    projects = project_and_recursive_children(selected_project_uuid)
+
+    existing_webhooks = []
+    trash_webhooks = []
+
+    webhooks.each do |webhook|
+      if project = projects.reject!{|p| p["_refObjectUUID"] == webhook.Expressions.first.value }
+        existing_webhooks << [project.first, webhook]
+      else
+        trash_webhooks << [webhook]
+      end
+    end
+
+    new_webhook_projects = projects
+
+    existing_webhooks.each do |(project, webhook)|
+      update_webhook project, webhook
+    end
+
+    new_webhook_projects.each do |project|
+      create_webhook project
+    end
+
+    trash_webhooks.each do |webhook|
+      destroy_webhook webhook
+    end
+  end
+
+  def update_webhook project, webhook
     response = http_patch_no_basic(webhook_url("/#{webhook.ObjectUUID}")) do |req|
-      req.body = hash_for_webhook.to_json
+      req.body = hash_for_webhook(project).to_json
     end
 
     process_response(response)
   end
 
-  def create_webhook
+  def create_webhook project
     response = http_post_no_basic(webhook_url("")) do |request|
-      request.body = hash_for_webhook.to_json
+      request.body = hash_for_webhook(project).to_json
     end
 
     process_response(response)
@@ -76,8 +105,12 @@ class RallyWebhookResource < RallyResource
     !@service.data.integration_enabled
   end
 
+  def all_project_ids_to_watch
+    project_and_recursive_children(selected_project_uuid)
+  end
+
   def selected_project_uuid
-    project = @service.meta_data.projects.detect{|project| project.ObjectID == @service.data.project.to_i }
+    project = @service.meta_data.projects.detect{|p| p.ObjectID == @service.data.project.to_i }
     
     if project
       project["_refObjectUUID"]
@@ -100,23 +133,17 @@ class RallyWebhookResource < RallyResource
     return_projects
   end
 
-  def hash_for_webhook
-    expressions = project_and_recursive_children(selected_project_uuid).map do |project|
-      {
-        "AttributeID" => PROJECT_FIELD_UUID,
-        "Operator" => "=",
-        "Value" => project["_refObjectUUID"]
-      }
-    end
-
-    Rails.logger.info "EXPRESSIONS: #{expressions.inspect}"
-
+  def hash_for_webhook project
     {
       "AppName" => "Aha!",
       "AppUrl" => "http://www.aha.io",
       "TargetUrl" => @service.data.callback_url,
       "Name" => "Aha! Rally Integration #{@service.data.integration_id}",
-      "Expressions" => expressions,
+      "Expressions" => [{
+        "AttributeID" => PROJECT_FIELD_UUID,
+        "Operator" => "=",
+        "Value" => project["_refObjectUUID"]
+      }],
       "Disabled" => webhook_is_disabled
     }
   end
