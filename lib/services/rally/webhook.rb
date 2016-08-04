@@ -1,30 +1,10 @@
 module AhaServices::RallyWebhook
-  def create_or_update_webhook
-    # Find the webhook that points at this integration
-    current_webhook = rally_webhook_resource.search_for_webhook(data.callback_url)
-
-    if current_webhook
-      logger.info "Updating webhook #{current_webhook.ObjectUUID} for integration: #{data.integration_id}"
-      update_webhook current_webhook
-    else
-      logger.info "Creating webhook for integration: #{data.integration_id}"
-      create_webhook
-    end
+  def create_or_update_webhooks
+    rally_webhook_resource.upsert_webhooks
   end
 
-  def create_webhook
-    rally_webhook_resource.create_webhook
-  end
-
-  def update_webhook current_webhook
-    rally_webhook_resource.update_webhook current_webhook
-  end
-
-  def destroy_webhook
-    current_webhook = rally_webhook_resource.search_for_webhook(data.callback_url)
-    if current_webhook
-      rally_webhook_resource.destroy_webhook(current_webhook)
-    end
+  def destroy_webhooks
+    rally_webhook_resource.destroy_webhooks
   end
 
   def update_record_from_webhook(payload)

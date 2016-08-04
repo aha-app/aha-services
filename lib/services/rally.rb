@@ -70,13 +70,13 @@ class AhaServices::Rally < AhaService
 
   def receive_updated
     if meta_data.install_successful && data.project.to_i
-      create_or_update_webhook
+      create_or_update_webhooks
     end
   end
 
   def receive_destroyed
     if meta_data.install_successful && data.project.to_i
-      destroy_webhook
+      destroy_webhooks
     end
   end
 
