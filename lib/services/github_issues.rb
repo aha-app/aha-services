@@ -19,6 +19,8 @@ class AhaServices::GithubIssues < AhaService
 
   internal :status_mapping
 
+  boolean :add_status_labels, description: "Sync the Aha status using a label on the github issue"
+
   callback_url description: "Use this URL to setup a two-way integration with Github issues."
 
   def receive_installed
@@ -66,11 +68,39 @@ class AhaServices::GithubIssues < AhaService
     else
       return
     end
+
     new_status = data.status_mapping.nil? ? nil : data.status_mapping[issue.state]
-    new_tags = issue.labels.map{|l| l.name } rescue []
+    new_tags = issue.labels.map(&:name) rescue []
+    aha_statuses = []
+
+    # remove the aha_statuses as these are 'special' tags used to change the state
+    if data.add_status_labels
+      aha_statuses = new_tags.select {|val| val.starts_with? "aha:"}
+      new_tags.delete_if {|val| val.starts_with? "aha:"}
+    end
+
     diff = {}
     diff[:name] = issue.title if resource.name != issue.title
-    diff[:workflow_status] = new_status if !new_status.nil? and new_status != resource.workflow_status.id
+
+    case action
+    when "unlabeled"
+      # add the label back to the issue if all aha labels were removed
+      label_resource.update(issue.number, [new_tags, payload.label.name].flatten) if data.add_status_labels and aha_statuses.empty? and payload.label.name.starts_with? "aha:"
+    when "labeled"
+      if data.add_status_labels && !aha_statuses.nil? && !aha_statuses.empty?
+        aha_status = aha_statuses.pop
+        # if there are multiple aha_statuses then clear all except for the last status
+        label_resource.update(issue.number, [new_tags, aha_status].flatten) unless aha_statuses.empty?
+        # trim the aha: prefix to match the aha workflow_status name
+        new_status = aha_status[4..-1]
+        # update the status
+        diff[:workflow_status] = new_status if !new_status.nil? and new_status != resource.workflow_status.name
+      end
+    else
+      if !data.add_status_labels
+        diff[:workflow_status] = new_status if !new_status.nil? and new_status != resource.workflow_status.id
+      end
+    end
     diff[:tags] = new_tags if Set.new(resource.tags) != Set.new(new_tags)
     if diff.size > 0  then
       api.put resource.resource, { resource_kind => diff }
@@ -169,10 +199,27 @@ class AhaServices::GithubIssues < AhaService
       .update(number, title: resource_name(resource),
                       body: issue_body(resource))
       .tap { |issue| update_labels(issue, resource) }
+      .tap { |issue| update_issue_status(issue, resource)}
   end
 
   def update_labels(issue, resource)
-    label_resource.update(issue['number'], resource.tags) unless resource.tags.nil?
+    tags = resource.tags.dup
+    return if tags.nil?
+    if data.add_status_labels
+      # remove that old aha statuses
+      tags = tags.delete_if {|val| val.starts_with? "aha:"}
+      # add a label for the status only if add_status_labels
+      tags.push("aha:" + resource.workflow_status.name) unless resource.nil? or resource.workflow_status.nil?
+    end
+    label_resource.update(issue['number'], tags)
+  end
+
+  def update_issue_status(issue, resource)
+    # close the issue if the aha_status matches the close status
+    status = data.status_mapping.key(resource.workflow_status.id)
+    if !status.nil? && status == 'closed'
+      issue_resource.update(issue['number'], {state: status})
+    end
   end
 
   def issue_body(resource)
