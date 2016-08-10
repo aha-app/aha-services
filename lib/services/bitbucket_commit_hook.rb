@@ -1,3 +1,4 @@
+require "mail"
 class AhaServices::BitbucketCommitHook < AhaService
   title "Bitbucket Commit Hook"
   caption "Create Aha! comments from Bitbucket commits"
@@ -7,7 +8,13 @@ class AhaServices::BitbucketCommitHook < AhaService
   # Create a comment for each commit where the message contains a feature
   # or requirement ID.
   def receive_webhook
-    commit_payload = Hashie::Mash.new(JSON.parse(payload.payload))
+    commit_payload = if payload.payload.is_a?(String)
+                       Hashie::Mash.new(JSON.parse(payload.payload))
+                     elsif payload.payload.is_a?(Hash)
+                       Hashie::Mash.new(payload.payload)
+                     else
+                       raise "Unknown type: #{payload.payload.class.inspect} for payload.payload"
+                     end
     (commit_payload.commits || []).each do |commit|
       commit.message.scan(/([A-Z]+-[0-9]+(?:-[0-9]+)?)/) do |m|
         m.each do |ref|

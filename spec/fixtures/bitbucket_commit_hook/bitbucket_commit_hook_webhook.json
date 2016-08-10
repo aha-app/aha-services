@@ -1,0 +1,8 @@
+{
+  "canon_url": "https://bitbucket.org/testing/project",
+  "commits": [{
+    "message": "AHA-4 Comment on aha 4",
+    "raw_author": "commentor@bitbucket.com"
+  }],
+  "repository": { }
+}
