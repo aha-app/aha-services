@@ -8,12 +8,13 @@ class AhaServices::BitbucketCommitHook < AhaService
   # Create a comment for each commit where the message contains a feature
   # or requirement ID.
   def receive_webhook
-    commit_payload = if payload.payload.is_a?(String)
-                       Hashie::Mash.new(JSON.parse(payload.payload))
-                     elsif payload.payload.is_a?(Hash)
-                       Hashie::Mash.new(payload.payload)
+    raw_payload = payload.try(:payload) || payload
+    commit_payload = if raw_payload.is_a?(String)
+                       Hashie::Mash.new(JSON.parse(raw_payload))
+                     elsif raw_payload.is_a?(Hash)
+                       Hashie::Mash.new(raw_payload)
                      else
-                       raise "Unknown type: #{payload.payload.class.inspect} for payload.payload"
+                       raise "Unknown type: #{raw_payload.class.inspect} for payload.payload"
                      end
     (commit_payload.commits || []).each do |commit|
       commit.message.scan(/([A-Z]+-[0-9]+(?:-[0-9]+)?)/) do |m|
