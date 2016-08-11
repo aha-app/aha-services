@@ -35,7 +35,7 @@ protected
     message = <<-EOF
       <p>#{email.display_name || email.address} committed:</p>
       <pre>#{commit.message}</pre>
-      <p>Commit: <a href="#{commit.links.self.href}">#{commit.hash}</a></p>
+      <p>Commit: <a href="#{commit.links.html.href}">#{commit["hash"]}</a></p>
     EOF
 
     begin
