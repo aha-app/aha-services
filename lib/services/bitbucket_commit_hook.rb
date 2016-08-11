@@ -16,10 +16,11 @@ class AhaServices::BitbucketCommitHook < AhaService
                      else
                        raise "Unknown type: #{raw_payload.class.inspect} for payload.payload"
                      end
-    (commit_payload.commits || []).each do |commit|
+    commits = (commit_payload.push.changes.flat_map(&:commits) rescue []) || []
+    commits.each do |commit|
       commit.message.scan(/([A-Z]+-[0-9]+(?:-[0-9]+)?)/) do |m|
         m.each do |ref|
-          comment_on_record(commit_payload, ref, commit)
+          comment_on_record(ref, commit)
         end
       end
     end
@@ -27,14 +28,14 @@ class AhaServices::BitbucketCommitHook < AhaService
 
 protected
 
-  def comment_on_record(commit_payload, ref_num, commit)
+  def comment_on_record(ref_num, commit)
     record_type = ref_num =~ /-[0-9]+-/ ? "requirements" : "features"
 
-    email = Mail::Address.new(commit.raw_author)
+    email = Mail::Address.new(commit.author.raw)
     message = <<-EOF
-      <p>#{email.display_name || email.address} committed to <a href="#{commit_payload.canon_url}#{commit_payload.repository.absolute_url}">#{commit_payload.repository.name}</a>:</p>
+      <p>#{email.display_name || email.address} committed:</p>
       <pre>#{commit.message}</pre>
-      <p>Commit: <a href="#{commit_payload.canon_url}#{commit_payload.repository.absolute_url}commits/#{commit.raw_node}">#{commit.node}</a></p>
+      <p>Commit: <a href="#{commit.links.self.href}">#{commit.hash}</a></p>
     EOF
 
     begin
