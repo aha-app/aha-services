@@ -28,11 +28,12 @@ describe AhaServices::Jira do
     stub_request(:get, "#{base_url}/project/DEMO/versions").
       to_return(:status => 200, :body => "[]", :headers => {})
     stub_request(:post, "#{base_url}/version").
-      with(:body => "{\"name\":\"Summer\",\"description\":\"Created from Aha! \",\"releaseDate\":null,\"released\":null,\"project\":\"DEMO\"}").
+      with(:body => "{\"name\":\"Summer\",\"description\":\"Created from Aha! \",\"releaseDate\":\"2014-06-06\",\"released\":null,\"project\":\"DEMO\"}").
       to_return(:status => 201, :body => "{\"id\":\"666\"}", :headers => {})
     # Call back into Aha! for release.
-    stub_request(:post, "https://a.aha.io/api/v1/releases/PROD-R-1/integrations/fields").
-      with(:body => {:integration_field => {:name => "id", :value => "666"}}).
+
+    stub_request(:post, "https://a.aha.io/api/v1/releases/PROD-R-1/integrations/1000/fields").
+      with(:body => {:integration_fields => [{:name => "id", :value => "666"}, {:name => "url", :value => "http://foo.com/a/browse/DEMO/fixforversion/666"}]}).
       to_return(:status => 201, :body => "", :headers => {})
     # Link to user picker
     stub_request(:get, "http://u:p@foo.com/a/rest/api/2/user/picker?query=watersco@gmail.com").
@@ -57,17 +58,22 @@ describe AhaServices::Jira do
       to_return(:status => 201)
 
     # Call back into Aha! for feature
-    stub_request(:post, "https://a.aha.io/api/v1/features/5886067808745625353/integrations/fields").
+    stub_request(:post, "https://a.aha.io/api/v1/features/5886067808745625353/integrations/1000/fields").
       with(:body => {:integration_fields => [{:name => "url", :value => "http://foo.com/a/browse/DEMO-10"}, {:name => "id", :value => "10009"}, {:name => "key", :value => "DEMO-10"}]}).
       to_return(:status => 201, :body => "", :headers => {})
+
     # Call back into Aha! for requirement
     stub_request(:post, "https://a.aha.io/api/v1/requirements/5886072825272941795/integrations/fields").
       with(:body => {:integration_fields => [{:name => "url", :value => "http://foo.com/a/browse/DEMO-10"}, {:name => "id", :value => "10009"}, {:name => "key", :value => "DEMO-10"}]}).
       to_return(:status => 201, :body => "", :headers => {})
 
+
+    stub_request(:post, "https://a.aha.io/api/v1/features/5886067808745625353/integrations/1000/adjacent_fields").
+      to_return(:status => 200, :body => "", :headers => {})
+
     stub_download_feature_attachments
 
-    AhaServices::Jira.new(service_params,
+    AhaServices::Jira.new(service_params.merge({'integration_id' => 1000}),
                           json_fixture('create_feature_event.json'),
                           integration_data)
       .receive(:create_feature)
@@ -423,6 +429,7 @@ describe AhaServices::Jira do
       resource = Hashie::Mash.new(description: {})
       new_issue = Hashie::Mash.new(id: 1001)
       service.should_receive(:create_issue_for).and_return(new_issue)
+      service.should_receive(:set_issue_rank)
       service.should_receive(:integrate_resource_with_jira_issue)
       service.should_receive(:upload_attachments).twice
       expect(service.send(:attach_issue_to, resource, nil, nil))

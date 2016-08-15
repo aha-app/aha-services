@@ -3,7 +3,7 @@ require 'html2confluence'
 class AhaServices::Jira < AhaService
   title "JIRA"
   caption "Send features to JIRA issue tracking (supports on-premise and cloud)"
-  
+
   string :server_url, description: "URL for the JIRA server, without a trailing slash, e.g. https://bigaha.atlassian.net"
   string :username, description: "Use your JIRA username from the JIRA profile page, not your email address."
   password :password
@@ -13,26 +13,26 @@ class AhaServices::Jira < AhaService
     configure_button: "Load project data",
     configure_button_highlight_if: -> (meta_data, data) { meta_data["configuration"]["attribute_project"]["project"] != data["project"] rescue true }
   boolean :send_initiatives, description: "Check to use feature initiatives to create Epics in JIRA Agile"
-  select :feature_issue_type, 
-    collection: ->(meta_data, data) { 
+  select :feature_issue_type,
+    collection: ->(meta_data, data) {
       meta_data.issue_type_sets[meta_data.projects.detect {|p| p[:key] == data.project}.issue_types].find_all{|i| !i.subtype}.collect{|p| [p.name, p.id] }
     }, description: "JIRA issue type that will be used when sending features. If you are using JIRA Agile then we recommend 'Story'."
-  select :requirement_issue_type, 
-    collection: ->(meta_data, data) { 
+  select :requirement_issue_type,
+    collection: ->(meta_data, data) {
       meta_data.issue_type_sets[meta_data.projects.detect {|p| p[:key] == data.project}.issue_types].find_all{|i| !i.subtype}.collect{|p| [p.name, p.id] }
     }, description: "JIRA issue type that will be used when sending requirements. If you are using JIRA Agile then we recommend 'Sub-task'."
   internal :feature_status_mapping
   internal :field_mapping
   # internal :resolution_mapping  # TODO: we are not actually using this at the moment.
   boolean :dont_send_releases, description: "Check to prevent Aha! from creating versions in JIRA and from populating the fixVersions field for issues. For most users this box should not be checked."
-  
+
   boolean :dont_auto_import, description: "Check to prevent Aha! from automatically importing issues that are related to an issue that is already linked to Aha!"
   boolean :only_auto_import_mapped_issue_types, description: "Check to prevent Aha! from from automatically importing issue types that are not mapped to Features or Requirements"
 
   boolean :send_tags, description: "Check to synchronize Aha! tags and JIRA labels. We recommend enabling this for new integrations. Enabling this option once features are synced to JIRA may cause tags in Aha! or labels in JIRA to be removed from a feature if the corresponding label or tag doesn't exist in the other system."
-  
+
   callback_url description: "The webhook enables updates from JIRA to Aha! Follow the instructions above to install this webhook in JIRA. Only one hook is necessary, even if multiple products are integrated with JIRA."
-    
+
   def receive_installed
     get_common_configuration
   end
@@ -41,7 +41,7 @@ class AhaServices::Jira < AhaService
     case payload[:field]
     when "attribute_project"
       get_common_configuration
-      
+
       if data.project && projects = @meta_data["projects"].detect{|project| project['key'] == data.project}
         project_id = projects["id"]
         project_resource.fetch_expanded_data_for_project(project_id, @meta_data)
@@ -61,7 +61,7 @@ class AhaServices::Jira < AhaService
   def receive_create_feature
     integrate_or_update_feature(payload.feature)
   end
-  
+
   def receive_update_feature
     integrate_or_update_feature(payload.feature)
   end
@@ -77,11 +77,11 @@ class AhaServices::Jira < AhaService
   def receive_create_release
     find_or_attach_jira_version(payload.release) unless dont_send_releases?
   end
-  
+
   def receive_update_release
     update_or_attach_jira_version(payload.release) unless dont_send_releases?
   end
-  
+
   def receive_create_comment
     create_comment(payload.comment, payload.commentable)
   end
@@ -131,14 +131,14 @@ class AhaServices::Jira < AhaService
         self.send "#{method}_without_catch_common_errors".intern
       end
     end
-    
+
     alias_method "#{method}_without_catch_common_errors".intern, method
     alias_method method, "#{method}_with_catch_common_errors".intern
   end
 
 protected
   include JiraMappedFields
-  
+
   def get_common_configuration
     @meta_data ||= {}
     @meta_data['epic_name_field'] = field_resource.epic_name_field
@@ -156,11 +156,11 @@ protected
     end
     @meta_data['resolutions'] = resolution_resource.all
   end
-  
+
   def dont_send_releases?
     data.dont_send_releases == "1"
   end
-  
+
   def new_or_existing_aha_reference_field
     # Create custom field for Aha! reference.
     unless field = field_resource.aha_reference_field
@@ -190,7 +190,7 @@ protected
       attach_version_to(release)
     end
   end
-  
+
   def update_or_attach_jira_version(release)
     if version_id = get_integration_field(release.integration_fields, 'id') and
         version = existing_version_integrated_with(release)
@@ -228,7 +228,7 @@ protected
                                 releaseDate: release.release_date,
                                 released: release.released
   end
-  
+
   def update_requirements(feature, version, issue_info)
     if feature.requirements
       feature.requirements.each do |requirement|
@@ -253,7 +253,7 @@ protected
       nil
     end
   end
-  
+
   def update_or_attach_jira_issue(resource, initiative, version, parent = nil)
     if issue_info = get_existing_issue_info(resource)
       update_issue(issue_info, resource, initiative, version, parent)
@@ -267,7 +267,7 @@ protected
     integrate_resource_with_jira_issue(reference_num_to_resource_type(resource.reference_num), resource, issue)
 
     # Put the issue in the correct order.
-    set_issue_rank(issue, resource)    
+    set_issue_rank(issue, resource)
 
     # Add attachments.
     upload_attachments(resource.description.attachments, issue.id)
@@ -275,14 +275,14 @@ protected
 
     issue
   end
-  
-  # Create an epic from an initiative, or find an existing epic for the 
+
+  # Create an epic from an initiative, or find an existing epic for the
   # initiative.
   #
   # Note there is a possible race condition - if multiple features with the
   # same initiative are being created in parallel then duplicate initiatives
-  # can be created. We avoid this by creating multiple features synchronously 
-  # in the application. 
+  # can be created. We avoid this by creating multiple features synchronously
+  # in the application.
   def epic_key_for_initiative(initiative)
     if epic_key = get_integration_field(initiative.integration_fields, 'key')
       epic_key
@@ -290,10 +290,10 @@ protected
       create_issue_for_initiative(initiative, issue_type)[:key]
     end
   end
-  
+
   def create_issue_for_initiative(initiative, issue_type)
     logger.info("Creating issue for initiative #{initiative.id}")
-    
+
     issue = Hashie::Mash.new(
       fields: {
         summary: resource_name(initiative),
@@ -316,9 +316,9 @@ protected
   def create_issue_for(resource, initiative, version, parent)
     issue_type = issue_type_by_parent(parent)
     summary = resource_name(resource)
-    
+
     logger.info("Creating issue for #{resource.reference_num}")
-    
+
     issue = Hashie::Mash.new(
       fields: {
         summary: summary,
@@ -341,13 +341,13 @@ protected
     # Use the custom fields from @feature to populate requirements, to solve for required custom fields on create
     issue.fields.merge!(mapped_custom_fields(@feature, issue_type))
     issue.fields.merge!(due_date_fields(@feature, issue_type))
-    
+
     new_issue = issue_resource.create(issue)
 
     create_link_for_issue(new_issue, issue_type, parent)
-    
+
     logger.info("Created issue #{new_issue[:key]}")
-    
+
     new_issue
   end
 
@@ -363,12 +363,12 @@ protected
         description: convert_html(resource.description.body)
       }
     )
-    
+
     #   .merge!(subtask_fields(issue_type.subtask, parent)) # This is not possible for updates.
     # We do still generate the epic link field since it creates the initiative
     # in JIRA, though it doesn't link it.
     issue_epic_link_field(issue_type, parent, initiative)
-    
+
     issue.fields
       .merge!(label_fields(resource, issue_type))
       .merge!(time_tracking_fields(resource, issue_type))
@@ -383,15 +383,15 @@ protected
         .merge!(mapped_custom_fields(@feature, issue_type))
         .merge!(due_date_fields(@feature, issue_type))
     end
-      
+
     issue.merge!(version_update_fields(version, issue_type))
 
     issue_resource.update(issue_info.id, issue)
 
     update_epic_link(issue_info.id, issue_type, parent, initiative)
-    
+
     update_attachments(issue_info.id, resource)
-    
+
     issue_info
   rescue Errors::RemoteError => e
     if e.message =~ /You do not have permission to edit issues/
@@ -419,22 +419,22 @@ protected
       issue_link_resource.create(link)
     end
   end
-  
+
   def create_comment(comment, resource)
     issue_info = get_existing_issue_info(resource)
-    
+
     logger.info("Creating comment for #{issue_info.id}")
-    
+
     comment_hash = Hashie::Mash.new(
       body: "Comment added by #{comment.user.name} in [Aha!|#{comment.url}]\n\n" + convert_html(comment.body)
     )
     new_comment = comment_resource.create(issue_info.id, comment_hash)
-    
+
     upload_attachments(comment.attachments, issue_info.id)
-    
+
     new_comment
   end
-  
+
   def project_resource
     @project_resource ||= JiraProjectResource.new(self)
   end
@@ -450,7 +450,7 @@ protected
   def version_resource
     @version_resource ||= JiraVersionResource.new(self)
   end
-  
+
   def comment_resource
     @comment_resource ||= JiraCommentResource.new(self)
   end
@@ -470,11 +470,11 @@ protected
   def user_resource
     @user_resource ||= JiraUserResource.new(self)
   end
-  
+
   def greenhopper_epic_resource
     @greenhopper_epic_resource ||= GreenhopperEpicResource.new(self)
   end
-  
+
   def update_attachments(issue_id, resource)
     aha_attachments = resource.attachments.dup | resource.description.attachments.dup
 
@@ -519,7 +519,7 @@ protected
       Hash.new
     end
   end
-  
+
   def due_date_fields(resource, issue_type)
     if issue_type.fields.include?('duedate') and resource.due_date
       { duedate: resource.due_date }
@@ -551,7 +551,7 @@ protected
       Hash.new
     end
   end
-  
+
   def reporter_fields(resource, issue_type)
     if (issue_type.has_field_reporter.nil? || issue_type.has_field_reporter) && resource.created_by_user && (user = user_resource.picker(resource.created_by_user.email))
       { reporter: { name: user.name } }
@@ -563,14 +563,14 @@ protected
   def time_tracking_fields(resource, issue_type)
     # Don't send updates to JIRA if capacity planning is disabled.
     return Hash.new unless resource.key?('original_estimate')
-    
+
     if resource.use_requirements_estimates == true
       # Don't include feature estimate if requirements have estimates.
       return Hash.new
     end
-    
-    if resource.work_units == 10 and issue_type.has_field_time_tracking and 
-      (resource.original_estimate.nil? or resource.original_estimate <= 20000) and 
+
+    if resource.work_units == 10 and issue_type.has_field_time_tracking and
+      (resource.original_estimate.nil? or resource.original_estimate <= 20000) and
       (resource.remaining_estimate.nil? or resource.remaining_estimate <= 20000) # Units are minutes. Ensure estimates are below the max limit for Jira
       {
         timetracking: {
@@ -584,7 +584,7 @@ protected
       Hash.new
     end
   end
-  
+
   def issue_epic_name_field(issue_type, summary)
     if issue_type.has_field_epic_name
       { meta_data.epic_name_field => summary }
@@ -603,7 +603,7 @@ protected
       Hash.new
     end
   end
-  
+
   def update_epic_link(issue_id, issue_type, parent, initiative)
     epic_key = nil
     if data.send_initiatives == "1" && initiative && issue_type.has_field_epic_link
@@ -613,12 +613,12 @@ protected
       epic_key = parent[:key]
     end
     if epic_key
-      greenhopper_epic_resource.add_story(issue_id, epic_key) 
+      greenhopper_epic_resource.add_story(issue_id, epic_key)
     elsif data.send_initiatives == "1" && initiative.nil? && issue_type.has_field_epic_link
       begin
         issue_data = get_issue(issue_id)
         if issue_data && (epic_key = issue_data.fields[meta_data.epic_link_field])
-          greenhopper_epic_resource.remove_story(issue_id, epic_key) 
+          greenhopper_epic_resource.remove_story(issue_id, epic_key)
         end
       rescue Exception => e
         logger.debug("Error removing epic from issue. #{e.class}: #{e.message} #{e.backtrace.join("\n")}")
@@ -641,17 +641,17 @@ protected
       Hash.new
     end
   end
-  
+
   def set_issue_rank(issue, resource)
     # Call back into Aha! to find another issue to rank relative to.
     adjacent_info = api.adjacent_integration_fields(
       reference_num_to_resource_type(resource.reference_num), resource.id, data.integration_id).first
     if adjacent_info
-      adjacent_issue_id = get_integration_field(adjacent_info.integration_fields, 'id')    
-      issue_resource.set_rank(issue[:key], adjacent_issue_id, adjacent_info.direction == "before" ? :before : :after) 
+      adjacent_issue_id = get_integration_field(adjacent_info.integration_fields, 'id')
+      issue_resource.set_rank(issue[:key], adjacent_issue_id, adjacent_info.direction == "before" ? :before : :after)
     end
   end
-  
+
   def issue_type_by_parent(parent)
     issue_type_id = parent ? (data.requirement_issue_type || data.feature_issue_type) : data.feature_issue_type
     issue_type_by_id(issue_type_id)
@@ -665,7 +665,7 @@ protected
     issue_types = meta_data.issue_type_sets[project.issue_types]
     issue_types.find {|type| type.has_field_epic_name == true }
   end
-  
+
   # Convert HTML from Aha! into Confluence-style wiki markup.
   def convert_html(html)
     parser = HTMLToConfluenceParser.new
@@ -674,7 +674,7 @@ protected
   end
 
   def integrate_release_with_jira_version(release, version)
-    api.create_integration_fields("releases", release.reference_num, data.integration_id, 
+    api.create_integration_fields("releases", release.reference_num, data.integration_id,
     {id: version.id, url: "#{data.server_url}/browse/#{data.project}/fixforversion/#{version.id}"})
   end
 
@@ -695,5 +695,5 @@ protected
     raise AhaService::RemoteError,
       "Initiative '#{initiative.name}' is from a product without a JIRA integration. Add a JIRA integration for the product the initiative belongs to."
   end
-  
+
 end
