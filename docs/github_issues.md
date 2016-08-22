@@ -15,7 +15,7 @@ This two-way integration allows you to push your features and requirements in Ah
 * Aha! releases will be created as milestones in Github.
 * After a feature is first sent to Github, changes to the name, description and requirements, can also be sent to Github using the _Update Github_ item in the _Actions_ menu on the features page or by sending all features in a release to Github again. New requirements will also be created in Github, however issues that were created for an existing requirement are not deleted from Github if the requirement is deleted from Aha!. If an attachment is deleted in Aha! the corresponding attachment in Github is not deleted.
 * When "Add status labels" is enabled and the feature is updated using _Send to Github Issues_ the state of the feature will be added as a label in Github with the prefix "aha:" ie. "aha:In development".
-* With "Add status labels" enabled the state of corresponding feature to the Github Issues can be changed to the desired aha state by adding a Github label with with the "aha:" prefix and removing the label representing the features previous state. ie. remove the label "aha:In development" and add "aha:Ready to ship". Note: only one label with the prefix "aha:" will be allowed on a Github issue
+* With "Add status labels" enabled the state of corresponding feature to the Github Issues can be changed to the desired Aha! state by adding a Github label with with the "Aha!:" prefix and removing the label representing the features previous state. ie. remove the label "Aha!:In development" and add "Aha!:Ready to ship". Note: only one label with the prefix "Aha!:" will be allowed on a Github issue
 
 ## Configuration
 
