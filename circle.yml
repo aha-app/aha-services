@@ -1,0 +1,7 @@
+dependencies:
+  pre:
+    - gem install bundler
+
+test:
+  override:
+    - bundle exec rspec -r rspec_junit_formatter --format RspecJunitFormatter -o $CIRCLE_TEST_REPORTS/rspec/junit.xml --format documentation
