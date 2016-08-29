@@ -42,26 +42,51 @@ class RallyWebhookResource < RallyResource
   end
 
   def all_webhooks
-    process_response(http_get_no_basic(webhook_url("?start=1&pageSize=200"))) do |document|
-      return document.Results
+    results = []
+    start = 1
+    pagesize = 20
+    total = 2
+
+    while start < total
+      process_response(http_get_no_basic(webhook_url("?start=#{start}&pagesize=#{pagesize}"))) do |document|
+        results.concat document.Results
+        total = document.TotalResultCount
+      end
+      start += pagesize
+    end
+    results
+  end
+
+  def search_for_webhooks(callback_url)
+    all_webhooks.select {|webhook| webhook.TargetUrl == callback_url}
+  end
+
+  def destroy_webhooks
+    search_for_webhooks(@service.data.callback_url).each do |webhook|
+      destroy_webhook webhook
     end
   end
 
-  def search_for_webhook(callback_url)
-    all_webhooks.detect {|webhook| webhook.TargetUrl == callback_url}
+  def upsert_webhooks
+    destroy_webhooks
+
+    projects = project_and_recursive_children(selected_project_uuid)
+    projects.each do |project|
+      create_webhook project
+    end
   end
 
-  def update_webhook webhook
+  def update_webhook project, webhook
     response = http_patch_no_basic(webhook_url("/#{webhook.ObjectUUID}")) do |req|
-      req.body = hash_for_webhook.to_json
+      req.body = hash_for_webhook(project).to_json
     end
 
     process_response(response)
   end
 
-  def create_webhook
+  def create_webhook project
     response = http_post_no_basic(webhook_url("")) do |request|
-      request.body = hash_for_webhook.to_json
+      request.body = hash_for_webhook(project).to_json
     end
 
     process_response(response)
@@ -76,8 +101,12 @@ class RallyWebhookResource < RallyResource
     !@service.data.integration_enabled
   end
 
+  def all_project_ids_to_watch
+    project_and_recursive_children(selected_project_uuid)
+  end
+
   def selected_project_uuid
-    project = @service.meta_data.projects.detect{|project| project.ObjectID == @service.data.project.to_i }
+    project = @service.meta_data.projects.detect{|p| p.ObjectID == @service.data.project.to_i }
     
     if project
       project["_refObjectUUID"]
@@ -86,18 +115,33 @@ class RallyWebhookResource < RallyResource
     end
   end
 
-  def hash_for_webhook
+  def project_and_recursive_children project_uuid
+    projects = @service.meta_data.projects
+
+    return_projects = []
+
+    return_projects << projects.detect {|project| project["_refObjectUUID"] == project_uuid }
+
+    projects.select {|project| project["ParentUUID"] == project_uuid }.each do |child_project|
+      return_projects.concat(project_and_recursive_children(child_project["_refObjectUUID"]))
+    end
+
+    return_projects
+  end
+
+  def hash_for_webhook project
     {
       "AppName" => "Aha!",
       "AppUrl" => "http://www.aha.io",
       "TargetUrl" => @service.data.callback_url,
       "Name" => "Aha! Rally Integration #{@service.data.integration_id}",
-      "Expressions" => [
+      "Expressions" => [{
         "AttributeID" => PROJECT_FIELD_UUID,
         "Operator" => "=",
-        "Value" => selected_project_uuid
-      ],
-      "Disabled" => webhook_is_disabled }
+        "Value" => project["_refObjectUUID"]
+      }],
+      "Disabled" => webhook_is_disabled
+    }
   end
 end
 

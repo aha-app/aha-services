@@ -171,7 +171,11 @@ module Networking
   #
   def verify_url(url_to_check)
     uri = URI.parse(url_to_check)
-
+    
+    if uri.nil? || uri.host.nil?
+      raise AhaService::InvalidUrlError, "URL is empty or invalid"
+    end
+    
     if (verified = @@verified_urls[uri.host]) == false
       raise AhaService::InvalidUrlError, "Invalid local address #{uri.host}"
     elsif verified

@@ -28,7 +28,9 @@ class AhaServices::Rally < AhaService
   }
 
   internal :feature_status_mapping
+  internal :feature_default_fields
   internal :requirement_status_mapping
+  internal :requirement_default_fields
 
   callback_url description: "URL Rally will call to update Aha!. This is webhook is automatically installed in Rally for the selected project."
 
@@ -38,6 +40,15 @@ class AhaServices::Rally < AhaService
     meta_data.workspaces = rally_workspace_resource.all
     meta_data.type_definitions = rally_portfolio_item_resource.get_all_portfolio_items
     meta_data.state_definitions = rally_state_resource.get_all_states
+
+    meta_data.custom_fields = {
+      "UserStory" => rally_portfolio_item_resource.get_all_requirement_custom_fields
+    }
+
+    meta_data.type_definitions.each do |definition|
+      meta_data.custom_fields[definition.Name] = definition.CustomFields
+    end
+
     meta_data.install_successful = true
   end
 
@@ -59,13 +70,13 @@ class AhaServices::Rally < AhaService
 
   def receive_updated
     if meta_data.install_successful && data.project.to_i
-      create_or_update_webhook
+      create_or_update_webhooks
     end
   end
 
   def receive_destroyed
     if meta_data.install_successful && data.project.to_i
-      destroy_webhook
+      destroy_webhooks
     end
   end
 

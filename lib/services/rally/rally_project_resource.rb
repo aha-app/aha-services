@@ -9,9 +9,13 @@ class RallyProjectResource < RallyResource
       process_response response do |document|
         total_results = document.QueryResult.TotalResultCount
         start += document.QueryResult.PageSize
-        projects.concat(document.QueryResult.Results.map{|project| project.slice("ObjectID", "_ref", "Name", "_refObjectUUID") })
+        projects.concat(document.QueryResult.Results.map{|project| project.slice("ObjectID", "_ref", "Name", "_refObjectUUID", "Parent") })
       end
       break if start >= total_results
+    end
+
+    projects.each do |project|
+      project["ParentUUID"] = project.delete("Parent").try(:"_refObjectUUID")
     end
     projects.sort_by {|r| r["Name"] }
   end

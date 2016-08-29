@@ -18,24 +18,24 @@ class RallyReleaseResource < RallyResource
   end
 
   def update aha_release
-    id = aha_release.integration_fields.find{|field| field.integration_id == @service.data.integration_id.to_s and field.name == "id"}.value
+    id = @service.get_integration_field(aha_release.integration_fields, "id")
     body = { :Release =>  map_release(aha_release) }.to_json
-    url = rally_secure_url "/release/#{id}"
+    url = rally_secure_url_without_workspace "/release/#{id}"
     response = http_post url, body
     process_response response
   end
 
 protected
   def map_release aha_release
-    start_date = aha_release.start_date || Date.today.to_s
-    release_date = aha_release.release_date || Date.today.to_s
+    release_date = Date.parse(aha_release.release_date) rescue Date.today
+    start_date = Date.parse(aha_release.start_date) rescue release_date
 
-    start_date = [start_date, release_date].min # Never send a start date after the release date
+    start_date = [start_date, (release_date - 1.day)].min # Never send a start date after the release date
     release = {
       :Name => aha_release.name,
       :Project => @service.data.project,
-      :ReleaseDate => Date.parse(release_date).rfc3339(),
-      :ReleaseStartDate => Date.parse(start_date).rfc3339(),
+      :ReleaseDate => release_date.rfc3339(),
+      :ReleaseStartDate => start_date.rfc3339(),
       :State => "Planning",
       :Theme => aha_release.theme.body
     }

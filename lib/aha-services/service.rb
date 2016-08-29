@@ -92,6 +92,10 @@ class AhaService
 
   def receive(event, timeout = nil)
     @event = event.to_sym
+
+    # TODO - check to see if we have a receive_event method in any of our implementations
+    # this looks like an intent that was never realized. Reduce complexity if it's not being
+    # used by deleting it.
     @event_method = ["receive_#{event}", "receive_event"].detect do |method|
       respond_to?(method)
     end
