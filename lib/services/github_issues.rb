@@ -217,8 +217,8 @@ class AhaServices::GithubIssues < AhaService
   end
 
   def update_labels(issue, resource)
+    return if resource.tags.nil?
     tags = resource.tags.dup
-    return if tags.nil?
     if add_status_labels_enabled?
       # remove that old aha statuses
       tags = tags.delete_if {|val| val.starts_with? "Aha!:"}
