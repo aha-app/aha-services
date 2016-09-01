@@ -26,7 +26,7 @@ class AhaServices::Jira < AhaService
   # internal :resolution_mapping  # TODO: we are not actually using this at the moment.
   boolean :dont_send_releases, description: "Check to prevent Aha! from creating versions in JIRA and from populating the fixVersions field for issues. For most users this box should not be checked."
 
-  boolean :dont_auto_import, description: "Check to prevent Aha! from automatically importing issues that are related to an issue that is already linked to Aha!"
+  boolean :dont_auto_import, description: "Check to prevent Aha! from automatically importing issues that are related to a record that is already linked to Aha!"
   boolean :only_auto_import_mapped_issue_types, description: "Check to prevent Aha! from from automatically importing issue types that are not mapped to Features or Requirements"
 
   boolean :send_tags, description: "Check to synchronize Aha! tags and JIRA labels. We recommend enabling this for new integrations. Enabling this option once features are synced to JIRA may cause tags in Aha! or labels in JIRA to be removed from a feature if the corresponding label or tag doesn't exist in the other system."

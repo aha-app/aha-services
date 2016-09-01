@@ -432,6 +432,13 @@ describe AhaServices::GithubIssues do
         end
       end
 
+      context "with an underscore inside a code tag in the body" do
+        let(:resource) { Hashie::Mash.new( description: { body: "Issue with backticks `method_name*`" }) }
+        it "returns the body" do
+          expect(service.issue_body(resource)).to eq "Issue with backticks `method_name*`\n\n"
+        end
+      end
+
       context "with a github todo in the body" do
         let(:resource) { Hashie::Mash.new( description: { body: "<ul><li>[ ] Todo<br></li></ul>" }) }
         it "returns the body" do
