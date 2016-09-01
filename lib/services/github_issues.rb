@@ -239,12 +239,23 @@ class AhaServices::GithubIssues < AhaService
   def issue_body(resource)
 
     issue_body_parts = []
-    issue_body_parts << html_to_markdown(resource.description.body, true) if resource.description.body.present?
+    if resource.description.body.present?
+      body = html_to_markdown(resource.description.body, true)
+      body = bugfix_escaping_in_method_name(body)
+      issue_body_parts << body
+    end
     issue_body_parts << requirements_to_checklist(resource) if resource.requirements.present? and requirements_to_checklist?
     if resource.description.attachments.present?
       issue_body_parts << attachments_in_body(resource.description.attachments)
     end
     issue_body_parts.join("\n\n")
+  end
+
+  # Github's parser is smart enough to not treat _ or * inside of `` blocks as markdown control characters, so we don't need to escape them
+  def bugfix_escaping_in_method_name body
+    body = body.gsub(/`[^`]+`/) do |code_point|
+      code_point.gsub('\\_', "_").gsub('\\*', "*")
+    end
   end
 
   def attachments_in_body(attachments)
