@@ -1,3 +1,5 @@
+require "zlib"
+
 module Networking
   # Public: Lazily loads the Faraday::Connection for the current Service
   # instance.
@@ -19,6 +21,7 @@ module Networking
         faraday_builder(b)
         b.adapter (adapter || :net_http)
         b.use(HttpReporter, self)
+        b.use(Gzip)
       end
     end
   end
@@ -245,6 +248,20 @@ module Networking
         @service.logger.debug @service.reportable_http_env(env, @time)
       else
         @service.logger.info @service.reportable_http_env(env, @time)
+      end
+    end
+  end
+  
+  class Gzip < Faraday::Response::Middleware
+    def on_complete(env)
+      encoding = env[:response_headers]['content-encoding'].to_s.downcase
+      case encoding
+      when 'gzip'
+        env[:body] = Zlib::GzipReader.new(StringIO.new(env[:body]), encoding: 'ASCII-8BIT').read
+        env[:response_headers].delete('content-encoding')
+      when 'deflate'
+        env[:body] = Zlib::Inflate.inflate(env[:body])
+        env[:response_headers].delete('content-encoding')
       end
     end
   end
