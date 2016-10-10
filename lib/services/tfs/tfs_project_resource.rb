@@ -1,7 +1,7 @@
 class TFSProjectResource < TFSResource
 
   def all
-    response = http_get mstfs_url("projects")
+    response = http_get mstfs_url("projects?$top=1000")
     process_response response do |body|
       projects = Hashie::Mash.new
       body.value.each do |project|
