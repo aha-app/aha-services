@@ -205,7 +205,7 @@ class RallyHierarchicalRequirementResource < RallyResource
   def maybe_add_tags_to_object(attributes, aha_object)
     object_tags = aha_object.tags
 
-    if !object_tags.empty?
+    if object_tags && !object_tags.empty?
       attributes[:Tags] = get_or_create_tag_references(object_tags)
     end
   rescue AhaService::RemoteError => e
