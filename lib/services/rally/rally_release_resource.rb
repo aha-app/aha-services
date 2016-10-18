@@ -1,3 +1,4 @@
+require 'active_support/core_ext'
 class RallyReleaseResource < RallyResource
   def by_id id
     url = rally_url_without_workspace "/release/#{id}"
