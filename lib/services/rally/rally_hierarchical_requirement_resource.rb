@@ -204,10 +204,8 @@ class RallyHierarchicalRequirementResource < RallyResource
 
   def maybe_add_tags_to_object(attributes, aha_object)
     object_tags = aha_object.tags
-
-    if object_tags && !object_tags.empty?
-      attributes[:Tags] = get_or_create_tag_references(object_tags)
-    end
+    attributes[:Tags] = [] if object_tags
+    attributes[:Tags] = get_or_create_tag_references(object_tags) if object_tags && !object_tags.empty?
   rescue AhaService::RemoteError => e
     logger.error("Failed to create tag #{tag_name}: #{e.message}")
   end
@@ -218,10 +216,11 @@ class RallyHierarchicalRequirementResource < RallyResource
     url = rally_secure_url_without_workspace("/tag?query=#{query_params}")
     process_response http_get(url) do |document|
       results = document.QueryResult.Results
-      tag_refs = []
-      results.each { |result| tag_refs << {_ref: result._ref} }
+
+      tag_refs = results.inject([]){ |acc, res| acc << {_ref: res._ref} }
       results_names = results.map{|obj| obj._refObjectName}
       tags_to_create = tags.select{|tag| !results_names.include? tag}
+
       created_tags = create_tags tags_to_create
 
       return tag_refs + created_tags
@@ -230,15 +229,9 @@ class RallyHierarchicalRequirementResource < RallyResource
 
   # The rally api requires that queries have paren nesting. EX:
   # (( (Name="something") OR (name="something else") ) OR (name="blah"))
-  def build_tag_query(tags, i=0, query="")
-    return query if tags.empty? || i == tags.length
+  def build_tag_query(tags)
     # The query must contain spaces surrounding the `=`
-    current_query = "(Name = \"#{tags[i]}\")"
-    if i == 0
-      return build_tag_query(tags, i+1, current_query)
-    else
-      return build_tag_query(tags, i+1, "(#{query} OR #{current_query})")
-    end
+    tags.map{|tag| "(Name = \"#{tag}\")" }.inject {|current, n| "(#{current} OR #{n})"}
   end
 
   def create_tags(tags)

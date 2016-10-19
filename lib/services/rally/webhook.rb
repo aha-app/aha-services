@@ -49,10 +49,8 @@ module AhaServices::RallyWebhook
         update_hash[:assigned_to_user] = nil
       end
 
-      if raw_state_map["Tags"]
-        tags = raw_state_map["Tags"].map(&:name)
-        update_hash[:tags] = tags
-      end
+      
+      update_hash[:tags] = raw_state_map["Tags"].map(&:name) if raw_state_map["Tags"]
 
       if resource_type == "feature"
         update_hash[:start_date] = Date.parse(new_state["PlannedStartDate"]) if new_state["PlannedStartDate"]
@@ -62,7 +60,9 @@ module AhaServices::RallyWebhook
       if status
         update_hash[:workflow_status] = status
       end
+      logger.info "REMOVE ME: update_hash = #{update_hash}"
 
+      logger.info "REMOVE ME: resource = #{resource.resource}"
       api.put(resource.resource, { resource_type => update_hash })
     end
   rescue AhaApi::NotFound
