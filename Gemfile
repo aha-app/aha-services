@@ -4,8 +4,8 @@ ruby "2.3.1"
 
 gemspec
 
-#gem "aha-api", :path => "~/Documents/projects/aha/aha-api"
-gem "aha-api", :git => "https://github.com/aha-app/aha-api"
+gem "aha-api", :path => "~/Documents/projects/aha/aha-api"
+# gem "aha-api", :git => "https://github.com/aha-app/aha-api"
 
 gem "html2confluence", :git => "https://github.com/JeremyGeros/html2confluence.git", branch: "patch-1"
 gem "reverse_markdown", :git => "https://github.com/JeremyGeros/reverse_markdown.git"

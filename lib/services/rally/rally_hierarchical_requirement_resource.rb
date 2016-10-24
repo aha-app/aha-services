@@ -167,8 +167,25 @@ class RallyHierarchicalRequirementResource < RallyResource
     maybe_add_workspace_to_object(attributes)
     maybe_add_owner_to_object(attributes, aha_feature)
 
+    maybe_set_rank_for_feature(attributes, aha_feature)
+
     include_release_if_exists(aha_feature, attributes, rally_release_id)
     attributes
+  end
+
+  def maybe_set_rank_for_feature(attributes, aha_feature)
+    # Call back into Aha! to find another issue to rank relative to.
+    logger.info "REMOVE ME: release: #{aha_feature.release.inspect}"
+    adjacent_info = api.adjacent_integration_fields(
+      reference_num_to_resource_type(aha_feature.reference_num), aha_feature.id, "6342485956939264315")
+    logger.info "REMOVE ME: adjacent_info: #{adjacent_info.inspect}"
+    if adjacent_info
+      adjacent_feature_id = get_integration_field(adjacent_info.integration_fields, 'id')
+      logger.info "REMOVE ME: adj_id: #{adjacent_feature_id}"
+      raise "stop"
+      # issue_resource.set_rank(issue[:key], adjacent_issue_id, adjacent_info.direction == "before" ? :before : :after)
+    end
+    # logger.info "REMOVE ME: features: #{features.inspect}"
   end
 
   def maybe_add_owner_to_object(attributes, aha_object)

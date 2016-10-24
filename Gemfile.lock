@@ -27,21 +27,10 @@ GIT
   specs:
     ClothRed (0.5.0)
 
-GIT
-  remote: https://github.com/aha-app/aha-api
-  revision: 1166580dad08835dd6c953a5a2f24a537bcc867a
-  specs:
-    aha-api (1.0.11)
-      activesupport
-      faraday (~> 0.9.0)
-      faraday_middleware
-      hashie
-      multi_json
-
 PATH
   remote: .
   specs:
-    aha-services (1.23.5)
+    aha-services (1.23.8)
       activesupport
       aha-api
       crack
@@ -54,6 +43,16 @@ PATH
       jwt
       reverse_markdown
       simple_oauth (>= 0.1, < 0.3)
+
+PATH
+  remote: ~/Documents/projects/aha/aha-api
+  specs:
+    aha-api (1.0.13)
+      activesupport
+      faraday (~> 0.9.0)
+      faraday_middleware
+      hashie
+      multi_json
 
 GEM
   remote: https://rubygems.org/
@@ -87,7 +86,7 @@ GEM
     html2markdown (0.0.3)
       nokogiri
     htmlentities (4.3.2)
-    http-cookie (1.0.2)
+    http-cookie (1.0.3)
       domain_name (~> 0.5)
     i18n (0.6.11)
     json (1.8.3)
@@ -183,4 +182,4 @@ RUBY VERSION
    ruby 2.3.1p112
 
 BUNDLED WITH
-   1.12.5
+   1.13.5
