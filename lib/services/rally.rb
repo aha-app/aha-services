@@ -83,7 +83,7 @@ class AhaServices::Rally < AhaService
   end
 
   def receive_webhook
-    update_record_from_webhook(payload)
+    update_record_from_webhook(payload, data)
   end
 
   def receive_create_release

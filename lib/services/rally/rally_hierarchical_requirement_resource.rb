@@ -203,9 +203,11 @@ class RallyHierarchicalRequirementResource < RallyResource
   end
 
   def maybe_add_tags_to_object(attributes, aha_object)
-    object_tags = aha_object.tags
-    attributes[:Tags] = [] if object_tags
-    attributes[:Tags] = get_or_create_tag_references(object_tags) if object_tags && !object_tags.empty?
+    if @service.data.send_tags == "1"
+      object_tags = aha_object.tags
+      attributes[:Tags] = [] if object_tags
+      attributes[:Tags] = get_or_create_tag_references(object_tags) if object_tags && !object_tags.empty?
+    end
   rescue AhaService::RemoteError => e
     logger.error("Failed to create tag #{tag_name}: #{e.message}")
   end
