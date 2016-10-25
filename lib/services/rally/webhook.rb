@@ -50,6 +50,7 @@ module AhaServices::RallyWebhook
       end
 
       
+      update_hash[:tags] = [] # there are no tags if they aren't in raw_state_map
       update_hash[:tags] = raw_state_map["Tags"].map(&:name) if raw_state_map["Tags"]
 
       if resource_type == "feature"
@@ -60,9 +61,6 @@ module AhaServices::RallyWebhook
       if status
         update_hash[:workflow_status] = status
       end
-      logger.info "REMOVE ME: update_hash = #{update_hash}"
-
-      logger.info "REMOVE ME: resource = #{resource.resource}"
       api.put(resource.resource, { resource_type => update_hash })
     end
   rescue AhaApi::NotFound
