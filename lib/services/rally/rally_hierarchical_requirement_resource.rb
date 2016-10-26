@@ -166,6 +166,7 @@ class RallyHierarchicalRequirementResource < RallyResource
 
     maybe_add_workspace_to_object(attributes)
     maybe_add_owner_to_object(attributes, aha_feature)
+    maybe_add_tags_to_object(attributes, aha_feature)
 
     include_release_if_exists(aha_feature, attributes, rally_release_id)
     attributes
@@ -189,6 +190,7 @@ class RallyHierarchicalRequirementResource < RallyResource
 
     maybe_add_workspace_to_object(attributes)
     maybe_add_owner_to_object(attributes, aha_requirement)
+    maybe_add_tags_to_object(attributes, aha_requirement)
 
     # The only time we should include the PortfolioItem field is when we are mapping across the hierarchicalRequirement boundary.
     if @service.feature_element_name != "UserStory" && @service.requirement_element_name == "UserStory"
@@ -198,6 +200,57 @@ class RallyHierarchicalRequirementResource < RallyResource
     end
     include_release_if_exists(aha_requirement, attributes, release_id)
     attributes
+  end
+
+  def maybe_add_tags_to_object(attributes, aha_object)
+    if @service.data.send_tags == "1"
+      object_tags = aha_object.tags
+      attributes[:Tags] = [] if object_tags
+      attributes[:Tags] = get_or_create_tag_references(object_tags) if object_tags && !object_tags.empty?
+    end
+  rescue AhaService::RemoteError => e
+    logger.error("Failed to create tag #{tag_name}: #{e.message}")
+  end
+
+  def get_or_create_tag_references(tags)
+    # Rally doesn't want escaped quotes or parens
+    query_params = build_tag_query(tags).gsub(" ", "%20").gsub("=", "%3D").gsub("&", "%26")
+    url = rally_secure_url_without_workspace("/tag?query=#{query_params}")
+    process_response http_get(url) do |document|
+      results = document.QueryResult.Results
+
+      tag_refs = results.inject([]){ |acc, res| acc << {_ref: res._ref} }
+      results_names = results.map{|obj| obj._refObjectName}
+      tags_to_create = tags.select{|tag| !results_names.include? tag}
+
+      created_tags = create_tags tags_to_create
+
+      return tag_refs + created_tags
+    end
+  end
+
+  # The rally api requires that queries have paren nesting. EX:
+  # (( (Name="something") OR (name="something else") ) OR (name="blah"))
+  def build_tag_query(tags)
+    # The query must contain spaces surrounding the `=`
+    tags.map{|tag| "(Name = \"#{tag.gsub('"', '\"')}\")" }.inject {|current, n| "(#{current} OR #{n})"}
+  end
+
+  def create_tags(tags)
+    url = rally_secure_url_without_workspace("/tag/create")
+    tag_refs = []
+    tags.each do |tag_name|
+      begin
+        body = { Tag: {Name: tag_name } }
+        response = http_post url, body.to_json
+        process_response response, 200, 201 do |document|
+          tag_refs << { _ref: document.CreateResult.Object._ref }
+        end
+      rescue AhaService::RemoteError => e
+        logger.error("Failed to create tag #{tag_name}: #{e.message}")
+      end
+    end
+    tag_refs
   end
 
   def create_attachments(parent, aha_attachments)

@@ -1,0 +1,124 @@
+{
+  "records": [
+    {
+      "feature": {
+        "id": "6342524994900514278",
+        "name": "rhodes",
+        "reference_num": "INTSANDBOX-4",
+        "position": 1,
+        "score": 0,
+        "created_at": "2016-10-17T19:56:16.951Z",
+        "updated_at": "2016-10-17T19:57:41.805Z",
+        "start_date": null,
+        "due_date": null,
+        "workflow_kind": {
+          "id": "6053108729101086872",
+          "name": "New"
+        },
+        "workflow_status": {
+          "id": "6013053275678580297",
+          "name": "Under consideration",
+          "complete": false
+        },
+        "description": {
+          "id": "6342524995178296186",
+          "body": "<p>a piano...</p>",
+          "created_at": "2016-10-17T19:56:17.017Z",
+          "attachments": []
+        },
+        "attachments": [],
+        "integration_fields": [
+          {
+            "id": "6342525359235535298",
+            "name": "url",
+            "value": "https://rally1.rallydev.com/#/22098603406d/detail/portfolioitem/feature/69490535048",
+            "integration_id": "6342485956939264315",
+            "service_name": "development_proxy",
+            "created_at": "2016-10-17T19:57:41.780Z"
+          },
+          {
+            "id": "6342525358996573444",
+            "name": "formatted_id",
+            "value": "F32",
+            "integration_id": "6342485956939264315",
+            "service_name": "development_proxy",
+            "created_at": "2016-10-17T19:57:41.723Z"
+          },
+          {
+            "id": "6342525358771038509",
+            "name": "id",
+            "value": "69490535048",
+            "integration_id": "6342485956939264315",
+            "service_name": "development_proxy",
+            "created_at": "2016-10-17T19:57:41.673Z"
+          }
+        ],
+        "url": "https://peterklipfel-trial.aha.io/features/INTSANDBOX-4",
+        "resource": "https://peterklipfel-trial.aha.io/api/v1/features/INTSANDBOX-4",
+        "release": {
+          "id": "6342524836488369036",
+          "reference_num": "INTSANDBOX-R-3",
+          "name": "higher scope - first project",
+          "start_date": "2016-11-05",
+          "release_date": "2016-11-17",
+          "parking_lot": false,
+          "created_at": "2016-10-17T19:55:40.066Z",
+          "integration_fields": [
+            {
+              "id": "6342525335362860221",
+              "name": "url",
+              "value": "https://rally1.rallydev.com/#/22098603406d/detail/release/69490303368",
+              "integration_id": "6342485956939264315",
+              "service_name": "development_proxy",
+              "created_at": "2016-10-17T19:57:36.223Z"
+            },
+            {
+              "id": "6342525334633434647",
+              "name": "id",
+              "value": "69490303368",
+              "integration_id": "6342485956939264315",
+              "service_name": "development_proxy",
+              "created_at": "2016-10-17T19:57:36.048Z"
+            }
+          ],
+          "url": "https://peterklipfel-trial.aha.io/releases/INTSANDBOX-R-3",
+          "resource": "https://peterklipfel-trial.aha.io/api/v1/releases/INTSANDBOX-R-3",
+          "owner": {
+            "id": "6339624200654489990",
+            "name": "Peter Klipfel",
+            "email": "peter@aha.io",
+            "created_at": "2016-10-10T00:19:43.160Z",
+            "updated_at": "2016-10-17T17:24:18.119Z"
+          },
+          "project": {
+            "id": "6342485828885727345",
+            "reference_prefix": "INTSANDBOX",
+            "name": "integration-development",
+            "product_line": false,
+            "created_at": "2016-10-17T17:24:17.902Z"
+          }
+        },
+        "created_by_user": {
+          "id": "6339624200654489990",
+          "name": "Peter Klipfel",
+          "email": "peter@aha.io",
+          "created_at": "2016-10-10T00:19:43.160Z",
+          "updated_at": "2016-10-17T17:24:18.119Z"
+        },
+        "assigned_to_user": null,
+        "requirements": [],
+        "goals": [],
+        "comments_count": 0,
+        "score_facts": [],
+        "tags": [],
+        "custom_fields": [],
+        "feature_links": []
+      }
+    }
+  ],
+  "pagination": {
+    "total_records": 1,
+    "total_pages": 1,
+    "current_page": 1
+  }
+}
