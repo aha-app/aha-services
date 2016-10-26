@@ -32,6 +32,8 @@ class AhaServices::Rally < AhaService
   internal :requirement_status_mapping
   internal :requirement_default_fields
 
+  boolean :send_tags, description: "Check to synchronize Aha! tags and Rally Tags. We recommend enabling this for new integrations. Enabling this option once features are synced to Rally may cause tags in Aha! or tags in Rally to be removed from a feature if the corresponding tags or tag doesn't exist in the other system."
+
   callback_url description: "URL Rally will call to update Aha!. This is webhook is automatically installed in Rally for the selected project."
 
   def receive_installed
@@ -81,7 +83,7 @@ class AhaServices::Rally < AhaService
   end
 
   def receive_webhook
-    update_record_from_webhook(payload)
+    update_record_from_webhook(payload, data)
   end
 
   def receive_create_release

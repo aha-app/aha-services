@@ -7,7 +7,7 @@ module AhaServices::RallyWebhook
     rally_webhook_resource.destroy_webhooks
   end
 
-  def update_record_from_webhook(payload)
+  def update_record_from_webhook(payload, data=nil)
     raw_state_map = {}
     new_state = Hashie::Mash.new(Hash[ payload.message.state.map do |_, attribute|
       value = attribute.value
@@ -48,6 +48,12 @@ module AhaServices::RallyWebhook
       else
         update_hash[:assigned_to_user] = nil
       end
+      
+      if data && (data.send_tags == "1")
+        update_hash[:tags] = [] # there are no tags if they aren't in raw_state_map
+        update_hash[:tags] = raw_state_map["Tags"].map(&:name) if raw_state_map["Tags"]
+      end
+
       if resource_type == "feature"
         update_hash[:start_date] = Date.parse(new_state["PlannedStartDate"]) if new_state["PlannedStartDate"]
         update_hash[:due_date] = Date.parse(new_state["PlannedEndDate"]) if new_state["PlannedEndDate"]
@@ -56,7 +62,6 @@ module AhaServices::RallyWebhook
       if status
         update_hash[:workflow_status] = status
       end
-
       api.put(resource.resource, { resource_type => update_hash })
     end
   rescue AhaApi::NotFound
