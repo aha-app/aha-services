@@ -233,7 +233,7 @@ class RallyHierarchicalRequirementResource < RallyResource
   # (( (Name="something") OR (name="something else") ) OR (name="blah"))
   def build_tag_query(tags)
     # The query must contain spaces surrounding the `=`
-    tags.map{|tag| "(Name = \"#{tag}\")" }.inject {|current, n| "(#{current} OR #{n})"}
+    tags.map{|tag| "(Name = \"#{tag.gsub('"', '\"')}\")" }.inject {|current, n| "(#{current} OR #{n})"}
   end
 
   def create_tags(tags)
