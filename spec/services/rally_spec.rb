@@ -15,7 +15,11 @@ describe AhaServices::Rally do
     #   to_return(status: 200, body: raw_fixture("rally/tbd.json"))
   end
   let(:service_params) do
-    {}
+    {send_tags: "1", integration_id: "123"}
+  end
+
+  let(:service_data) do
+    Hashie::Mash.new service_params
   end
 
   let(:webhook_payload) do
@@ -57,7 +61,7 @@ describe AhaServices::Rally do
   it "adds tags" do
     api = webhook_service.api
     expect(api).to receive(:put) { |_, update_hash| expect(update_hash["feature"][:tags]).to be_present }
-    webhook_service.update_record_from_webhook(webhook_payload)
+    webhook_service.update_record_from_webhook(webhook_payload, service_data)
   end
 
   it "can be installed"

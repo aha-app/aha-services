@@ -58,7 +58,7 @@ describe AhaServices::Jira do
       to_return(:status => 201)
 
     # Call back into Aha! for feature
-    stub_request(:post, "https://a.aha.io/api/v1/features/5886067808745625353/integrations/1000/fields").
+    stub_request(:post, /https:\/\/a.aha.io\/api\/v1\/(features|requirements)\/\d+\/integrations\/1000\/fields/).
       with(:body => {:integration_fields => [{:name => "url", :value => "http://foo.com/a/browse/DEMO-10"}, {:name => "id", :value => "10009"}, {:name => "key", :value => "DEMO-10"}]}).
       to_return(:status => 201, :body => "", :headers => {})
 
@@ -73,10 +73,13 @@ describe AhaServices::Jira do
 
     stub_download_feature_attachments
 
-    AhaServices::Jira.new(service_params.merge({'integration_id' => 1000}),
+    service = AhaServices::Jira.new(service_params.merge({'integration_id' => 1000}),
                           json_fixture('create_feature_event.json'),
                           integration_data)
-      .receive(:create_feature)
+
+    allow(service.api).to receive(:adjacent_integration_fields).and_return({})
+
+    service.receive(:create_feature)
   end
 
   it "can update existing features" do
