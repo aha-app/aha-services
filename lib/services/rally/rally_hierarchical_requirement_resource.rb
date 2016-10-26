@@ -214,7 +214,7 @@ class RallyHierarchicalRequirementResource < RallyResource
 
   def get_or_create_tag_references(tags)
     # Rally doesn't want escaped quotes or parens
-    query_params = build_tag_query(tags).gsub(" ", "%20").gsub("=", "%3D")
+    query_params = build_tag_query(tags).gsub(" ", "%20").gsub("=", "%3D").gsub("&", "%26")
     url = rally_secure_url_without_workspace("/tag?query=#{query_params}")
     process_response http_get(url) do |document|
       results = document.QueryResult.Results
