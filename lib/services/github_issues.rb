@@ -81,7 +81,6 @@ class AhaServices::GithubIssues < AhaService
       return
     end
 
-    new_status = data.status_mapping.nil? ? nil : data.status_mapping[issue.state]
     new_tags = issue.labels.map(&:name) rescue []
     aha_statuses = []
 
@@ -97,7 +96,7 @@ class AhaServices::GithubIssues < AhaService
     case action
     when "unlabeled"
       # add the label back to the issue if all aha labels were removed
-      label_resource.update(issue.number, [new_tags, payload.label.name].flatten) if add_status_labels_enabled? and aha_statuses.empty? and payload.label.name.starts_with? "Aha!:"
+      label_resource.update(issue.number, [new_tags, payload.label.name].flatten) if add_status_labels_enabled? && aha_statuses.empty? && payload.label.name.starts_with?("Aha!:")
     when "labeled"
       if add_status_labels_enabled? && !aha_statuses.nil? && !aha_statuses.empty?
         aha_status = aha_statuses.pop
@@ -106,14 +105,11 @@ class AhaServices::GithubIssues < AhaService
         # trim the Aha!: prefix to match the aha workflow_status name
         new_status = aha_status[5..-1]
         # update the status
-        diff[:workflow_status] = new_status if !new_status.nil? and new_status != resource.workflow_status.name
+        diff[:workflow_status] = new_status if !new_status.nil? && new_status != resource.workflow_status.name
       end
-    when "closed"
-      diff[:workflow_status] = new_status if !new_status.nil? and new_status != resource.workflow_status.id
-    else
-      if !add_status_labels_enabled?
-        diff[:workflow_status] = new_status if !new_status.nil? and new_status != resource.workflow_status.id
-      end
+    when "closed", "opened", "reopened"
+      new_status = data.status_mapping.nil? ? nil : data.status_mapping[issue.state]
+      diff[:workflow_status] = new_status if !new_status.nil? && new_status != resource.workflow_status.id
     end
     diff[:tags] = new_tags if Set.new(resource.tags) != Set.new(new_tags)
     if diff.size > 0  then
