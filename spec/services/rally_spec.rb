@@ -64,7 +64,10 @@ describe AhaServices::Rally do
     webhook_service.update_record_from_webhook(webhook_payload, service_data)
   end
 
-  it "can be installed"
+  it "can be installed" do
+    AhaServices::Rally.new service_params
+  end
+
   context "project" do
     it "can be updated"
     it "can be destroyed"
