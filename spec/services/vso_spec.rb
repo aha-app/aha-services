@@ -27,7 +27,7 @@ describe AhaServices::VSO do
   
   context "when installing" do
     before do
-      @stub_get_projects = stub_request(:get, "#{api_url}/projects?api-version=1.0").
+      @stub_get_projects = stub_request(:get, "#{api_url}/projects?$top=1000&api-version=1.0").
                            to_return(:status => 200, :body => raw_fixture("tfs/tfs_get_projects.json"))
       @stub_get_project = stub_request(:get, "#{api_url}/projects/#{project_id}?api-version=1.0").
                           to_return(:status => 200, :body => raw_fixture("tfs/tfs_get_project.json"))
@@ -45,7 +45,7 @@ describe AhaServices::VSO do
         'account_name' => account_name,
         'project' => project_id
       }, nil, {})
-      stub_request(:get, "#{api_url}/projects?api-version=1.0").
+      stub_request(:get, "#{api_url}/projects?$top=1000&api-version=1.0").
         to_return(:status => 401, :headers => {})
       expect {
         service.receive(:installed)
