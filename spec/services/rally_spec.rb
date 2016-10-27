@@ -68,6 +68,12 @@ describe AhaServices::Rally do
     AhaServices::Rally.new service_params
   end
 
+  it "sets rank" do
+    allow(h_req_service.api).to receive(:adjacent_integration_fields).
+      and_return( [Hashie::Mash.new(json_fixture('rally/adjacent_integration_fields.json'))] )
+    expect(h_req_service.send(:maybe_set_rank_for_feature, Hashie::Mash.new({}) )).to include("rankBelow")
+  end
+
   context "project" do
     it "can be updated"
     it "can be destroyed"

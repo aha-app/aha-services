@@ -1,0 +1,29 @@
+{
+  "direction":"before",
+  "integration_fields":[
+    {
+      "id":"6346210626448067828",
+      "name":"url",
+      "value":"https://rally1.rallydev.com/#/22098603406d/detail/portfolioitem/feature/71644790508",
+      "integration_id":"6342485956939264315",
+      "service_name":"development_proxy",
+      "created_at":"2016-10-27T18:18:24.916Z"
+    },
+    {
+      "id":"6346210626257777694",
+      "name":"formatted_id",
+      "value":"F96",
+      "integration_id":"6342485956939264315",
+      "service_name":"development_proxy",
+      "created_at":"2016-10-27T18:18:24.870Z"
+    },
+    {
+      "id":"6346210626038683777",
+      "name":"id",
+      "value":"71644790508",
+      "integration_id":"6342485956939264315",
+      "service_name":"development_proxy",
+      "created_at":"2016-10-27T18:18:24.818Z"
+    }
+  ]
+}
