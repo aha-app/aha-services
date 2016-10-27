@@ -99,6 +99,11 @@ class RallyHierarchicalRequirementResource < RallyResource
       api.create_integration_fields "features", aha_feature.id, @service.data.integration_id, id: hrequirement.ObjectID, formatted_id: hrequirement.FormattedID, url: human_url_for_feature(hrequirement.ObjectID)
       aha_feature.requirements.each { |requirement| create_from_requirement hrequirement.ObjectID, release_id, requirement }
       create_attachments hrequirement, (aha_feature.attachments | aha_feature.description.attachments)
+
+      # Ensure that rank is set
+      patched_feature = aha_feature
+      patched_feature.rally_object_id = hrequirement.ObjectID
+      update_from_feature patched_feature
     end
   end
 
@@ -112,7 +117,7 @@ class RallyHierarchicalRequirementResource < RallyResource
   end
 
   def update_from_feature(aha_feature)
-    id = map_to_objectid aha_feature
+    id = map_to_objectid(aha_feature) || aha_feature.rally_object_id
     release_id = map_to_objectid aha_feature.release
     query_params = maybe_set_rank_for_feature aha_feature
     update id, map_feature(aha_feature), @service.feature_element_name, query_params do |hrequirement|
