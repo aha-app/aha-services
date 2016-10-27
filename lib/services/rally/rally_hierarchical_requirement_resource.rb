@@ -59,9 +59,9 @@ class RallyHierarchicalRequirementResource < RallyResource
     logger.error("Failed create new #{element_name}: #{e.message}")
   end
 
-  def update(id, hrequirement, element_name)
+  def update(id, hrequirement, element_name, query_params)
     body = {}
-    url = rally_secure_url_without_workspace(object_path(id, element_name))
+    url = rally_secure_url_without_workspace(object_path(id, element_name)+query_params)
     payload_key = element_name
     if element_name == "UserStory"
       payload_key = "HierarchicalRequierement"
@@ -114,7 +114,8 @@ class RallyHierarchicalRequirementResource < RallyResource
   def update_from_feature(aha_feature)
     id = map_to_objectid aha_feature
     release_id = map_to_objectid aha_feature.release
-    update id, map_feature(aha_feature), @service.feature_element_name do |hrequirement|
+    query_params = maybe_set_rank_for_feature aha_feature
+    update id, map_feature(aha_feature), @service.feature_element_name, query_params do |hrequirement|
       @service.logger.debug "Successful update for feature, object: #{hrequirement.to_json.inspect}"
       rally_attachment_resource.sync_attachments(
         hrequirement,
@@ -168,25 +169,30 @@ class RallyHierarchicalRequirementResource < RallyResource
     maybe_add_owner_to_object(attributes, aha_feature)
     maybe_add_tags_to_object(attributes, aha_feature)
 
-    maybe_set_rank_for_feature(attributes, aha_feature)
-
     include_release_if_exists(aha_feature, attributes, rally_release_id)
     attributes
   end
 
-  def maybe_set_rank_for_feature(attributes, aha_feature)
-    # Call back into Aha! to find another issue to rank relative to.
-    logger.info "REMOVE ME: release: #{aha_feature.release.inspect}"
+  def maybe_set_rank_for_feature(aha_feature)
+    # Call back into Aha! to find another feature to rank relative to.
     adjacent_info = api.adjacent_integration_fields(
-      reference_num_to_resource_type(aha_feature.reference_num), aha_feature.id, "6342485956939264315")
-    logger.info "REMOVE ME: adjacent_info: #{adjacent_info.inspect}"
-    if adjacent_info
-      adjacent_feature_id = get_integration_field(adjacent_info.integration_fields, 'id')
-      logger.info "REMOVE ME: adj_id: #{adjacent_feature_id}"
-      raise "stop"
-      # issue_resource.set_rank(issue[:key], adjacent_issue_id, adjacent_info.direction == "before" ? :before : :after)
+      reference_num_to_resource_type(aha_feature.reference_num),
+      aha_feature.id,
+      @service.data.integration_id).first
+
+
+    return "" if !adjacent_info
+
+    adjacent_feature_id = get_integration_field(adjacent_info.integration_fields, 'id')
+
+    query_addition = if adjacent_info.direction == "before"
+      "?rankBelow=/slm/webservice/v2.0/portfolioitem/feature/#{adjacent_feature_id}"
+    elsif adjacent_info.direction == "after"
+      "?rankAbove=/slm/webservice/v2.0/portfolioitem/feature/#{adjacent_feature_id}"
+    else
+      ""
     end
-    # logger.info "REMOVE ME: features: #{features.inspect}"
+    query_addition
   end
 
   def maybe_add_owner_to_object(attributes, aha_object)

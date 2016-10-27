@@ -26,6 +26,14 @@ class RallyResource < GenericResource
     end
   end
 
+  def get_integration_field(integration_fields, field_name)
+    return nil if integration_fields.nil?
+    field = integration_fields.detect do |f|
+      f.integration_id.to_s == @service.data.integration_id.to_s and f.name == field_name
+    end
+    field && field.value
+  end
+
   def process_response(response, *success_codes, &block)
     success_codes = [200] if success_codes == []
     if success_codes.include?(response.status)
