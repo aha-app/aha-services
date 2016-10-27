@@ -191,9 +191,9 @@ class RallyHierarchicalRequirementResource < RallyResource
     adjacent_feature_id = get_integration_field(adjacent_info.integration_fields, 'id')
 
     query_addition = if adjacent_info.direction == "before"
-      "?rankBelow=/slm/webservice/v2.0/portfolioitem/feature/#{adjacent_feature_id}"
+      "?rankBelow=/slm/webservice/v2.0/#{object_path(adjacent_feature_id, @service.feature_element_name)}"
     elsif adjacent_info.direction == "after"
-      "?rankAbove=/slm/webservice/v2.0/portfolioitem/feature/#{adjacent_feature_id}"
+      "?rankAbove=/slm/webservice/v2.0/#{object_path(adjacent_feature_id, @service.feature_element_name)}"
     else
       ""
     end
