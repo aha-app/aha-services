@@ -1,10 +1,9 @@
 module JiraMappedFields
   def mapped_custom_fields(resource, issue_type)
     custom_fields = Hash.new
-    
+
     (data.field_mapping || []).each do |field_mapping|
       next unless field_mapping.is_a? Hashie::Mash
-
       info = jira_field_info(field_mapping.jira_field)
       if info
         value = custom_field_for_resource(resource, field_mapping.aha_field, info)
@@ -50,6 +49,12 @@ module JiraMappedFields
       {name: aha_type_to_string(aha_type, aha_value)}
     when "option"
       {value: aha_type_to_string(aha_type, aha_value)}
+    when "user"
+      if jira_type_info.editor == "com.atlassian.jira.plugin.system.customfieldtypes:userpicker"
+        {name: aha_type_to_user(aha_type, aha_value)}
+      else
+        {name: aha_type_to_string(aha_type, aha_value)}
+      end
     else
       logger.debug("Using default field type mapping for Aha field '#{aha_field}' with value '#{aha_type}' to '#{jira_type_info.type}'")
       aha_value
@@ -58,6 +63,8 @@ module JiraMappedFields
   
   def aha_type_to_string(aha_type, aha_value)
     case aha_type
+    when "email"
+      print "something"
     when "html", "note"
       convert_html(aha_value)
     when "array"
@@ -65,6 +72,20 @@ module JiraMappedFields
     else
       logger.debug("Using default string mapping for '#{aha_type}'")
       aha_value.to_s
+    end
+  end
+
+  def aha_type_to_user(aha_type, aha_value)
+    if aha_type == "string"
+      user_resource.picker(aha_value.strip).try(:[], :key)
+    else
+      # TODO change x.name to x.email (emails with '+' in them do not get searched in jira (bug with jira)),
+      # change before deploying (for dev purposes only)
+      User.find(aha_value).sort_by(&:name).each do |user|
+        potential_key = user_resource.picker(user.email).try(:[], :key)
+        return potential_key  unless potential_key.nil?
+      end
+      nil
     end
   end
   
