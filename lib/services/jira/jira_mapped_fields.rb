@@ -63,8 +63,6 @@ module JiraMappedFields
   
   def aha_type_to_string(aha_type, aha_value)
     case aha_type
-    when "email"
-      print "something"
     when "html", "note"
       convert_html(aha_value)
     when "array"
@@ -79,8 +77,6 @@ module JiraMappedFields
     if aha_type == "string"
       user_resource.picker(aha_value.strip).try(:[], :key)
     else
-      # TODO change x.name to x.email (emails with '+' in them do not get searched in jira (bug with jira)),
-      # change before deploying (for dev purposes only)
       User.find(aha_value).sort_by(&:name).each do |user|
         potential_key = user_resource.picker(user.email).try(:[], :key)
         return potential_key  unless potential_key.nil?
