@@ -21,14 +21,15 @@ module JiraMappedFields
     return nil unless resource.custom_fields # We only have custom fields for Requirements.
     
     field = resource.custom_fields.find {|field| field['key'] == aha_field}
+
     if field
-      aha_type_to_jira_type(field.value, field.type, jira_type_info, aha_field)
+      aha_type_to_jira_type(field.value, field.type, jira_type_info, aha_field, field)
     else
       nil
     end
   end
-  
-  def aha_type_to_jira_type(aha_value, aha_type, jira_type_info, aha_field)
+
+  def aha_type_to_jira_type(aha_value, aha_type, jira_type_info, aha_field, field)
     case jira_type_info.type
     when "string"
       v = aha_type_to_string(aha_type, aha_value)
@@ -50,8 +51,9 @@ module JiraMappedFields
     when "option"
       {value: aha_type_to_string(aha_type, aha_value)}
     when "user"
+
       if jira_type_info.editor == "com.atlassian.jira.plugin.system.customfieldtypes:userpicker"
-        {name: aha_type_to_user(aha_type, aha_value)}
+        {name: aha_type_to_user(aha_type, field)}
       else
         {name: aha_type_to_string(aha_type, aha_value)}
       end
@@ -73,12 +75,13 @@ module JiraMappedFields
     end
   end
 
-  def aha_type_to_user(aha_type, aha_value)
+  def aha_type_to_user(aha_type, field)
+
     if aha_type == "string"
-      user_resource.picker(aha_value.strip).try(:[], :key)
+      user_resource.picker(field.value.strip).try(:[], :key)
     else
-      User.find(aha_value).sort_by(&:name).each do |user|
-        potential_key = user_resource.picker(user.email).try(:[], :key)
+      field.email_value.each do |email|
+        potential_key = user_resource.picker(email).try(:[], :key)
         return potential_key  unless potential_key.nil?
       end
       nil
