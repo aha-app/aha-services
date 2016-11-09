@@ -41,7 +41,7 @@ GIT
 PATH
   remote: .
   specs:
-    aha-services (1.23.14)
+    aha-services (1.23.15)
       activesupport
       aha-api
       crack
