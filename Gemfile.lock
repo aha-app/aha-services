@@ -41,14 +41,14 @@ GIT
 PATH
   remote: .
   specs:
-    aha-services (1.23.15)
+    aha-services (1.23.18)
       activesupport
       aha-api
       crack
       faraday (~> 0.9.0)
       faraday-cookie_jar
       faraday_middleware (~> 0.9.0)
-      hashie (~> 3.4.6)
+      hashie (~> 2.1.1)
       html2confluence
       htmlentities
       jwt
@@ -82,7 +82,7 @@ GEM
     faraday_middleware (0.9.1)
       faraday (>= 0.7.4, < 0.10)
     ffi (1.9.6)
-    hashie (3.4.6)
+    hashie (2.1.2)
     hitimes (1.2.2)
     html2markdown (0.0.3)
       nokogiri
@@ -164,7 +164,6 @@ DEPENDENCIES
   aha-services!
   byebug
   crack
-  hashie (~> 3.4.6)
   html2confluence!
   mail
   net-http-persistent

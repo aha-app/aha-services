@@ -17,7 +17,6 @@ gem "mail"
 gem "restforce"
 gem "net-http-persistent"
 gem "rubyntlm"
-gem "hashie", "~>3.4.6"
 gem "ClothRed", :git => "https://github.com/aha-app/ClothRed", require: "clothred"
 gem "nokogiri", "1.6.6.2"
 
