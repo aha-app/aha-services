@@ -209,13 +209,18 @@ class RallyHierarchicalRequirementResource < RallyResource
       attributes[:Tags] = get_or_create_tag_references(object_tags) if object_tags && !object_tags.empty?
     end
   rescue AhaService::RemoteError => e
-    logger.error("Failed to create tag #{tag_name}: #{e.message}")
+    logger.error("Failed to add tags to object: #{e.message}")
   end
 
   def get_or_create_tag_references(tags)
     # Rally doesn't want escaped quotes or parens
-    query_params = build_tag_query(tags).gsub(" ", "%20").gsub("=", "%3D").gsub("&", "%26")
-    url = rally_secure_url_without_workspace("/tag?query=#{query_params}")
+    query_params = build_tag_query(tags)
+    query_params = query_params.gsub(" ", "%20").gsub("=", "%3D").gsub("&", "%26")
+
+    params = "query=#{query_params}"
+    params << "&workspace=#{rally_url("")}" if @service.data.workspace.present?
+
+    url = rally_secure_url_without_workspace("/tag?#{params}")
     process_response http_get(url) do |document|
       results = document.QueryResult.Results
 
@@ -237,7 +242,8 @@ class RallyHierarchicalRequirementResource < RallyResource
   end
 
   def create_tags(tags)
-    url = rally_secure_url_without_workspace("/tag/create")
+    params = "workspace=#{rally_url("")}" if @service.data.workspace.present?
+    url = rally_secure_url_without_workspace("/tag/create?#{params.to_s}")
     tag_refs = []
     tags.each do |tag_name|
       begin
