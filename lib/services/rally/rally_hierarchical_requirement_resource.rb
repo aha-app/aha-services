@@ -59,9 +59,9 @@ class RallyHierarchicalRequirementResource < RallyResource
     logger.error("Failed create new #{element_name}: #{e.message}")
   end
 
-  def update(id, hrequirement, element_name)
+  def update(id, hrequirement, element_name, query_params)
     body = {}
-    url = rally_secure_url_without_workspace(object_path(id, element_name))
+    url = rally_secure_url_without_workspace(object_path(id, element_name)+query_params)
     payload_key = element_name
     if element_name == "UserStory"
       payload_key = "HierarchicalRequierement"
@@ -99,6 +99,11 @@ class RallyHierarchicalRequirementResource < RallyResource
       api.create_integration_fields "features", aha_feature.id, @service.data.integration_id, id: hrequirement.ObjectID, formatted_id: hrequirement.FormattedID, url: human_url_for_feature(hrequirement.ObjectID)
       aha_feature.requirements.each { |requirement| create_from_requirement hrequirement.ObjectID, release_id, requirement }
       create_attachments hrequirement, (aha_feature.attachments | aha_feature.description.attachments)
+
+      # Ensure that rank is set
+      patched_feature = aha_feature
+      patched_feature.rally_object_id = hrequirement.ObjectID
+      update_from_feature patched_feature
     end
   end
 
@@ -112,9 +117,10 @@ class RallyHierarchicalRequirementResource < RallyResource
   end
 
   def update_from_feature(aha_feature)
-    id = map_to_objectid aha_feature
+    id = map_to_objectid(aha_feature) || aha_feature.rally_object_id
     release_id = map_to_objectid aha_feature.release
-    update id, map_feature(aha_feature), @service.feature_element_name do |hrequirement|
+    query_params = maybe_set_rank_for_feature aha_feature
+    update id, map_feature(aha_feature), @service.feature_element_name, query_params do |hrequirement|
       @service.logger.debug "Successful update for feature, object: #{hrequirement.to_json.inspect}"
       rally_attachment_resource.sync_attachments(
         hrequirement,
@@ -170,6 +176,28 @@ class RallyHierarchicalRequirementResource < RallyResource
 
     include_release_if_exists(aha_feature, attributes, rally_release_id)
     attributes
+  end
+
+  def maybe_set_rank_for_feature(aha_feature)
+    # Call back into Aha! to find another feature to rank relative to.
+    adjacent_info = api.adjacent_integration_fields(
+      reference_num_to_resource_type(aha_feature.reference_num),
+      aha_feature.id,
+      @service.data.integration_id).first
+
+
+    return "" if !adjacent_info
+
+    adjacent_feature_id = get_integration_field(adjacent_info.integration_fields, 'id')
+
+    query_addition = if adjacent_info.direction == "before"
+      "?rankBelow=/slm/webservice/v2.0/#{object_path(adjacent_feature_id, @service.feature_element_name)}"
+    elsif adjacent_info.direction == "after"
+      "?rankAbove=/slm/webservice/v2.0/#{object_path(adjacent_feature_id, @service.feature_element_name)}"
+    else
+      ""
+    end
+    query_addition
   end
 
   def maybe_add_owner_to_object(attributes, aha_object)

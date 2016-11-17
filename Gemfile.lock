@@ -29,9 +29,9 @@ GIT
 
 GIT
   remote: https://github.com/aha-app/aha-api
-  revision: 1166580dad08835dd6c953a5a2f24a537bcc867a
+  revision: 6b2ed49ff4de69aae04206505f346108a64b6c0d
   specs:
-    aha-api (1.0.11)
+    aha-api (1.0.13)
       activesupport
       faraday (~> 0.9.0)
       faraday_middleware
@@ -41,7 +41,7 @@ GIT
 PATH
   remote: .
   specs:
-    aha-services (1.23.16)
+    aha-services (1.23.17)
       activesupport
       aha-api
       crack
@@ -101,7 +101,7 @@ GEM
     mime-types (2.99.2)
     mini_portile (0.6.2)
     minitest (5.4.2)
-    multi_json (1.10.1)
+    multi_json (1.12.1)
     multipart-post (2.0.0)
     net-http-persistent (2.9.4)
     nokogiri (1.6.6.2)
