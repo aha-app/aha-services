@@ -59,7 +59,7 @@ class RallyHierarchicalRequirementResource < RallyResource
     logger.error("Failed create new #{element_name}: #{e.message}")
   end
 
-  def update(id, hrequirement, element_name, query_params)
+  def update(id, hrequirement, element_name, query_params = "")
     body = {}
     url = rally_secure_url_without_workspace(object_path(id, element_name)+query_params)
     payload_key = element_name
