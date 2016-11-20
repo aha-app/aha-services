@@ -52,7 +52,7 @@ module JiraMappedFields
       {value: aha_type_to_string(aha_type, aha_value)}
     when "user"
       if jira_type_info.editor == "com.atlassian.jira.plugin.system.customfieldtypes:userpicker"
-        {name: aha_type_to_user(field)}
+        {name: aha_type_to_user(aha_type, field)}
       else
         {name: aha_type_to_string(aha_type, aha_value)}
       end
@@ -74,12 +74,13 @@ module JiraMappedFields
     end
   end
 
-  def aha_type_to_user(field)
-    Array(field.email_value).each do |email|
-      potential_key = user_resource.picker(email.strip).try(:[], :key)
-      return potential_key if potential_key.present?
+  def aha_type_to_user(aha_type, field)
+    key = nil
+    email_add = aha_type == "string" ? field.value : field.email_value
+    Array(email_add).each do |email|
+      key = user_resource.picker(email.strip).try(:[], :key)
     end
-    nil
+    key
   end
   
   def aha_type_to_number(aha_type, aha_value, jira_type_info, aha_field)
