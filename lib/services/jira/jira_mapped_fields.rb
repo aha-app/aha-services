@@ -75,9 +75,11 @@ module JiraMappedFields
   end
 
   def aha_type_to_user(field)
-    Array(field.email_value).find do |email|
-      user_resource.picker(email.strip).try(:[], :key)
+    Array(field.email_value).each do |email|
+      potential_key = user_resource.picker(email.strip).try(:[], :key)
+      return potential_key if potential_key.present?
     end
+    nil
   end
   
   def aha_type_to_number(aha_type, aha_value, jira_type_info, aha_field)
