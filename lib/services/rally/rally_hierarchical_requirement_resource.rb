@@ -94,10 +94,8 @@ class RallyHierarchicalRequirementResource < RallyResource
   end
 
   def create_from_feature(aha_feature)
-    release_id = map_to_objectid aha_feature.release
     create map_feature(aha_feature), @service.feature_element_name do |hrequirement|
       api.create_integration_fields "features", aha_feature.id, @service.data.integration_id, id: hrequirement.ObjectID, formatted_id: hrequirement.FormattedID, url: human_url_for_feature(hrequirement.ObjectID)
-      aha_feature.requirements.each { |requirement| create_from_requirement hrequirement.ObjectID, release_id, requirement }
       create_attachments hrequirement, (aha_feature.attachments | aha_feature.description.attachments)
 
       # Ensure that rank is set
