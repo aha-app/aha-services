@@ -31,6 +31,7 @@ require 'aha-services/logger'
 require 'services/generic_resource'
 
 require 'services/github/github_resource'
+require 'services/gitlab/gitlab_resource'
 require 'services/bitbucket/bitbucket_resource'
 require 'services/jira/jira_resource'
 require 'services/jira/jira_mapped_fields'
