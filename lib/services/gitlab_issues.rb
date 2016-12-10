@@ -4,6 +4,7 @@ class AhaServices::GitlabIssues < AhaService
 
     string :username
     password :password
+    string :private_token
     string :server_url, description: 'If you are using your own GitLab server please enter your server URL without a trailing slash (https://example.com/api/v3). If you are using gitlab.com leave this field empty.',
                         label: 'Server URL'
     install_button
@@ -26,11 +27,7 @@ class AhaServices::GitlabIssues < AhaService
     callback_url description: 'Use this URL to setup a two-way integration with GitLab issues.'
 
     def receive_installed
-        meta_data.repos = repo_resource.all.map { |repo| { full_name: repo['full_name'] } }
-    end
-
-    def receive_webhook
-        nil
+        meta_data.repos = repo_resource.all.map { |repo| { full_name: repo['name'] } }
     end
 
     def server_url
@@ -39,6 +36,22 @@ class AhaServices::GitlabIssues < AhaService
         else
             'https://www.gitlab.com/api/v3/'
         end
+    end
+
+    def receive_create_feature
+
+    end
+
+    def receive_create_release
+    end
+
+    def receive_update_feature
+    end
+
+    def receive_update_release
+    end
+
+    def receive_webhook
     end
 
     protected

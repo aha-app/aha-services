@@ -8,8 +8,8 @@ class GitlabResource < GenericResource
         http.basic_auth @service.data.username, @service.data.password
     end
 
-    def gilab_http_get_paginated(url, page = 1, previous_response = [], &block)
-        response = http_get("#{url}?per_page=100&page=#{page}")
+    def gitlab_http_get_paginated(url, page = 1, previous_response = [], &block)
+        response = http_get("#{url}?per_page=100&page=#{page}", nil, {'PRIVATE-TOKEN': @service.data.private_token})
         process_response(response, 200) do |parsed_response|
             if has_paginated_header?(response)
                 gitlab_http_get_paginated(url, page + 1, previous_response + parsed_response, &block)
@@ -28,5 +28,9 @@ class GitlabResource < GenericResource
         else
             raise RemoteError, "Unhandled error: STATUS=#{response.status} BODY=#{response.body}"
         end
+    end
+
+    def has_paginated_header?(response)
+      response.headers['link'] && response.headers['link'].match(/rel=\"next\"/)
     end
 end
