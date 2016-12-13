@@ -1,12 +1,12 @@
 class GitlabResource < GenericResource
     def prepare_request
         super
-        auth_header
+        #auth_header
     end
 
-    def auth_header
-        http.basic_auth @service.data.username, @service.data.password
-    end
+    #def auth_header
+        #http.basic_auth @service.data.username, @service.data.password
+    #end
 
     def gitlab_http_get_paginated(url, page = 1, previous_response = [], &block)
         response = http_get("#{url}?per_page=100&page=#{page}", nil, {'PRIVATE-TOKEN': @service.data.private_token})

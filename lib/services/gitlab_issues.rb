@@ -2,9 +2,9 @@ class AhaServices::GitlabIssues < AhaService
     title 'GitLab Issues'
     caption 'Send features to GitLab Issues'
 
-    string :username
-    password :password
-    string :private_token
+    #string :username
+    #password :password
+    password :private_token
     string :server_url, description: 'If you are using your own GitLab server please enter your server URL without a trailing slash (https://example.com/api/v3). If you are using gitlab.com leave this field empty.',
                         label: 'Server URL'
     install_button
@@ -39,10 +39,10 @@ class AhaServices::GitlabIssues < AhaService
     end
 
     def receive_create_feature
-
     end
 
     def receive_create_release
+      find_or_attach_gitlab_milestone(payload.release)
     end
 
     def receive_update_feature
@@ -52,6 +52,41 @@ class AhaServices::GitlabIssues < AhaService
     end
 
     def receive_webhook
+    end
+
+    def find_or_attach_gitlab_milestone(release)
+      if milestone = existing_milestone_integrated_with(release)
+        milestone
+      else
+        attach_milestone_to(release)
+      end
+    end
+
+    def existing_milestone_integrated_with(release)
+      if milestone_number = get_integration_field(release.integration_fields, 'number')
+        milestone_resource.find_by_number(milestone_number)
+      end
+    end
+
+    def attach_milestone_to(release)
+      unless milestone = milestone_resource.find_by_title(release.name)
+        milestone = create_milestone_for(release)
+      end
+      integrate_release_with_gitlab_milestone(release, milestone)
+      milestone
+    end
+
+    def create_milestone_for(release)
+      milestone_resource.create title: release.name,
+        description: "Created from Aha! #{release.url}",
+        due_on: release.release_date.try(:to_time).try(:iso8601),
+        state: release.released ? "closed" : "open"
+    end
+
+    def update_milestone(number, release)
+      milestone_resource.update number, title: release.name,
+        due_on: release.release_date.try(:to_time).try(:iso8601),
+        state: release.released ? "closed" : "open"
     end
 
     protected
@@ -66,5 +101,10 @@ class AhaServices::GitlabIssues < AhaService
         else
             'https://gitlab.com'
         end
+    end
+
+    def integrate_release_with_gitlab_milestone(release, milestone)
+      api.create_integration_fields("releases", release.reference_num, data.integration_id,
+        {number: milestone['number'], url: "#{server_display_url}/projects/#{data.repository}/issues?milestone=#{milestone['title']}"})
     end
 end
