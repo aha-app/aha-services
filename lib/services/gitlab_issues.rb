@@ -46,9 +46,14 @@ class AhaServices::GitlabIssues < AhaService
     end
 
     def receive_update_feature
+      milestone = find_or_attach_gitlab_milestone(payload.feature.release)
+      update_or_attach_gitlab_issue(payload.feature, milestone)
+      update_requirements(payload.feature.requirements, milestone)
+
     end
 
     def receive_update_release
+      update_or_attach_gitlab_milestone(payload.release)
     end
 
     def receive_webhook
@@ -57,6 +62,14 @@ class AhaServices::GitlabIssues < AhaService
     def find_or_attach_gitlab_milestone(release)
       if milestone = existing_milestone_integrated_with(release)
         milestone
+      else
+        attach_milestone_to(release)
+      end
+    end
+
+    def update_or_attach_gitlab_milestone(release)
+      if milestone_number = get_integration_field(release.integration_fields, 'number')
+        update_milestone(milestone_number, release)
       else
         attach_milestone_to(release)
       end
@@ -79,20 +92,24 @@ class AhaServices::GitlabIssues < AhaService
     def create_milestone_for(release)
       milestone_resource.create title: release.name,
         description: "Created from Aha! #{release.url}",
-        due_on: release.release_date.try(:to_time).try(:iso8601),
-        state: release.released ? "closed" : "open"
+        due_date: release.release_date.try(:to_time).try(:iso8601),
+        state_event: release.released ? "closed" : "activate"
     end
 
     def update_milestone(number, release)
       milestone_resource.update number, title: release.name,
-        due_on: release.release_date.try(:to_time).try(:iso8601),
-        state: release.released ? "closed" : "open"
+        due_date: release.release_date.try(:to_time).try(:iso8601),
+        state_event: release.released ? "closed" : "activate"
     end
 
     protected
 
     def repo_resource
         @repo_resource ||= GitlabRepoResource.new(self)
+    end
+
+    def milestone_resource
+      @milestone_resource ||= GitlabMilestoneResource.new(self)
     end
 
     def server_display_url
@@ -105,6 +122,6 @@ class AhaServices::GitlabIssues < AhaService
 
     def integrate_release_with_gitlab_milestone(release, milestone)
       api.create_integration_fields("releases", release.reference_num, data.integration_id,
-        {number: milestone['number'], url: "#{server_display_url}/projects/#{data.repository}/issues?milestone=#{milestone['title']}"})
+        {number: milestone['id'], url: "#{server_display_url}/projects/#{data.repository}/issues?milestone=#{milestone['title']}"})
     end
 end

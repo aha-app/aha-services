@@ -1,4 +1,5 @@
 class GitlabResource < GenericResource
+
     def prepare_request
         super
         #auth_header
