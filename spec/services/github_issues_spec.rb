@@ -525,7 +525,7 @@ describe AhaServices::GithubIssues do
 
       context "with add_status_labels enabled" do
         before do
-          service.stub(:data).and_return(Hashie::Mash.new({add_status_labels: "1", integration_id: 1000, status_mapping: {open: 'In development', closed: 'Shipped'}}))
+          service.stub(:data).and_return(Hashie::Mash.new({add_status_labels: "1", integration_id: 1000, status_mapping: {open: Hashie::Mash.new(name: 'In development'), closed: Hashie::Mash.new(name: 'Shipped')}}))
         end
 
         context "and labeled action" do
