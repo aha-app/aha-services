@@ -564,7 +564,7 @@ describe AhaServices::GithubIssues do
             service.stub(:payload).and_return(Hashie::Mash.new({label: {name: 'Aha!:Shipped'}, webhook: { action: 'opened', issue: mock_issue }}))
             label_resource.should_receive(:update).with(mock_issue[:number], ["First", "Second", "Third", "Aha!:In development"])
             service.stub(:label_resource).and_return(label_resource)
-            mock_api_client.stub(:put)
+            mock_api_client.stub(:put).and_return(Hashie::Mash.new({feature: {workflow_status: {name: "In development"}}}))
           end
         end
 
@@ -575,7 +575,7 @@ describe AhaServices::GithubIssues do
             service.stub(:payload).and_return(Hashie::Mash.new({label: {name: 'Aha!:Shipped'}, webhook: { action: 'closed', issue: mock_issue }}))
             label_resource.should_receive(:update).with(mock_issue[:number], ["First", "Second", "Third", "Aha!:Shipped"])
             service.stub(:label_resource).and_return(label_resource)
-            mock_api_client.stub(:put)
+            mock_api_client.stub(:put).and_return(Hashie::Mash.new({feature: {workflow_status: {name: "Shipped"}}}))
           end
         end
       end

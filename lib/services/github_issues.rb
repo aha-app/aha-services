@@ -109,12 +109,14 @@ class AhaServices::GithubIssues < AhaService
       end
     when "closed", "opened", "reopened"
       new_status = data.status_mapping.nil? ? nil : data.status_mapping[issue.state]
-      label_resource.update(issue.number, [new_tags, "Aha!:#{new_status.name}"].flatten) if add_status_labels_enabled? && new_status.present?
       diff[:workflow_status] = new_status if !new_status.nil? && new_status != resource.workflow_status.id
     end
     diff[:tags] = new_tags if Set.new(resource.tags) != Set.new(new_tags)
     if diff.size > 0  then
-      api.put resource.resource, { resource_kind => diff }
+      updated_resource = api.put(resource.resource, { resource_kind => diff })
+      if add_status_labels_enabled? && %w(closed opened reopened).include?(action) && diff.key?(:workflow_status)
+        label_resource.update(issue.number, [new_tags, "Aha!:#{updated_resource.feature.workflow_status.name}"].flatten) 
+      end
     end
   end
 
