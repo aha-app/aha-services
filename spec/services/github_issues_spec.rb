@@ -525,7 +525,7 @@ describe AhaServices::GithubIssues do
 
       context "with add_status_labels enabled" do
         before do
-          service.stub(:data).and_return(Hashie::Mash.new({add_status_labels: "1", integration_id: 1000, status_mapping: {open: '12345', closed: '67890'}}))
+          service.stub(:data).and_return(Hashie::Mash.new({add_status_labels: "1", integration_id: 1000, status_mapping: {open: 'In development', closed: 'Shipped'}}))
         end
 
         context "and labeled action" do
@@ -552,6 +552,28 @@ describe AhaServices::GithubIssues do
           it "should add the label back to the issue" do
             service.stub(:payload).and_return(Hashie::Mash.new({label: {name: 'Aha!:Shipped'}, webhook: { action: 'unlabeled', issue: mock_issue }}))
             label_resource.should_not_receive(:update)
+            service.stub(:label_resource).and_return(label_resource)
+            mock_api_client.stub(:put)
+          end
+        end
+
+        context "and opened action" do
+          let(:mock_issue) { { number: 42, title: "The issue", state: "open", labels: [{name:"First"}, {name:"Second"}, {name: "Third"}, {name: "Aha!:Shipped"}] } }
+
+          it "should propagate the open status back to GitHub" do
+            service.stub(:payload).and_return(Hashie::Mash.new({label: {name: 'Aha!:Shipped'}, webhook: { action: 'opened', issue: mock_issue }}))
+            label_resource.should_receive(:update).with(mock_issue[:number], ["First", "Second", "Third", "Aha!:In development"])
+            service.stub(:label_resource).and_return(label_resource)
+            mock_api_client.stub(:put)
+          end
+        end
+
+        context "and closed action" do
+          let(:mock_issue) { { number: 42, title: "The issue", state: "closed", labels: [{name:"First"}, {name:"Second"}, {name: "Third"}, {name: "Aha!:Shipped"}] } }
+
+          it "should propagate the closed status back to GitHub" do
+            service.stub(:payload).and_return(Hashie::Mash.new({label: {name: 'Aha!:Shipped'}, webhook: { action: 'closed', issue: mock_issue }}))
+            label_resource.should_receive(:update).with(mock_issue[:number], ["First", "Second", "Third", "Aha!:Shipped"])
             service.stub(:label_resource).and_return(label_resource)
             mock_api_client.stub(:put)
           end
