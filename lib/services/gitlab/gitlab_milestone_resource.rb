@@ -32,19 +32,6 @@ class GitlabMilestoneResource < GithubResource
 private
 
   def gitlab_milestones_path
-    if @project_ids == nil
-      @project_ids = Hash.new
-    end
-    if !@project_ids.key?(@service.data.repository)
-      response = http_get("#{@service.server_url}/projects?search=#{@service.data.repository}", nil, {'PRIVATE-TOKEN': @service.data.private_token})
-      process_response(response, 200) do |results|
-        if results.kind_of?(Array)
-          @project_ids[@service.data.repository] = results[0]["id"]
-        else
-          return nil
-        end
-      end
-    end
-    "#{@service.server_url}/projects/#{@project_ids[@service.data.repository]}/milestones"
+    "#{@service.server_url}/projects/#{get_project_id}/milestones"
   end
 end
