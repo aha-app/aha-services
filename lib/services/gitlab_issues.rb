@@ -2,8 +2,6 @@ class AhaServices::GitlabIssues < AhaService
     title 'GitLab Issues'
     caption 'Send features to GitLab Issues'
 
-    #string :username
-    #password :password
     password :private_token
     string :server_url, description: 'If you are using your own GitLab server please enter your server URL without a trailing slash (https://example.com/api/v3). If you are using gitlab.com leave this field empty.',
                         label: 'Server URL'
@@ -56,6 +54,18 @@ class AhaServices::GitlabIssues < AhaService
 
     def receive_update_release
       update_or_attach_gitlab_milestone(payload.release)
+    end
+
+    def add_status_labels_enabled?
+      if data.add_status_labels.is_a?(TrueClass) || data.add_status_labels.is_a?(FalseClass)
+        data.add_status_labels
+      elsif data.add_status_labels.is_a?(String)
+        !data.add_status_labels.to_i.zero?
+      elsif data.add_status_labels.is_a?(Numeric)
+        !data.add_status_labels.zero?
+      else
+        false
+      end
     end
 
     def receive_webhook
@@ -141,33 +151,33 @@ class AhaServices::GitlabIssues < AhaService
     end
 
     def create_issue_for(resource, milestone)
-      issue_resource
-        .create(title: resource_name(resource),
-                body: issue_body(resource),
-                milestone: milestone['number'])
-        .tap { |issue| update_labels(issue, resource) }
+      args = { title: resource_name(resource),
+              body: issue_body(resource),
+              milestone: milestone['number'] }
+      update_labels(args, resource)
+        issue_resource.create(args)
     end
 
     def update_issue(number, resource)
+      args = { title: resource_name(resource),
+               body: issue_body(resource) }
+      update_labels(args, resource)
       issue_resource
-        .update(number, title: resource_name(resource),
-                        body: issue_body(resource))
-        .tap { |issue| update_labels(issue, resource) }
+        .update(number, args)
         .tap { |issue| update_issue_status(issue, resource)}
     end
 
-    def update_labels(issue, resource)
-      return if resource.tags.nil?
-      tags = resource.tags.dup
-      if add_status_labels_enabled?
+    def update_labels(args, resource)
+      if !resource.tags.nil? && add_status_labels_enabled?
+        tags = resource.tags.dup
         # remove that old aha statuses
         tags = tags.delete_if {|val| val.starts_with? "Aha!:"}
         # add a label for the status only if add_status_labels
         tags.push("Aha!:" + resource.workflow_status.name) unless resource.nil? or resource.workflow_status.nil?
+        args[:label] = tags.join(',')
       end
-      label_resource.update(issue['number'], tags)
     end
-    
+
     def update_issue_status(issue, resource)
       # close the issue if the aha_status matches the close status
       status = data.status_mapping.key(resource.workflow_status.id)
@@ -215,6 +225,10 @@ class AhaServices::GitlabIssues < AhaService
       @milestone_resource ||= GitlabMilestoneResource.new(self)
     end
 
+    def issue_resource
+      @issue_resource ||= GitlabIssueResource.new(self)
+    end
+
     def server_display_url
         if data.server_url.present?
             data.server_url.gsub(/api\/v\d\/?/, '')
@@ -226,5 +240,28 @@ class AhaServices::GitlabIssues < AhaService
     def integrate_release_with_gitlab_milestone(release, milestone)
       api.create_integration_fields("releases", release.reference_num, data.integration_id,
         {number: milestone['id'], url: "#{server_display_url}/projects/#{data.repository}/issues?milestone=#{milestone['title']}"})
+    end
+
+    def integrate_resource_with_gitlab_issue(resource, issue)
+      api.create_integration_fields(reference_num_to_resource_type(resource.reference_num), resource.reference_num, data.integration_id,
+        {number: issue['number'], url: "#{server_display_url}/projects/#{data.repository}/issues/#{issue['number']}"})
+    end
+
+    def requirements_to_checklist?
+      data.mapping == "issue-checklist"
+    end
+
+    def requirements_to_checklist resource
+      resource.requirements.map do |requirement|
+        status = (requirement.workflow_status.try(:complete) || false) ? "x" : " "
+        head = "- [#{status}] #{requirement.name}\n"
+        body = html_to_markdown(requirement.description.body, true)
+        body += attachments_in_body(requirement.description.attachments) if requirement.description.attachments.present?
+        head + indent(body, "    ")
+      end.join("\n").gsub(/\n+/m, "\n")
+    end
+
+    def indent text, prefix
+      text.lines.map{|line| prefix + line.chomp }.join("\n")
     end
 end

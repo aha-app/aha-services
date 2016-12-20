@@ -1,7 +1,7 @@
-class GitlabMilestoneResource < GithubResource
+class GitlabMilestoneResource < GitlabResource
   def find_by_number(number)
     prepare_request
-    response = http_get "#{gitlab_milestones_path}/#{number}"
+    response = http_get "#{gitlab_milestones_path}/#{number}", nil, {'PRIVATE-TOKEN': @service.data.private_token}
     found_resource(response)
   end
 
