@@ -16,7 +16,7 @@ class GitlabIssueResource < GitlabResource
 
   def update(number, updated_issue)
     prepare_request
-    response = http_patch "#{gitlab_issues_path}/#{number}", updated_issue.to_json, {'PRIVATE-TOKEN': @service.data.private_token}
+    response = http_put "#{gitlab_issues_path}/#{number}", updated_issue.to_json, {'PRIVATE-TOKEN': @service.data.private_token}
     process_response(response, 200) do |issue|
       return issue
     end

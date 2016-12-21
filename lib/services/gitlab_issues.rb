@@ -16,6 +16,7 @@ class AhaServices::GitlabIssues < AhaService
         ['Feature -> Issue, Requirement -> Checklist item', 'issue-checklist']
     ], description: 'Choose how features and requirements in Aha! will map to issues and checklists in GitLab.'
 
+    string :due_date_phase, description: 'The name of the phase to find the due date of a release', label: 'Due Date Phase'
     # it looks like the GitHub status_mapping is not available to us, right now we'll need to assume the statuses
     # that we want: Open -> Ready To Develop, closed -> Ready to Ship
     # internal :status_mapping
@@ -71,6 +72,21 @@ class AhaServices::GitlabIssues < AhaService
     def receive_webhook
     end
 
+    def get_due_date(release)
+      if !data.due_date_phase.empty?
+        response = http_get release.resource + '/release_phases', nil, {"Authorization": "Bearer " + data.aha_api_token}
+        if response.status == 200
+          body = JSON.parse(response.body)
+          body['release_phases'].each do |phase|
+            if phase['name'] == data.due_date_phase
+              return phase['end_on']
+            end
+          end
+        end
+      end
+      release.release_date.try(:to_time).try(:iso8601)
+    end
+
     def find_or_attach_gitlab_milestone(release)
       if milestone = existing_milestone_integrated_with(release)
         milestone
@@ -104,13 +120,13 @@ class AhaServices::GitlabIssues < AhaService
     def create_milestone_for(release)
       milestone_resource.create title: release.name,
         description: "Created from Aha! #{release.url}",
-        due_date: release.release_date.try(:to_time).try(:iso8601),
+        due_date: get_due_date(release),
         state_event: release.released ? "closed" : "activate"
     end
 
     def update_milestone(number, release)
       milestone_resource.update number, title: release.name,
-        due_date: release.release_date.try(:to_time).try(:iso8601),
+        due_date: get_due_date(release),
         state_event: release.released ? "closed" : "activate"
     end
 
@@ -132,7 +148,7 @@ class AhaServices::GitlabIssues < AhaService
 
     def update_or_attach_gitlab_issue(resource, milestone)
       if issue_number = get_integration_field(resource.integration_fields, 'number')
-        update_issue(issue_number, resource)
+        update_issue(issue_number, resource, milestone["id"])
       else
         attach_issue_to(resource, milestone)
       end
@@ -152,15 +168,16 @@ class AhaServices::GitlabIssues < AhaService
 
     def create_issue_for(resource, milestone)
       args = { title: resource_name(resource),
-              body: issue_body(resource),
-              milestone: milestone['number'] }
+              description: issue_body(resource),
+              milestone_id: milestone['id'] }
       update_labels(args, resource)
         issue_resource.create(args)
     end
 
-    def update_issue(number, resource)
+    def update_issue(number, resource, milestone_id)
       args = { title: resource_name(resource),
-               body: issue_body(resource) }
+               description: issue_body(resource),
+               milestone_id: milestone_id }
       update_labels(args, resource)
       issue_resource
         .update(number, args)
@@ -182,7 +199,7 @@ class AhaServices::GitlabIssues < AhaService
       # close the issue if the aha_status matches the close status
       status = data.status_mapping.key(resource.workflow_status.id)
       if !status.nil? && status == 'closed'
-        issue_resource.update(issue['number'], {state: status})
+        issue_resource.update(issue['id'], {state: status})
       end
     end
 
@@ -231,7 +248,7 @@ class AhaServices::GitlabIssues < AhaService
 
     def server_display_url
         if data.server_url.present?
-            data.server_url.gsub(/api\/v\d\/?/, '')
+            data.server_url
         else
             'https://gitlab.com'
         end
@@ -239,12 +256,12 @@ class AhaServices::GitlabIssues < AhaService
 
     def integrate_release_with_gitlab_milestone(release, milestone)
       api.create_integration_fields("releases", release.reference_num, data.integration_id,
-        {number: milestone['id'], url: "#{server_display_url}/projects/#{data.repository}/issues?milestone=#{milestone['title']}"})
+        {number: milestone['id'], url: "#{server_display_url}/projects/#{release.get_project_id}/issues/#{release.integration_fields['number']}"})
     end
 
     def integrate_resource_with_gitlab_issue(resource, issue)
       api.create_integration_fields(reference_num_to_resource_type(resource.reference_num), resource.reference_num, data.integration_id,
-        {number: issue['number'], url: "#{server_display_url}/projects/#{data.repository}/issues/#{issue['number']}"})
+        {number: issue['id'], url: "#{server_display_url}/projects/#{resource.get_project_id}/issues/#{issue['id']}"})
     end
 
     def requirements_to_checklist?
