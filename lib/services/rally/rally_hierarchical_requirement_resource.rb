@@ -46,7 +46,7 @@ class RallyHierarchicalRequirementResource < RallyResource
     url = rally_secure_url_without_workspace(create_path(element_name))
     payload_key = element_name
     if element_name == "UserStory"
-      payload_key = "HierarchicalRequierement"
+      payload_key = "HierarchicalRequirement"
     end
 
     body[payload_key] = hrequirement
@@ -64,7 +64,8 @@ class RallyHierarchicalRequirementResource < RallyResource
     url = rally_secure_url_without_workspace(object_path(id, element_name)+query_params)
     payload_key = element_name
     if element_name == "UserStory"
-      payload_key = "HierarchicalRequierement"
+      hrequirement.delete(:Release) if has_children?(id, element_name)
+      payload_key = "HierarchicalRequirement"
     end
     body[payload_key] = hrequirement
     response = http_post url, body.to_json
@@ -75,6 +76,12 @@ class RallyHierarchicalRequirementResource < RallyResource
     end
   rescue AhaService::RemoteError => e
     logger.error("Failed to update user story #{id}: #{e.message}")
+  end
+
+  def has_children?(id, element_name)
+    resp = http_get rally_url_without_workspace(object_path(id, element_name)+"/children")
+    children = Hashie::Mash.new(JSON.parse(resp.body))
+    children&.QueryResult&.TotalResultCount.to_i > 0
   end
 
   def human_url_for_feature(id)
