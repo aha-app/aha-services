@@ -39,8 +39,8 @@ class AhaServices::GitlabIssues < AhaService
 
     def receive_create_feature
       milestone = find_or_attach_gitlab_milestone(payload.feature.release)
-      find_or_attach_gitlab_issue(payload.feature, milestone)
-      update_requirements(payload.feature.requirements, milestone)
+      issue = find_or_attach_gitlab_issue(payload.feature, milestone)
+      update_requirements(payload.feature.requirements, milestone, issue["id"])
     end
 
     def receive_create_release
@@ -49,8 +49,8 @@ class AhaServices::GitlabIssues < AhaService
 
     def receive_update_feature
       milestone = find_or_attach_gitlab_milestone(payload.feature.release)
-      update_or_attach_gitlab_issue(payload.feature, milestone)
-      update_requirements(payload.feature.requirements, milestone)
+      issue = update_or_attach_gitlab_issue(payload.feature, milestone)
+      update_requirements(payload.feature.requirements, milestone, issue["id"])
     end
 
     def receive_update_release
@@ -130,9 +130,10 @@ class AhaServices::GitlabIssues < AhaService
         state_event: release.released ? "closed" : "activate"
     end
 
-    def update_requirements(requirements, milestone)
+    def update_requirements(requirements, milestone, issue_id)
       if (requirements) and !requirements_to_checklist?
         requirements.each do |requirement|
+          requirement["parent_id"] = issue_id
           update_or_attach_gitlab_issue(requirement, milestone)
         end
       end
@@ -204,7 +205,6 @@ class AhaServices::GitlabIssues < AhaService
     end
 
     def issue_body(resource)
-
       issue_body_parts = []
       if resource.description.body.present?
         body = html_to_markdown(resource.description.body, true)
@@ -215,6 +215,11 @@ class AhaServices::GitlabIssues < AhaService
       if resource.description.attachments.present?
         issue_body_parts << attachments_in_body(resource.description.attachments)
       end
+
+      if resource.key?("parent_id")
+        issue_body_parts << "##{resource['parent_id']}"
+      end
+
       issue_body_parts.join("\n\n")
     end
 

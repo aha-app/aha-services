@@ -36,19 +36,19 @@ class GitlabResource < GenericResource
     end
 
     def get_project_id
-      if @project_ids == nil
-        @project_ids = Hash.new
+      if @@project_ids == nil
+        @@project_ids = Hash.new
       end
-      if !@project_ids.key?(@service.data.repository)
+      if !@@project_ids.key?(@service.data.repository)
         response = http_get("#{@service.server_url}/projects?search=#{@service.data.repository}", nil, {'PRIVATE-TOKEN': @service.data.private_token})
         process_response(response, 200) do |results|
           if results.kind_of?(Array)
-            @project_ids[@service.data.repository] = results[0]["id"]
+            @@project_ids[@service.data.repository] = results[0]["id"]
           else
             return nil
           end
         end
       end
-      @project_ids[@service.data.repository]
+      @@project_ids[@service.data.repository]
     end
 end
