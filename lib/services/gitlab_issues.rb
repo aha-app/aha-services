@@ -264,7 +264,7 @@ class AhaServices::GitlabIssues < AhaService
       end
 
       if resource.key?("parent_id")
-        issue_body_parts << "##{resource['parent_id']}"
+        issue_body_parts << "Parent Requirement ##{resource['parent_id']}"
       end
 
       issue_body_parts.join("\n\n")
