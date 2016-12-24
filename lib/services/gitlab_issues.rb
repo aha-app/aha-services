@@ -6,7 +6,7 @@ class AhaServices::GitlabIssues < AhaService
     string :server_url, description: 'If you are using your own GitLab server please enter your server URL without a trailing slash (https://example.com/api/v3). If you are using gitlab.com leave this field empty.',
                         label: 'Server URL'
     install_button
-    select :repository, collection: -> (meta_data, _data) do
+    select :project, collection: -> (meta_data, _data) do
         return [] if meta_data.nil? || meta_data.repos.nil?
         meta_data.repos.sort_by(&:name).collect { |repo| [repo.full_name, repo.full_name] }
     end
@@ -26,7 +26,7 @@ class AhaServices::GitlabIssues < AhaService
     callback_url description: 'Use this URL to setup a two-way integration with GitLab issues.'
 
     def receive_installed
-        meta_data.repos = repo_resource.all.map { |repo| { full_name: repo['name'] } }
+        meta_data.repos = repo_resource.all.map { |repo| { full_name: repo['name'], id: repo['id'], web_url: repo['web_url']  } }
     end
 
     def server_url
@@ -70,6 +70,53 @@ class AhaServices::GitlabIssues < AhaService
     end
 
     def receive_webhook
+      action = payload.webhook.action
+      issue = payload.webhook.issue
+      return unless issue and action
+      results = api.search_integration_fields(data.integration_id, "number", issue.number)['records'] rescue []
+      return unless results.size == 1
+      if resource = results[0].requirement then
+        resource_kind = :requirement
+      elsif resource = results[0].feature then
+        resource_kind = :feature
+      else
+        return
+      end
+
+      new_tags = issue.labels.map(&:name) rescue []
+      aha_statuses = []
+
+      # remove the aha_statuses as these are 'special' tags used to change the state
+      if add_status_labels_enabled?
+        aha_statuses = new_tags.select {|val| val.starts_with? "Aha!:"}
+        new_tags.delete_if {|val| val.starts_with? "Aha!:"}
+      end
+
+      diff = {}
+      diff[:name] = issue.title if resource.name != issue.title
+
+      case action
+      when "unlabeled"
+        # add the label back to the issue if all aha labels were removed
+        label_resource.update(issue.number, [new_tags, payload.label.name].flatten) if add_status_labels_enabled? && aha_statuses.empty? && payload.label.name.starts_with?("Aha!:")
+      when "labeled"
+        if add_status_labels_enabled? && !aha_statuses.nil? && !aha_statuses.empty?
+          aha_status = aha_statuses.pop
+          # if there are multiple aha_statuses then clear all except for the last status
+          label_resource.update(issue.number, [new_tags, aha_status].flatten) unless aha_statuses.empty?
+          # trim the Aha!: prefix to match the aha workflow_status name
+          new_status = aha_status[5..-1]
+          # update the status
+          diff[:workflow_status] = new_status if !new_status.nil? && new_status != resource.workflow_status.name
+        end
+      when "closed", "opened", "reopened"
+        new_status = data.status_mapping.nil? ? nil : data.status_mapping[issue.state]
+        diff[:workflow_status] = new_status if !new_status.nil? && new_status != resource.workflow_status.id
+      end
+      diff[:tags] = new_tags if Set.new(resource.tags) != Set.new(new_tags)
+      if diff.size > 0  then
+        api.put resource.resource, { resource_kind => diff }
+      end
     end
 
     def get_due_date(release)
@@ -192,7 +239,7 @@ class AhaServices::GitlabIssues < AhaService
         tags = tags.delete_if {|val| val.starts_with? "Aha!:"}
         # add a label for the status only if add_status_labels
         tags.push("Aha!:" + resource.workflow_status.name) unless resource.nil? or resource.workflow_status.nil?
-        args[:label] = tags.join(',')
+        args[:labels] = tags.join(',')
       end
     end
 
@@ -261,14 +308,20 @@ class AhaServices::GitlabIssues < AhaService
 
     def integrate_release_with_gitlab_milestone(release, milestone)
       api.create_integration_fields("releases", release.reference_num, data.integration_id,
-        {number: milestone['id'], url: "#{server_display_url}/projects/#{release.get_project_id}/issues/#{release.integration_fields['number']}"})
+        {number: milestone['id'], url: "#{get_project_url}/milestons/#{milestone['id']}"})
     end
 
     def integrate_resource_with_gitlab_issue(resource, issue)
       api.create_integration_fields(reference_num_to_resource_type(resource.reference_num), resource.reference_num, data.integration_id,
-        {number: issue['id'], url: "#{server_display_url}/projects/#{resource.get_project_id}/issues/#{issue['id']}"})
+        {number: issue['id'], url: "#{get_project_url}/issues/#{issue['id']}"})
     end
 
+    def get_project_url
+      repos = meta_data.repos.select {|repo| repo['full_name'] == data.project }
+      if repos.kind_of?(Array)
+        repos[0].web_url
+      end
+    end
     def requirements_to_checklist?
       data.mapping == "issue-checklist"
     end

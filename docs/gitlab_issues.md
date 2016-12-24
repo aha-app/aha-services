@@ -2,9 +2,9 @@ This two-way integration allows you to push your features and requirements in Ah
 
 ## Features
 
-* One Aha! product can be associated with one or many GitLab repositories. If the association is one to many, you need to set up different integrations for each product - repository mapping.
+* One Aha! product can be associated with one or many GitLab projects. If the association is one to many, you need to set up different integrations for each product - project mapping.
 * Individual features can be sent to GitLab using the _Send to GitLab Issues_ item in the _Actions_ menu on the features page.
-* All features in a release (that have not already been implemented or sent to GitHLab previously) can be sent to GitLab using the _Send to GitLab Issues_ item in the _Actions_ menu on the release page.
+* All features in a release (that have not already been implemented or sent to GitLab previously) can be sent to GitLab using the _Send to GitLab Issues_ item in the _Actions_ menu on the release page.
 * When a feature is copied to GitLab one issue will be created for the feature.
 * There are two ways to map requirements to issues. Each requirement can be mapped to a stand-alone issue, or the requirements can be converted to a checklist within the main issue. If checklists are used, note that there are some significant caveats:
   * When checklist items are ticked, the status of the corresponding requirement in Aha! will not be updated.
@@ -25,19 +25,18 @@ Please carefully follow these instructions to ensure that the integration is pro
 
 Create the integration in Aha!
 
-1. Enter your GitLab username and password. Consider using a [GitLab Personal Token](https://help.GitLab.com/articles/creating-an-access-token-for-command-line-use) rather than a password here. A token is essential if you use two-factor authentication with your GitLab account. Click the _Test connection_ button
-2. After a short delay, you will be able to choose the repository the issues will be created in.
+1. Enter your [GitLab Personal Token](https://docs.gitlab.com/ee/api/README.html#personal-access-tokens).
+Click the _Test connection_ button
+2. After a short delay, you will be able to choose the project the issues will be created in.
 3. Enable the integration.
 4. Test the integration by going to one of your features in Aha! and using the _Send to GitLab Issues_ item in the _Actions_ menu on the features page. You should then look at your repository in GitLab and see that the feature (and any requirements) were properly copied to issues.
 
 To receive updates when an issue is changed on GitLab you have to setup a webhook for the GitLab repository.
 
 1. In Aha!, copy the Webhook URL from the GitLab issues integration settings.
-2. On GitLab, go to the settings page of the GitLab repository and click on the _Webhooks & Services_ tab.
-3. Add a new webhook.
-4. Paste the Webhook URL into the _Payload URL_ field. Choose _application/json_ as content type and leave the secret field blank.
-5. Select _Let me select individual events._ and then check only _Issues_.
-6. Finally, click _Add webhook_.
+2. On GitLab, go to the settings dropdown select _Webhooks_ .
+3. Paste the Webhook URL into the _URL_ field and leave the secret field blank.
+4. Finally, click _Add webhook_.
 
 In the GitLab issues integration settings, you can choose to which Aha! status the "Open" or "Closed" state of an issue should map.
 
