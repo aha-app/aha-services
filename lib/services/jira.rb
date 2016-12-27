@@ -338,9 +338,14 @@ protected
       .merge!(reporter_fields(resource, issue_type))
       .merge!(aha_position_fields(resource, issue_type))
 
-    # Use the custom fields from @feature to populate requirements, to solve for required custom fields on create
+    # Use the custom fields from @feature to populate requirements, to solve
+    # for required custom fields on create
     issue.fields.merge!(mapped_custom_fields(@feature, issue_type))
     issue.fields.merge!(due_date_fields(@feature, issue_type))
+
+    # Use the custom fields from the resource, this will overwrite any
+    # differences from the above write
+    issue.fields.merge!(mapped_custom_fields(resource, issue_type))
 
     new_issue = issue_resource.create(issue)
 
@@ -375,12 +380,13 @@ protected
       .merge!(aha_reference_fields(resource, issue_type))
       .merge!(assignee_fields(resource, issue_type))
       .merge!(aha_position_fields(resource, issue_type))
+      .merge!(mapped_custom_fields(resource, issue_type))
 
     if @feature == resource
-      # Only update custom_fields and due dates for features, not requirements.
-      # This will cause an issue with two-way field syncing if we constantly overwrite requirements' custom fields
+      # Only update due dates for features, not requirements.  This will cause
+      # an issue with two-way field syncing if we constantly overwrite
+      # requirements' due dates
       issue.fields
-        .merge!(mapped_custom_fields(@feature, issue_type))
         .merge!(due_date_fields(@feature, issue_type))
     end
 
