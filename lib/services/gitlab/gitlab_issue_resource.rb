@@ -25,7 +25,6 @@ class GitlabIssueResource < GitlabResource
 private
 
   def gitlab_issues_path
-    #get_project_id
     "#{ @service.server_url }/projects/#{get_project_id}/issues"
   end
 end

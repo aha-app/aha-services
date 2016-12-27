@@ -1,4 +1,4 @@
-This two-way integration allows you to push your features and requirements in Aha! into GitLsb as issues and get status updates back.
+This two-way integration allows you to push your features and requirements in Aha! into GitLab as issues and get status updates back.
 
 ## Features
 
@@ -34,7 +34,7 @@ Click the _Test connection_ button
 To receive updates when an issue is changed on GitLab you have to setup a webhook for the GitLab repository.
 
 1. In Aha!, copy the Webhook URL from the GitLab issues integration settings.
-2. On GitLab, go to the settings dropdown select _Webhooks_ .
+2. On GitLab, go to the settings dropdown and select _Webhooks_ .
 3. Paste the Webhook URL into the _URL_ field and leave the secret field blank.
 4. Finally, click _Add webhook_.
 
