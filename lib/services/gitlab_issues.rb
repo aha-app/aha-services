@@ -70,10 +70,14 @@ class AhaServices::GitlabIssues < AhaService
     end
 
     def receive_webhook
-      action = payload.webhook.action
-      issue = payload.webhook.issue
-      return unless issue and action
-      results = api.search_integration_fields(data.integration_id, "number", issue.number)['records'] rescue []
+      #action = payload.webhook.action
+      #issue = payload.webhook.issue
+      objattr = payload.webhook.object_attributes
+      if objattr
+        action = objattr.action
+      end
+      return unless objattr and action
+      results = api.search_integration_fields(data.integration_id, "number", objattr.id)['records'] rescue []
       return unless results.size == 1
       if resource = results[0].requirement then
         resource_kind = :requirement
@@ -83,37 +87,14 @@ class AhaServices::GitlabIssues < AhaService
         return
       end
 
-      new_tags = issue.labels.map(&:name) rescue []
-      aha_statuses = []
-
-      # remove the aha_statuses as these are 'special' tags used to change the state
-      if add_status_labels_enabled?
-        aha_statuses = new_tags.select {|val| val.starts_with? "Aha!:"}
-        new_tags.delete_if {|val| val.starts_with? "Aha!:"}
-      end
-
       diff = {}
-      diff[:name] = issue.title if resource.name != issue.title
+      diff[:name] = objattr.title if resource.name != objattr.title
 
       case action
-      when "unlabeled"
-        # add the label back to the issue if all aha labels were removed
-        label_resource.update(issue.number, [new_tags, payload.label.name].flatten) if add_status_labels_enabled? && aha_statuses.empty? && payload.label.name.starts_with?("Aha!:")
-      when "labeled"
-        if add_status_labels_enabled? && !aha_statuses.nil? && !aha_statuses.empty?
-          aha_status = aha_statuses.pop
-          # if there are multiple aha_statuses then clear all except for the last status
-          label_resource.update(issue.number, [new_tags, aha_status].flatten) unless aha_statuses.empty?
-          # trim the Aha!: prefix to match the aha workflow_status name
-          new_status = aha_status[5..-1]
-          # update the status
-          diff[:workflow_status] = new_status if !new_status.nil? && new_status != resource.workflow_status.name
-        end
       when "closed", "opened", "reopened"
-        new_status = data.status_mapping.nil? ? nil : data.status_mapping[issue.state]
+        new_status = data.status_mapping.nil? ? nil : data.status_mapping[objattr.state]
         diff[:workflow_status] = new_status if !new_status.nil? && new_status != resource.workflow_status.id
       end
-      diff[:tags] = new_tags if Set.new(resource.tags) != Set.new(new_tags)
       if diff.size > 0  then
         api.put resource.resource, { resource_kind => diff }
       end
