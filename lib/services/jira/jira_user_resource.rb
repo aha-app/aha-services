@@ -1,7 +1,7 @@
 class JiraUserResource < JiraResource
   def picker(email)
     prepare_request
-    response = http_get "#{api_url}/user/picker?query=#{email}"
+    response = http_get "#{api_url}/user/picker?query=#{CGI.escape email}"
     if response.status == 404
       return nil
     end

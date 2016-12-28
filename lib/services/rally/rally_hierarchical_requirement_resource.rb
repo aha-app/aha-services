@@ -46,7 +46,7 @@ class RallyHierarchicalRequirementResource < RallyResource
     url = rally_secure_url_without_workspace(create_path(element_name))
     payload_key = element_name
     if element_name == "UserStory"
-      payload_key = "HierarchicalRequierement"
+      payload_key = "HierarchicalRequirement"
     end
 
     body[payload_key] = hrequirement
@@ -64,7 +64,7 @@ class RallyHierarchicalRequirementResource < RallyResource
     url = rally_secure_url_without_workspace(object_path(id, element_name)+query_params)
     payload_key = element_name
     if element_name == "UserStory"
-      payload_key = "HierarchicalRequierement"
+      payload_key = "HierarchicalRequirement"
     end
     body[payload_key] = hrequirement
     response = http_post url, body.to_json
@@ -302,11 +302,15 @@ class RallyHierarchicalRequirementResource < RallyResource
   end
 
   # Rally will fail the API call if we attempt to assign this to a release that does not exist.
-  # Rally will also fail the API call if we attempt to set Release for a feature that is not a leaf node.
+  # Rally will also fail the API call if we attempt to set Release for a user story that is not a leaf node.
   def include_release_if_exists(aha_model, attributes, release_id)
-    return if (aha_model.requirements.try(:length) || 0) > 0 # do not send if we know for a fact this is not a leaf
+    if @service.feature_element_name == "UserStory"
+      return if (aha_model.requirements.try(:length) || 0) > 0
+      # do not send if we know for a fact this is not a leaf
+      # Rally does not allow you to set the release for a User Story that has other user stories within it
+    end
 
-    children_count = get_children(map_to_objectid(aha_model)).length rescue 0
+    children_count = get_children(map_to_objectid(aha_model), @service.feature_element_name).length rescue 0
     return if children_count > 0 # do not send if rally has children for this resource
 
     release_exists = release_id && rally_release_resource.by_id(release_id) rescue false
