@@ -16,9 +16,9 @@ class AhaServices::GitlabIssues < AhaService
       ['Feature -> Issue, Requirement -> Checklist item', 'issue-checklist']
   ], description: 'Choose how features and requirements in Aha! will map to issues and checklists in GitLab.'
 
-  string :due_date_phase, description: 'The name of the phase to find the due date of a release', label: 'Due Date Phase'
+  string :due_date_phase, description: 'The name of a release phase whose end date should be used as the milestone date in GitLab when sending releases. Falls back to the release date if not set or if the named release phase does not exist.'
 
-  internal :status_mapping
+  #internal :status_mapping
 
   boolean :add_status_labels, description: 'Sync the Aha! status using a label on the GitLab issue'
 
@@ -248,7 +248,7 @@ class AhaServices::GitlabIssues < AhaService
     issue_body_parts.join("\n\n")
   end
 
-  # Github's parser is smart enough to not treat _ or * inside of `` blocks as markdown control characters, so we don't need to escape them
+  # Gitlab's parser is smart enough to not treat _ or * inside of `` blocks as markdown control characters, so we don't need to escape them
   def bugfix_escaping_in_method_name body
     body = body.gsub(/`[^`]+`/) do |code_point|
       code_point.gsub('\\_', "_").gsub('\\*', "*")
