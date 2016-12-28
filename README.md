@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/aha-app/aha-services.svg?style=shield)](https://circleci.com/gh/aha-app/aha-services)
+
 Integrate Aha! with third-party services
 ========================================
 

@@ -30,6 +30,8 @@ protected
     release_date = Date.parse(aha_release.release_date) rescue Date.today
     start_date = Date.parse(aha_release.start_date) rescue release_date
 
+    release_date = release_date.to_datetime + 1.day
+    release_date = release_date.to_date
     start_date = [start_date, (release_date - 1.day)].min # Never send a start date after the release date
     release = {
       :Name => aha_release.name,
