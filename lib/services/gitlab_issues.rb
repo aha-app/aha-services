@@ -18,7 +18,7 @@ class AhaServices::GitlabIssues < AhaService
 
   string :due_date_phase, description: 'The name of a release phase whose end date should be used as the milestone date in GitLab when sending releases. Falls back to the release date if not set or if the named release phase does not exist.'
 
-  #internal :status_mapping
+  internal :status_mapping
 
   boolean :add_status_labels, description: 'Sync the Aha! status using a label on the GitLab issue'
 
@@ -86,12 +86,36 @@ class AhaServices::GitlabIssues < AhaService
 
     diff = {}
     diff[:name] = objattr.title if resource.name != objattr.title
-
     case action
-    when "closed", "opened", "reopened"
+    when "update"
+      # Go back to GitLab to retrieve labels
+      issue = issue_resource.find_by_number_and_milestone(objattr["id"], {:number => objattr["milestone_id"]})
+      new_tags = issue['labels']
+      aha_statuses = []
+
+      # remove the aha_statuses as these are 'special' tags used to change the state
+      if add_status_labels_enabled?
+        aha_statuses = new_tags.select {|val| val.starts_with? "Aha!:"}
+        new_tags.delete_if {|val| val.starts_with? "Aha!:"}
+        if aha_statuses == []
+          # add the label back to the issue if all aha labels were removed
+          args = { title: resource_name(resource),
+                   description: issue_body(resource),
+                   milestone_id: objattr["milestone_id"] }
+          update_labels(args, resource)
+          issue_resource.update(objattr["id"], args)
+        end
+      end
+      combined_tags = new_tags | resource.tags
+      if combined_tags.sort != resource.tags.sort
+        dif[:tags] = combined_tags
+      end
+
+    when "close", "open", "reopen"
       new_status = data.status_mapping.nil? ? nil : data.status_mapping[objattr.state]
       diff[:workflow_status] = new_status if !new_status.nil? && new_status != resource.workflow_status.id
     end
+
     if diff.size > 0  then
       api.put resource.resource, { resource_kind => diff }
     end
@@ -217,6 +241,8 @@ class AhaServices::GitlabIssues < AhaService
       tags = tags.delete_if {|val| val.starts_with? "Aha!:"}
       # add a label for the status only if add_status_labels
       tags.push("Aha!:" + resource.workflow_status.name) unless resource.nil? or resource.workflow_status.nil?
+    end
+    if tags && tags.length > 0
       args[:labels] = tags.join(',')
     end
   end
