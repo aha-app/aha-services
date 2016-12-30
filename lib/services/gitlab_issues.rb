@@ -83,13 +83,14 @@ class AhaServices::GitlabIssues < AhaService
     else
       return
     end
+    issue = issue_resource.find_by_number_and_milestone(objattr["id"], {:number => objattr["milestone_id"]})
+    return unless issue
 
     diff = {}
     diff[:name] = objattr.title if resource.name != objattr.title
     case action
     when "update"
       # Go back to GitLab to retrieve labels
-      issue = issue_resource.find_by_number_and_milestone(objattr["id"], {:number => objattr["milestone_id"]})
       new_tags = issue['labels']
       aha_statuses = []
 
@@ -106,9 +107,16 @@ class AhaServices::GitlabIssues < AhaService
           issue_resource.update(objattr["id"], args)
         end
       end
-      combined_tags = new_tags | resource.tags
-      if combined_tags.sort != resource.tags.sort
-        dif[:tags] = combined_tags
+      new_tags ||= []
+
+      if resource.tags
+        combined_tags = new_tags | resource.tags
+        if combined_tags.sort != resource.tags.sort
+          diff[:tags] = combined_tags
+        end
+      else
+        combined_tags = new_tags
+        diff[:tags] = combined_tags
       end
 
     when "close", "open", "reopen"
@@ -240,6 +248,10 @@ class AhaServices::GitlabIssues < AhaService
       # remove that old aha statuses
       tags = tags.delete_if {|val| val.starts_with? "Aha!:"}
       # add a label for the status only if add_status_labels
+    else
+      tags = []
+    end
+    if add_status_labels_enabled?
       tags.push("Aha!:" + resource.workflow_status.name) unless resource.nil? or resource.workflow_status.nil?
     end
     if tags && tags.length > 0
