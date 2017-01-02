@@ -32,6 +32,6 @@ class GitlabMilestoneResource < GitlabResource
 private
 
   def gitlab_milestones_path
-    "#{@service.server_url}/projects/#{get_project_id}/milestones"
+    "#{ @service.server_url }/projects/#{get_project_id}/milestones"
   end
 end

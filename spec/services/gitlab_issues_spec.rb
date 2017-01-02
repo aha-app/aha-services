@@ -1,44 +1,42 @@
 require 'spec_helper'
 
 describe AhaServices::GitlabIssues do
-    let(:protocol) { 'https' }
-    let(:domain) { 'gitlab.com/api/v3' }
-    let(:private_token) { 'secret' }
-    let(:base_request_url) { "#{protocol}://#{domain}/?private_token=#{private_token}" }
-    let(:service) do
-        AhaServices::GitlabIssues.new 'server_url' => "#{protocol}://#{domain}",
-                                      'private_token' => private_token
-    end
+  let(:protocol) { 'https' }
+  let(:domain) { 'gitlab.com/api/v3' }
+  let(:private_token) { 'secret' }
+  let(:base_request_url) { "#{protocol}://#{domain}/?private_token=#{private_token}" }
+  let(:service) do
+    AhaServices::GitlabIssues.new 'server_url' => "#{protocol}://#{domain}",
+                                  'private_token' => private_token
+  end
 
-    let(:release) { Hashie::Mash.new(name: 'First release') }
-    let(:feature) do
-        Hashie::Mash.new name: 'First feature',
-                         workflow_status: { name: 'In development' },
-                         description: { body: 'First feature description' },
-                         release: release,
-                         tags: ['First', 'Second', 'Third', 'Aha!:First'],
-                         requirements: [{ id: 'req_id' }]
-    end
+  let(:release) { Hashie::Mash.new(name: 'First release') }
+  let(:feature) do
+    Hashie::Mash.new name: 'First feature',
+                     workflow_status: { name: 'In development' },
+                     description: { body: 'First feature description' },
+                     release: release,
+                     tags: ['First', 'Second', 'Third', 'Aha!:First'],
+                     requirements: [{ id: 'req_id' }]
+  end
 
-    let(:repo_resource) { double }
-    let(:milestone_resource) { double }
-    let(:issue_resource) { double }
-    let(:label_resource) { double }
+  let(:repo_resource) { double }
+  let(:milestone_resource) { double }
+  let(:issue_resource) { double }
 
-    before do
-        service.stub(:repo_resource).and_return(repo_resource)
-        service.stub(:milestone_resource).and_return(milestone_resource)
-        service.stub(:issue_resource).and_return(issue_resource)
-        service.stub(:label_resource).and_return(label_resource)
-    end
+  before do
+    service.stub(:repo_resource).and_return(repo_resource)
+    service.stub(:milestone_resource).and_return(milestone_resource)
+    service.stub(:issue_resource).and_return(issue_resource)
+  end
 
-    context "can be installed" do
+  context "can be installed" do
     it "and handles installed event" do
-      mock_repos = [ { 'full_name' => 'user/first_repo' } ]
+      mock_repos = [ { 'name' => 'user/first_repo', 'id' => '123', 'web_url' => 'https://gitlab.com' } ]
       repo_resource.stub(:all).and_return(mock_repos)
       service.receive(:installed)
       expect(service.meta_data.repos.first)
-        .to eq Hashie::Mash.new(mock_repos.first)
+        .to eq Hashie::Mash.new({ 'full_name' => 'user/first_repo', 'id' => '123', 'web_url' => 'https://gitlab.com' })
     end
   end
 
@@ -49,6 +47,7 @@ describe AhaServices::GitlabIssues do
     service.stub(:find_or_attach_gitlab_milestone)
       .and_return(mock_milestone)
     service.stub(:find_or_attach_gitlab_issue)
+      .and_return(mock_payload)
     service.should_receive(:find_or_attach_gitlab_milestone)
       .with(mock_payload.feature.release)
     service.should_receive(:find_or_attach_gitlab_issue)
@@ -76,6 +75,7 @@ describe AhaServices::GitlabIssues do
     service.stub(:find_or_attach_gitlab_milestone)
       .and_return(mock_milestone)
     service.stub(:update_or_attach_gitlab_issue)
+      .and_return(mock_payload)
     service.should_receive(:find_or_attach_gitlab_milestone)
       .with(mock_payload.feature.release)
     service.should_receive(:update_or_attach_gitlab_issue)
@@ -223,7 +223,7 @@ describe AhaServices::GitlabIssues do
   describe "#update_requirements" do
     shared_examples "empty 'update_requirements' method" do
       it "does not do any api calls" do
-        service.update_requirements(requirements, mock_milestone)
+        service.update_requirements(requirements, mock_milestone, 1)
       end
     end
 
@@ -241,7 +241,7 @@ describe AhaServices::GitlabIssues do
         requirements = [ { id: 'first_requirement' }, { id: 'second_requirement' } ]
         service.stub(:update_or_attach_gitlab_issue)
         service.should_receive(:update_or_attach_gitlab_issue).twice
-        service.update_requirements(requirements, mock_milestone)
+        service.update_requirements(requirements, mock_milestone, 1)
       end
     end
   end
@@ -268,7 +268,7 @@ describe AhaServices::GitlabIssues do
   end
 
   describe "#update_or_attach_gitlab_issue" do
-    let(:mock_milestone) { { id: 1 } }
+    let(:mock_milestone) { { 'id' => 1 } }
     let(:mock_issue) { { id: 42 } }
     context "when the resource is integrated with a gitlab issue" do
       let(:issue_number) { 42 }
@@ -278,7 +278,7 @@ describe AhaServices::GitlabIssues do
       end
       it "calls update_issue method" do
         service.should_receive(:update_issue)
-          .with(issue_number, feature)
+          .with(issue_number, feature, mock_milestone['id'])
         service.update_or_attach_gitlab_issue(feature, mock_milestone)
       end
       it "returns the updated issue" do
@@ -391,7 +391,7 @@ describe AhaServices::GitlabIssues do
       service.stub(:update_labels)
       service.stub(:update_issue_status)
       issue_resource.should_receive(:update).and_return(mock_issue)
-      expect(service.update_issue(42, feature)).to eq mock_issue
+      expect(service.update_issue(42, feature, 1)).to eq mock_issue
     end
   end
 
@@ -400,8 +400,8 @@ describe AhaServices::GitlabIssues do
     let(:mock_labels) { [{ name: "First label"}] }
     context "add_status_labeled is not enabled" do
       it "returns the updated labels" do
-        label_resource.should_receive(:update)
-          .with(mock_issue["number"], feature.tags)
+        issue_resource.should_receive(:update)
+          .with(mock_issue["id"], labels: feature.tags)
           .and_return(mock_labels)
         service.update_labels(mock_issue, feature)
       end
@@ -411,8 +411,8 @@ describe AhaServices::GitlabIssues do
         service.stub(:data).and_return(Hashie::Mash.new({add_status_labels: "1"}))
       end
       it "returns the updated labels" do
-        label_resource.should_receive(:update)
-          .with(mock_issue["id"], ['First', 'Second', 'Third', 'Aha!:In development'])
+        issue_resource.should_receive(:update)
+          .with(mock_issue["id"], labels: ['First', 'Second', 'Third', 'Aha!:In development'])
           .and_return(mock_labels)
         service.update_labels(mock_issue, feature)
       end
@@ -492,7 +492,7 @@ describe AhaServices::GitlabIssues do
   end
   #
   describe "#receive_webhook" do
-    let(:mock_issue) { { id: 42, title: "The issue", action: "update"] } }
+    let(:mock_issue) { { id: 42, title: "The issue", action: "update" } }
     let(:mock_api_client) { double }
     after do
       service.stub(:api).and_return(mock_api_client)

@@ -15,6 +15,7 @@ class GitlabIssueResource < GitlabResource
   end
 
   def update(number, updated_issue)
+    updated_issue[:labels] = updated_issue[:labels].join(',') if updated_issue.key?(:labels) && updated_issue[:labels].is_a?(Array)
     prepare_request
     response = http_put "#{gitlab_issues_path}/#{number}", updated_issue.to_json, {'PRIVATE-TOKEN': @service.data.private_token}
     process_response(response, 200) do |issue|
