@@ -106,7 +106,7 @@ class AhaService
     end
     logger.info("Sending :#{@event} using #{self.class.title}")
     timeout_sec = (@data.timeout || timeout || 310).to_i
-    Timeout.timeout(timeout_sec, TimeoutError) do
+    Timeout.timeout(timeout_sec, Timeout::Error) do
       send(event_method)
     end
     self
