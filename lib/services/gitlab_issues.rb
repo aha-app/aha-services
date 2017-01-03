@@ -100,19 +100,14 @@ class AhaServices::GitlabIssues < AhaService
     case action
     when "update"
       # remove the aha_statuses as these are 'special' tags used to change the state
-      if add_status_labels_enabled?
-        if aha_statuses.empty?
-          # add the label back to the issue if all aha labels were removed
-          issue_resource.update(issue.id, { labels: [new_tags, "Aha!:#{resource.workflow_status.name}"].flatten })
-        else
-          aha_status = aha_statuses.pop
-          # If there are multiple aha_statuses then clear all except for the last status
-          issue_resource.update(issue.id, labels: [new_tags, aha_status].flatten) unless aha_statuses.empty?
-          # trim the Aha!: prefix to match the aha workflow_status name
-          new_status = aha_status[5..-1]
-          # update the status
-          diff[:workflow_status] = new_status if !new_status.nil? && new_status != resource.workflow_status.name
-        end
+      if add_status_labels_enabled? && aha_statuses.any?
+        aha_status = aha_statuses.pop
+        # If there are multiple aha_statuses then clear all except for the last status
+        issue_resource.update(issue.id, labels: [new_tags, aha_status].flatten) unless aha_statuses.empty?
+        # trim the Aha!: prefix to match the aha workflow_status name
+        new_status = aha_status[5..-1]
+        # update the status
+        diff[:workflow_status] = new_status if !new_status.nil? && new_status != resource.workflow_status.name
       end
 
       if resource.tags
