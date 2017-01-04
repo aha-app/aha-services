@@ -1,7 +1,7 @@
 class GitlabMilestoneResource < GitlabResource
-  def find_by_number(number)
+  def find_by_id(id)
     prepare_request
-    response = http_get "#{gitlab_milestones_path}/#{number}", nil, {'PRIVATE-TOKEN': @service.data.private_token}
+    response = http_get "#{gitlab_milestones_path}/#{id}", nil, {'PRIVATE-TOKEN': @service.data.private_token}
     found_resource(response)
   end
 
@@ -21,9 +21,9 @@ class GitlabMilestoneResource < GitlabResource
     end
   end
 
-  def update(number, updated_milestone)
+  def update(id, updated_milestone)
     prepare_request
-    response = http_put "#{gitlab_milestones_path}/#{number}", updated_milestone.to_json, {'PRIVATE-TOKEN': @service.data.private_token}
+    response = http_put "#{gitlab_milestones_path}/#{id}", updated_milestone.to_json, {'PRIVATE-TOKEN': @service.data.private_token}
     process_response(response, 200) do |milestone|
       return milestone
     end

@@ -42,7 +42,7 @@ describe AhaServices::GitlabIssues do
 
   it "handles the 'create feature' event" do
     mock_payload = Hashie::Mash.new(feature: feature)
-    mock_milestone = { number: 1 }
+    mock_milestone = { id: 1 }
     service.stub(:payload).and_return(mock_payload)
     service.stub(:find_or_attach_gitlab_milestone)
       .and_return(mock_milestone)
@@ -70,7 +70,7 @@ describe AhaServices::GitlabIssues do
 
   it "handles the 'update feature' event" do
     mock_payload = Hashie::Mash.new(feature: feature)
-    mock_milestone = { number: 1 }
+    mock_milestone = { id: 1 }
     service.stub(:payload).and_return(mock_payload)
     service.stub(:find_or_attach_gitlab_milestone)
       .and_return(mock_milestone)
@@ -118,14 +118,14 @@ describe AhaServices::GitlabIssues do
   describe "#update_or_attach_gitlab_milestone" do
     let(:mock_milestone) { { id: 42 } }
     context "when the release is integrated with a gitlab milestone" do
-      let(:milestone_number) { 42 }
+      let(:milestone_id) { 42 }
       before do
-        service.stub(:get_integration_field).and_return(milestone_number)
+        service.stub(:get_integration_field).and_return(milestone_id)
         service.stub(:update_milestone).and_return(mock_milestone)
       end
       it "calls the 'update_milestone' method" do
         service.should_receive(:update_milestone)
-          .with(milestone_number, release)
+          .with(milestone_id, release)
         service.update_or_attach_gitlab_milestone(release)
       end
       it "returns the newly updated milestone" do
@@ -145,18 +145,18 @@ describe AhaServices::GitlabIssues do
   end
 
   describe "#existing_milestone_integrated_with" do
-    context "when the release has a 'number' integration field" do
-      it "returns the result of 'milestone_resource.find_by_number'" do
-        milestone_number = 42
+    context "when the release has a 'id' integration field" do
+      it "returns the result of 'milestone_resource.find_by_id'" do
+        milestone_id = 42
         mock_milestone = { id: 42, title: 'First milestone' }
-        service.stub(:get_integration_field).and_return(milestone_number)
-        milestone_resource.stub(:find_by_number)
+        service.stub(:get_integration_field).and_return(milestone_id)
+        milestone_resource.stub(:find_by_id)
           .and_return(mock_milestone)
         expect(service.existing_milestone_integrated_with(release))
           .to eq mock_milestone
       end
     end
-    context "when the release doesn't have a 'number' integration field" do
+    context "when the release doesn't have a 'id' integration field" do
       it "returns nil" do
         service.stub(:get_integration_field).and_return(nil)
         expect(service.existing_milestone_integrated_with(release))
@@ -271,14 +271,14 @@ describe AhaServices::GitlabIssues do
     let(:mock_milestone) { { 'id' => 1 } }
     let(:mock_issue) { { id: 42 } }
     context "when the resource is integrated with a gitlab issue" do
-      let(:issue_number) { 42 }
+      let(:issue_id) { 42 }
       before do
-        service.stub(:get_integration_field).and_return(issue_number)
+        service.stub(:get_integration_field).and_return(issue_id)
         service.stub(:update_issue).and_return(mock_issue)
       end
       it "calls update_issue method" do
         service.should_receive(:update_issue)
-          .with(issue_number, feature, mock_milestone['id'])
+          .with(issue_id, feature, mock_milestone['id'])
         service.update_or_attach_gitlab_issue(feature, mock_milestone)
       end
       it "returns the updated issue" do
@@ -299,18 +299,18 @@ describe AhaServices::GitlabIssues do
 
   describe "#existing_issue_integrated_with" do
     let(:mock_milestone) { { id: 1 } }
-    context "when the feature has a 'number' integration field" do
-      it "returns the result of 'issue_resource.find_by_number_and_milestone'" do
-        issue_number = 42
-        mock_issue = { id: issue_number }
-        service.stub(:get_integration_field).and_return(issue_number)
-        issue_resource.stub(:find_by_number_and_milestone)
+    context "when the feature has a 'id' integration field" do
+      it "returns the result of 'issue_resource.find_by_id_and_milestone'" do
+        issue_id = 42
+        mock_issue = { id: issue_id }
+        service.stub(:get_integration_field).and_return(issue_id)
+        issue_resource.stub(:find_by_id_and_milestone)
           .and_return(mock_issue)
         expect(service.existing_issue_integrated_with(feature, mock_milestone))
           .to eq mock_issue
       end
     end
-    context "when the feature doesn't have a 'number' integration field" do
+    context "when the feature doesn't have a 'id' integration field" do
       it "returns nil" do
         service.stub(:get_integration_field).and_return(nil)
         expect(service.existing_issue_integrated_with(feature, mock_milestone))
@@ -522,7 +522,7 @@ describe AhaServices::GitlabIssues do
       ]}) }
 
       before do
-        mock_api_client.stub(:search_integration_fields).with(1000, "number", mock_issue[:id]).and_return(valid_search_integration_fields_response)
+        mock_api_client.stub(:search_integration_fields).with(1000, "id", mock_issue[:id]).and_return(valid_search_integration_fields_response)
       end
     end
   end

@@ -73,7 +73,7 @@ class AhaServices::GitlabIssues < AhaService
     action = objattr.action if objattr
     return unless objattr and objattr.id and action
 
-    results = api.search_integration_fields(data.integration_id, "number", objattr.id)['records'] rescue []
+    results = api.search_integration_fields(data.integration_id, "id", objattr.id)['records'] rescue []
     return unless results.size == 1
     if resource = results[0].requirement
       resource_kind = :requirement
@@ -82,7 +82,7 @@ class AhaServices::GitlabIssues < AhaService
     else
       return
     end
-    issue = issue_resource.find_by_number_and_milestone(objattr["id"], { number: objattr["milestone_id"] })
+    issue = issue_resource.find_by_id_and_milestone(objattr["id"], { id: objattr["milestone_id"] })
     return unless issue
 
     # Go back to GitLab to retrieve labels
@@ -158,16 +158,16 @@ class AhaServices::GitlabIssues < AhaService
   end
 
   def update_or_attach_gitlab_milestone(release)
-    if milestone_number = get_integration_field(release.integration_fields, 'number')
-      update_milestone(milestone_number, release)
+    if milestone_id = get_integration_field(release.integration_fields, 'id')
+      update_milestone(milestone_id, release)
     else
       attach_milestone_to(release)
     end
   end
 
   def existing_milestone_integrated_with(release)
-    if milestone_number = get_integration_field(release.integration_fields, 'number')
-      milestone_resource.find_by_number(milestone_number)
+    if milestone_id = get_integration_field(release.integration_fields, 'id')
+      milestone_resource.find_by_id(milestone_id)
     end
   end
 
@@ -186,8 +186,8 @@ class AhaServices::GitlabIssues < AhaService
       state_event: release.released ? "closed" : "activate"
   end
 
-  def update_milestone(number, release)
-    milestone_resource.update number, title: release.name,
+  def update_milestone(id, release)
+    milestone_resource.update id, title: release.name,
       due_date: get_due_date(release),
       state_event: release.released ? "closed" : "activate"
   end
@@ -210,16 +210,16 @@ class AhaServices::GitlabIssues < AhaService
   end
 
   def update_or_attach_gitlab_issue(resource, milestone)
-    if issue_number = get_integration_field(resource.integration_fields, 'number')
-      update_issue(issue_number, resource, milestone["id"])
+    if issue_id = get_integration_field(resource.integration_fields, 'id')
+      update_issue(issue_id, resource, milestone["id"])
     else
       attach_issue_to(resource, milestone)
     end
   end
 
   def existing_issue_integrated_with(resource, milestone)
-    if issue_number = get_integration_field(resource.integration_fields, 'number')
-      issue_resource.find_by_number_and_milestone(issue_number, milestone)
+    if issue_id = get_integration_field(resource.integration_fields, 'id')
+      issue_resource.find_by_id_and_milestone(issue_id, milestone)
     end
   end
 
@@ -237,9 +237,9 @@ class AhaServices::GitlabIssues < AhaService
       .tap { |issue| update_labels(issue, resource) }
   end
 
-  def update_issue(number, resource, milestone_id)
+  def update_issue(id, resource, milestone_id)
     issue_resource
-      .update(number, title: resource_name(resource),
+      .update(id, title: resource_name(resource),
                       description: issue_body(resource),
                       milestone_id: milestone_id)
       .tap { |issue| update_labels(issue, resource) }
@@ -323,12 +323,12 @@ class AhaServices::GitlabIssues < AhaService
 
   def integrate_release_with_gitlab_milestone(release, milestone)
     api.create_integration_fields("releases", release.reference_num, data.integration_id,
-      {number: milestone['id'], url: "#{get_project_url}/milestons/#{milestone['id']}"})
+      {id: milestone['id'], number: milestone['iid'], url: "#{get_project_url}/milestons/#{milestone['id']}"})
   end
 
   def integrate_resource_with_gitlab_issue(resource, issue)
     api.create_integration_fields(reference_num_to_resource_type(resource.reference_num), resource.reference_num, data.integration_id,
-      {number: issue['id'], url: "#{get_project_url}/issues/#{issue['id']}"})
+      {id: issue['id'], number: issue['iid'], url: "#{get_project_url}/issues/#{issue['id']}"})
   end
 
   def get_project_url

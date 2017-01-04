@@ -1,9 +1,9 @@
 class GitlabIssueResource < GitlabResource
-  def find_by_number_and_milestone(number, milestone)
+  def find_by_id_and_milestone(id, milestone)
     prepare_request
-    response = http_get "#{gitlab_issues_path}/#{number}", nil, {'PRIVATE-TOKEN': @service.data.private_token}
+    response = http_get "#{gitlab_issues_path}/#{id}", nil, {'PRIVATE-TOKEN': @service.data.private_token}
     issue = found_resource(response)
-    issue if issue && issue['milestone'] && (issue['milestone']['number'] == milestone['number'])
+    issue if issue && issue['milestone'] && (issue['milestone']['id'] == milestone['id'])
   end
 
   def create(new_issue)
