@@ -233,8 +233,8 @@ class AhaServices::GitlabIssues < AhaService
   def update_issue(id, resource, milestone_id)
     issue_resource
       .update(id, title: resource_name(resource),
-                      description: issue_body(resource),
-                      milestone_id: milestone_id)
+                  description: issue_body(resource),
+                  milestone_id: milestone_id)
       .tap { |issue| update_labels(issue, resource) }
       .tap { |issue| update_issue_status(issue, resource) }
   end
@@ -256,9 +256,13 @@ class AhaServices::GitlabIssues < AhaService
   end
 
   def update_issue_status(issue, resource)
-    # close the issue if the aha_status matches the close status
+    # Close or reopen the issue if needed to match the new status.
     status = data.status_mapping.key(resource.workflow_status.id)
-    issue_resource.update(issue['id'], { state: status }) if status == 'closed'
+    if status == 'closed' && issue['state'] != 'closed'
+      issue_resource.update(issue['id'], { state_event: 'close' })
+    elsif status == 'open' && issue['state'] != 'opened'
+      issue_resource.update(issue['id'], { state_event: 'reopen' })
+    end
   end
 
   def issue_body(resource)
