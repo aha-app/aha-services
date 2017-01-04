@@ -136,15 +136,8 @@ class AhaServices::GitlabIssues < AhaService
 
   def get_due_date(release)
     unless data.due_date_phase.blank?
-      response = http_get release.resource + '/release_phases', nil, { "Authorization": "Bearer " + data.aha_api_token }
-      if response.status == 200
-        body = JSON.parse(response.body)
-        body['release_phases'].each do |phase|
-          if phase['name'] == data.due_date_phase
-            return phase['end_on']
-          end
-        end
-      end
+      phase = api.get("api/v1/releases/#{release.id}/release_phases").find { |rp| rp.name == data.due_date_phase }
+      return phase.end_on.try(:to_time).try(:iso8601) if phase
     end
     release.release_date.try(:to_time).try(:iso8601)
   end
@@ -323,12 +316,12 @@ class AhaServices::GitlabIssues < AhaService
 
   def integrate_release_with_gitlab_milestone(release, milestone)
     api.create_integration_fields("releases", release.reference_num, data.integration_id,
-      {id: milestone['id'], number: milestone['iid'], url: "#{get_project_url}/milestons/#{milestone['id']}"})
+      {id: milestone['id'], number: milestone['iid'], url: "#{get_project_url}/milestones/#{milestone['iid']}"})
   end
 
   def integrate_resource_with_gitlab_issue(resource, issue)
     api.create_integration_fields(reference_num_to_resource_type(resource.reference_num), resource.reference_num, data.integration_id,
-      {id: issue['id'], number: issue['iid'], url: "#{get_project_url}/issues/#{issue['id']}"})
+      {id: issue['id'], number: issue['iid'], url: "#{get_project_url}/issues/#{issue['iid']}"})
   end
 
   def get_project_url
