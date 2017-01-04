@@ -129,7 +129,7 @@ class AhaServices::GitlabIssues < AhaService
     if diff.size > 0  then
       updated_resource = api.put(resource.resource, { resource_kind => diff })
       if add_status_labels_enabled? && %w(close open reopen).include?(action) && diff.key?(:workflow_status)
-        issue_resource.update(issue.id, labels: [new_tags, "Aha!:#{updated_resource.feature.workflow_status.name}"].flatten) 
+        issue_resource.update(issue.id, labels: [new_tags, "Aha!:#{updated_resource.feature.workflow_status.name}"].flatten)
       end
     end
   end
@@ -247,7 +247,10 @@ class AhaServices::GitlabIssues < AhaService
   end
 
   def update_labels(issue, resource)
-    return if resource.tags.nil?
+    if resource.tags.nil?
+      resource.tags = []
+    end
+    #return if resource.tags.nil?
     tags = resource.tags.dup
     if add_status_labels_enabled?
       # remove the old Aha! statuses
