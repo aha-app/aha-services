@@ -39,7 +39,7 @@ class AhaServices::GitlabIssues < AhaService
   def receive_create_feature
     milestone = find_or_attach_gitlab_milestone(payload.feature.release)
     issue = find_or_attach_gitlab_issue(payload.feature, milestone)
-    update_requirements(payload.feature.requirements, milestone, issue["id"])
+    update_requirements(payload.feature.requirements, milestone, issue["iid"])
   end
 
   def receive_create_release
@@ -49,7 +49,7 @@ class AhaServices::GitlabIssues < AhaService
   def receive_update_feature
     milestone = find_or_attach_gitlab_milestone(payload.feature.release)
     issue = update_or_attach_gitlab_issue(payload.feature, milestone)
-    update_requirements(payload.feature.requirements, milestone, issue["id"])
+    update_requirements(payload.feature.requirements, milestone, issue["iid"])
   end
 
   def receive_update_release
@@ -278,7 +278,7 @@ class AhaServices::GitlabIssues < AhaService
     end
 
     if resource.key?("parent_id")
-      issue_body_parts << "Parent Requirement ##{resource['parent_id']}"
+      issue_body_parts << "Parent: ##{resource['parent_id']}"
     end
 
     issue_body_parts.join("\n\n")
