@@ -36,7 +36,7 @@ To receive updates when an issue is changed on GitLab you have to setup a webhoo
 
 1. In Aha!, copy the Webhook URL from the GitLab issues integration settings.
 2. On GitLab, go to the settings dropdown and select _Webhooks_ .
-3. Paste the Webhook URL into the _URL_ field and leave the secret field blank.
+3. Paste the Webhook URL into the _URL_ field and leave the secret field blank. Check the "Issues events" box for the trigger.
 4. Finally, click _Add webhook_.
 
 In the GitLab issues integration settings, you can choose to which Aha! status the "Open" or "Closed" state of an issue should map.
