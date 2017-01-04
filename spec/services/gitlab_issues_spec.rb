@@ -361,7 +361,7 @@ describe AhaServices::GitlabIssues do
       it "updates the issue state to 'closed'" do
         resource = Hashie::Mash.new({workflow_status: {id: '67890'}})
         issue_resource.should_receive(:update)
-          .with(mock_issue["id"], {state: 'closed'})
+          .with(mock_issue["id"], {state_event: 'close'})
         service.stub(:issue_resource).and_return(issue_resource)
         service.update_issue_status(mock_issue, resource)
       end
@@ -376,9 +376,10 @@ describe AhaServices::GitlabIssues do
     end
 
     context "when the issue state is open" do
-      it "does nothing" do
+      it "updates the issue state to 'closed'" do
         resource = Hashie::Mash.new({workflow_status: {id: '12345'}})
-        issue_resource.should_not_receive(:update)
+        issue_resource.should_receive(:update)
+          .with(mock_issue["id"], {state_event: 'reopen'})
         service.stub(:issue_resource).and_return(issue_resource)
         service.update_issue_status(mock_issue, resource)
       end
