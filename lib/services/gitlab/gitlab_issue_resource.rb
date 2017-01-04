@@ -3,7 +3,7 @@ class GitlabIssueResource < GitlabResource
     prepare_request
     response = http_get "#{gitlab_issues_path}/#{id}", nil, {'PRIVATE-TOKEN': @service.data.private_token}
     issue = found_resource(response)
-    issue if issue && issue['milestone'] && (issue['milestone']['id'] == milestone['id'])
+    issue if issue && issue['milestone'] && (issue['milestone']['id'] == (milestone[:id] || milestone['id']))
   end
 
   def create(new_issue)

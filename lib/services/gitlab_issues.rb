@@ -136,7 +136,7 @@ class AhaServices::GitlabIssues < AhaService
 
   def get_due_date(release)
     unless data.due_date_phase.blank?
-      phase = api.get("api/v1/releases/#{release.id}/release_phases").find { |rp| rp.name == data.due_date_phase }
+      phase = api.get("api/v1/releases/#{release.id}/release_phases").release_phases.find { |rp| rp.name == data.due_date_phase }
       return phase.end_on.try(:to_time).try(:iso8601) if phase
     end
     release.release_date.try(:to_time).try(:iso8601)
@@ -241,10 +241,11 @@ class AhaServices::GitlabIssues < AhaService
 
   def update_labels(issue, resource)
     if resource.tags.nil?
-      resource.tags = []
+      tags = []
+    else
+      tags = resource.tags.dup
     end
-    #return if resource.tags.nil?
-    tags = resource.tags.dup
+
     if add_status_labels_enabled?
       # remove the old Aha! statuses
       tags = tags.delete_if { |val| val.starts_with? "Aha!:" }
