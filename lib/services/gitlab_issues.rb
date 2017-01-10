@@ -143,7 +143,7 @@ class AhaServices::GitlabIssues < AhaService
   end
 
   def update_or_attach_gitlab_milestone(release)
-    if milestone_id = get_integration_field(release.integration_fields, 'id')
+    if milestone_id = get_integration_field(release.integration_fields, 'milestone_id')
       update_milestone(milestone_id, release)
     else
       attach_milestone_to(release)
@@ -151,7 +151,7 @@ class AhaServices::GitlabIssues < AhaService
   end
 
   def existing_milestone_integrated_with(release)
-    if milestone_id = get_integration_field(release.integration_fields, 'id')
+    if milestone_id = get_integration_field(release.integration_fields, 'milestone_id')
       milestone_resource.find_by_id(milestone_id)
     end
   end
@@ -313,7 +313,7 @@ class AhaServices::GitlabIssues < AhaService
 
   def integrate_release_with_gitlab_milestone(release, milestone)
     api.create_integration_fields("releases", release.reference_num, data.integration_id,
-      {id: milestone['id'], number: milestone['iid'], url: "#{get_project_url}/milestones/#{milestone['iid']}"})
+      {milestone_id: milestone['id'], number: milestone['iid'], url: "#{get_project_url}/milestones/#{milestone['iid']}"})
   end
 
   def integrate_resource_with_gitlab_issue(resource, issue)
