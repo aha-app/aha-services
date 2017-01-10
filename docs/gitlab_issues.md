@@ -26,7 +26,7 @@ Please carefully follow these instructions to ensure that the integration is pro
 
 Create the integration in Aha!
 
-1. Enter your [GitLab Personal Token](https://docs.gitlab.com/ee/api/README.html#personal-access-tokens).
+1. Enter your [GitLab Personal Token](https://gitlab.com/help/profile/two_factor_authentication.md#personal-access-tokens).
 Click the _Test connection_ button
 2. After a short delay, you will be able to choose the project the issues will be created in.
 3. Enable the integration.
@@ -36,7 +36,7 @@ To receive updates when an issue is changed on GitLab you have to setup a webhoo
 
 1. In Aha!, copy the Webhook URL from the GitLab issues integration settings.
 2. On GitLab, go to the settings dropdown and select _Webhooks_ .
-3. Paste the Webhook URL into the _URL_ field and leave the secret field blank. Check the "Issues events" box for the trigger.
+3. Paste the Webhook URL into the _URL_ field and leave the secret field blank. Uncheck the "Push events" box, and check the "Issues events" box for the trigger.
 4. Finally, click _Add webhook_.
 
 In the GitLab issues integration settings, you can choose to which Aha! status the "Open" or "Closed" state of an issue should map.
