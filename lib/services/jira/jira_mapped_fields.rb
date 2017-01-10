@@ -1,8 +1,16 @@
 module JiraMappedFields
+  def field_mappings_for(resource)
+    if resource == @feature
+      data.field_mapping || []
+    else
+      data.requirement_field_mapping || data.field_mapping || []
+    end
+  end
+  
   def mapped_custom_fields(resource, issue_type)
     custom_fields = Hash.new
 
-    (data.field_mapping || []).each do |field_mapping|
+    field_mappings_for(resource).each do |field_mapping|
       next unless field_mapping.is_a? Hashie::Mash
       info = jira_field_info(field_mapping.jira_field)
       if info

@@ -17,12 +17,13 @@ class AhaServices::Jira < AhaService
     collection: ->(meta_data, data) {
       meta_data.issue_type_sets[meta_data.projects.detect {|p| p[:key] == data.project}.issue_types].find_all{|i| !i.subtype}.collect{|p| [p.name, p.id] }
     }, description: "JIRA issue type that will be used when sending features. If you are using JIRA Agile then we recommend 'Story'."
+  internal :feature_status_mapping
+  internal :field_mapping
   select :requirement_issue_type,
     collection: ->(meta_data, data) {
       meta_data.issue_type_sets[meta_data.projects.detect {|p| p[:key] == data.project}.issue_types].find_all{|i| !i.subtype}.collect{|p| [p.name, p.id] }
     }, description: "JIRA issue type that will be used when sending requirements. If you are using JIRA Agile then we recommend 'Sub-task'."
-  internal :feature_status_mapping
-  internal :field_mapping
+  internal :requirement_field_mapping
   # internal :resolution_mapping  # TODO: we are not actually using this at the moment.
   boolean :dont_send_releases, description: "Check to prevent Aha! from creating versions in JIRA and from populating the fixVersions field for issues. For most users this box should not be checked."
 
@@ -337,15 +338,9 @@ protected
       .merge!(assignee_fields(resource, issue_type))
       .merge!(reporter_fields(resource, issue_type))
       .merge!(aha_position_fields(resource, issue_type))
+      .merge!(mapped_custom_fields(resource, issue_type))
 
-    # Use the custom fields from @feature to populate requirements, to solve
-    # for required custom fields on create
-    issue.fields.merge!(mapped_custom_fields(@feature, issue_type))
     issue.fields.merge!(due_date_fields(@feature, issue_type))
-
-    # Use the custom fields from the resource, this will overwrite any
-    # differences from the above write
-    issue.fields.merge!(mapped_custom_fields(resource, issue_type))
 
     new_issue = issue_resource.create(issue)
 
