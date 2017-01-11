@@ -110,15 +110,7 @@ class AhaServices::GitlabIssues < AhaService
         diff[:workflow_status] = new_status if !new_status.nil? && new_status != resource.workflow_status.name
       end
 
-      if resource.tags
-        combined_tags = new_tags | resource.tags
-        if combined_tags.sort != resource.tags.sort
-          diff[:tags] = combined_tags
-        end
-      else
-        combined_tags = new_tags
-        diff[:tags] = combined_tags
-      end
+      diff[:tags] = new_tags unless resource.tags && resource.tags.sort == new_tags.sort
 
     when "close", "open", "reopen"
       new_state = (objattr.state == "reopened") ? "open" : objattr.state
@@ -151,7 +143,7 @@ class AhaServices::GitlabIssues < AhaService
   end
 
   def update_or_attach_gitlab_milestone(release)
-    if milestone_id = get_integration_field(release.integration_fields, 'id')
+    if milestone_id = get_integration_field(release.integration_fields, 'milestone_id')
       update_milestone(milestone_id, release)
     else
       attach_milestone_to(release)
@@ -159,7 +151,7 @@ class AhaServices::GitlabIssues < AhaService
   end
 
   def existing_milestone_integrated_with(release)
-    if milestone_id = get_integration_field(release.integration_fields, 'id')
+    if milestone_id = get_integration_field(release.integration_fields, 'milestone_id')
       milestone_resource.find_by_id(milestone_id)
     end
   end
@@ -321,7 +313,7 @@ class AhaServices::GitlabIssues < AhaService
 
   def integrate_release_with_gitlab_milestone(release, milestone)
     api.create_integration_fields("releases", release.reference_num, data.integration_id,
-      {id: milestone['id'], number: milestone['iid'], url: "#{get_project_url}/milestones/#{milestone['iid']}"})
+      {milestone_id: milestone['id'], number: milestone['iid'], url: "#{get_project_url}/milestones/#{milestone['iid']}"})
   end
 
   def integrate_resource_with_gitlab_issue(resource, issue)
