@@ -95,6 +95,8 @@ class RallyWebhookResource < RallyResource
   def destroy_webhook webhook
     response = http_delete_no_basic(webhook_url("/#{webhook.ObjectUUID}"))
     process_response(response)
+  rescue
+    nil
   end
 
   def webhook_is_disabled
