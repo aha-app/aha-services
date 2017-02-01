@@ -34,14 +34,12 @@ Next create the integration in Aha!
 If you want to be able to receive updates from VSTS you must setup a subscription.
 
 1. Copy the Webhook URL from the configuration page.
-2. In your Visual Studio Team Services account, go to the project you want to integrate with.
-3. Click the small cog in the top right corner to go to the settings.
-4. Click on the _Service Hooks_ tab.
-5. Add a new service hook by clicking the green plus.
-6. Choose the _Web Hooks_ service and click _Next_.
-7. Choose the _Work item updated_ trigger from the dropdown menu. You can leave the filters unchanged and click _Next_.
-8. In the _Action_ settings, paste the Webhook URL from Aha! into the _URL_ field.
-9. Press _Finish_ to create the subscription.
+2. In your Visual Studio Online account, go to the project you want to integrate with.
+3. Click the small cog in the top center of the main navigation menu and click on the _Service Hooks_ option.
+4. Add a new service hook by clicking the _+ Create subscription_ button.
+5. Scroll to the option for the Web Hooks service and click Next.
+6. Under _Trigger on this type of event_ choose the Work item updated trigger from the dropdown menu. You can leave the filters unchanged and click _Next_.
+7. In the _Action > Settings_, paste the Webhook URL from Aha! into the _URL_ field. You can leave the option fields unchanged and click _Finish_ to create the subscription.
 
 ## Troubleshooting
 
