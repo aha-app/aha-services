@@ -48,7 +48,7 @@ class AhaServices::Slack < AhaService
 protected
 
   def is_wide_field(field_name)
-    !["Descripition", "Theme", "Body"].include?(field_name)
+    !["Description", "Theme", "Body"].include?(field_name)
   end
 
   def send_message(message)
