@@ -17,8 +17,10 @@ You need to be Product Owner in Aha! to set up this integration.
 
 To configure this integration, first configure your Visual Studio Team Services account.
 
-1. Go to _My profile_ and then choose the _Credentials_ tab.
-2. Setup the _Alternate Authentication Credentials_. This credential will be used with Aha! (not your normal login credential).
+1. Open your account dropdown (usually identified by your first initial or profile image) in the top right of the page and choose the _Security_.
+2. Select _Alternate authentication credentials_.
+3. Check the box next to _Enable alternate authentication credentials_.
+4. Add a _User name (secondary)_ and a _Password_. This credential will be used with Aha! (not your normal login credential).
 
 Next create the integration in Aha!
 
