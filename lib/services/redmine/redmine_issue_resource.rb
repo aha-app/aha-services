@@ -20,6 +20,7 @@ class RedmineIssueResource < RedmineResource
       parent_id: parent_id,
       attachments: check_attachments(payload_fragment, issue_id),
       version_id: version_id
+    params[:issue].delete :priority_id # Don't override priority on upload
     prepare_request
     response = http_put redmine_issues_path(issue_id), params.to_json
     process_response response, 200 do
