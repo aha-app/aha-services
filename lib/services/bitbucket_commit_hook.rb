@@ -16,7 +16,7 @@ class AhaServices::BitbucketCommitHook < AhaService
                      else
                        raise "Unknown type: #{raw_payload.class.inspect} for payload.payload"
                      end
-    commits = (commit_payload.push.changes.flat_map(&:commits) rescue []) || []
+    commits = Array(commit_payload&.push&.changes&.flat_map(&:commits)).compact
     commits.each do |commit|
       commit.message.scan(/([A-Z]+-[0-9]+(?:-[0-9]+)?)/) do |m|
         m.each do |ref|
