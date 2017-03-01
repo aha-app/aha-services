@@ -102,16 +102,15 @@ class AhaServices::Jira < AhaService
   end
 
   def issue_type_by_id(id)
-    project = meta_data.projects.find {|project| project[:key] == data.project }
-    issue_types = meta_data.issue_type_sets[project.issue_types]
-    issue_type = issue_types.find {|type| type.id.to_s == id.to_s }
-  rescue
     if meta_data.projects.nil? then raise AhaService::RemoteError, "Integration has not been configured" end
+    project = meta_data.projects.find {|project| project[:key] == data.project }
     if project.nil? then raise AhaService::RemoteError, "Integration has not been configured, can't find project '#{data.project}'" end
-    if meta_data.issue_type_sets.nil? or project.issue_types.nil? or issue_types.nil? then raise AhaService::RemoteError, "Integration has not been configured, project data not loaded" end
-    raise # re-raise original error
-  else
-    issue_type or raise AhaService::RemoteError, "Integration needs to be reconfigured, issue types have changed, can't find issue type '#{id}'"
+    if meta_data.issue_type_sets.nil? or project.issue_types.nil? then raise AhaService::RemoteError, "Integration has not been configured, project data not loaded" end
+    issue_types = meta_data.issue_type_sets[project.issue_types]
+    if issue_types.nil? then raise AhaService::RemoteError, "Integration has not been configured, project data not loaded" end
+    issue_type = issue_types.find {|type| type.id.to_s == id.to_s }
+    if issue_type.nil? then raise AhaService::RemoteError, "Integration needs to be reconfigured, issue types have changed, can't find issue type '#{id}'" end
+    issue_type
   end
 
   def update_issue_fields(issue_id, issue)
