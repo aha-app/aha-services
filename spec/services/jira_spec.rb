@@ -946,7 +946,7 @@ describe AhaServices::Jira do
     it "adds the assignee when valid" do
       resource = json_fixture("create_feature_event_assignee.json")
       service.stub(:issue_type_by_id).and_return(Hashie::Mash.new(id: 239509, fields: []))
-      user_resource.should_receive(:picker).exactly(2).times.with("watersco@gmail.com").and_return(Hashie::Mash.new("name" => "chris","emailAddress" => "watersco@gmail.com"))
+      user_resource.should_receive(:picker).exactly(2).times.with("watersco@gmail.com", "Chris Waters").and_return(Hashie::Mash.new("name" => "chris","emailAddress" => "watersco@gmail.com"))
 
       issue_resource.should_receive(:create).
         with(Hashie::Mash.new(fields: {assignee: {name: 'chris'}, description: "", issuetype: {id: 239509}, reporter: {name: 'chris'}, summary: "Feature with attachments"})).
