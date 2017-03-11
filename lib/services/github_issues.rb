@@ -116,7 +116,7 @@ class AhaServices::GithubIssues < AhaService
     if diff.size > 0  then
       updated_resource = api.put(resource.resource, { resource_kind => diff })
       if add_status_labels_enabled? && %w(closed opened reopened).include?(action) && diff.key?(:workflow_status)
-        label_resource.update(issue.number, [new_tags, "Aha!:#{updated_resource.feature.workflow_status.name}"].flatten) 
+        label_resource.update(issue.number, [new_tags, "Aha!:#{updated_resource[resource_kind].workflow_status.name}"].flatten) 
       end
     end
   end
