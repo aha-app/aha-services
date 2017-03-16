@@ -73,7 +73,15 @@ class AhaServices::GithubIssues < AhaService
     issue = payload.webhook.issue
     return unless issue and action
     results = api.search_integration_fields(data.integration_id, "number", issue.number)['records'] rescue []
-    return unless results.size == 1
+    # only consider requirements or features. It is possible for a release to have
+    # an issue number that matches a feature and a release - only consider the feature
+    results = results.select {|result| result.requirement || result.feature }
+
+    unless results.size == 1
+      logger.warn("Multiple entries returned for issue number '#{issue.number}' - none will be updated.")
+      return
+    end
+
     if resource = results[0].requirement then
       resource_kind = :requirement
     elsif resource = results[0].feature then

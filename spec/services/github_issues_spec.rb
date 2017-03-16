@@ -496,13 +496,22 @@ describe AhaServices::GithubIssues do
       service.stub(:api).and_return(mock_api_client)
       service.receive_webhook
     end
-    it "does nothing if more then one integration_field is returned" do
+    it "does nothing if more then one integration_field for features is returned" do
         service.stub(:payload).and_return(Hashie::Mash.new({webhook: { action: 'labeled', issue: mock_issue }}))
         mock_api_client.stub(:search_integration_fields).and_return(Hashie::Mash.new({records:[
           {feature:{ resource: 'resource-1', name: 'name-1'}},
           {feature:{ resource: 'resource-2', name: 'name-2'}}
         ]}))
         mock_api_client.should_not_receive(:put)
+    end
+
+    it "Updates feature if more than one integration field (feature and release) is returned" do
+      service.stub(:payload).and_return(Hashie::Mash.new({webhook: { action: 'labeled', issue: mock_issue }}))
+      mock_api_client.stub(:search_integration_fields).and_return(Hashie::Mash.new({records:[
+        {feature:{ resource: 'resource-1', name: 'name-1'}},
+        {release:{ resource: 'release-2', name: 'name-2'}}
+      ]}))
+      mock_api_client.should_receive(:put).once()
     end
 
     it "does nothing if the webhook issue is nil" do
