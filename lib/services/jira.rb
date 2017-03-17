@@ -60,7 +60,7 @@ class AhaServices::Jira < AhaService
   end
 
   def receive_create_feature
-    integrate_or_update_feature(payload.feature)
+    integrate_or_update_feature(payload.feature, true)
   end
 
   def receive_update_feature
@@ -178,11 +178,13 @@ protected
     field
   end
 
-  def integrate_or_update_feature(feature)
+  def integrate_or_update_feature(feature, create = false)
     @feature = feature
     version = find_or_attach_jira_version(feature.release) unless dont_send_releases?
     issue_info = update_or_attach_jira_issue(feature, feature.initiative, version)
-    update_requirements(feature, version, issue_info)
+    # Only process the requirements if we are creating. In all other cases
+    # requirements will handled via the requirement events.
+    update_requirements(feature, version, issue_info) if create
   end
 
   def find_or_attach_jira_version(release)
