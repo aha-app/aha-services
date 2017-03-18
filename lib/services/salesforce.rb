@@ -1,10 +1,16 @@
 class AhaServices::Salesforce < AhaService
   caption "Receive ideas from Salesforce"
   
-  string :username, description: "This is the email address you use to login to Salesforce."
-  password :password
-  password :security_token, description: "Your Salesforce security token. You can request a new token in Salesforce under your name -> \"My Settings\" -> \"Personal\" -> \"Reset My Security Token\"."  
-  string :host, description: "The custom host to use for sandbox Salesforce organizations. Leave this blank if you are not using a sandbox org."
+  oauth2_button authorize_url: "https://login.salesforce.com/services/oauth2/authorize",
+    token_url: "https://login.salesforce.com/services/oauth2/token",
+    parameters: "display=popup&immediate=false"
+  
+  # TODO: old params - remove
+  #string :username, description: "This is the email address you use to login to Salesforce."
+  #password :password
+  #password :security_token, description: "Your Salesforce security token. You can request a new token in Salesforce under your name -> \"My Settings\" -> \"Personal\" -> \"Reset My Security Token\"."  
+  
+  string :host, description: "The custom host to use for sandbox Salesforce organizations. Leave this blank if you are not using a sandbox organization."
   
   install_button
 
