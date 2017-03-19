@@ -12,16 +12,24 @@ class AhaServices::Salesforce < AhaService
   
   string :host, description: "The custom host to use for sandbox Salesforce organizations. Leave this blank if you are not using a sandbox organization."
   
+  internal :idea_portal_url
+  
   install_button
 
   def receive_installed
+    # Validate authentication.
     client.user_info
+    
+    # Update settings.
+    client.post('/services/apexrest/ahaapp/aha_rest_api/settings', 
+      idea_portal_url: data.idea_portal_url, 
+      jwt_secret_key: data.jwt_secret_key)
   rescue Exception => e
     logger.debug("Salesforce authentication problem #{e.class}: #{e.message} #{e.backtrace.join("\n")}")
     if e.message.include? 'The REST API is not enabled for this Organization.'
       raise ConfigurationError, "The REST API is not enabled for this Organization."
     else
-      raise ConfigurationError, "Authentication failed. Please verify the settings are correct."
+      raise ConfigurationError, "Authentication failed. Please use the 'Authenticate' button to connect to Salesforce."
     end
   end
     
