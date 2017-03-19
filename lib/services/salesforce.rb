@@ -26,9 +26,8 @@ class AhaServices::Salesforce < AhaService
   end
     
   def client
-    @client ||= Restforce.new username: data.username,
-      password: data.password,
-      security_token: data.security_token,
+    @client ||= Restforce.new oauth_token: data.oauth2_token,
+      refresh_token: data.oauth2_refresh_token,
       client_id: data.consumer_key,
       client_secret: data.consumer_secret,
       host: data.host.present? ? data.host : "login.salesforce.com"
