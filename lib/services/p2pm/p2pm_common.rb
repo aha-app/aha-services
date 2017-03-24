@@ -14,4 +14,5 @@ module P2PMCommon
     #
     
     install_button
+  end
 end
