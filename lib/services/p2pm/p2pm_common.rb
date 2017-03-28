@@ -35,6 +35,9 @@ protected
     uri.port = server_uri.port
     uri.to_s
   end
+  def feature_mapping_resource
+    @feature_mapping_resource ||= P2PMFeatureMappingResource.new(self)
+  end
   
   def project_resource
     @project_resource ||= P2PMProjectResource.new(self)
