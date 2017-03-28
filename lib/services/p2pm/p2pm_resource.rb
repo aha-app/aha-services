@@ -2,8 +2,9 @@ class P2PMResource < GenericResource
 
   API_VERSION = "1.0"
 
+ 
   def faraday_builder b
-    if @service.class.service_name == "tfs_on_premise"
+    if @service.class.service_name == "p2_pm"
       b.request(:tfs_ntlm, self, @service.data.user_name, @service.data.user_password)
     else
       b.basic_auth(@service.data.user_name, @service.data.user_password)
@@ -39,19 +40,6 @@ class P2PMResource < GenericResource
     end
   end
   
-  def create_attachments(workitem, aha_attachments)
-    existing_files = workitem.relations.select{|relation| relation.rel == "AttachedFile"}.map{|relation| relation.attributes.name} rescue []
-    aha_attachments.each do |aha_attachment|
-      next if existing_files.include?(aha_attachment.file_name)
-      new_attachment = attachment_resource.create aha_attachment
-      if new_attachment
-        workitem_resource.add_attachment workitem, new_attachment, aha_attachment.file_size.to_i
-      end
-    end
-  rescue AhaService::RemoteError => e
-    logger.error e.message
-  end
-
 protected
   def description_or_default(body)
     if body.present?
@@ -72,17 +60,14 @@ protected
   end
   
   def url_prefix
-    if @service.class.service_name == "tfs_on_premise"
+    if @service.class.service_name == "p2_pm"
       @service.data.server_url
-    else
-      "https://#{@service.data.account_name}.visualstudio.com/defaultcollection"
-    end
   end
   
 end
 
 
-class TfsNtlm < Faraday::Middleware
+class P2PMOAuth < Faraday::Middleware
 
   def initialize(app, service, username, password)
     super app
@@ -100,6 +85,14 @@ class TfsNtlm < Faraday::Middleware
   end
     
   def handshake(env)
+      req.url '/workflow/oauth2/token'
+      req.headers['Content-Type'] = 'application/json'
+      
+      req.headers['Cache-Control'] = ' no-cache'
+      req.headers['Postman-Token'] = '2e534444-f11f-12af-9053-205ceddd98a0'
+      req.body = '{"client_id":"GDDMSRMYAZCXXZYCORZDDYMZUSCDMSBS","client_secret":"8556684445876ac6758cbd2008857012","username":"pwaller","password":"BaseBall24","grant_type":"password"}'
+
+  end
     env_without_body = env.dup
     env_without_body[:request_headers] = env[:request_headers].dup
     env_without_body.clear_body
@@ -110,7 +103,7 @@ class TfsNtlm < Faraday::Middleware
       ntlm_message_type1.enable(a.to_sym)
     end
     
-    env_without_body[:request_headers]['Authorization'] = 'NTLM ' + ntlm_message_type1.encode64
+    env_without_body[:request_headers]['Authorization'] = 'Bearer ' + ntlm_message_type1.encode64
     @app.call(env_without_body)
   end
   
@@ -123,4 +116,4 @@ class TfsNtlm < Faraday::Middleware
   end
 end
 
-Faraday::Request.register_middleware :tfs_ntlm => lambda { TfsNtlm }
+Faraday::Request.register_middleware :pm_ntlm => lambda { P2PMOauth }
