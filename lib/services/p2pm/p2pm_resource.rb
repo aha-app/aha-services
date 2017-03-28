@@ -111,6 +111,7 @@ class P2PMNtlm < Faraday::Middleware
     end
     
     env_without_body[:request_headers]['Authorization'] = 'NTLM ' + ntlm_message_type1.encode64
+    
     @app.call(env_without_body)
   end
   
