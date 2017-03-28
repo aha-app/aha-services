@@ -4,14 +4,15 @@ This integration allows Aha! to communicate to Salesforce to create links betwee
 
 ## Configuration
 
+To use the integration you must first install the Aha! app within your Salesforce account. Use the [installation instructions](http://support.aha.io/hc/en-us/articles/203880429) to get the app installed.
+
 You need to be a Administrator in Aha! to set up this integration.
 
 1. Add the integration under _Account Settings_ (the Salesforce integration is for the entire Aha! account).
-2. Enter your Salesforce credentials.
-3. Click the _Test connection_ button to verify your credentials are correct.
+2. Click the _Authenticate_ button to enter Salesforce credentials.
+3. Choose the idea portal that will be linked to Salesforce.
+3. Click the _Test connection_ button to verify your credentials are correct and send the idea portal configuration to Salesforce.
 4. Enable the integration.
-
-To use the integration you must also install the Aha! app within your Salesforce account. Use the [installation instructions](http://support.aha.io/hc/en-us/articles/203880429) to get the app installed.
 
 ## Troubleshooting
 
