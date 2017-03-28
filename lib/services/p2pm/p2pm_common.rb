@@ -36,6 +36,10 @@ protected
     uri.to_s
   end
   
+  def project_resource
+    @project_resource ||= P2PMProjectResource.new(self)
+  end
+
   def workitemtype_resource
     @workitemtype_resource ||= P2PMWorkitemtypeResource.new(self)
   end
@@ -44,8 +48,5 @@ protected
     @feature_mapping_resource ||= P2PMFeatureMappingResource.new(self)
   end
 
-  def project_resource
-    @project_resource ||= P2PMProjectResource.new(self)
-  end
 
 end
