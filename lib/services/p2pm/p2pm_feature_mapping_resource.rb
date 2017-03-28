@@ -90,7 +90,7 @@ protected
   end
 
   def workitem_resource
-    @workitem_resource ||= TFSWorkItemResource.new(@service)
+    @workitem_resource ||= P2PMWorkItemResource.new(@service)
   end
 
 end

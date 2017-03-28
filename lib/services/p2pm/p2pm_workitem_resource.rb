@@ -67,7 +67,7 @@ protected
     end
   end
 
-  def attachment_resource
-    @attachment_resource ||= TFSAttachmentResource.new(@service)
-  end
+  #def attachment_resource
+  #  @attachment_resource ||= TFSAttachmentResource.new(@service)
+  #end
 end
