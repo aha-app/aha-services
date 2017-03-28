@@ -45,6 +45,9 @@ require 'services/rally/webhook'
 require 'services/rally/rally_resource'
 require 'services/bugzilla/bugzilla_resource'
 
+require 'services/p2pm/p2pm_common'
+require 'services/p2pm/p2pm_resource'
+
 require 'services/redmine/redmine_resource'
 require 'services/redmine/redmine_upload_resource'
 require 'services/redmine/redmine_project_resource'
