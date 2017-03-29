@@ -75,7 +75,8 @@ protected
     if @service.class.service_name == "tfs_on_premise"
       @service.data.server_url
     else
-      "https://#{@service.data.account_name}.visualstudio.com/defaultcollection"
+    #  "https://#{@service.data.account_name}.visualstudio.com/defaultcollection"
+      @service.data.server_url
     end
   end
   

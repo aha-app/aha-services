@@ -1,5 +1,5 @@
 module P2PMCommon
-      include Schema
+  include Schema
   extend Schema::ClassMethods
   
   def self.included(klass)
@@ -14,6 +14,12 @@ module P2PMCommon
     #
     
     install_button
+  end
+
+  def receive_installed
+    meta_data.tables = project_resource.all
+    workitemtype_resource.determine_possible_workflows(meta_data)
+    classification_nodes_resource.get_areas_for_all_projects(meta_data)
   end
 protected
   
