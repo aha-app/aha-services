@@ -23,6 +23,11 @@ module P2PMCommon
       end
     }
 
+    def receive_installed
+      meta_data.tables = project_resource.all
+      workitemtype_resource.determine_possible_workflows(meta_data)
+      classification_nodes_resource.get_areas_for_all_projects(meta_data)
+    end
   end
 
  protected
