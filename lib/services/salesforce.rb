@@ -5,11 +5,6 @@ class AhaServices::Salesforce < AhaService
     token_url: "https://login.salesforce.com/services/oauth2/token",
     parameters: "display=popup&immediate=false"
   
-  # TODO: old params - remove
-  #string :username, description: "This is the email address you use to login to Salesforce."
-  #password :password
-  #password :security_token, description: "Your Salesforce security token. You can request a new token in Salesforce under your name -> \"My Settings\" -> \"Personal\" -> \"Reset My Security Token\"."  
-  
   string :host, description: "The custom host to use for sandbox Salesforce organizations. Leave this blank if you are not using a sandbox organization."
   
   internal :idea_portal_url
@@ -34,11 +29,18 @@ class AhaServices::Salesforce < AhaService
   end
     
   def client
-    @client ||= Restforce.new oauth_token: data.oauth2_token,
-      refresh_token: data.oauth2_refresh_token,
-      client_id: data.consumer_key,
-      client_secret: data.consumer_secret,
-      host: data.host.present? ? data.host : "login.salesforce.com"
+    if data.consumer_key.present?
+      @client ||= Restforce.new oauth_token: data.oauth2_token,
+        refresh_token: data.oauth2_refresh_token,
+        client_id: data.consumer_key,
+        client_secret: data.consumer_secret,
+        host: data.host.present? ? data.host : "login.salesforce.com"
+    else
+      @client ||= Restforce.new username: data.username,
+        password: data.password,
+        security_token: data.security_token,
+        host: data.host.present? ? data.host : "login.salesforce.com"
+    end
   end  
   
 end
