@@ -7,7 +7,7 @@ class AhaServices::Salesforce < AhaService
   
   string :host, description: "The custom host to use for sandbox Salesforce organizations. Leave this blank if you are not using a sandbox organization."
   
-  internal :idea_portal_url
+  internal :idea_portal_id
   
   install_button
 
@@ -39,6 +39,8 @@ class AhaServices::Salesforce < AhaService
       @client ||= Restforce.new username: data.username,
         password: data.password,
         security_token: data.security_token,
+        client_id: data.consumer_key,
+        client_secret: data.consumer_secret,
         host: data.host.present? ? data.host : "login.salesforce.com"
     end
   end  
