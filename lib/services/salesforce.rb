@@ -29,7 +29,7 @@ class AhaServices::Salesforce < AhaService
   end
     
   def client
-    if data.consumer_key.present?
+    if data.oauth2_token.present?
       @client ||= Restforce.new oauth_token: data.oauth2_token,
         refresh_token: data.oauth2_refresh_token,
         client_id: data.consumer_key,
