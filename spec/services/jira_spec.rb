@@ -362,11 +362,11 @@ describe AhaServices::Jira do
     end
     context "when the feature has requirements" do
       let(:feature) { Hashie::Mash.new(name: 'Feature',
-                        requirements: [:req1, :req2, :req3]) }
+                        requirements: [{integration_fields: []}, {integration_fields: []}, {integration_fields: []}]) }
       it "calls update_or_attach_jira_issue for each requirement" do
         service.should_receive(:update_or_attach_jira_issue)
           .exactly(3).times
-        service.send(:update_requirements, feature, nil, nil)
+        service.send(:update_feature_requirements, feature, nil, nil)
       end
     end
 
@@ -374,7 +374,7 @@ describe AhaServices::Jira do
       let(:feature) { Hashie::Mash.new(name: 'Feature') }
       it "does nothing" do
         service.should_not_receive(:update_or_attach_jira_issue)
-        service.send(:update_requirements, feature, nil, nil)
+        service.send(:update_feature_requirements, feature, nil, nil)
       end
     end
   end
