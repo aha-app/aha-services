@@ -36,6 +36,10 @@ module Schema
       add_to_schema :oauth_button, "oauth_button", options
     end
 
+    def oauth2_button(options = {})
+      add_to_schema :oauth2_button, "oauth2_button", options
+    end
+
     def slack_button(options = {})
       add_to_schema :slack_button, "slack_button", options
     end
