@@ -33,6 +33,7 @@ class AhaServices::Rally < AhaService
   internal :requirement_default_fields
 
   boolean :send_tags, description: "Check to synchronize Aha! tags and Rally Tags. We recommend enabling this for new integrations. Enabling this option once features are synced to Rally may cause tags in Aha! or tags in Rally to be removed from a feature if the corresponding tags or tag doesn't exist in the other system."
+  boolean :dont_send_releases, description: "Check to prevent Aha! from creating releases in Rally and from populating the Release field for user stories. For most users this box should not be checked."
 
   callback_url description: "URL Rally will call to update Aha!. This is webhook is automatically installed in Rally for the selected project."
 
