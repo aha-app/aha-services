@@ -304,7 +304,7 @@ class RallyHierarchicalRequirementResource < RallyResource
   # Rally will fail the API call if we attempt to assign this to a release that does not exist.
   # Rally will also fail the API call if we attempt to set Release for a user story that is not a leaf node.
   def include_release_if_exists(aha_model, attributes, release_id)
-    return if @service.data.dont_send_releases
+    return if @service.dont_send_releases?
     if @service.feature_element_name == "UserStory"
       return if (aha_model.requirements.try(:length) || 0) > 0
       # do not send if we know for a fact this is not a leaf

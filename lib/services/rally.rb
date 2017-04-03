@@ -37,6 +37,10 @@ class AhaServices::Rally < AhaService
 
   callback_url description: "URL Rally will call to update Aha!. This is webhook is automatically installed in Rally for the selected project."
 
+  def dont_send_releases?
+    data.dont_send_releases == "1"
+  end
+
   def receive_installed
     projects = rally_project_resource.all
     meta_data.projects = projects
@@ -88,11 +92,15 @@ class AhaServices::Rally < AhaService
   end
 
   def receive_create_release
-    rally_release_resource.create payload.release
+    unless dont_send_releases?
+      rally_release_resource.create payload.release
+    end
   end
 
   def receive_update_release
-    rally_release_resource.update payload.release
+    unless dont_send_releases?
+      rally_release_resource.update payload.release
+    end
   end
 
   def receive_create_feature
