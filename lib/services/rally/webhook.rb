@@ -55,8 +55,8 @@ module AhaServices::RallyWebhook
       end
 
       if resource_type == "feature"
-        update_hash[:start_date] = Date.parse(new_state["PlannedStartDate"]) if new_state["PlannedStartDate"]
-        update_hash[:due_date] = Date.parse(new_state["PlannedEndDate"]) if new_state["PlannedEndDate"]
+        update_hash[:start_date] = normalize_date(new_state["PlannedStartDate"]) if new_state["PlannedStartDate"]
+        update_hash[:due_date] = normalize_date(new_state["PlannedEndDate"]) if new_state["PlannedEndDate"]
       end
       status = extract_status new_state, status_mappings
       if status
@@ -66,6 +66,17 @@ module AhaServices::RallyWebhook
     end
   rescue AhaApi::NotFound
     logger.warn "No record found for reference: #{new_state.ObjectID}"
+  end
+
+  # Rally sends dates back in GMT, which makes the date wrong for some customers.
+  #
+  # Pull the time zone for this workspace, and then map the date that we have been given into it
+  def normalize_date(date)
+    if zone = @service.active_workspace_configuration["TimeZone"]
+      Time.parse(date).in_time_zone(zone).to_date rescue Date.parse(date)
+    else
+      Date.parse(date)
+    end
   end
 
   def extract_status new_state, status_mappings

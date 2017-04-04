@@ -11,7 +11,12 @@ class RallyWorkspaceResource < RallyResource
         process_response response do |document|
           total_results = document.QueryResult.TotalResultCount
           start += document.QueryResult.PageSize
-          workspaces.concat(document.QueryResult.Results.map{|workspace| workspace.slice("ObjectID", "Name")})
+          document.QueryResult.Results.each do |workspace_result|
+            workspace = workspace_result.slice("ObjectID", "Name")
+            configuration_url = workspace_result.WorkspaceConfiguration["_ref"]
+            workspace["Configuration"] = process_response(http_get(configuration_url))
+            workspaces.push(workspace)
+          end
         end
         break if start >= total_results
       end

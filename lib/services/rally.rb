@@ -41,6 +41,11 @@ class AhaServices::Rally < AhaService
     data.dont_send_releases == "1"
   end
 
+  def active_workspace_configuration
+    workspace = meta_data.workspaces.detect {|w| w.ObjectID == data.workspace_id }
+    workspace["Configuration"]["WorkspaceConfiguration"] rescue {}
+  end
+
   def receive_installed
     projects = rally_project_resource.all
     meta_data.projects = projects
