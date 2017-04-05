@@ -72,7 +72,7 @@ module AhaServices::RallyWebhook
   #
   # Pull the time zone for this workspace, and then map the date that we have been given into it
   def normalize_date(date)
-    if zone = @service.active_workspace_configuration["TimeZone"]
+    if zone = active_workspace_configuration["TimeZone"]
       Time.parse(date).in_time_zone(zone).to_date rescue Date.parse(date)
     else
       Date.parse(date)
