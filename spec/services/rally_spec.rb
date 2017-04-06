@@ -1,4 +1,5 @@
 require "spec_helper"
+require "active_support/all"
 
 # The following operations are supported:
 #
@@ -14,8 +15,27 @@ describe AhaServices::Rally do
     # stub_request(:get, //).
     #   to_return(status: 200, body: raw_fixture("rally/tbd.json"))
   end
+
+  let(:meta_data) do
+    Hashie::Mash.new({
+      workspaces: [{
+        name: "Test Workspace",
+        ObjectID: "123",
+        Configuration: {
+          WorkspaceConfiguration: {
+            TimeZone: "America/Chicago"
+          }
+        }
+      }]
+    })
+  end
+
   let(:service_params) do
-    {send_tags: "1", integration_id: "123"}
+    {
+      send_tags: "1",
+      integration_id: "123",
+      workspace_id: "123"
+    }
   end
 
   let(:service_data) do
@@ -34,8 +54,7 @@ describe AhaServices::Rally do
     api = Object.new
     allow(api).to receive(:search_integration_fields).and_return(integration_fields)
 
-    service = AhaServices::Rally.new service_params
-    service.instance_variable_set(:@payload, Hashie::Mash.new(webhook_payload))
+    service = AhaServices::Rally.new service_params, Hashie::Mash.new(webhook_payload), meta_data
     service.instance_variable_set(:@api, api)
     service
   end
@@ -72,6 +91,15 @@ describe AhaServices::Rally do
     allow(h_req_service.api).to receive(:adjacent_integration_fields).
       and_return( [Hashie::Mash.new(json_fixture('rally/adjacent_integration_fields.json'))] )
     expect(h_req_service.send(:maybe_set_rank_for_feature, Hashie::Mash.new({}) )).to include("rankBelow")
+  end
+
+  it "Can update start and end dates to the right zone" do
+    api = webhook_service.api
+    expect(api).to receive(:put) do |_, update_hash|
+      expect(update_hash["feature"][:due_date].to_s).to eql("2017-04-02")
+    end
+
+    webhook_service.update_record_from_webhook(webhook_payload, service_data)
   end
 
   context "project" do

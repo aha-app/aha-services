@@ -496,7 +496,7 @@
             "ref":"https://rally1.rallydev.com/slm/webservice/v2.x/PortfolioItem/Feature/69490535048/Changesets"
          },
          "e1aabad8-5315-4004-bf0f-68ee64cf335a":{  
-            "value":null,
+            "value":"2017-04-03T04:59:59z",
             "type":"Date",
             "name":"PlannedEndDate",
             "display_name":"Planned End Date",
@@ -1126,7 +1126,7 @@
                "ref":"https://rally1.rallydev.com/slm/webservice/v2.x/PortfolioItem/Feature/69490535048/Changesets"
             },
             "e1aabad8-5315-4004-bf0f-68ee64cf335a":{  
-               "value":null,
+               "value":"2017-04-03T04:59:59z",
                "type":"Date",
                "name":"PlannedEndDate",
                "display_name":"Planned End Date",
