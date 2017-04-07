@@ -42,7 +42,7 @@ class AhaServices::Rally < AhaService
   end
 
   def active_workspace_configuration
-    workspace = meta_data.workspaces.detect {|w| w.ObjectID == data.workspace_id } rescue {}
+    workspace = meta_data.workspaces.detect {|w| w.ObjectID == data.workspace.to_i } rescue {}
     workspace["Configuration"]["WorkspaceConfiguration"] rescue {}
   end
 

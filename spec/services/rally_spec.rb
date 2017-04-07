@@ -20,7 +20,7 @@ describe AhaServices::Rally do
     Hashie::Mash.new({
       workspaces: [{
         name: "Test Workspace",
-        ObjectID: "123",
+        ObjectID: 123,
         Configuration: {
           WorkspaceConfiguration: {
             TimeZone: "America/Chicago"
@@ -34,7 +34,7 @@ describe AhaServices::Rally do
     {
       send_tags: "1",
       integration_id: "123",
-      workspace_id: "123"
+      workspace: "123"
     }
   end
 
