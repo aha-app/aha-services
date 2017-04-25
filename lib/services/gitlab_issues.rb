@@ -272,6 +272,8 @@ class AhaServices::GitlabIssues < AhaService
     if resource.key?("parent_id")
       issue_body_parts << "Parent: ##{resource['parent_id']}"
     end
+    
+    issue_body_parts << "Created from Aha! #{resource.url}" if resource.respond_to?(:url)
 
     issue_body_parts.join("\n\n")
   end

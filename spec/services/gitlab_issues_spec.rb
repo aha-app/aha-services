@@ -428,6 +428,14 @@ describe AhaServices::GitlabIssues do
           expect(service.issue_body(resource)).to eq ""
         end
       end
+
+      context "with url" do
+        let(:resource) { Hashie::Mash.new( description: {}, url: "www.example.com") }
+        it "with urls" do
+          expect(service.issue_body(resource)).to eq "Created from Aha! www.example.com"
+        end
+      end
+
       context "with a body" do
         let(:resource) { Hashie::Mash.new( description: { body: "Issue name" }) }
         it "returns the body" do
