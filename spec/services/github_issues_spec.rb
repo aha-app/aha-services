@@ -432,6 +432,14 @@ describe AhaServices::GithubIssues do
         end
       end
 
+      context "with a url" do
+        let(:resource) { Hashie::Mash.new( description: {}, url: "www.example.com") }
+        it "returns the body" do
+          expect(service.issue_body(resource)).to eq "Created from Aha! www.example.com"
+        end
+      end
+
+
       context "with an underscore inside a code tag in the body" do
         let(:resource) { Hashie::Mash.new( description: { body: "Issue with backticks `method_name*`" }) }
         it "returns the body" do

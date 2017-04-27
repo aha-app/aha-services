@@ -256,6 +256,8 @@ class AhaServices::GithubIssues < AhaService
     if resource.description.attachments.present?
       issue_body_parts << attachments_in_body(resource.description.attachments)
     end
+    issue_body_parts << "Created from Aha! #{resource.url}" if resource.respond_to?(:url)
+
     issue_body_parts.join("\n\n")
   end
 
