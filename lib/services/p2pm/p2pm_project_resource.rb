@@ -7,7 +7,7 @@ class P2PMProjectResource < P2PMResource
     body = '{"client_id":"ORFAVREOUWRAUGGRQJGTNKDRHKBSETWT","client_secret":"434157704590a695188bf57026369405","username":"admin","password":"admin","grant_type":"password"}'
     puts body
     puts body.to_json
-    puts @service.data_server_url
+    puts @service.data.server_url
     response = http_post @service.data.server_url do |req|
       req.headers['Content-Type'] = 'application/json'
       req.headers['Cache-Control'] = 'no-cache'
