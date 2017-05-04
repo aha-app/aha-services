@@ -4,15 +4,21 @@ class P2PMProjectResource < P2PMResource
 
   def all
 
-    body = '{"client_id":"ORFAVREOUWRAUGGRQJGTNKDRHKBSETWT","client_secret":"434157704590a695188bf57026369405","username":"admin","password":"admin","grant_type":"password"}'
-    puts body
+    body = [{
+      :client_id => "ORFAVREOUWRAUGGRQJGTNKDRHKBSETWT",
+      :client_secret => "434157704590a695188bf57026369405",
+      :username => "admin",
+      :password => "admin",
+      :grant_type => "password"
+    }]
+
     puts body.to_json
     puts @service.data.server_url
     response = http_post @service.data.server_url do |req|
       req.headers['Content-Type'] = 'application/json'
       req.headers['Cache-Control'] = 'no-cache'
       req.headers['Postman-Token'] = '2e534444-f11f-12af-9053-205ceddd98a0'
-      req.body = body
+      req.body = body.to_json
     end
     process_response response do |document|
       self.security_token = document.OperationResult.SecurityToken
