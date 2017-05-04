@@ -4,7 +4,7 @@ class P2PMProjectResource < P2PMResource
 
   def all
 
-    body = '{"client_id":"GDDMSRMYAZCXXZYCORZDDYMZUSCDMSBS","client_secret":"8556684445876ac6758cbd2008857012","username":"pwaller","password":"BaseBall24","grant_type":"password"}'
+    body = '{"client_id":"ORFAVREOUWRAUGGRQJGTNKDRHKBSETWT","client_secret":"434157704590a695188bf57026369405","username":"admin","password":"admin","grant_type":"password"}'
     response = http_post @service.data.server_url do |req|
       req.headers['Content-Type'] = 'application/json'
       req.headers['Cache-Control'] = 'no-cache'
