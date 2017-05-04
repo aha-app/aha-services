@@ -11,7 +11,7 @@ class P2PMProjectResource < P2PMResource
       req.headers['Content-Type'] = 'application/json'
       req.headers['Cache-Control'] = 'no-cache'
       req.headers['Postman-Token'] = '2e534444-f11f-12af-9053-205ceddd98a0'
-      req.body = body.to_json
+      req.body = body
     end
     process_response response do |document|
       self.security_token = document.OperationResult.SecurityToken
