@@ -1,5 +1,5 @@
 class P2PMProjectResource < P2PMResource
-  require './processmaker'  
+  require 'processmaker'  
 
   attr_accessor :security_token
 
