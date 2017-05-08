@@ -80,6 +80,10 @@ class RallyResource < GenericResource
     end
   end
 
+  def rally_workspace_url
+    "#{API_URL}/workspace/#{@service.data.workspace}"
+  end
+
   def maybe_add_workspace_to_object(object)
     if @service.data.workspace.present?
       object[:Workspace] = maybe_workspace
