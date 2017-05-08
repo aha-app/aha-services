@@ -29,6 +29,8 @@ request.body = user.to_json
 
 # Send the request
 response = http.request(request)
+puts response
+
     body = [{
       :grant_type => "password",
       :scope => "*",
