@@ -1,9 +1,34 @@
 class P2PMProjectResource < P2PMResource
- 
+  require 'net/http'
+  require 'uri'
+  require 'json'
+  
   attr_accessor :security_token
 
   def all
 
+    uri = URI.parse("http://52.39.212.230:8080/workflow/oauth2/token")
+    header = {'Content-Type': 'application/json',}
+    user = {user: {
+              grant_type: 'password',
+              scope: '*',
+              client_id: 'ORFAVREOUWRAUGGRQJGTNKDRHKBSETWT',
+              client_secret: '434157704590a695188bf57026369405',
+              userame: 'admin',
+              password: 'admin'
+              }
+            }
+
+puts uri
+puts user.to_json
+
+# Create the HTTP objects
+http = Net::HTTP.new(uri.host, uri.port)
+request = Net::HTTP::Post.new(uri.request_uri, header)
+request.body = user.to_json
+
+# Send the request
+response = http.request(request)
     body = [{
       :grant_type => "password",
       :scope => "*",
