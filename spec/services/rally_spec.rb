@@ -59,15 +59,28 @@ describe AhaServices::Rally do
     service
   end
 
+  let(:release) { Hashie::Mash.new(name: 'First release') }
+  let(:feature) { Hashie::Mash.new name: 'First feature',
+                                  workflow_status: {name: 'In development'},
+                                  description: { body: 'First feature description' },
+                                  release: release,
+                                  tags: [ 'First', 'Second', 'Third', 'Aha!:First' ],
+                                  requirements: [ { id: 'req_id' } ] }
+
+  let (:feature_create_service) do
+    api = Object.new
+    service = AhaServices::Rally.new service_params, Hashie::Mash.new(feature: feature), meta_data
+    service.instance_variable_set(:@api, api)
+    service
+  end
+
   let (:service) do
     AhaServices::Rally.new service_params
   end
 
   let(:h_req_service) do
-    RallyHierarchicalRequirementResource.new service
+    service.send(:rally_hierarchical_requirement_resource)
   end
-
-
 
   it "creates the right tag queries" do
     expect(h_req_service.send( :build_tag_query, ["1", "2", "3", "4", "5", "6"] ))
@@ -113,7 +126,35 @@ describe AhaServices::Rally do
   end
 
   context "feature" do
-    it "can be created"
+    it "can be created" do
+      h_req_service = feature_create_service.send(:rally_hierarchical_requirement_resource)
+      token = SecureRandom.hex
+      allow(h_req_service).to receive(:get_security_token).and_return(token)
+      allow(h_req_service).to receive(:get_or_create_tag_references).and_return([{
+        _ref: "https://example.com/tag/ref"
+      }])
+
+      create_url = "https://rally1.rallydev.com/slm/webservice/v2.0/hierarchicalrequirement/create?key=&workspace=https%3A%2F%2Frally1.rallydev.com%2Fslm%2Fwebservice%2Fv2.0%2Fworkspace%2F123"
+
+      stub_response = Hashie::Mash.new({
+        status: 200,
+        body: {
+          CreateResult: {
+            Object: {
+              object_id: "123"
+            },
+            Errors: []
+          },
+        }.to_json
+      })
+
+      expect(h_req_service.api).to receive(:create_integration_fields).and_return(true)
+      expect(h_req_service).to receive(:create_attachments).and_return(true)
+      expect(h_req_service).to receive(:update_from_feature).and_return(true)
+      expect(h_req_service).to receive(:http_put).with(create_url, instance_of(String)).and_return(stub_response)
+
+      feature_create_service.receive(:create_feature)
+    end
     it "can be updated"
   end
 end
