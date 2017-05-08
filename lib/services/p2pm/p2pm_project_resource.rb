@@ -9,7 +9,7 @@ class P2PMProjectResource < P2PMResource
       :client_secret => "434157704590a695188bf57026369405",
       :username => "admin",
       :password => "admin",
-      :grant_type => "password"
+      :grant_type => "authorization_code"
     }]
 
     puts body.to_json
