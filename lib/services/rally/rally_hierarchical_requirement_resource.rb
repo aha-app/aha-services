@@ -41,16 +41,6 @@ class RallyHierarchicalRequirementResource < RallyResource
     end
   end
 
-  # Ensure that we pass in the workspace parameter on create, so that
-  # we are routed to the correct API endpoint
-  def add_workspace_param_to_url url
-    url = URI.parse(url)
-    params = Rack::Utils.parse_nested_query(url.query)
-    params["workspace"] = rally_workspace_url
-    url.query = params.to_query
-    url.to_s
-  end
-
   def create(hrequirement, element_name)
     body = {}
     url = add_workspace_param_to_url(rally_secure_url_without_workspace(create_path(element_name)))
@@ -330,6 +320,8 @@ class RallyHierarchicalRequirementResource < RallyResource
     attributes[:Release] = release_id
   end
 
+  private
+
   def rally_release_resource
     @rally_release_resource ||= RallyReleaseResource.new @service
   end
@@ -341,4 +333,15 @@ class RallyHierarchicalRequirementResource < RallyResource
   def rally_attachment_resource
     @rally_attachment_resource ||= RallyAttachmentResource.new @service
   end
+
+  # Ensure that we pass in the workspace parameter on create, so that
+  # we are routed to the correct API endpoint
+  def add_workspace_param_to_url(url)
+    url = URI.parse(url)
+    params = Rack::Utils.parse_nested_query(url.query)
+    params["workspace"] = rally_workspace_url
+    url.query = params.to_query
+    url.to_s
+  end
 end
+
