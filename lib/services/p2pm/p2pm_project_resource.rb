@@ -1,21 +1,8 @@
 class P2PMProjectResource < P2PMResource
-  require 'processmaker'  
 
   attr_accessor :security_token
 
   def all
-
-# ProcessMaker instance
-url = 'http://52.39.212.230:8080/workflow/en/classic/services/wsdl2'
-
-# Login first
-Processmaker.login(wsdl: url, user_id: 'admin', password: 'admin')
-
-users = Processmaker.user_list
-users.each do |u|
-	u[:name]
-  puts u[:name]
-end
 
     body = [{
       :grant_type => "password",
