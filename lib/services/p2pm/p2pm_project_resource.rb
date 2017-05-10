@@ -7,10 +7,10 @@ class P2PMProjectResource < P2PMResource
     body = {
       'grant_type' => "password",
       'scope' => "*",
-      'client_id' => "ORFAVREOUWRAUGGRQJGTNKDRHKBSETWT",
-      'client_secret' => "434157704590a695188bf57026369405",
+      'client_id' => @service.data.client_id,
+      'client_secret' => @service.data.client_secret,
       'username' => @service.data.user_name,
-      'password' => @service.data.password
+      'password' => @service.data.user_password
     }
     header = {
       'Content-Type' => 'application/json'
