@@ -59,7 +59,7 @@ class FogbugzResource < GenericResource
   end
 
   def api_url
-    "#{ URI.join(@url, '/api.asp') }?cmd="
+    "#{ File.join(@url, '/api.asp') }?cmd="
   end
 
   def request_columns
