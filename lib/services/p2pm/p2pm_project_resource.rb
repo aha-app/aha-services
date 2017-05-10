@@ -9,13 +9,13 @@ class P2PMProjectResource < P2PMResource
       'scope' => "*",
       'client_id' => "ORFAVREOUWRAUGGRQJGTNKDRHKBSETWT",
       'client_secret' => "434157704590a695188bf57026369405",
-      'username' => "pwaller",
-      'password' => "welcome"
+      'username' => @service.data.user_name,
+      'password' => @service.data.password
     }
     header = {
       'Content-Type' => 'application/json'
     }
-    response = http_post @service.data.server_url, body.to_json, header
+    response = http_post (@service.data.server_url, body.to_json, header)
     process_response response do |document|
       self.security_token = document.OperationResult.SecurityToken
     end
