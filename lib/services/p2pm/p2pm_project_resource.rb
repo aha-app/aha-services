@@ -13,10 +13,10 @@ class P2PMProjectResource < P2PMResource
       'password' => "welcome"
     }
     header = {
-      'Content-Type' => 'application/json'
+      'Content-Type' => 'application/json',
+      'Cache-Control' => 'no-cache',
+      'Postman-Token' => '2e534444-f11f-12af-9053-205ceddd98a0'
     }
-    puts body.to_json
-    puts @service.data.server_url
     response = http_post @service.data.server_url, body.to_json, header.to_json
     process_response response do |document|
       self.security_token = document.OperationResult.SecurityToken
