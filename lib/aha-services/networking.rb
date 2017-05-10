@@ -154,6 +154,9 @@ module Networking
     block = Proc.new if block_given?
     
     @logger.debug("Sending #{method} request to #{url} with body: #{body} and headers: #{headers}")
+    puts url
+    puts headers
+    puts body
     
     check_ssl do
       http.send(method) do |req|
