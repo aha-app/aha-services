@@ -12,11 +12,10 @@ class P2PMProjectResource < P2PMResource
       'username' => @service.data.user_name,
       'password' => @service.data.user_password
     }
-    header = {
-      'Content-Type' => 'application/json'
+    
+    response = http_post @service.data.server_url, body.to_json, {
+      'Content-Type' => 'application/application/json'
     }
-    http.headers['Content-Type'] = 'application/json'
-    response = http_post @service.data.server_url, body.to_json
     process_response response do |document|
       self.security_token = document.OperationResult.SecurityToken
     end
