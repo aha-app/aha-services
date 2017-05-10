@@ -15,7 +15,7 @@ class P2PMProjectResource < P2PMResource
 
     puts body.to_json
     puts @service.data.server_url
-    response = http_post @service.data.server_url, body, {
+    response = http_post @service.data.server_url, body.to_json, {
       'Content-Type' => 'application/json',
     }
     puts response
