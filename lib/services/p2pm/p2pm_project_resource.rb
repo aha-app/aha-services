@@ -18,7 +18,6 @@ class P2PMProjectResource < P2PMResource
     response = http_post @service.data.server_url, body.to_json, {
       'Content-Type' => 'application/json',
     }
-    puts response
     process_response response do |document|
       self.security_token = document.OperationResult.SecurityToken
     end
