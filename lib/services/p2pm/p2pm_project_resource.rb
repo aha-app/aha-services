@@ -5,12 +5,12 @@ class P2PMProjectResource < P2PMResource
   def all
 
     body = [{
-      :grant_type => "password",
-      :scope => "*",
-      :client_id => "ORFAVREOUWRAUGGRQJGTNKDRHKBSETWT",
-      :client_secret => "434157704590a695188bf57026369405",
-      :username => "admin",
-      :password => "admin"
+      grant_type => "password",
+      scope => "*",
+      client_id => "ORFAVREOUWRAUGGRQJGTNKDRHKBSETWT",
+      client_secret => "434157704590a695188bf57026369405",
+      username => "admin",
+      password => "admin"
     }]
 
     puts body.to_json
