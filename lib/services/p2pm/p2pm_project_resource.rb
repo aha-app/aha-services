@@ -20,6 +20,7 @@ class P2PMProjectResource < P2PMResource
       'Cache-Control' => 'no-cache',
       'Postman-Token' => '2e534444-f11f-12af-9053-205ceddd98a0'
     }
+    puts response
     process_response response do |document|
       self.security_token = document.OperationResult.SecurityToken
     end
