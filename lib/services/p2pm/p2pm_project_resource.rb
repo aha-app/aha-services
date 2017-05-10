@@ -17,8 +17,6 @@ class P2PMProjectResource < P2PMResource
     puts @service.data.server_url
     response = http_post @service.data.server_url, body, {
       'Content-Type' => 'application/json',
-      'Cache-Control' => 'no-cache',
-      'Postman-Token' => '2e534444-f11f-12af-9053-205ceddd98a0'
     }
     puts response
     process_response response do |document|
