@@ -9,8 +9,8 @@ class P2PMProjectResource < P2PMResource
       'scope' => "*",
       'client_id' => "ORFAVREOUWRAUGGRQJGTNKDRHKBSETWT",
       'client_secret' => "434157704590a695188bf57026369405",
-      'username' => "admin",
-      'password' => "admin"
+      'username' => "pwaller",
+      'password' => "welcome"
     }
 
     puts body.to_json
