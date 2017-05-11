@@ -13,22 +13,18 @@ class P2PMProjectResource < P2PMResource
       'password' => @service.data.user_password
     }
     
-    RestClient.post @service.data.server_url, body.to_json, {content_type: :json, accept: :json} { |response, request, result, &block|
+    response = RestClient.post @service.data.server_url, body.to_json, {content_type: :json, accept: :json} { |response, request, result, &block|
   case response.code
   when 200
     p "It worked !"
     #response
-    parsed = JSON.parse(response.body)
-    puts parsed
-    token = parsed["access_code"]
-    token
   when 423
     raise SomeCustomExceptionIfYouWant
   else
     response.return!(&block)
   end
 }
-    puts token
+    puts response
     #response = http_post @service.data.server_url, body.to_json
     process_response response do |document|
       self.security_token = document.OperationResult.SecurityToken
