@@ -15,11 +15,13 @@ module P2PMCommon
     
     install_button
 
-    select :name, id: "The tables in Process Maker.",
+    select :table, id: "The tables in Process Maker.",
       collection: ->(meta_data, data) {
       return [] if meta_data.nil? or meta_data.projects.nil?
       meta_data.tables.collect do |id, table|
-        
+        puts id
+        puts table.name
+        puts table.id
         [table.name, table.id]
       end
     }
