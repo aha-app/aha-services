@@ -34,7 +34,7 @@ class P2PMProjectResource < P2PMResource
     #end
 
     http.headers["Authorization"] = "Bearer " + security_token
-    response = http_get pm_url("pmtable")
+    response = http_get "http://52.39.212.230:8080/api/1.0/workflow/pmtable"
     process_response response do |body|
       tables = Hashie::Mash.new
       body.value.each do |table|
