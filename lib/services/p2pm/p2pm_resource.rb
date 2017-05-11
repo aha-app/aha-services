@@ -23,7 +23,8 @@ class P2PMResource < GenericResource
       if block_given?
         yield hashie_or_array_of_hashies(response.body)
       else
-        return hashie_or_array_of_hashies(response.body)
+        #return hashie_or_array_of_hashies(response.body)
+        return response.body
       end
     elsif response.status == 302
       raise_config_error "Authentication denied. Invalid credentials."
