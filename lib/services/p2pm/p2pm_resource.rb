@@ -18,6 +18,7 @@ class P2PMResource < GenericResource
   end
 
   def process_response(response, *success_codes, &block)
+    puts success_codes
     success_codes = [200] if success_codes == []
     if success_codes.include?(response.status)
       if block_given?
