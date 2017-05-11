@@ -26,8 +26,8 @@ class P2PMProjectResource < P2PMResource
 }
     puts response
     parsed = JSON.parse(response)
-    token = parsed["access_token"]
-    p "token = {#token}"
+    token = parsed['access_token']
+    puts token
     #response = http_post @service.data.server_url, body.to_json
     process_response response do |document|
       self.security_token = document.OperationResult.SecurityToken
