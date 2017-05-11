@@ -36,10 +36,11 @@ class P2PMProjectResource < P2PMResource
     http.headers["Authorization"] = "Bearer " + security_token
     response = http_get "http://52.39.212.230:8080/api/1.0/workflow/pmtable"
     process_response response do |body|
-      puts body
+      
       tables = Hashie::Mash.new
       p "In processing body"
-      
+      parsed = JSON.parse(body)
+      puts parsed
       body.each do |fields|
         fields.each do |table|
           tables[table.pmt_uid] = Hashie::Mash.new({:id => table.pmt_uid, :name => table.pmt_tab_name})
@@ -47,6 +48,5 @@ class P2PMProjectResource < P2PMResource
       end
       tables
     end
-    puts tables
   end
 end

@@ -21,7 +21,8 @@ class P2PMResource < GenericResource
     success_codes = [200] if success_codes == []
     if success_codes.include?(response.status)
       if block_given?
-        yield hashie_or_array_of_hashies(response.body)
+        #yield hashie_or_array_of_hashies(response.body)
+        yield response.body
       else
         #return hashie_or_array_of_hashies(response.body)
         return response.body
