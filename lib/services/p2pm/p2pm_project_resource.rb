@@ -14,16 +14,16 @@ class P2PMProjectResource < P2PMResource
     }
     
     response = RestClient.post @service.data.server_url, body.to_json, {content_type: :json, accept: :json} { |response, request, result, &block|
-  case response.code
-  when 200
-    p "It worked !"
-    response
-  when 423
-    raise SomeCustomExceptionIfYouWant
-  else
-    response.return!(&block)
-  end
-}
+      case response.code
+        when 200
+          p "It worked !"
+          response
+        when 423
+          raise SomeCustomExceptionIfYouWant
+        else
+          response.return!(&block)
+      end
+    }
     puts response
     parsed = JSON.parse(response)
     security_token = parsed['access_token']
@@ -36,6 +36,7 @@ class P2PMProjectResource < P2PMResource
     http.headers["Authorization"] = "Bearer " + security_token
     response = http_get "http://52.39.212.230:8080/api/1.0/workflow/pmtable"
     process_response response do |body|
+      puts body
       tables = Hashie::Mash.new
       p "In processing body"
       
