@@ -14,6 +14,7 @@ class P2PMProjectResource < P2PMResource
     }
     
     response = RestClient.post @service.data.server_url, body.to_json, {content_type: :json, accept: :json}
+    puts reponse
     #response = http_post @service.data.server_url, body.to_json
     process_response response do |document|
       self.security_token = document.OperationResult.SecurityToken
