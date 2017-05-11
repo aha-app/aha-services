@@ -1,5 +1,7 @@
 class P2PMProjectResource < P2PMResource
 
+  require 'rest-client'
+
   attr_accessor :security_token
 
   def all
@@ -13,7 +15,8 @@ class P2PMProjectResource < P2PMResource
       'password' => @service.data.user_password
     }
     
-    response = http_post @service.data.server_url, body.to_json
+    repsonse = RestClient.post @service.data.server_url, body.to_json, {content_type: :json, accept: :json}
+    #response = http_post @service.data.server_url, body.to_json
     process_response response do |document|
       self.security_token = document.OperationResult.SecurityToken
     end
