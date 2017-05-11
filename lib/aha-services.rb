@@ -17,6 +17,7 @@ require 'ipaddr'
 require 'socket'
 require 'hashie'
 require 'aha-api'
+require 'rest-client'
 
 require 'aha-services/version'
 require 'aha-services/networking'

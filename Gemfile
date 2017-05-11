@@ -19,6 +19,7 @@ gem "net-http-persistent"
 gem "rubyntlm"
 gem "ClothRed", :git => "https://github.com/aha-app/ClothRed", require: "clothred"
 gem "nokogiri", "1.6.6.2"
+gem "rest-client", :git => "https://github.com/rest-client/rest-client"
 
 # Auto reload sinatra
 gem "rerun"

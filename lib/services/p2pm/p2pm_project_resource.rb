@@ -1,7 +1,5 @@
 class P2PMProjectResource < P2PMResource
 
-  require 'rest-client'
-
   attr_accessor :security_token
 
   def all
