@@ -18,6 +18,9 @@ class P2PMProjectResource < P2PMResource
   when 200
     p "It worked !"
     response
+    rsp = response.to_json
+    token = rsp.access_token
+    puts token
   when 423
     raise SomeCustomExceptionIfYouWant
   else
