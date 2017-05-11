@@ -37,6 +37,7 @@ class P2PMProjectResource < P2PMResource
     response = http_get "http://52.39.212.230:8080/api/1.0/workflow/pmtable"
     process_response response do |body|
       tables = Hashie::Mash.new
+      puts body
       body.value.each do |table|
         tables[table.pmt_uid] = Hashie::Mash.new({:id => table.pmt_uid, :name => table.pmt_tab_name})
       end
