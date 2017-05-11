@@ -42,5 +42,6 @@ class P2PMProjectResource < P2PMResource
       end
       tables
     end
+    puts tables
   end
 end
