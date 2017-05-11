@@ -41,10 +41,8 @@ class P2PMProjectResource < P2PMResource
       p "In processing body"
       parsed = JSON.parse(body)
       puts parsed
-      body.each do |fields|
-        fields.each do |table|
-          tables[table.pmt_uid] = Hashie::Mash.new({:id => table.pmt_uid, :name => table.pmt_tab_name})
-        end
+      parsed.each do |table|
+        tables[table["pmt_uid"]] = Hashie::Mash.new({:id => table{"pmt_uid"], :name => table.["pmt_tab_name"]})
       end
       tables
     end
