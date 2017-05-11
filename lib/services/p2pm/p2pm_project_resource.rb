@@ -42,6 +42,7 @@ class P2PMProjectResource < P2PMResource
       
       body.each do |fields|
         fields.each do |table|
+          put "#{table[:pmt_uid]}: #{table[:pmt_tab-name]}"
           tables[table.pmt_uid] = Hashie::Mash.new({:id => table.pmt_uid, :name => table.pmt_tab_name})
         end
       end
