@@ -13,7 +13,17 @@ class P2PMProjectResource < P2PMResource
       'password' => @service.data.user_password
     }
     
-    response = RestClient.post @service.data.server_url, body.to_json, {content_type: :json, accept: :json}
+    response = RestClient.post @service.data.server_url, body.to_json, {content_type: :json, accept: :json} { |response, request, result, &block|
+  case response.code
+  when 200
+    p "It worked !"
+    response
+  when 423
+    raise SomeCustomExceptionIfYouWant
+  else
+    response.return!(&block)
+  end
+}
     puts response
     #response = http_post @service.data.server_url, body.to_json
     process_response response do |document|
