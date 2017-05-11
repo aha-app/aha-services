@@ -19,6 +19,7 @@ class P2PMProjectResource < P2PMResource
     p "It worked !"
     response
     parsed = JSON.parse(response)
+    puts parsed
     token = parsed["access_code"]
     puts token
   when 423
