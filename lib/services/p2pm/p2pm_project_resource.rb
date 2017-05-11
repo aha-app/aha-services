@@ -38,9 +38,11 @@ class P2PMProjectResource < P2PMResource
     process_response response do |body|
       tables = Hashie::Mash.new
       p "In processing body"
-      puts body
-      body.value.each do |table|
-        tables[table.pmt_uid] = Hashie::Mash.new({:id => table.pmt_uid, :name => table.pmt_tab_name})
+      
+      body.each do |fields|
+        fields.each do |table|
+          tables[table.pmt_uid] = Hashie::Mash.new({:id => table.pmt_uid, :name => table.pmt_tab_name})
+        end
       end
       tables
     end
