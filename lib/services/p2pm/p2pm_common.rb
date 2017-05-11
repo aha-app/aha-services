@@ -18,7 +18,8 @@ module P2PMCommon
     select :name, id: "The tables in Process Maker.",
       collection: ->(meta_data, data) {
       return [] if meta_data.nil? or meta_data.projects.nil?
-      meta_data.tables.collect do |id, name|
+      meta_data.tables.collect do |id, table|
+        
         [table.name, table.id]
       end
     }
