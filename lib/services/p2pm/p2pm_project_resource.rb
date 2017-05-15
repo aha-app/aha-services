@@ -53,7 +53,6 @@ class P2PMProjectResource < P2PMResource
         tables[table_id] = Hashie::Mash.new({:id => table_id, :name => table_name })
       end
       tables
-      security_token
     end
   end
 end
