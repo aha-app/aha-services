@@ -7,7 +7,7 @@ class P2PMFeatureMappingResource < P2PMResource
       "System.AreaPath" => @service.data.area
     }
     
-    puts aha_feature.custom_fields['salesforce_id']
+    puts aha_feature.custom_fields.custom_reader('salesforce_id')
 
     body = {
       "REPRO_STEPS" => aha_feature.custom_fields.bug_repro_steps,
