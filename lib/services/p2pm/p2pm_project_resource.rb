@@ -80,6 +80,6 @@ protected
     puts response
     parsed = JSON.parse(response)
     security_token = parsed['access_token']
-    securiyt_token
+    security_token
   end
 end
