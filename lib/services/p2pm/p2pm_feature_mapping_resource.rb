@@ -6,7 +6,17 @@ class P2PMFeatureMappingResource < P2PMResource
       "System.Description" => description_or_default(aha_feature.description.body),
       "System.AreaPath" => @service.data.area
     }
-    add_default_fields(body)
+
+    body = {
+      "REPRO_STEPS" => aha_feature.bug_repro_steps,
+      "SEVERITY" => aha_feature.bug_severity,
+      "VERSION_FOUND_IN" => aha_feature.bug_version_found_in,
+      "CUSTOMER" => aha_feature.customer,
+      "CUSTOMER_PRIORITY" => aha_feature.customer_priority,
+      "OWNER" => aha_feature.salesforce_case_owner,
+      "SALESFORCE_ID" => aha_feature.salesforce_id	
+    }
+    #add_default_fields(body)
     
     # create new workitem in TFS
     created_workitem = workitem_resource.create project, mapped_type, body
