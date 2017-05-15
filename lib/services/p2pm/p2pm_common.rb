@@ -16,7 +16,7 @@ module P2PMCommon
     install_button
 
     puts meta_data
-    
+
     select :table, id: "The tables in Process Maker.",
       collection: ->(meta_data, data) {
       return [] if meta_data.nil? or meta_data.tables.nil?
@@ -29,7 +29,7 @@ module P2PMCommon
       end
     }
     
-    string :security_token, description: "Retrieved Security Token", meta_data.security_token
+    #string :security_token, description: "Retrieved Security Token", meta_data.security_token
 
     def receive_installed
       meta_data.tables = project_resource.all
