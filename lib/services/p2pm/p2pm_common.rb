@@ -21,9 +21,9 @@ module P2PMCommon
       meta_data.tables.collect do |id, table|
         puts table.name
         puts table.id
-        #if table.name == "TFS_DATA"
-        [table.name, table.id]
-        #end
+        if table.name == "PMT_TFS_DATA"
+          [table.name, table.id]
+        end
       end
     }
     
