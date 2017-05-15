@@ -20,7 +20,8 @@ class P2PMFeatureMappingResource < P2PMResource
     #add_default_fields(body)
     
     # create new workitem in TFS
-    created_workitem = workitem_resource.create table, body
+    sec_token = get_security_token
+    created_workitem = workitem_resource.create table, body, sec_token
     # add integration field to workitem in aha
     #api.create_integration_fields("features", aha_feature.reference_num, @service.data.integration_id, {id: created_workitem.id, url: created_workitem._links.html.href})
     # create a workitem in TFS for each requirement
