@@ -27,7 +27,7 @@ module P2PMCommon
       end
     }
     
-    string :security_token
+    string :security_token, meta_data.security_token
 
     def receive_installed
       meta_data.tables = project_resource.all
