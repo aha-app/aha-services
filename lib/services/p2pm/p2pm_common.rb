@@ -27,6 +27,8 @@ module P2PMCommon
       end
     }
     
+    internal :security_token
+    
     def receive_installed
       meta_data.tables = project_resource.all
       #workitemtype_resource.determine_possible_workflows(meta_data)
