@@ -6,8 +6,8 @@ class P2PMFeatureMappingResource < P2PMResource
       "System.Description" => description_or_default(aha_feature.description.body),
       "System.AreaPath" => @service.data.area
     }
-    puts aha_feature
-    puts aha_feature.custom_fields['customer'].value
+    
+    puts aha_feature.custom_fields
 
     body = {
       "REPRO_STEPS" => aha_feature.custom_fields.bug_repro_steps,
