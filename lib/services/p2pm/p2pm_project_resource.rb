@@ -43,7 +43,9 @@ class P2PMProjectResource < P2PMResource
       puts parsed
       
       parsed.each do |table|
-        
+        #if table['pmt_tab_name'] == 'TFS_DATA'
+        #  tab_uid = table['pmt_uid']
+        #end
         table_id = table['pmt_uid']
         table_name = table['pmt_tab_name']
         #tables[table["pmt_uid"]] = Hashie::Mash.new({:id => table["pmt_uid"], :name => table.["pmt_tab_name"]})
