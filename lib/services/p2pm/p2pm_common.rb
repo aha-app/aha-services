@@ -19,7 +19,9 @@ module P2PMCommon
       collection: ->(meta_data, data) {
       return [] if meta_data.nil? or meta_data.tables.nil?
       meta_data.tables.collect do |id, table|
-        [table.name, table.id]
+        if table.name == "TFS_DATA"
+          [table.name, table.id]
+        end
       end
     }
 
