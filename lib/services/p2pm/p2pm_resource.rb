@@ -40,6 +40,32 @@ class P2PMResource < GenericResource
       raise AhaService::RemoteError, "Unhandled error: STATUS=#{response.status} BODY=#{response.body}"
     end
   end
+  def get_security_token
+    body = {
+      'grant_type' => "password",
+      'scope' => "*",
+      'client_id' => @service.data.client_id,
+      'client_secret' => @service.data.client_secret,
+      'username' => @service.data.user_name,
+      'password' => @service.data.user_password
+    }
+    
+    response = RestClient.post @service.data.server_url, body.to_json, {content_type: :json, accept: :json} { |response, request, result, &block|
+      case response.code
+        when 200
+          p "It worked !"
+          response
+        when 423
+          raise SomeCustomExceptionIfYouWant
+        else
+          response.return!(&block)
+      end
+    }
+    puts response
+    parsed = JSON.parse(response)
+    security_token = parsed['access_token']
+    security_token
+  end
   
   def create_attachments(workitem, aha_attachments)
     existing_files = workitem.relations.select{|relation| relation.rel == "AttachedFile"}.map{|relation| relation.attributes.name} rescue []
