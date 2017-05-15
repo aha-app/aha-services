@@ -14,11 +14,12 @@ class P2PMWorkItemResource < P2PMResource
     by_url url
   end
 
-  def create project, type, fields, links = []
-    body = (to_field_patch_array(fields) + to_relation_patch_array(links) ).to_json
-    url = mstfs_project_url project, "wit/workitems/$" + ERB::Util.url_encode(type)
+  def create table, body
+    #body = (to_field_patch_array(fields) + to_relation_patch_array(links) ).to_json
+    url = "http://52.39.212.230:8080/api/1.0/workflow/pmtable/" + table + "/data"
+    #url = mstfs_project_url project, "wit/workitems/$" + ERB::Util.url_encode(type)
     logger.debug "Sending request to #{url}\nBody: #{body}\n"
-    response = http_patch url, body, PATCH_HEADER
+    response = http_patch url, body.to_json, PATCH_HEADER
     process_response response
   end
 

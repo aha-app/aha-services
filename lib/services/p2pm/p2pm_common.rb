@@ -32,12 +32,24 @@ module P2PMCommon
       #workitemtype_resource.determine_possible_workflows(meta_data)
       #classification_nodes_resource.get_areas_for_all_projects(meta_data)
     end
+
+    def receive_create_feature
+      created_workitem = feature_mapping_resource.create data.table, payload.feature
+    end
   end
 
  protected
    
   def project_resource
     @project_resource ||= P2PMProjectResource.new(self)
+  end
+
+  def workitem_resource
+    @workitem_resource ||= P2PMWorkItemResource.new(self)
+  end
+
+  def feature_mapping_resource
+    @feature_mapping_resource ||= P2PMFeatureMappingResource.new(self)
   end
 
 end

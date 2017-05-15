@@ -1,6 +1,6 @@
 class P2PMFeatureMappingResource < P2PMResource
 
-  def create project, aha_feature
+  def create table, aha_feature
     body = {
       "System.Title" => aha_feature.name || "Untitled feature",
       "System.Description" => description_or_default(aha_feature.description.body),
@@ -19,13 +19,13 @@ class P2PMFeatureMappingResource < P2PMResource
     #add_default_fields(body)
     
     # create new workitem in TFS
-    created_workitem = workitem_resource.create project, mapped_type, body
+    created_workitem = workitem_resource.create table, body
     # add integration field to workitem in aha
-    api.create_integration_fields("features", aha_feature.reference_num, @service.data.integration_id, {id: created_workitem.id, url: created_workitem._links.html.href})
+    #api.create_integration_fields("features", aha_feature.reference_num, @service.data.integration_id, {id: created_workitem.id, url: created_workitem._links.html.href})
     # create a workitem in TFS for each requirement
-    create_and_link_requirements project, created_workitem, aha_feature.requirements
+    #create_and_link_requirements project, created_workitem, aha_feature.requirements
     # upload all attachments to TFS and link them to the workitem
-    create_attachments created_workitem, (aha_feature.attachments | aha_feature.description.attachments)
+    #create_attachments created_workitem, (aha_feature.attachments | aha_feature.description.attachments)
     return created_workitem
   end
 
@@ -91,8 +91,8 @@ protected
     logger.error e.message
   end
 
-  def mapped_type
-    @service.data.feature_mapping
+  def table
+    @service.data.table
   end
 
   def tfs_to_aha_status status
