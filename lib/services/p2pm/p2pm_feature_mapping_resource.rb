@@ -7,16 +7,17 @@ class P2PMFeatureMappingResource < P2PMResource
       "System.AreaPath" => @service.data.area
     }
     puts aha_feature
-    puts aha_feature.customer
+    puts aha_feature.custom_fields.customer
 
     body = {
-      "REPRO_STEPS" => aha_feature.bug_repro_steps,
+      "REPRO_STEPS" => aha_feature.custom_fields.bug_repro_steps,
       "SEVERITY" => aha_feature.bug_severity,
       "VERSION_FOUND_IN" => aha_feature.bug_version_found_in,
       "CUSTOMER" => aha_feature.customer,
       "CUSTOMER_PRIORITY" => aha_feature.customer_priority,
       "OWNER" => aha_feature.salesforce_case_owner,
-      "SALESFORCE_ID" => aha_feature.salesforce_id	
+      "SALESFORCE_ID" => aha_feature.salesforce_id,
+      "AHA_ID" => aha_feature.reference_num
     }
     #add_default_fields(body)
     
