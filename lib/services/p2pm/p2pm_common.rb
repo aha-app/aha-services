@@ -25,8 +25,6 @@ module P2PMCommon
       end
     }
     
-    internal :tfs_data_table    
-     
     def receive_installed
       meta_data.tables = project_resource.all
       #workitemtype_resource.determine_possible_workflows(meta_data)
