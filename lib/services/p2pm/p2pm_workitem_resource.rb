@@ -20,8 +20,8 @@ class P2PMWorkItemResource < P2PMResource
     url = "http://52.39.212.230:8080/api/1.0/workflow/pmtable/" + table + "/data"
     #url = mstfs_project_url project, "wit/workitems/$" + ERB::Util.url_encode(type)
     logger.debug "Sending request to #{url}\nBody: #{body}\n"
-    POST_HEADER = { 'Authorization'=> 'Bearer ' + security_token}
-    response = http_patch url, body.to_json, POST_HEADER 
+    my_header = { 'Authorization'=> 'Bearer ' + security_token}
+    response = http_patch url, body.to_json, my_header
     process_response response
   end
 
