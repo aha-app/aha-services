@@ -9,7 +9,7 @@ class P2PMFeatureMappingResource < P2PMResource
     
     puts aha_feature
     body = {
-      "REPRO_STEPS" => get_custom_field_value(aha_feature,"bug_repro_steps",
+      "REPRO_STEPS" => get_custom_field_value(aha_feature,"bug_repro_steps"),
       "SEVERITY" => get_custom_field_value(aha_feature,"bug_severigy"),
       "VERSION_FOUND_IN" => get_custom_field_value(aha_feature,"bug_version_found_in"),
       "CUSTOMER" => get_custom_field_value(aha_feature,"customer"),
@@ -114,5 +114,5 @@ protected
       nil
     end
   end
-  
+
 end
