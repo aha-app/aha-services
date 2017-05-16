@@ -56,11 +56,12 @@ class P2PMWorkItemResource < P2PMResource
     update workitem.id, patch_set
   end
 
-  def update workitem_id, patch_set
+  def update workitem_id, patch_set, table, sec_token
     return if patch_set.length == 0
     body = patch_set.to_json
     url = @service.data.data_url "/api/1.0/workflow/pmtable/" + table + "/data"
-    response = http_put url, body, PATCH_HEADER
+    bearer = 'Bearer ' + security_token
+    response = http_put url, body, { 'Content-Type'=> 'application/json-patch+json', 'Authorization' => bearer }
     process_response response
   end
 
