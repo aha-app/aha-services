@@ -11,7 +11,7 @@ class P2PMFeatureMappingResource < P2PMResource
     process_response response do |body|
       parsed = JSON.parse(body)
       logger.debug "Parsed body: #{parsed}\n"
-      puts parsed[0]
+      puts parsed["rows"]["name"]
       parsed.each do |rows|
         logger.debug "rows: #{rows}\n"
         dev_manager = nil
