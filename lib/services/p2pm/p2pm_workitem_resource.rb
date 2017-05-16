@@ -25,7 +25,6 @@ class P2PMWorkItemResource < P2PMResource
     response = RestClient.post url, body.to_json, { content_type: :json,:Authorization => bearer } { |response, request, result, &block|
       puts request.headers
       puts request.url
-      puts request.body
       puts response
       puts result
       case response.code
