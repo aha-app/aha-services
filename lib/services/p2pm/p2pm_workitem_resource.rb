@@ -24,6 +24,8 @@ class P2PMWorkItemResource < P2PMResource
     #response = http_patch url, body.to_json, my_header
     response = RestClient.post url, body.to_json, { :Authorization => bearer } { |response, request, result, &block|
       puts request.headers
+      puts request.url
+      puts request.body
       puts response
       puts result
       case response.code
