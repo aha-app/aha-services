@@ -37,7 +37,7 @@ class P2PMFeatureMappingResource < P2PMResource
 
     puts created_workitem
     # add integration field to workitem in aha
-    api.create_integration_fields("features", aha_feature.reference_num, {id: created_workitem.id})
+    api.create_integration_fields("features", aha_feature.reference_num, @service.data.integration_id, {id: created_workitem.id})
     # create a workitem in TFS for each requirement
     #create_and_link_requirements project, created_workitem, aha_feature.requirements
     # upload all attachments to TFS and link them to the workitem
