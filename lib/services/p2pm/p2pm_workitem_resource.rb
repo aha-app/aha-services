@@ -20,9 +20,9 @@ class P2PMWorkItemResource < P2PMResource
     url = "http://52.39.212.230:8080/api/1.0/workflow/pmtable/" + table + "/data"
     #url = mstfs_project_url project, "wit/workitems/$" + ERB::Util.url_encode(type)
     logger.debug "Sending request to #{url}\nBody: #{body}\n"
-    my_header = { 'Authorization'=> 'Bearer ' + security_token}
+    my_header = { :Authorization => 'Bearer ' + security_token}
     #response = http_patch url, body.to_json, my_header
-    response = RestClient.post url, body.to_json, {:Authorization => 'Bearer ' + security_token} { |response, request, result, &block|
+    response = RestClient.post url, body.to_json, my_header { |response, request, result, &block|
       case response.code
         when 201
           p "It worked !"
