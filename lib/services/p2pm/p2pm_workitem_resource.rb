@@ -23,6 +23,10 @@ class P2PMWorkItemResource < P2PMResource
     bearer = 'Bearer ' + security_token
     #response = http_patch url, body.to_json, my_header
     response = RestClient.post url, body.to_json, { content_type: :json,:Authorization => bearer } { |response, request, result, &block|
+      puts request.headers
+      puts request.url
+      puts response
+      puts result
       case response.code
         when 201
           p "It worked !"
@@ -34,7 +38,7 @@ class P2PMWorkItemResource < P2PMResource
           response.return!(&block)
       end
     }
-    process_RestClient_response response
+    process_response response
   end
 
   def add_attachment workitem, attachment, size
