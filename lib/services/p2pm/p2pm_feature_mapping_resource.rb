@@ -10,6 +10,7 @@ class P2PMFeatureMappingResource < P2PMResource
     puts aha_feature.custom_fields
     field = aha_feature.custom_fields.find {|field| field['key'] == "bug_severity"}
     puts field
+    puts field.value
     body = {
       "REPRO_STEPS" => aha_feature.custom_fields.bug_repro_steps,
       "SEVERITY" => aha_feature.bug_severity,
