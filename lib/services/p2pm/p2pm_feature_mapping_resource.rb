@@ -107,7 +107,7 @@ protected
   end
 
   def get_custom_field_value(resource, key)
-    field = aha_feature.custom_fields.find {|field| field['key'] == key}
+    field = resource.custom_fields.find {|field| field['key'] == key}
     if field
       field.value
     else
