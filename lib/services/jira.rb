@@ -5,7 +5,7 @@ class AhaServices::Jira < AhaService
   caption "Send features to JIRA issue tracking (supports on-premise and cloud)"
 
   string :server_url, description: "URL for the JIRA server, without a trailing slash, e.g. https://bigaha.atlassian.net"
-  string :username, description: "Use your JIRA email address or username from the JIRA profile page (see instructions above for details)."
+  string :username, description: "Use your verified JIRA email address or username from the JIRA profile page (see instructions above for details)."
   password :password
   install_button
   select :project, collection: ->(meta_data, data) { meta_data.projects.collect{|p| [p.name, p[:key]] } },

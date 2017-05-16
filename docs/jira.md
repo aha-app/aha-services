@@ -92,7 +92,7 @@ This integration works with both the cloud and on premise versions of JIRA. If y
 
 Please carefully follow these instructions to ensure that the integration is properly configured.
 
-1. Configure the Server URL, Username and Password below. After May 2017 [you may need to use your email address rather than username](https://confluence.atlassian.com/cloud/the-upgrade-to-atlassian-account-873871204.html#TheupgradetoAtlassianaccount-RESTAPIs) if you are using JIRA Cloud. In this case your email address must be verified in JIRA for the integration to work.
+1. Configure the Server URL, Username and Password below. After May 2017 [you may need to use your email address rather than username](https://confluence.atlassian.com/cloud/the-upgrade-to-atlassian-account-873871204.html#TheupgradetoAtlassianaccount-RESTAPIs) if you are using JIRA Cloud. In this case your email address must be *verified* in JIRA for the integration to work.
 2. Click the _Test connection_ button
 3. After a short delay, you will be able to choose the Project the issues will be created in.
 4. Select the JIRA project you wish to connect to and click _Load project data_.
