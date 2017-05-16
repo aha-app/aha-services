@@ -10,11 +10,10 @@ class P2PMFeatureMappingResource < P2PMResource
     response = http_get @service.data.data_url + "/api/1.0/workflow/pmtable/"+ dev_id + '/data?q={"where": {"product": "P2 ProShield"}}'
     process_response response do |body|
       parsed = JSON.parse(body)
-      puts parsed
+      logger.debug "Parsed body: #{parsed}\n"
       parsed.each do |rows|
-        puts rows
-        puts rows[0]["name"]
-        dev_manager = rows[0]["name"]
+        logger.debug "rows: #{rows}\n"
+        dev_manager = nil
       end
     end    
     puts dev_manager
