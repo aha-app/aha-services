@@ -21,7 +21,17 @@ class P2PMWorkItemResource < P2PMResource
     #url = mstfs_project_url project, "wit/workitems/$" + ERB::Util.url_encode(type)
     logger.debug "Sending request to #{url}\nBody: #{body}\n"
     my_header = { 'Authorization'=> 'Bearer ' + security_token}
-    response = http_patch url, body.to_json, my_header
+    #response = http_patch url, body.to_json, my_header
+    response = RestClient.post url, body.to_json, my_header { |response, request, result, &block|
+      case response.code
+        when 200
+          p "It worked !"
+          response
+        when 423
+          raise SomeCustomExceptionIfYouWant
+        else
+          response.return!(&block)
+      end
     process_response response
   end
 
