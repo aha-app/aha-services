@@ -12,13 +12,7 @@ class P2PMFeatureMappingResource < P2PMResource
       parsed = JSON.parse(body)
       logger.debug "Body: #{body}\n"
       logger.debug "Parsed body: #{parsed}\n"
-      puts parsed["rows"][0]["name"]
-      parsed.each do |cell|
-        row = JSON.parse(cell)
-        puts row
-        #logger.debug "rows: #{rows}\n"
-        dev_manager = nil
-      end
+      dev_manager = parsed["rows"][0]["name"]
     end    
     puts dev_manager
     # Get the DEV_MANGER from the TABLE for the Aha project
