@@ -1,7 +1,8 @@
 class P2PMFeatureMappingResource < P2PMResource
 
   def create table, aha_feature
-   
+    puts aha_feature
+    
     body = {
       "ID" => nil,
       "REPRO_STEPS" => get_custom_field_value(aha_feature,"bug_repro_steps"),
