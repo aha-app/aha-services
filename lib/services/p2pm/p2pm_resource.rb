@@ -40,6 +40,7 @@ class P2PMResource < GenericResource
       raise AhaService::RemoteError, "Unhandled error: STATUS=#{response.status} BODY=#{response.body}"
     end
   end
+ 
   def get_security_token
     body = {
       'grant_type' => "password",
@@ -53,7 +54,7 @@ class P2PMResource < GenericResource
     response = RestClient.post @service.data.server_url, body.to_json, {content_type: :json, accept: :json} { |response, request, result, &block|
       case response.code
         when 200
-          p "It worked !"
+          #p "It worked !"
           response
         when 423
           raise SomeCustomExceptionIfYouWant
@@ -61,7 +62,7 @@ class P2PMResource < GenericResource
           response.return!(&block)
       end
     }
-    puts response
+    #puts response
     parsed = JSON.parse(response)
     security_token = parsed['access_token']
     security_token

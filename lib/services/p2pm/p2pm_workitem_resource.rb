@@ -24,7 +24,7 @@ class P2PMWorkItemResource < P2PMResource
     #response = http_patch url, body.to_json, my_header
     response = RestClient.post url, body.to_json, my_header { |response, request, result, &block|
       case response.code
-        when 200
+        when 201
           p "It worked !"
           response
         when 423

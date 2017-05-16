@@ -1,13 +1,7 @@
 class P2PMFeatureMappingResource < P2PMResource
 
   def create table, aha_feature
-    body = {
-      "System.Title" => aha_feature.name || "Untitled feature",
-      "System.Description" => description_or_default(aha_feature.description.body),
-      "System.AreaPath" => @service.data.area
-    }
-    
-    puts aha_feature
+   
     body = {
       "REPRO_STEPS" => get_custom_field_value(aha_feature,"bug_repro_steps"),
       "SEVERITY" => get_custom_field_value(aha_feature,"bug_severigy"),
