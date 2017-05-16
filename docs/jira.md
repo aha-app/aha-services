@@ -92,16 +92,17 @@ This integration works with both the cloud and on premise versions of JIRA. If y
 
 Please carefully follow these instructions to ensure that the integration is properly configured.
 
-1. Configure the Server URL, Username and Password below. Click the _Test connection_ button
-2. After a short delay, you will be able to choose the Project the issues will be created in.
-3. Select the JIRA project you wish to connect to and click _Load project data_.
-4. Map how you want new features to show up in JIRA and how the JIRA status fields should map to Aha!
-5. Copy the Webhook URL below, this step is required for the integration to be bi-directional.
-6. In JIRA, navigate to System Settings -> WebHooks.
-7. Create a new Webhook in JIRA and paste in the Webhook URL that you copied from step #5. Check the boxes for all _Worklog_ and _Issue_ events, do not check the box for _Exclude body._
-8. Save the Webhook.
-9. Enable the integration in Aha!
-10. Test the integration by going to one of your features in Aha! and using the _Send to JIRA_ item in the _Actions_ menu on the features page. You should then look at your project in JIRA and see that the feature (and any requirements) were properly created.
+1. Configure the Server URL, Username and Password below. After May 2017 [you may need to use your email address rather than username](https://confluence.atlassian.com/cloud/the-upgrade-to-atlassian-account-873871204.html#TheupgradetoAtlassianaccount-RESTAPIs) if you are using JIRA Cloud. In this case your email address must be verified in JIRA for the integration to work.
+2. Click the _Test connection_ button
+3. After a short delay, you will be able to choose the Project the issues will be created in.
+4. Select the JIRA project you wish to connect to and click _Load project data_.
+5. Map how you want new features to show up in JIRA and how the JIRA status fields should map to Aha!
+6. Copy the Webhook URL below, this step is required for the integration to be bi-directional.
+7. In JIRA, navigate to System Settings -> WebHooks.
+8. Create a new Webhook in JIRA and paste in the Webhook URL that you copied from step #5. Check the boxes for all _Worklog_ and _Issue_ events, do not check the box for _Exclude body._
+9. Save the Webhook.
+10. Enable the integration in Aha!
+11. Test the integration by going to one of your features in Aha! and using the _Send to JIRA_ item in the _Actions_ menu on the features page. You should then look at your project in JIRA and see that the feature (and any requirements) were properly created.
 
 ## Troubleshooting
 
