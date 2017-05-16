@@ -66,13 +66,13 @@ class P2PMFeatureMappingResource < P2PMResource
     #   }
     # end
     # update the feature
-    workitem_resource.update workitem.id, patch_set, table
+    workitem_resource.update workitem["rows"][0]["id"], patch_set, table
     # update associated requirements
-    aha_feature.requirements.each do |requirement|
-      requirement_mapping_resource.create_or_update(@service.data.project, workitem, requirement)
-    end
+    # aha_feature.requirements.each do |requirement|
+    #   requirement_mapping_resource.create_or_update(@service.data.project, workitem, requirement)
+    # end
     # Add new attachments
-    create_attachments(workitem, (aha_feature.attachments | aha_feature.description.attachments))
+    #create_attachments(workitem, (aha_feature.attachments | aha_feature.description.attachments))
   end
 
   def update_aha_feature aha_feature, workitem
