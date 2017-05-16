@@ -10,7 +10,7 @@ class P2PMWorkItemResource < P2PMResource
   end
 
   # Get the ProcessMaker TFS_DATA record by the ID.
-  def by_id id, table
+  def by_id id, table, sec_token
     http.headers["Authorization"] = "Bearer " + sec_token
     url = @service.data.data_url + "/api/1.0/workflow/pmtable/"+ table + '/data?q={"where": {"ID": ' + id+ '}}'
     by_url url
