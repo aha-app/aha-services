@@ -28,7 +28,7 @@ class P2PMFeatureMappingResource < P2PMResource
       "OWNER" => get_custom_field_value(aha_feature,"salesforce_case_owner"),
       "SALESFORCE_ID" => get_custom_field_value(aha_feature,"salesforce_id"),
       "AHA_ID" => aha_feature.reference_num,
-      "DEV_MANABGER" => dev_manager
+      "DEV_MANAGER" => dev_manager
     }
     #add_default_fields(body)
     
