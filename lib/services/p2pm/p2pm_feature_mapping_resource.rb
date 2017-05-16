@@ -12,6 +12,7 @@ class P2PMFeatureMappingResource < P2PMResource
       parsed = JSON.parse(body)
       puts parsed
       parsed.each do |rows|
+        puts rows
         dev_manager = rows["name"]
       end
     end    
