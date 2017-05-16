@@ -61,7 +61,7 @@ class P2PMWorkItemResource < P2PMResource
     body = patch_set.to_json
     url = @service.data.data_url + "/api/1.0/workflow/pmtable/" + table + "/data"
     bearer = 'Bearer ' + sec_token
-    response = http_put url, body, { 'Content-Type'=> 'application/json-patch+json', 'Authorization' => bearer }
+    response = http_put url, body, { 'Content-Type'=> 'application/json', 'Authorization' => bearer }
     process_response response
   end
 
