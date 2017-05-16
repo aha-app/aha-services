@@ -17,6 +17,27 @@ class P2PMResource < GenericResource
     @@default_http_options
   end
 
+def process_RestClient_response(response, *success_codes, &block)
+    success_codes = [200, 201] if success_codes == []
+    if success_codes.include?(response.code)
+      if block_given?
+        yield hashie_or_array_of_hashies(response.body)
+      else
+        return hashie_or_array_of_hashies(response.body)
+      end
+    elsif response.code == 404
+      msg = parse(response.body)
+      raise AhaService::RemoteError, "Remote resource was not found: #{msg['message']}"
+    elsif response.code == 400
+      msg = parse(response.body)
+      raise AhaService::RemoteError, "The request was not valid: #{msg['message']}"
+    elsif [403, 401].include?(response.code)
+      raise_config_error "The API key is invalid or has insufficent rights."
+    else
+      raise AhaService::RemoteError, "Unhandled error: STATUS=#{response.code} BODY=#{response.body}"
+    end
+  end
+
   def process_response(response, *success_codes, &block)
     success_codes = [200] if success_codes == []
     if success_codes.include?(response.status)
