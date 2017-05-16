@@ -22,7 +22,7 @@ class P2PMWorkItemResource < P2PMResource
     logger.debug "Sending request to #{url}\nBody: #{body}\n"
     bearer = 'Bearer ' + security_token
     #response = http_patch url, body.to_json, my_header
-    response = RestClient.post url, body.to_json, { :Authorization => bearer } { |response, request, result, &block|
+    response = RestClient.post url, body.to_json, { content_type: :json,:Authorization => bearer } { |response, request, result, &block|
       puts request.headers
       puts request.url
       puts request.body
