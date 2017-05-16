@@ -23,7 +23,7 @@ class P2PMWorkItemResource < P2PMResource
     bearer = 'Bearer ' + security_token
     #response = http_patch url, body.to_json, my_header
     response = RestClient.post url, body.to_json, { :Authorization => bearer } { |response, request, result, &block|
-      puts request
+      puts request.headers
       puts response
       puts result
       case response.code
@@ -33,6 +33,7 @@ class P2PMWorkItemResource < P2PMResource
         when 423
           raise SomeCustomExceptionIfYouWant
         else
+          RestClient::
           response.return!(&block)
       end
     }
