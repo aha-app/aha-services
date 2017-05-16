@@ -7,7 +7,7 @@ class P2PMFeatureMappingResource < P2PMResource
     dev_id = get_table_id("PMT_TFS_DEV_MANAGER", sec_token)
     puts dev_id
     http.headers["Authorization"] = "Bearer " + sec_token
-    response = http_get @service.data.server_url + "/api/1.0/workflow/pmtable/"+ dev_id + 'data?q={"where": {"product": "P2 ProShield"}}'
+    response = http_get @service.data.data_url + "/api/1.0/workflow/pmtable/"+ dev_id + 'data?q={"where": {"product": "P2 ProShield"}}'
     process_response response do |body|
       parsed = JSON.parse(body)
       puts parsed

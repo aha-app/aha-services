@@ -17,7 +17,8 @@ class P2PMWorkItemResource < P2PMResource
   def create table, body, security_token
     #body = (to_field_patch_array(fields) + to_relation_patch_array(links) ).to_json
     http.headers["Authorization"] = "Bearer " + security_token
-    url = "http://52.39.212.230:8080/api/1.0/workflow/pmtable/" + table + "/data"
+    #url = "http://52.39.212.230:8080/api/1.0/workflow/pmtable/" + table + "/data"
+    url = @service.data.data_url + "/api/1.0/workflow/pmtable/" + table + "/data"
     #url = mstfs_project_url project, "wit/workitems/$" + ERB::Util.url_encode(type)
     logger.debug "Sending request to #{url}\nBody: #{body}\n"
     bearer = 'Bearer ' + security_token
