@@ -28,7 +28,8 @@ class P2PMFeatureMappingResource < P2PMResource
       "OWNER" => get_custom_field_value(aha_feature,"salesforce_case_owner"),
       "SALESFORCE_ID" => get_custom_field_value(aha_feature,"salesforce_id"),
       "AHA_ID" => aha_feature.reference_num,
-      "DEV_MANAGER" => dev_manager
+      "DEV_MANAGER" => dev_manager,
+      "TITLE" => aha_feature.name
     }
     #add_default_fields(body)
     
@@ -45,26 +46,25 @@ class P2PMFeatureMappingResource < P2PMResource
     return created_workitem
   end
 
-  def update workitem_id, aha_feature
-    workitem = workitem_resource.by_id workitem_id
+  def update workitem_id, aha_feature, table
+    workitem = workitem_resource.by_id workitem_id, table
     # determine changes
     patch_set = []
-    if workitem.fields["System.Title"] != aha_feature.name then
-      patch_set << {
-        :op => :replace,
-        :path => "/fields/System.Title",
-        :value => aha_feature.name
+    if workitem.fields["TITLE"] != aha_feature.name then
+      patch_set << { 
+        "ID" => workitem_id,
+        "TITLE" => aha_feature.name
       }
     end
-    if workitem.fields["System.Description"] != aha_feature.description.body then
-      patch_set << {
-        :op => :replace,
-        :path => "/fields/System.Description",
-        :value => aha_feature.description.body
-      }
-    end
+    # if workitem.fields["System.Description"] != aha_feature.description.body then
+    #   patch_set << {
+    #     :op => :replace,
+    #     :path => "/fields/System.Description",
+    #     :value => aha_feature.description.body
+    #   }
+    # end
     # update the feature
-    workitem_resource.update workitem.id, patch_set
+    workitem_resource.update workitem.id, patch_set, table
     # update associated requirements
     aha_feature.requirements.each do |requirement|
       requirement_mapping_resource.create_or_update(@service.data.project, workitem, requirement)

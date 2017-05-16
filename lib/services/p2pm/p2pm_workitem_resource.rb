@@ -9,8 +9,10 @@ class P2PMWorkItemResource < P2PMResource
     process_response response
   end
 
-  def by_id id
-    url = mstfs_url "wit/workitems/#{id}?$expand=all"
+  # Get the ProcessMaker TFS_DATA record by the ID.
+  def by_id id, table
+    http.headers["Authorization"] = "Bearer " + sec_token
+    url = @service.data.data_url + "/api/1.0/workflow/pmtable/"+ table + '/data?q={"where": {"ID": ' + id+ '}}'
     by_url url
   end
 
@@ -57,8 +59,8 @@ class P2PMWorkItemResource < P2PMResource
   def update workitem_id, patch_set
     return if patch_set.length == 0
     body = patch_set.to_json
-    url = mstfs_url "wit/workitems/#{workitem_id}"
-    response = http_patch url, body, PATCH_HEADER
+    url = @service.data.data_url "/api/1.0/workflow/pmtable/" + table + "/data"
+    response = http_put url, body, PATCH_HEADER
     process_response response
   end
 
