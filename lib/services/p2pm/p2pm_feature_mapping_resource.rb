@@ -130,7 +130,7 @@ protected
       
       tables = Hashie::Mash.new
       parsed = JSON.parse(body)
-      
+      table_id = nil
       parsed.each do |table|
         if table['pmt_tab_name'] == table_name
           table_id = table['pmt_uid']
