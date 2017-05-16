@@ -125,7 +125,7 @@ protected
 
   def get_table_id(table_name, sec_token)
     http.headers["Authorization"] = "Bearer " + sec_token
-    response = http_get @service.data.server_url + "/api/1.0/workflow/pmtable"
+    response = http_get @service.data.data_url + "/api/1.0/workflow/pmtable"
     process_response response do |body|
       
       tables = Hashie::Mash.new
