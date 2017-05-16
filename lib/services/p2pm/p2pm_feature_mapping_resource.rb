@@ -13,6 +13,7 @@ class P2PMFeatureMappingResource < P2PMResource
       puts parsed
       parsed.each do |rows|
         puts rows
+        puts rows["name"]
         dev_manager = rows["name"]
       end
     end    
