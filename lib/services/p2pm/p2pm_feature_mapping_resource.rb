@@ -12,7 +12,6 @@ class P2PMFeatureMappingResource < P2PMResource
       parsed = JSON.parse(body)
       logger.debug "Body: #{body}\n"
       logger.debug "Parsed body: #{parsed}\n"
-      puts parsed[0][1]
       parsed.each do |cell|
         puts cell
         #logger.debug "rows: #{rows}\n"
