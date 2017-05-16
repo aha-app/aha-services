@@ -1,0 +1,92 @@
+#<Hashie::Mash 
+assigned_to_user=nil 
+attachments=[] 
+comments_count=0 
+created_at="2017-03-15T05:30:01.502Z" 
+created_by_user=#<Hashie::Mash created_at="2016-06-22T17:41:01.338Z" email="p2ahaadmin@p2energysolutions.com" id="6299073172345110648" name="P2 AhaAdmin" updated_at="2017-03-24T21:16:30.312Z"> 
+custom_fields=[
+    #<Hashie::Mash
+        key="customer_priority" 
+        name="Customer Priority" 
+        type="string" 
+        value="Medium"
+    >, 
+    #<Hashie::Mash 
+        key="bug_severity" 
+        name="Bug Severity" 
+        type="string" 
+        value="3 - Medium"
+    >, 
+    #<Hashie::Mash 
+        key="customer" 
+        name="Customer" 
+        type="string" 
+        value="Beaverbrook Lords"
+    >, 
+    #<Hashie::Mash
+        attachments=[] 
+        body="<h1>Don&#39;t underestimate the Force.</h1><p>You&#39;re all clear, kid. Let&#39;s blow this thing and go home! I don&#39;t know what you&#39;re talking about. I am a member of the Imperial Senate on a diplomatic mission to Alderaan-- The more you tighten your grip, Tarkin, the more star systems will slip through your fingers.</p><p>You mean it controls your actions? Ye-ha! I suggest you try it again, Luke. This time, let go your conscious self and act on instinct. Oh God, my uncle. How am I ever gonna explain this? <b>I need your help, Luke.</b><i> She needs your help.</i> I&#39;m getting too old for this sort of thing.</p><h2>Kid, I&#39;ve flown from one side of this galaxy to the other. I&#39;ve seen a lot of strange stuff, but I&#39;ve never seen anything to make me believe there&#39;s one all-powerful Force controlling everything. There&#39;s no mystical energy field that controls my destiny. It&#39;s all a lot of simple tricks and nonsense.</h2><p>But with the blast shield down, I can&#39;t even see! How am I supposed to fight? The Force is strong with this one. I have you now. I&#39;m surprised you had the courage to take the responsibility yourself. Escape is not his plan. I must face him, alone.</p><ol><li>Escape is not his plan. I must face him, alone.</li><li>Kid, I&#39;ve flown from one side of this galaxy to the other. I&#39;ve seen a lot of strange stuff, but I&#39;ve never seen anything to make me believe there&#39;s one all-powerful Force controlling everything. There&#39;s no mystical energy field that controls my destiny. It&#39;s all a lot of simple tricks and nonsense.</li><li>Ye-ha!</li></ol><h3>You&#39;re all clear, kid. Let&#39;s blow this thing and go home!</h3>" 
+        created_at="2017-03-15T05:30:01.893Z" 
+        id="6397593454713336259" 
+        key="bug_repro_steps" 
+        name="Bug Repro Steps" 
+        type="note" 
+        value="<h1>Don't underestimate the Force.</h1><p>You're all clear, kid. Let's blow this thing and go home! I don't know what you're talking about. I am a member of the Imperial Senate on a diplomatic mission to Alderaan-- The more you tighten your grip, Tarkin, the more star systems will slip through your fingers.</p><p>You mean it controls your actions? Ye-ha! I suggest you try it again, Luke. This time, let go your conscious self and act on instinct. Oh God, my uncle. How am I ever gonna explain this? <b>I need your help, Luke.</b><i> She needs your help.</i> I'm getting too old for this sort of thing.</p><h2>Kid, I've flown from one side of this galaxy to the other. I've seen a lot of strange stuff, but I've never seen anything to make me believe there's one all-powerful Force controlling everything. There's no mystical energy field that controls my destiny. It's all a lot of simple tricks and nonsense.</h2><p>But with the blast shield down, I can't even see! How am I supposed to fight? The Force is strong with this one. I have you now. I'm surprised you had the courage to take the responsibility yourself. Escape is not his plan. I must face him, alone.</p><ol>\n<li>Escape is not his plan. I must face him, alone.</li>\n<li>Kid, I've flown from one side of this galaxy to the other. I've seen a lot of strange stuff, but I've never seen anything to make me believe there's one all-powerful Force controlling everything. There's no mystical energy field that controls my destiny. It's all a lot of simple tricks and nonsense.</li>\n<li>Ye-ha!</li>\n</ol><h3>You're all clear, kid. Let's blow this thing and go home!</h3>"
+    >, 
+    #<Hashie::Mash 
+        key="salesforce_id" 
+        name="Salesforce ID" 
+        type="string" 
+        value="00343192"
+    >
+] 
+description=#<Hashie::Mash attachments=[] body="" created_at="2017-03-15T05:30:02.030Z" id="6397593455293888215"> 
+due_date=nil 
+feature_links=[] 
+goals=[] 
+id="6397593453041834223" 
+integration_fields=[] 
+name="00343192 - Testing the Aha Interface" 
+position=1 
+reference_num="SHIELD-64" 
+release=#<Hashie::Mash 
+    created_at="2016-06-24T15:43:42.744Z" 
+    id="6299785111907674985" 
+    integration_fields=[] 
+    name="Parking Lot" 
+    owner=#<Hashie::Mash
+        created_at="2016-06-22T17:25:24.973Z" 
+        email="eschneider@p2es.com" 
+        id="6299069149710915505" 
+        name="Erik Schneider" 
+        updated_at="2017-05-12T18:09:58.897Z"
+    > 
+    parking_lot=true 
+    project=#<Hashie::Mash
+        created_at="2016-06-24T15:43:42.489Z" 
+        id="6299785111899741307" 
+        name="P2 ProShield" 
+        product_line=false 
+        reference_prefix="SHIELD"
+    > 
+    reference_num="SHIELD-R-1" 
+    resource="https://p2platform.aha.io/api/v1/releases/SHIELD-R-1" 
+    url="https://p2platform.aha.io/releases/SHIELD-R-1"> 
+    requirements=[] 
+    resource="https://p2platform.aha.io/api/v1/features/SHIELD-64" 
+    score=0 
+    score_facts=[] 
+    start_date=nil 
+    tags=[] 
+    updated_at="2017-05-16T14:19:57.899Z" 
+    url="https://p2platform.aha.io/features/SHIELD-64" 
+    workflow_kind=#<Hashie::Mash
+         id="6322436160488211114" 
+         name="Research"
+    > 
+    workflow_status=#<Hashie::Mash
+        complete=false 
+        id="6322436160474595418" 
+        name="Under consideration"
+    >
+>

@@ -2,7 +2,20 @@ class P2PMFeatureMappingResource < P2PMResource
 
   def create table, aha_feature
     puts aha_feature
-    
+    # Get List of tables to get the UID of the TFS_DEV_MANAGER table
+    dev_id = get_table_id("PMT_TFS_DEV_MANAGER")
+    puts dev_id
+    sec_token = get_security_token
+    http.headers["Authorization"] = "Bearer " + sec_token
+    response = http_get @service.data.server_url + "/api/1.0/workflow/pmtable/"+ dev_id + 'data?q={"where": {"product": "P2 ProShield"}}'
+    process_response response do |body|
+      
+      parsed = JSON.parse(body)
+      puts parsed
+      dev_manager = body.name
+    end    
+    # Get the DEV_MANGER from the TABLE for the Aha project
+    #http://52.39.212.230:8080/api/1.0/workflow/pmtable/58415494458d0549dd1f0b3088492444/data?q={"where": {"product": "P2 ProShield"}}
     body = {
       "ID" => nil,
       "REPRO_STEPS" => get_custom_field_value(aha_feature,"bug_repro_steps"),
@@ -12,12 +25,12 @@ class P2PMFeatureMappingResource < P2PMResource
       "CUSTOMER_PRIORITY" => get_custom_field_value(aha_feature,"customer_priority"),
       "OWNER" => get_custom_field_value(aha_feature,"salesforce_case_owner"),
       "SALESFORCE_ID" => get_custom_field_value(aha_feature,"salesforce_id"),
-      "AHA_ID" => aha_feature.reference_num
+      "AHA_ID" => aha_feature.reference_num,
+      "DEV_MANABGER" => dev_manager
     }
     #add_default_fields(body)
     
     # create new workitem in TFS
-    sec_token = get_security_token
     created_workitem = workitem_resource.create table, body, sec_token
     # add integration field to workitem in aha
     #api.create_integration_fields("features", aha_feature.reference_num, @service.data.integration_id, {id: created_workitem.id, url: created_workitem._links.html.href})
@@ -110,5 +123,23 @@ protected
       nil
     end
   end
+
+  def get_table_id(table_name)
+    sec_token = get_security_token
+    http.headers["Authorization"] = "Bearer " + sec_token
+    response = http_get @service.data.server_url + "/api/1.0/workflow/pmtable"
+    process_response response do |body|
+      
+      tables = Hashie::Mash.new
+      parsed = JSON.parse(body)
+      
+      parsed.each do |table|
+        if table['pmt_tab_name'] == table_name
+          table_id = table['pmt_uid']
+        end
+      end
+      table_id
+    end
+
 
 end
