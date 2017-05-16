@@ -3,6 +3,7 @@ class P2PMFeatureMappingResource < P2PMResource
   def create table, aha_feature
    
     body = {
+      "ID" => nil,
       "REPRO_STEPS" => get_custom_field_value(aha_feature,"bug_repro_steps"),
       "SEVERITY" => get_custom_field_value(aha_feature,"bug_severigy"),
       "VERSION_FOUND_IN" => get_custom_field_value(aha_feature,"bug_version_found_in"),
