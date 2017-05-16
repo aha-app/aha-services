@@ -7,18 +7,15 @@ class P2PMFeatureMappingResource < P2PMResource
       "System.AreaPath" => @service.data.area
     }
     
-    puts aha_feature.custom_fields
-    field = aha_feature.custom_fields.find {|field| field['key'] == "bug_severity"}
-    puts field
-    puts field.value
+    puts aha_feature
     body = {
-      "REPRO_STEPS" => aha_feature.custom_fields.bug_repro_steps,
-      "SEVERITY" => aha_feature.bug_severity,
-      "VERSION_FOUND_IN" => aha_feature.bug_version_found_in,
-      "CUSTOMER" => aha_feature.customer,
-      "CUSTOMER_PRIORITY" => aha_feature.customer_priority,
-      "OWNER" => aha_feature.salesforce_case_owner,
-      "SALESFORCE_ID" => aha_feature.salesforce_id,
+      "REPRO_STEPS" => get_custom_field_value(aha_feature,"bug_repro_steps",
+      "SEVERITY" => get_custom_field_value(aha_feature,"bug_severigy"),
+      "VERSION_FOUND_IN" => get_custom_field_value(aha_feature,"bug_version_found_in"),
+      "CUSTOMER" => get_custom_field_value(aha_feature,"customer"),
+      "CUSTOMER_PRIORITY" => get_custom_field_value(aha_feature,"customer_priority"),
+      "OWNER" => get_custom_field_value(aha_feature,"salesforce_case_owner"),
+      "SALESFORCE_ID" => get_custom_field_value(aha_feature,"salesforce_id"),
       "AHA_ID" => aha_feature.reference_num
     }
     #add_default_fields(body)
@@ -109,5 +106,12 @@ protected
     @workitem_resource ||= P2PMWorkItemResource.new(@service)
   end
 
-end
+  def get_custom_field_value(resource, key)
+    field = aha_feature.custom_fields.find {|field| field['key'] == key}
+    if field
+      field.value
+    else
+      nil
+    end
+  end
 
