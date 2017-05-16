@@ -32,6 +32,7 @@ class P2PMWorkItemResource < P2PMResource
         else
           response.return!(&block)
       end
+    }
     process_response response
   end
 
