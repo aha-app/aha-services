@@ -53,10 +53,7 @@ class P2PMFeatureMappingResource < P2PMResource
     # determine changes
     patch_set = []
     if workitem["rows"][0]["title"] != aha_feature.name then
-      patch_set << { 
-        "ID" => workitem_id,
-        "TITLE" => aha_feature.name
-      }
+      patch_set ='{"ID":"' + workitem_id +'","TITLE":"' + aha_feature.name + '"}'
     end
     puts patch_set
     patch_json = patch_set.to_json
