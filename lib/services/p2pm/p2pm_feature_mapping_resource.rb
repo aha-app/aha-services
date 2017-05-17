@@ -16,7 +16,7 @@ class P2PMFeatureMappingResource < P2PMResource
       dev_manager = parsed["rows"][0]["name"]
     end    
     puts dev_manager
-    puts @service.data.project
+    puts aha_feature.project
     # Get the DEV_MANGER from the TABLE for the Aha project
     #http://52.39.212.230:8080/api/1.0/workflow/pmtable/58415494458d0549dd1f0b3088492444/data?q={"where": {"product": "P2 ProShield"}}
     body = {
