@@ -59,6 +59,7 @@ class P2PMFeatureMappingResource < P2PMResource
       }
     end
     puts patch_set
+    patch_json = patch_set.to_json
     # if workitem.fields["System.Description"] != aha_feature.description.body then
     #   patch_set << {
     #     :op => :replace,
