@@ -32,7 +32,7 @@ class AhaServices::GitlabIssues < AhaService
     if data.server_url.present?
       data.server_url
     else
-      'https://www.gitlab.com/api/v3'
+      'https://gitlab.com/api/v3'
     end
   end
 
