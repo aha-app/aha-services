@@ -16,36 +16,39 @@ class P2PMFeatureMappingResource < P2PMResource
       dev_manager = parsed["rows"][0]["name"]
     end    
     puts dev_manager
+    puts aha_feature.workflow_kind.name
     puts aha_feature.release.project.name
-    # Get the DEV_MANGER from the TABLE for the Aha project
-    #http://52.39.212.230:8080/api/1.0/workflow/pmtable/58415494458d0549dd1f0b3088492444/data?q={"where": {"product": "P2 ProShield"}}
-    body = {
-      "ID" => nil,
-      "REPRO_STEPS" => get_custom_field_value(aha_feature,"bug_repro_steps"),
-      "SEVERITY" => get_custom_field_value(aha_feature,"bug_severigy"),
-      "VERSION_FOUND_IN" => get_custom_field_value(aha_feature,"bug_version_found_in"),
-      "CUSTOMER" => get_custom_field_value(aha_feature,"customer"),
-      "CUSTOMER_PRIORITY" => get_custom_field_value(aha_feature,"customer_priority"),
-      "OWNER" => get_custom_field_value(aha_feature,"salesforce_case_owner"),
-      "SALESFORCE_ID" => get_custom_field_value(aha_feature,"salesforce_id"),
-      "AHA_ID" => aha_feature.reference_num,
-      "DEV_MANAGER" => dev_manager,
-      "TITLE" => aha_feature.name,
-      "PRODUCT" => aha_feature.release.project.name
-    }
-    #add_default_fields(body)
-    
-    # create new workitem in TFS
-    created_workitem = workitem_resource.create table, body, sec_token
+    if aha_feature.workflow_kind.name == 'Bug Fix'
+      # Get the DEV_MANGER from the TABLE for the Aha project
+      #http://52.39.212.230:8080/api/1.0/workflow/pmtable/58415494458d0549dd1f0b3088492444/data?q={"where": {"product": "P2 ProShield"}}
+      body = {
+        "ID" => nil,
+        "REPRO_STEPS" => get_custom_field_value(aha_feature,"bug_repro_steps"),
+        "SEVERITY" => get_custom_field_value(aha_feature,"bug_severigy"),
+        "VERSION_FOUND_IN" => get_custom_field_value(aha_feature,"bug_version_found_in"),
+        "CUSTOMER" => get_custom_field_value(aha_feature,"customer"),
+        "CUSTOMER_PRIORITY" => get_custom_field_value(aha_feature,"customer_priority"),
+        "OWNER" => get_custom_field_value(aha_feature,"salesforce_case_owner"),
+        "SALESFORCE_ID" => get_custom_field_value(aha_feature,"salesforce_id"),
+        "AHA_ID" => aha_feature.reference_num,
+        "DEV_MANAGER" => dev_manager,
+        "TITLE" => aha_feature.name,
+        "PRODUCT" => aha_feature.release.project.name
+      }
+      #add_default_fields(body)
+      
+      # create new workitem in TFS
+      created_workitem = workitem_resource.create table, body, sec_token
 
-    puts created_workitem
-    # add integration field to workitem in aha
-    api.create_integration_fields("features", aha_feature.reference_num, @service.data.integration_id, {id: created_workitem.id})
-    # create a workitem in TFS for each requirement
-    #create_and_link_requirements project, created_workitem, aha_feature.requirements
-    # upload all attachments to TFS and link them to the workitem
-    #create_attachments created_workitem, (aha_feature.attachments | aha_feature.description.attachments)
-    return created_workitem
+      puts created_workitem
+      # add integration field to workitem in aha
+      api.create_integration_fields("features", aha_feature.reference_num, @service.data.integration_id, {id: created_workitem.id})
+      # create a workitem in TFS for each requirement
+      #create_and_link_requirements project, created_workitem, aha_feature.requirements
+      # upload all attachments to TFS and link them to the workitem
+      #create_attachments created_workitem, (aha_feature.attachments | aha_feature.description.attachments)
+      return created_workitem
+    end
   end
 
   def update workitem_id, aha_feature, table
