@@ -52,6 +52,7 @@ class P2PMFeatureMappingResource < P2PMResource
   end
 
   def update workitem_id, aha_feature, table
+    puts aha_feature.workflow_kind.name
     if aha_feature.workflow_kind.name == 'Bug Fix'
       sec_token = get_security_token
       workitem = workitem_resource.by_id workitem_id, table, sec_token
