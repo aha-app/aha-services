@@ -52,30 +52,32 @@ class P2PMFeatureMappingResource < P2PMResource
   end
 
   def update workitem_id, aha_feature, table
-    sec_token = get_security_token
-    workitem = workitem_resource.by_id workitem_id, table, sec_token
-    puts workitem["rows"][0]["title"]
-    # determine changes
-    patch_set = []
-    if workitem["rows"][0]["title"] != aha_feature.name then
-      patch_set ='{"ID":"' + workitem_id +'","TITLE":"' + aha_feature.name + '"}'
+    if aha_feature.workflow_kind.name == 'Bug Fix'
+      sec_token = get_security_token
+      workitem = workitem_resource.by_id workitem_id, table, sec_token
+      puts workitem["rows"][0]["title"]
+      # determine changes
+      patch_set = []
+      if workitem["rows"][0]["title"] != aha_feature.name then
+        patch_set ='{"ID":"' + workitem_id +'","TITLE":"' + aha_feature.name + '"}'
+      end
+      puts patch_set
+      # if workitem.fields["System.Description"] != aha_feature.description.body then
+      #   patch_set << {
+      #     :op => :replace,
+      #     :path => "/fields/System.Description",
+      #     :value => aha_feature.description.body
+      #   }
+      # end
+      # update the feature
+      workitem_resource.update workitem["rows"][0]["id"], patch_set, table, sec_token
+      # update associated requirements
+      # aha_feature.requirements.each do |requirement|
+      #   requirement_mapping_resource.create_or_update(@service.data.project, workitem, requirement)
+      # end
+      # Add new attachments
+      #create_attachments(workitem, (aha_feature.attachments | aha_feature.description.attachments))
     end
-    puts patch_set
-    # if workitem.fields["System.Description"] != aha_feature.description.body then
-    #   patch_set << {
-    #     :op => :replace,
-    #     :path => "/fields/System.Description",
-    #     :value => aha_feature.description.body
-    #   }
-    # end
-    # update the feature
-    workitem_resource.update workitem["rows"][0]["id"], patch_set, table, sec_token
-    # update associated requirements
-    # aha_feature.requirements.each do |requirement|
-    #   requirement_mapping_resource.create_or_update(@service.data.project, workitem, requirement)
-    # end
-    # Add new attachments
-    #create_attachments(workitem, (aha_feature.attachments | aha_feature.description.attachments))
   end
 
   def update_aha_feature aha_feature, workitem
