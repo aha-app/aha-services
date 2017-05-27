@@ -18,14 +18,14 @@ You need to be Product Owner in Aha! to set up this integration.
 To configure this integration, first configure your Visual Studio Team Services account.
 
 1. Open your account dropdown (usually identified by your first initial or profile image) in the top right of the page and choose the _Security_.
-2. Select _Alternate authentication credentials_.
-3. Check the box next to _Enable alternate authentication credentials_.
-4. Add a _User name (secondary)_ and a _Password_. This credential will be used with Aha! (not your normal login credential).
+2. Select _Personal access tokens_.
+3. Add a new access token with scopes: Project and team (read), Work items (read and write).
+4. Save the token value which is generated.
 
 Next create the integration in Aha!
 
 1. Enter the account name of your Visual Studio Team Services account. It is equal to the subdomain of your Visual Studio Team Services account.
-2. Enter the alternate credentials you created in Visual Studio Team Services.
+2. Enter the personal access token you created in Visual Studio Team Services.
 3. Click the _Test connection_ button.
 4. On success, you should be able to choose a project from Visual Studio Team Services. You also must select an area of this project where features and requirements should be created.
 5. Select the workitemtype to which features should be mapped. Then select for each VSTS state to which Aha! workflow status it should be mapped.
