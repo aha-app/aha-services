@@ -192,6 +192,8 @@ protected
       task_id = nil
       parsed.each do |task|
         logger.debug "\ntask: #{task}\n"
+        x = task["diagrams"][0]
+        logger.debug "\ndiagrams #{x}\n"
         #if task["diagrams"][0]["activities"][0]["act_name"] == "Approve Bug"
         #  task_id = task["diagrams"][0]["activities"][0]["act_uid"]
         #end
