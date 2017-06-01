@@ -190,6 +190,7 @@ protected
       parsed = JSON.parse(body)
       task_id = nil
       parsed.each do |task|
+        puts task
         if task["diagrams"][0]["activities"][0]["act_name"] == "Approve Bug"
           task_id = task["diagrams"][0]["activities"][0]["act_uid"]
         end
