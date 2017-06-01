@@ -43,7 +43,7 @@ class P2PMWorkItemResource < P2PMResource
   def create_case aha_feature, security_token
     logger.debug "Creating case for #{aha_feature.reference_num}\n"
     projid = get_projectid security_token
-    logger.debug "PM Project ID: #{prodid}"
+    logger.debug "PM Project ID: #{projid}"
     userid = get_userid security_token
     logger.debug "PM User ID: #{userid}"
     taskid = get_taskid projid, security_token
