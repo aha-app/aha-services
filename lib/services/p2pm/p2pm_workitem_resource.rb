@@ -59,7 +59,8 @@ class P2PMWorkItemResource < P2PMResource
 			    "title" => aha_feature.name,
 			    "type" => aha_feature.workflow_kind.name
 		    }
-      }
+      ]
+    }
     #body = (to_field_patch_array(fields) + to_relation_patch_array(links) ).to_json
     http.headers["Authorization"] = "Bearer " + security_token
     #url = "http://52.39.212.230:8080/api/1.0/workflow/pmtable/" + table + "/data"
