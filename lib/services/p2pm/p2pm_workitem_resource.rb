@@ -189,10 +189,9 @@ protected
       tasks = Hashie::Mash.new
       parsed = JSON.parse(body)
       logger.debug "\nbody: #{body}\n"
-      logger.debug 
       task_id = nil
       parsed.each do |task|
-        logger.debug "task: #{task}\n"
+        logger.debug "\ntask: #{task}\n"
         #if task["diagrams"][0]["activities"][0]["act_name"] == "Approve Bug"
         #  task_id = task["diagrams"][0]["activities"][0]["act_uid"]
         #end
