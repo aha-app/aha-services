@@ -193,6 +193,8 @@ protected
       logger.debug "\ndiagrams #{x}\n"
       y = x["activities"][0]
       logger.debug "\nactivities #{y}\n"
+      logger.debug "\nact_name: #{y.act_name}\n"
+      logger.debug "\nact_uid:  #{y.act_uid}\n"
       task_id = nil
       parsed.each do |task|
         logger.debug "\ntask: #{task}\n"
