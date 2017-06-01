@@ -191,6 +191,8 @@ protected
       logger.debug "\nbody: #{body}\n"
       x = parsed["diagrams"][0]
       logger.debug "\ndiagrams #{x}\n"
+      y = x["activities"][0]
+      logger.debug "\nactivities #{y}\n"
       task_id = nil
       parsed.each do |task|
         logger.debug "\ntask: #{task}\n"
