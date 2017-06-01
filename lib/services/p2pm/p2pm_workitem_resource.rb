@@ -196,8 +196,10 @@ protected
         logger.debug "\nelem: #{elem}\n"
       end
       logger.debug "\nactivities #{y}\n"
-      logger.debug "\nact_name: #{y.act_name}\n"
-      logger.debug "\nact_uid:  #{y.act_uid}\n"
+      z = y["act_name"]
+      logger.debug "\nact_name: #{z}\n"
+      z1 = y["act_uid"]
+      logger.debug "\nact_uid:  #{z1}\n"
       task_id = nil
       parsed.each do |task|
         logger.debug "\ntask: #{task}\n"
