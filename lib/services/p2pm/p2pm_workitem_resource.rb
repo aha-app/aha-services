@@ -188,7 +188,7 @@ protected
       
       tasks = Hashie::Mash.new
       parsed = JSON.parse(body)
-      logger.debug "parsed: #{parsed}\n"
+      logger.debug "\nbody: #{body}\n"
       task_id = nil
       parsed.each do |task|
         logger.debug "task: #{task}\n"
