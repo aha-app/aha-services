@@ -71,7 +71,8 @@ def process_RestClient_response(response, *success_codes, &block)
       'username' => @service.data.user_name,
       'password' => @service.data.user_password
     }
-    
+    logger.debug "URL: #{@service.data.server_url}\n"
+    logger.debug "Body: #{body}\n"
     response = RestClient.post @service.data.server_url, body.to_json, {content_type: :json, accept: :json} { |response, request, result, &block|
       case response.code
         when 200
