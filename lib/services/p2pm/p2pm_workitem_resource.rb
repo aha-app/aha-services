@@ -144,7 +144,7 @@ protected
     end
   end
 
-  def get_projectid security_token
+  def get_projectid sec_token
     logger.debug "In get_projectid"
     http.headers["Authorization"] = "Bearer " + sec_token
     response = http_get @service.data.data_url + "/api/1.0/workflow/project"
@@ -162,7 +162,7 @@ protected
     end
   end
 
-  def get_userid security_token
+  def get_userid sec_token
     logger.debug "In get_userid"
     http.headers["Authorization"] = "Bearer " + sec_token
     response = http_get @service.data.data_url + "/api/1.0/workflow/users"
@@ -180,7 +180,7 @@ protected
     end
   end
   
-  def get_taskid project_id, security_token
+  def get_taskid project_id, sec_token
     logger.debug "In get_taskid"
     http.headers["Authorization"] = "Bearer " + sec_token
     response = http_get @service.data.data_url + "/api/1.0/workflow/project/" + project_id
