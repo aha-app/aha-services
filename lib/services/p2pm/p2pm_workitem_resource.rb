@@ -192,21 +192,12 @@ protected
       x = parsed["diagrams"][0]
       logger.debug "\ndiagrams #{x}\n"
       y = x["activities"][0]
-      y.each do |elem|
-        logger.debug "\nelem: #{elem}\n"
-      end
       logger.debug "\nactivities #{y}\n"
       z = y["act_name"]
       logger.debug "\nact_name: #{z}\n"
       z1 = y["act_uid"]
       logger.debug "\nact_uid:  #{z1}\n"
-      task_id = nil
-      parsed.each do |task|
-        logger.debug "\ntask: #{task}\n"
-        #if task["diagrams"][0]["activities"][0]["act_name"] == "Approve Bug"
-        #  task_id = task["diagrams"][0]["activities"][0]["act_uid"]
-        #end
-      end
+      task_id = z1
       task_id
     end
   end
