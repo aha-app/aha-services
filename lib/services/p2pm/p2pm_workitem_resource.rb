@@ -192,6 +192,9 @@ protected
       x = parsed["diagrams"][0]
       logger.debug "\ndiagrams #{x}\n"
       y = x["activities"][0]
+      y.each do |elem|
+        logger.debug "\nelem: #{elem}\n"
+      end
       logger.debug "\nactivities #{y}\n"
       logger.debug "\nact_name: #{y.act_name}\n"
       logger.debug "\nact_uid:  #{y.act_uid}\n"
