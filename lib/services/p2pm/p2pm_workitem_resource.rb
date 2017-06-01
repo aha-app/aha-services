@@ -41,9 +41,13 @@ class P2PMWorkItemResource < P2PMResource
   end
 
   def create_case aha_feature, security_token
+    logger.debug "Creating case for #{aha_feature.reference_num}\n"
     projid = get_projectid security_token
+    logger.debug "PM Project ID: #{prodid}"
     userid = get_userid security_token
+    logger.debug "PM User ID: #{userid}"
     taskid = get_taskid projid, security_token
+    logger.debug "PM Task ID: #{taskid}"
     body = {
       "pro_uid" => projid,
 	    "usr_uid" => userid,
@@ -84,56 +88,6 @@ class P2PMWorkItemResource < P2PMResource
     process_RestClient_response response
   end
 
-  def get_projectid security_token
-    http.headers["Authorization"] = "Bearer " + sec_token
-    response = http_get @service.data.data_url + "/api/1.0/workflow/project"
-    process_response response do |body|
-      
-      projects = Hashie::Mash.new
-      parsed = JSON.parse(body)
-      project_id = nil
-      parsed.each do |project|
-        if project['prj_name'] == "Aha! to TFS"
-          project_id = project['prj_uid']
-        end
-      end
-      project_id
-    end
-  end
-
-  def get_userid security_token
-    http.headers["Authorization"] = "Bearer " + sec_token
-    response = http_get @service.data.data_url + "/api/1.0/workflow/users"
-    process_response response do |body|
-      
-      users = Hashie::Mash.new
-      parsed = JSON.parse(body)
-      user_id = nil
-      parsed.each do |user|
-        if user['usr_username'] == "pwaller"
-          user_id = user['usr_uid']
-        end
-      end
-      user_id
-    end
-  end
-  
-  def get_taskid project_id, security_token
-    http.headers["Authorization"] = "Bearer " + sec_token
-    response = http_get @service.data.data_url + "/api/1.0/workflow/project/" + project_id
-    process_response response do |body|
-      
-      tasks = Hashie::Mash.new
-      parsed = JSON.parse(body)
-      task_id = nil
-      parsed.each do |task|
-        if task["diagrams"][0]["activities"][0]["act_name"] == "Approve Bug"
-          task_id = task["diagrams"][0]["activities"][0]["act_uid"]
-        end
-      end
-      task_id
-    end
-  end
 
   def add_attachment workitem, attachment, size
     return unless attachment.respond_to? :url
@@ -180,12 +134,67 @@ protected
       }
     end
   end
+
   def get_custom_field_value(resource, key)
     field = resource.custom_fields.find {|field| field['key'] == key}
     if field
       field.value
     else
       nil
+    end
+  end
+
+  def get_projectid security_token
+    logger.debug "In get_projectid"
+    http.headers["Authorization"] = "Bearer " + sec_token
+    response = http_get @service.data.data_url + "/api/1.0/workflow/project"
+    process_response response do |body|
+      
+      projects = Hashie::Mash.new
+      parsed = JSON.parse(body)
+      project_id = nil
+      parsed.each do |project|
+        if project['prj_name'] == "Aha! to TFS"
+          project_id = project['prj_uid']
+        end
+      end
+      project_id
+    end
+  end
+
+  def get_userid security_token
+    logger.debug "In get_userid"
+    http.headers["Authorization"] = "Bearer " + sec_token
+    response = http_get @service.data.data_url + "/api/1.0/workflow/users"
+    process_response response do |body|
+      
+      users = Hashie::Mash.new
+      parsed = JSON.parse(body)
+      user_id = nil
+      parsed.each do |user|
+        if user['usr_username'] == "pwaller"
+          user_id = user['usr_uid']
+        end
+      end
+      user_id
+    end
+  end
+  
+  def get_taskid project_id, security_token
+    logger.debug "In get_taskid"
+    http.headers["Authorization"] = "Bearer " + sec_token
+    response = http_get @service.data.data_url + "/api/1.0/workflow/project/" + project_id
+    process_response response do |body|
+      
+      tasks = Hashie::Mash.new
+      parsed = JSON.parse(body)
+      task_id = nil
+      parsed.each do |task|
+        if task["diagrams"][0]["activities"][0]["act_name"] == "Approve Bug"
+          task_id = task["diagrams"][0]["activities"][0]["act_uid"]
+        end
+      end
+      task_id
     end
   end
 
