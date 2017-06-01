@@ -145,7 +145,7 @@ protected
   end
 
   def get_projectid sec_token
-    logger.debug "In get_projectid"
+    logger.debug "In get_projectid\n"
     http.headers["Authorization"] = "Bearer " + sec_token
     response = http_get @service.data.data_url + "/api/1.0/workflow/project"
     process_response response do |body|
@@ -163,7 +163,7 @@ protected
   end
 
   def get_userid sec_token
-    logger.debug "In get_userid"
+    logger.debug "In get_userid\n"
     http.headers["Authorization"] = "Bearer " + sec_token
     response = http_get @service.data.data_url + "/api/1.0/workflow/users"
     process_response response do |body|
@@ -181,17 +181,17 @@ protected
   end
   
   def get_taskid project_id, sec_token
-    logger.debug "In get_taskid"
+    logger.debug "In get_taskid\n"
     http.headers["Authorization"] = "Bearer " + sec_token
     response = http_get @service.data.data_url + "/api/1.0/workflow/project/" + project_id
     process_response response do |body|
       
       tasks = Hashie::Mash.new
       parsed = JSON.parse(body)
-      logger.debug "parsed: #{parsed}"
+      logger.debug "parsed: #{parsed}\n"
       task_id = nil
       parsed.each do |task|
-        logger.debug "task: #{task}"
+        logger.debug "task: #{task}\n"
         if task["diagrams"][0]["activities"][0]["act_name"] == "Approve Bug"
           task_id = task["diagrams"][0]["activities"][0]["act_uid"]
         end
