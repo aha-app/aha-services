@@ -95,7 +95,6 @@ class P2PMWorkItemResource < P2PMResource
     #url = "http://52.39.212.230:8080/api/1.0/workflow/pmtable/" + table + "/data"
     url = @service.data.data_url + "/api/1.0/workflow/cases/" + app_uid + "/execute-trigger/6970852345931ef3dc4ac54009416704"
     #url = mstfs_project_url project, "wit/workitems/$" + ERB::Util.url_encode(type)
-    logger.debug "Sending request to #{url}\nBody: #{body}\n"
     bearer = 'Bearer ' + security_token
     #response = http_patch url, body.to_json, my_header
     response = http_put url, "", { content_type: :json,:Authorization => bearer } { |response, request, result, &block|
