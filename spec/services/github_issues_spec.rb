@@ -276,7 +276,7 @@ describe AhaServices::GithubIssues do
       end
       it "calls update_issue method" do
         service.should_receive(:update_issue)
-          .with(issue_number, feature)
+          .with(issue_number, feature, mock_milestone)
         service.update_or_attach_github_issue(feature, mock_milestone)
       end
       it "returns the updated issue" do
@@ -385,11 +385,13 @@ describe AhaServices::GithubIssues do
 
   describe "#update_issue" do
     let(:mock_issue) { { number: 42, title: 'Another issue' } }
+    let(:mock_milestone) { { number: 1 } }
+
     it "returns the updated issue" do
       service.stub(:update_labels)
       service.stub(:update_issue_status)
       issue_resource.should_receive(:update).and_return(mock_issue)
-      expect(service.update_issue(42, feature)).to eq mock_issue
+      expect(service.update_issue(42, feature, mock_milestone)).to eq mock_issue
     end
   end
 
