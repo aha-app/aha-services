@@ -40,7 +40,7 @@ class P2PMFeatureMappingResource < P2PMResource
       # create new workitem in TFS
       created_workitem = workitem_resource.create table, body, sec_token
       created_case = workitem_resource.create_case aha_feature, sec_token
-
+      #resp = workitem_resource.update_case sec_token
       puts created_workitem
       # add integration field to workitem in aha
       api.create_integration_fields("features", aha_feature.reference_num, @service.data.integration_id, {id: created_workitem.id})

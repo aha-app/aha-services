@@ -85,6 +85,55 @@ class P2PMWorkItemResource < P2PMResource
           response.return!(&block)
       end
     }
+    logger.debug "respsonse: #{response}"
+    process_RestClient_response response
+  end
+
+  def update_case security_token
+    logger.debug "Creating case for #{aha_feature.reference_num}\n"
+    projid = get_projectid security_token
+    logger.debug "PM Project ID: #{projid}"
+    userid = get_userid security_token
+    logger.debug "PM User ID: #{userid}"
+    taskid = get_taskid projid, security_token
+    logger.debug "PM Task ID: #{taskid}"
+    body = {
+      "pro_uid" => projid,
+	    "usr_uid" => userid,
+	    "tas_uid" => taskid,
+	    "variables" => [
+		    {
+			    "ahaId" => aha_feature.reference_num,
+			    "customer" => get_custom_field_value(aha_feature,"customer"),
+			    "owner" => get_custom_field_value(aha_feature,"salesforce_case_owner"),
+			    "product" => aha_feature.release.project.name,
+			    "reproSteps" => get_custom_field_value(aha_feature,"bug_repro_steps"),
+			    "salesforceId" => get_custom_field_value(aha_feature,"salesforce_id"),
+			    "title" => aha_feature.name,
+			    "type" => aha_feature.workflow_kind.name
+		    }
+      ]
+    }
+    #body = (to_field_patch_array(fields) + to_relation_patch_array(links) ).to_json
+    http.headers["Authorization"] = "Bearer " + security_token
+    #url = "http://52.39.212.230:8080/api/1.0/workflow/pmtable/" + table + "/data"
+    url = @service.data.data_url + "/api/1.0/workflow/cases/impersonate"
+    #url = mstfs_project_url project, "wit/workitems/$" + ERB::Util.url_encode(type)
+    logger.debug "Sending request to #{url}\nBody: #{body}\n"
+    bearer = 'Bearer ' + security_token
+    #response = http_patch url, body.to_json, my_header
+    response = RestClient.post url, body.to_json, { content_type: :json,:Authorization => bearer } { |response, request, result, &block|
+      case response.code
+        when 200
+          p "It worked !"
+          response
+        when 423
+          raise SomeCustomExceptionIfYouWant
+        else
+          RestClient::
+          response.return!(&block)
+      end
+    }
     process_RestClient_response response
   end
 
