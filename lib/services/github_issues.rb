@@ -190,7 +190,7 @@ class AhaServices::GithubIssues < AhaService
 
   def update_or_attach_github_issue(resource, milestone)
     if issue_number = get_integration_field(resource.integration_fields, 'number')
-      update_issue(issue_number, resource)
+      update_issue(issue_number, resource, milestone)
     else
       attach_issue_to(resource, milestone)
     end
@@ -216,10 +216,11 @@ class AhaServices::GithubIssues < AhaService
       .tap { |issue| update_labels(issue, resource) }
   end
 
-  def update_issue(number, resource)
+  def update_issue(number, resource, milestone)
     issue_resource
       .update(number, title: resource_name(resource),
-                      body: issue_body(resource))
+                      body: issue_body(resource),
+                      milestone: milestone['number'])
       .tap { |issue| update_labels(issue, resource) }
       .tap { |issue| update_issue_status(issue, resource)}
   end
