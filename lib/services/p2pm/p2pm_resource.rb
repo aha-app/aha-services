@@ -87,6 +87,7 @@ def process_RestClient_response(response, *success_codes, &block)
     #puts response
     parsed = JSON.parse(response)
     security_token = parsed['access_token']
+    logger.debug "PR access_token = #{security_token}"
     security_token
   end
   
