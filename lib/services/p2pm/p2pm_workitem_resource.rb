@@ -97,7 +97,7 @@ class P2PMWorkItemResource < P2PMResource
     #url = mstfs_project_url project, "wit/workitems/$" + ERB::Util.url_encode(type)
     bearer = 'Bearer ' + security_token
     #response = http_patch url, body.to_json, my_header
-    response = http_put url, "", { content_type: :json,:Authorization => bearer } { |response, request, result, &block|
+    response = http_put url, nil, { content_type: :json,:Authorization => bearer } { |response, request, result, &block|
       case response.code
         when 200
           p "It worked !"
