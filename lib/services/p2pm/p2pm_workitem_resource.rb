@@ -109,7 +109,7 @@ class P2PMWorkItemResource < P2PMResource
           response.return!(&block)
       end
     }
-    process_response response
+    process_RestClient_response response
   end
 
 
