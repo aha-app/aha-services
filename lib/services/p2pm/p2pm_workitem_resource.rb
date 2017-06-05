@@ -85,7 +85,7 @@ class P2PMWorkItemResource < P2PMResource
           response.return!(&block)
       end
     }
-    logger.debug "respsonse: #{response}"
+    logger.debug "response: #{response}"
     process_RestClient_response response
   end
 
@@ -109,6 +109,7 @@ class P2PMWorkItemResource < P2PMResource
           response.return!(&block)
       end
     }
+    logger.debug "response: #{response}"
     process_RestClient_response response
   end
 
