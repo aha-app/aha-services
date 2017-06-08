@@ -55,6 +55,7 @@ class P2PMWorkItemResource < P2PMResource
 	    "variables" => [
 		    {
 			    "ahaId" => aha_feature.reference_num,
+          "ahaGUID" => aha_feature.id,
 			    "customer" => get_custom_field_value(aha_feature,"customer"),
 			    "owner" => get_custom_field_value(aha_feature,"salesforce_case_owner"),
 			    "product" => aha_feature.release.project.name,
