@@ -1,92 +1,91 @@
 #<Hashie::Mash 
 assigned_to_user=nil 
 attachments=[] 
-comments_count=0 
-created_at="2017-03-15T05:30:01.502Z" 
-created_by_user=#<Hashie::Mash created_at="2016-06-22T17:41:01.338Z" email="p2ahaadmin@p2energysolutions.com" id="6299073172345110648" name="P2 AhaAdmin" updated_at="2017-03-24T21:16:30.312Z"> 
-custom_fields=[
-    #<Hashie::Mash
-        key="customer_priority" 
-        name="Customer Priority" 
-        type="string" 
-        value="Medium"
-    >, 
-    #<Hashie::Mash 
-        key="bug_severity" 
-        name="Bug Severity" 
-        type="string" 
-        value="3 - Medium"
-    >, 
-    #<Hashie::Mash 
-        key="customer" 
-        name="Customer" 
-        type="string" 
-        value="Beaverbrook Lords"
-    >, 
-    #<Hashie::Mash
-        attachments=[] 
-        body="<h1>Don&#39;t underestimate the Force.</h1><p>You&#39;re all clear, kid. Let&#39;s blow this thing and go home! I don&#39;t know what you&#39;re talking about. I am a member of the Imperial Senate on a diplomatic mission to Alderaan-- The more you tighten your grip, Tarkin, the more star systems will slip through your fingers.</p><p>You mean it controls your actions? Ye-ha! I suggest you try it again, Luke. This time, let go your conscious self and act on instinct. Oh God, my uncle. How am I ever gonna explain this? <b>I need your help, Luke.</b><i> She needs your help.</i> I&#39;m getting too old for this sort of thing.</p><h2>Kid, I&#39;ve flown from one side of this galaxy to the other. I&#39;ve seen a lot of strange stuff, but I&#39;ve never seen anything to make me believe there&#39;s one all-powerful Force controlling everything. There&#39;s no mystical energy field that controls my destiny. It&#39;s all a lot of simple tricks and nonsense.</h2><p>But with the blast shield down, I can&#39;t even see! How am I supposed to fight? The Force is strong with this one. I have you now. I&#39;m surprised you had the courage to take the responsibility yourself. Escape is not his plan. I must face him, alone.</p><ol><li>Escape is not his plan. I must face him, alone.</li><li>Kid, I&#39;ve flown from one side of this galaxy to the other. I&#39;ve seen a lot of strange stuff, but I&#39;ve never seen anything to make me believe there&#39;s one all-powerful Force controlling everything. There&#39;s no mystical energy field that controls my destiny. It&#39;s all a lot of simple tricks and nonsense.</li><li>Ye-ha!</li></ol><h3>You&#39;re all clear, kid. Let&#39;s blow this thing and go home!</h3>" 
-        created_at="2017-03-15T05:30:01.893Z" 
-        id="6397593454713336259" 
-        key="bug_repro_steps" 
-        name="Bug Repro Steps" 
-        type="note" 
-        value="<h1>Don't underestimate the Force.</h1><p>You're all clear, kid. Let's blow this thing and go home! I don't know what you're talking about. I am a member of the Imperial Senate on a diplomatic mission to Alderaan-- The more you tighten your grip, Tarkin, the more star systems will slip through your fingers.</p><p>You mean it controls your actions? Ye-ha! I suggest you try it again, Luke. This time, let go your conscious self and act on instinct. Oh God, my uncle. How am I ever gonna explain this? <b>I need your help, Luke.</b><i> She needs your help.</i> I'm getting too old for this sort of thing.</p><h2>Kid, I've flown from one side of this galaxy to the other. I've seen a lot of strange stuff, but I've never seen anything to make me believe there's one all-powerful Force controlling everything. There's no mystical energy field that controls my destiny. It's all a lot of simple tricks and nonsense.</h2><p>But with the blast shield down, I can't even see! How am I supposed to fight? The Force is strong with this one. I have you now. I'm surprised you had the courage to take the responsibility yourself. Escape is not his plan. I must face him, alone.</p><ol>\n<li>Escape is not his plan. I must face him, alone.</li>\n<li>Kid, I've flown from one side of this galaxy to the other. I've seen a lot of strange stuff, but I've never seen anything to make me believe there's one all-powerful Force controlling everything. There's no mystical energy field that controls my destiny. It's all a lot of simple tricks and nonsense.</li>\n<li>Ye-ha!</li>\n</ol><h3>You're all clear, kid. Let's blow this thing and go home!</h3>"
-    >, 
-    #<Hashie::Mash 
-        key="salesforce_id" 
-        name="Salesforce ID" 
-        type="string" 
-        value="00343192"
-    >
-] 
-description=#<Hashie::Mash attachments=[] body="" created_at="2017-03-15T05:30:02.030Z" id="6397593455293888215"> 
-due_date=nil 
-feature_links=[] 
-goals=[] 
-id="6397593453041834223" 
-integration_fields=[] 
-name="00343192 - Testing the Aha Interface" 
-position=1 
-reference_num="SHIELD-64" 
-release=#<Hashie::Mash 
-    created_at="2016-06-24T15:43:42.744Z" 
-    id="6299785111907674985" 
-    integration_fields=[] 
-    name="Parking Lot" 
-    owner=#<Hashie::Mash
-        created_at="2016-06-22T17:25:24.973Z" 
-        email="eschneider@p2es.com" 
-        id="6299069149710915505" 
-        name="Erik Schneider" 
-        updated_at="2017-05-12T18:09:58.897Z"
-    > 
-    parking_lot=true 
-    project=#<Hashie::Mash
-        created_at="2016-06-24T15:43:42.489Z" 
-        id="6299785111899741307" 
-        name="P2 ProShield" 
-        product_line=false 
-        reference_prefix="SHIELD"
-    > 
-    reference_num="SHIELD-R-1" 
-    resource="https://p2platform.aha.io/api/v1/releases/SHIELD-R-1" 
-    url="https://p2platform.aha.io/releases/SHIELD-R-1"> 
-    requirements=[] 
-    resource="https://p2platform.aha.io/api/v1/features/SHIELD-64" 
-    score=0 
-    score_facts=[] 
-    start_date=nil 
-    tags=[] 
-    updated_at="2017-05-16T14:19:57.899Z" 
-    url="https://p2platform.aha.io/features/SHIELD-64" 
-    workflow_kind=#<Hashie::Mash
-         id="6322436160488211114" 
-         name="Research"
-    > 
-    workflow_status=#<Hashie::Mash
-        complete=false 
-        id="6322436160474595418" 
-        name="Under consideration"
-    >
->
+comments_count=2 
+created_at="2017-06-08T22:00:00.592Z" 
+created_by_user=#<Hashie::Mash 
+    created_at="2016-06-22T17:41:01.338Z" 
+    email="p2ahaadmin@p2energysolutions.com" 
+    id="6299073172345110648" 
+    name="P2 AhaAdmin" 
+    updated_at="2017-06-08T20:44:14.252Z"> 
+    custom_fields=[
+        #<Hashie::Mash 
+            key="tfs_id" 
+            name="TFS ID" 
+            type="string" 
+            value="169449">, 
+        #<Hashie::Mash 
+            key="salesforce_case_owner" 
+            name="Salesforce Case Owner" 
+            type="string" 
+            value="TFS Admin">, 
+        #<Hashie::Mash 
+            key="customer" 
+            name="Customer" 
+            type="string" 
+            value="Beaverbrook Lords">, 
+        #<Hashie::Mash 
+            key="bug_severity" 
+            name="Bug Severity" 
+            type="string" 
+            value="3 - Medium">, 
+        #<Hashie::Mash 
+            attachments=[] 
+            body="<p><h1>Ergo illi intellegunt quid Epicurus dicat, ego non intellego?</h1></p><p></p><p><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Itaque in rebus minime obscuris non multus est apud eos disserendi labor.??<i>Faceres tu quidem, Torquate, haec omnia;</i>??<a href='http://loripsum.net/' target='_blank'>Sit enim idem caecus, debilis.</a><a href='http://loripsum.net/' target='_blank'>Quis enim redargueret?</a>??Duo Reges: constructio interrete. Theophrastus mediocriterne delectat, cum tractat locos ab Aristotele ante tractatos?</p></p><p></p><p><blockquote>Hic Speusippus, hic Xenocrates, hic eius auditor Polemo, cuius illa ipsa sessio fuit, quam videmus.</blockquote></p><p></p><p><p>Audeo dicere, inquit.??<code>Et nemo nimium beatus est;</code>??<code>Nihil enim hoc differt.</code>??Apud imperitos tum illa dicta sunt, aliquid etiam coronae datum; Nescio quo modo praetervolavit oratio. Cum autem in quo sapienter dicimus, id a primo rectissime dicitur.</p></p><p></p><p><ol><li>Laboro autem non sine causa;</li><li>Ita fit cum gravior, tum etiam splendidior oratio.</li></ol></p><p></p><p><h3>Primum in nostrane potestate est, quid meminerimus?</h3></p><p></p><p><p>Hoc loco discipulos quaerere videtur, ut, qui asoti esse velint, philosophi ante fiant.??<a href='http://loripsum.net/' target='_blank'>An haec ab eo non dicuntur?</a>??<code>Ut aliquid scire se gaudeant?</code>??Itaque hic ipse iam pridem est reiectus; Sed erat aequius Triarium aliquid de dissensione nostra iudicare.</p></p><p></p><p><h2>Hic ambiguo ludimur.</h2></p><p></p><p><p>Egone non intellego, quid sit don Graece, Latine voluptas? Et certamen honestum et disputatio splendida! omnis est enim de virtutis dignitate contentio. Quod si ita se habeat, non possit beatam praestare vitam sapientia. An haec ab eo non dicuntur? Graecum enim hunc versum nostis omnes-: Suavis laborum est praeteritorum memoria.</p></p><p></p><p><dl><dt><dfn>Itaque fecimus.</dfn></dt><dd>Sit hoc ultimum bonorum, quod nunc a me defenditur;</dd><dt><dfn>Sed ad rem redeamus;</dfn></dt><dd>Et ille ridens: Video, inquit, quid agas;</dd><dt><dfn>Quo modo?</dfn></dt><dd>Varietates autem iniurasque fortunae facile veteres philosophorum praeceptis instituta vita superabat.</dd></dl></p><p></p><p><ul><li>Sed quid attinet de rebus tam apertis plura requirere?</li><li>Sed tamen omne, quod de re bona dilucide dicitur, mihi praeclare dici videtur.</li><li>Sed ne, dum huic obsequor, vobis molestus sim.</li><li>Cur, nisi quod turpis oratio est?</li><li>Et homini, qui ceteris animantibus plurimum praestat, praecipue a natura nihil datum esse dicemus?</li><li>Quid est, quod ab ea absolvi et perfici debeat?</li><li>Bonum incolumis acies: misera caecitas.</li></ul></p><p></p><p><p><b>Comprehensum, quod cognitum non habet?</b>??<a href='http://loripsum.net/' target='_blank'>Non semper, inquam;</a>??Claudii libidini, qui tum erat summo ne imperio, dederetur. Roges enim Aristonem, bonane ei videantur haec: vacuitas doloris, divitiae, valitudo; Omnis enim est natura diligens sui. Ut id aliis narrare gestiant? Beatus sibi videtur esse moriens. Sic enim censent, oportunitatis esse beate vivere. At cum de plurimis eadem dicit, tum certe de maximis. Dempta enim aeternitate nihilo beatior Iuppiter quam Epicurus;</p></p><p></p><p><pre></p><p>Quae quidem adhuc peregrinari Romae videbatur nec offerre</p><p>sese nostris sermonibus, et ista maxime propter limatam</p><p>quandam et rerum et verborum tenuitatem.</p><p></p><p>Et ego: Piso, inquam, si est quisquam, qui acute in causis</p><p>videre soleat quae res agatur.</pre></p>" created_at="2017-06-08T22:00:00.708Z" id="6429390810488893967" key="bug_repro_steps" name="Bug Repro Steps" type="note" value="<p></p><h1>Ergo illi intellegunt quid Epicurus dicat, ego non intellego?</h1><p></p><p></p><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Itaque in rebus minime obscuris non multus est apud eos disserendi labor.??<i>Faceres tu quidem, Torquate, haec omnia;</i>??<a href=\"http://loripsum.net/\" target=\"_blank\">Sit enim idem caecus, debilis.</a><a href=\"http://loripsum.net/\" target=\"_blank\">Quis enim redargueret?</a>??Duo Reges: constructio interrete. Theophrastus mediocriterne delectat, cum tractat locos ab Aristotele ante tractatos?</p><p></p><p></p><blockquote>Hic Speusippus, hic Xenocrates, hic eius auditor Polemo, cuius illa ipsa sessio fuit, quam videmus.</blockquote><p></p><p></p><p>Audeo dicere, inquit.??<code>Et nemo nimium beatus est;</code>??<code>Nihil enim hoc differt.</code>??Apud imperitos tum illa dicta sunt, aliquid etiam coronae datum; Nescio quo modo praetervolavit oratio. Cum autem in quo sapienter dicimus, id a primo rectissime dicitur.</p><p></p><p></p><ol>\n<li>Laboro autem non sine causa;</li>\n<li>Ita fit cum gravior, tum etiam splendidior oratio.</li>\n</ol><p></p><p></p><h3>Primum in nostrane potestate est, quid meminerimus?</h3><p></p><p></p><p>Hoc loco discipulos quaerere videtur, ut, qui asoti esse velint, philosophi ante fiant.??<a href=\"http://loripsum.net/\" target=\"_blank\">An haec ab eo non dicuntur?</a>??<code>Ut aliquid scire se gaudeant?</code>??Itaque hic ipse iam pridem est reiectus; Sed erat aequius Triarium aliquid de dissensione nostra iudicare.</p><p></p><p></p><h2>Hic ambiguo ludimur.</h2><p></p><p></p><p>Egone non intellego, quid sit don Graece, Latine voluptas? Et certamen honestum et disputatio splendida! omnis est enim de virtutis dignitate contentio. Quod si ita se habeat, non possit beatam praestare vitam sapientia. An haec ab eo non dicuntur? Graecum enim hunc versum nostis omnes-: Suavis laborum est praeteritorum memoria.</p><p></p><p></p><dl>\n<dt><dfn>Itaque fecimus.</dfn></dt>\n<dd>Sit hoc ultimum bonorum, quod nunc a me defenditur;</dd>\n<dt><dfn>Sed ad rem redeamus;</dfn></dt>\n<dd>Et ille ridens: Video, inquit, quid agas;</dd>\n<dt><dfn>Quo modo?</dfn></dt>\n<dd>Varietates autem iniurasque fortunae facile veteres philosophorum praeceptis instituta vita superabat.</dd>\n</dl><p></p><p></p><ul>\n<li>Sed quid attinet de rebus tam apertis plura requirere?</li>\n<li>Sed tamen omne, quod de re bona dilucide dicitur, mihi praeclare dici videtur.</li>\n<li>Sed ne, dum huic obsequor, vobis molestus sim.</li>\n<li>Cur, nisi quod turpis oratio est?</li>\n<li>Et homini, qui ceteris animantibus plurimum praestat, praecipue a natura nihil datum esse dicemus?</li>\n<li>Quid est, quod ab ea absolvi et perfici debeat?</li>\n<li>Bonum incolumis acies: misera caecitas.</li>\n</ul><p></p><p></p><p><b>Comprehensum, quod cognitum non habet?</b>??<a href=\"http://loripsum.net/\" target=\"_blank\">Non semper, inquam;</a>??Claudii libidini, qui tum erat summo ne imperio, dederetur. Roges enim Aristonem, bonane ei videantur haec: vacuitas doloris, divitiae, valitudo; Omnis enim est natura diligens sui. Ut id aliis narrare gestiant? Beatus sibi videtur esse moriens. Sic enim censent, oportunitatis esse beate vivere. At cum de plurimis eadem dicit, tum certe de maximis. Dempta enim aeternitate nihilo beatior Iuppiter quam Epicurus;</p><p></p><p></p><pre><p>Quae quidem adhuc peregrinari Romae videbatur nec offerre</p><p>sese nostris sermonibus, et ista maxime propter limatam</p><p>quandam et rerum et verborum tenuitatem.</p><p></p><p>Et ego: Piso, inquam, si est quisquam, qui acute in causis</p><p>videre soleat quae res agatur.</p></pre>">, 
+        #<Hashie::Mash 
+            key="salesforce_id" 
+            name="Salesforce ID" 
+            type="string" 
+            value="00373357">
+        ] 
+        description=#<Hashie::Mash 
+            attachments=[] 
+            body="" 
+            created_at="2017-06-08T22:00:01.049Z" 
+            id="6429390811975478302"> 
+        due_date=nil 
+        feature_links=[] 
+        goals=[] 
+        id="6429390810002292191" 
+        integration_fields=[] 
+        name="00373357 - Testing the Aha! Integration for a Rejected Bug Pass Number 2" 
+        position=1 
+        reference_num="SHIELD-146" 
+        release=#<Hashie::Mash 
+            created_at="2017-04-03T17:28:39.329Z" 
+            id="6404829261003629546" 
+            integration_fields=[] 
+            name="New Salesforce Cases" 
+            owner=#<Hashie::Mash 
+                created_at="2016-06-22T17:25:24.973Z" 
+                email="eschneider@p2es.com" 
+                id="6299069149710915505" 
+                name="Erik Schneider" 
+                updated_at="2017-05-12T18:09:58.897Z"> 
+            parking_lot=true 
+            project=#<Hashie::Mash 
+                created_at="2016-06-24T15:43:42.489Z" 
+                id="6299785111899741307" 
+                name="P2 ProShield" 
+                product_line=false 
+                reference_prefix="SHIELD"> 
+            reference_num="SHIELD-R-3" 
+            resource="https://p2platform.aha.io/api/v1/releases/SHIELD-R-3" 
+            url="https://p2platform.aha.io/releases/SHIELD-R-3"> 
+            requirements=[] 
+            resource="https://p2platform.aha.io/api/v1/features/SHIELD-146" 
+            score=0 
+            score_facts=[] 
+            start_date=nil 
+            tags=[] 
+            updated_at="2017-06-09T20:23:50.337Z" 
+            url="https://p2platform.aha.io/features/SHIELD-146" 
+            workflow_kind=#<Hashie::Mash 
+                id="6322436160482981363" 
+                name="Bug fix"> 
+            workflow_status=#<Hashie::Mash 
+                complete=false 
+                id="6322436160474595418" 
+                name="Under consideration">
+        >

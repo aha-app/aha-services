@@ -53,6 +53,7 @@ class P2PMWorkItemResource < P2PMResource
       "pro_uid" => projid,
 	    "usr_uid" => userid,
 	    "tas_uid" => taskid,
+      "app_title" => aha_feature.reference_num,
 	    "variables" => [
 		    {
 			    "ahaId" => aha_feature.reference_num,
