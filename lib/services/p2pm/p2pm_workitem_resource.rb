@@ -49,10 +49,6 @@ class P2PMWorkItemResource < P2PMResource
     logger.debug "PM User ID: #{userid}"
     taskid = get_taskid projid, security_token
     logger.debug "PM Task ID: #{taskid}"
-    if (aha_feature.comments_count > 0)
-      {
-
-      }
     body = {
       "pro_uid" => projid,
 	    "usr_uid" => userid,
