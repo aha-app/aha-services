@@ -67,8 +67,7 @@ class P2PMWorkItemResource < P2PMResource
 			    "reproSteps" => get_custom_field_value(aha_feature,"bug_repro_steps"),
 			    "salesforceId" => get_custom_field_value(aha_feature,"salesforce_id"),
 			    "title" => aha_feature.name,
-			    "type" => aha_feature.workflow_kind.name,
-          "ahaComments" => array ()
+			    "type" => aha_feature.workflow_kind.name
 		    }
       ]
     }
