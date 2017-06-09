@@ -41,6 +41,7 @@ class P2PMWorkItemResource < P2PMResource
   end
 
   def create_case aha_feature, security_token
+    logger.debug "\n#{aha_feature}\n"
     logger.debug "Creating case for #{aha_feature.reference_num}\n"
     projid = get_projectid security_token
     logger.debug "PM Project ID: #{projid}"
@@ -48,6 +49,10 @@ class P2PMWorkItemResource < P2PMResource
     logger.debug "PM User ID: #{userid}"
     taskid = get_taskid projid, security_token
     logger.debug "PM Task ID: #{taskid}"
+    if (aha_feature.comments_count > 0)
+      {
+
+      }
     body = {
       "pro_uid" => projid,
 	    "usr_uid" => userid,
@@ -62,7 +67,8 @@ class P2PMWorkItemResource < P2PMResource
 			    "reproSteps" => get_custom_field_value(aha_feature,"bug_repro_steps"),
 			    "salesforceId" => get_custom_field_value(aha_feature,"salesforce_id"),
 			    "title" => aha_feature.name,
-			    "type" => aha_feature.workflow_kind.name
+			    "type" => aha_feature.workflow_kind.name,
+          "ahaComments" => array ()
 		    }
       ]
     }
