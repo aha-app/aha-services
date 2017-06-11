@@ -82,7 +82,7 @@ Depending on whether you are using JIRA Agile or standard Agile, below are detai
 - If you use JIRA Agile, [read this for feature mapping](http://support.aha.io/entries/40551483)
 - If you use JIRA, [read this for feature mapping](http://support.aha.io/entries/40843667)
 
-There is also a set of advanced functionality unique to the JIRA integration, such as the ability to have content created in JIRA populate into Aha! automatically. Read more here.
+There is also a set of advanced functionality unique to the JIRA integration, such as the ability to have content created in JIRA populate into Aha! automatically. Read more [here](https://support.aha.io/hc/en-us/articles/204452355-Advanced-JIRA-functionality).
 
 ## Integration configuration
 
