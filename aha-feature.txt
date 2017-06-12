@@ -1,91 +1,152 @@
 #<Hashie::Mash 
-assigned_to_user=nil 
-attachments=[] 
-comments_count=2 
-created_at="2017-06-08T22:00:00.592Z" 
-created_by_user=#<Hashie::Mash 
-    created_at="2016-06-22T17:41:01.338Z" 
-    email="p2ahaadmin@p2energysolutions.com" 
-    id="6299073172345110648" 
-    name="P2 AhaAdmin" 
-    updated_at="2017-06-08T20:44:14.252Z"> 
+    assigned_to_user=nil 
+    attachments=[] 
+    comments_count=2 
+    created_at="2017-06-09T23:26:41.401Z" 
+    created_by_user=
+        #<Hashie::Mash 
+            created_at="2016-06-22T17:41:01.338Z" 
+            email="p2ahaadmin@p2energysolutions.com" 
+            id="6299073172345110648" 
+            name="P2 AhaAdmin" 
+            updated_at="2017-06-08T20:44:14.252Z"
+        > 
     custom_fields=[
         #<Hashie::Mash 
             key="tfs_id" 
             name="TFS ID" 
             type="string" 
-            value="169449">, 
+            value="169499"
+        >, 
         #<Hashie::Mash 
             key="salesforce_case_owner" 
             name="Salesforce Case Owner" 
             type="string" 
-            value="TFS Admin">, 
+            value="TFS Admin"
+        >, 
+        #<Hashie::Mash 
+            key="customer_priority" 
+            name="Customer Priority" 
+            type="string" 
+            value="Medium"
+        >, 
         #<Hashie::Mash 
             key="customer" 
             name="Customer" 
             type="string" 
-            value="Beaverbrook Lords">, 
+            value="Beaverbrook Lords"
+        >, 
         #<Hashie::Mash 
             key="bug_severity" 
             name="Bug Severity" 
             type="string" 
-            value="3 - Medium">, 
+            value="3 - Medium"
+        >, 
         #<Hashie::Mash 
             attachments=[] 
-            body="<p><h1>Ergo illi intellegunt quid Epicurus dicat, ego non intellego?</h1></p><p></p><p><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Itaque in rebus minime obscuris non multus est apud eos disserendi labor.??<i>Faceres tu quidem, Torquate, haec omnia;</i>??<a href='http://loripsum.net/' target='_blank'>Sit enim idem caecus, debilis.</a><a href='http://loripsum.net/' target='_blank'>Quis enim redargueret?</a>??Duo Reges: constructio interrete. Theophrastus mediocriterne delectat, cum tractat locos ab Aristotele ante tractatos?</p></p><p></p><p><blockquote>Hic Speusippus, hic Xenocrates, hic eius auditor Polemo, cuius illa ipsa sessio fuit, quam videmus.</blockquote></p><p></p><p><p>Audeo dicere, inquit.??<code>Et nemo nimium beatus est;</code>??<code>Nihil enim hoc differt.</code>??Apud imperitos tum illa dicta sunt, aliquid etiam coronae datum; Nescio quo modo praetervolavit oratio. Cum autem in quo sapienter dicimus, id a primo rectissime dicitur.</p></p><p></p><p><ol><li>Laboro autem non sine causa;</li><li>Ita fit cum gravior, tum etiam splendidior oratio.</li></ol></p><p></p><p><h3>Primum in nostrane potestate est, quid meminerimus?</h3></p><p></p><p><p>Hoc loco discipulos quaerere videtur, ut, qui asoti esse velint, philosophi ante fiant.??<a href='http://loripsum.net/' target='_blank'>An haec ab eo non dicuntur?</a>??<code>Ut aliquid scire se gaudeant?</code>??Itaque hic ipse iam pridem est reiectus; Sed erat aequius Triarium aliquid de dissensione nostra iudicare.</p></p><p></p><p><h2>Hic ambiguo ludimur.</h2></p><p></p><p><p>Egone non intellego, quid sit don Graece, Latine voluptas? Et certamen honestum et disputatio splendida! omnis est enim de virtutis dignitate contentio. Quod si ita se habeat, non possit beatam praestare vitam sapientia. An haec ab eo non dicuntur? Graecum enim hunc versum nostis omnes-: Suavis laborum est praeteritorum memoria.</p></p><p></p><p><dl><dt><dfn>Itaque fecimus.</dfn></dt><dd>Sit hoc ultimum bonorum, quod nunc a me defenditur;</dd><dt><dfn>Sed ad rem redeamus;</dfn></dt><dd>Et ille ridens: Video, inquit, quid agas;</dd><dt><dfn>Quo modo?</dfn></dt><dd>Varietates autem iniurasque fortunae facile veteres philosophorum praeceptis instituta vita superabat.</dd></dl></p><p></p><p><ul><li>Sed quid attinet de rebus tam apertis plura requirere?</li><li>Sed tamen omne, quod de re bona dilucide dicitur, mihi praeclare dici videtur.</li><li>Sed ne, dum huic obsequor, vobis molestus sim.</li><li>Cur, nisi quod turpis oratio est?</li><li>Et homini, qui ceteris animantibus plurimum praestat, praecipue a natura nihil datum esse dicemus?</li><li>Quid est, quod ab ea absolvi et perfici debeat?</li><li>Bonum incolumis acies: misera caecitas.</li></ul></p><p></p><p><p><b>Comprehensum, quod cognitum non habet?</b>??<a href='http://loripsum.net/' target='_blank'>Non semper, inquam;</a>??Claudii libidini, qui tum erat summo ne imperio, dederetur. Roges enim Aristonem, bonane ei videantur haec: vacuitas doloris, divitiae, valitudo; Omnis enim est natura diligens sui. Ut id aliis narrare gestiant? Beatus sibi videtur esse moriens. Sic enim censent, oportunitatis esse beate vivere. At cum de plurimis eadem dicit, tum certe de maximis. Dempta enim aeternitate nihilo beatior Iuppiter quam Epicurus;</p></p><p></p><p><pre></p><p>Quae quidem adhuc peregrinari Romae videbatur nec offerre</p><p>sese nostris sermonibus, et ista maxime propter limatam</p><p>quandam et rerum et verborum tenuitatem.</p><p></p><p>Et ego: Piso, inquam, si est quisquam, qui acute in causis</p><p>videre soleat quae res agatur.</pre></p>" created_at="2017-06-08T22:00:00.708Z" id="6429390810488893967" key="bug_repro_steps" name="Bug Repro Steps" type="note" value="<p></p><h1>Ergo illi intellegunt quid Epicurus dicat, ego non intellego?</h1><p></p><p></p><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Itaque in rebus minime obscuris non multus est apud eos disserendi labor.??<i>Faceres tu quidem, Torquate, haec omnia;</i>??<a href=\"http://loripsum.net/\" target=\"_blank\">Sit enim idem caecus, debilis.</a><a href=\"http://loripsum.net/\" target=\"_blank\">Quis enim redargueret?</a>??Duo Reges: constructio interrete. Theophrastus mediocriterne delectat, cum tractat locos ab Aristotele ante tractatos?</p><p></p><p></p><blockquote>Hic Speusippus, hic Xenocrates, hic eius auditor Polemo, cuius illa ipsa sessio fuit, quam videmus.</blockquote><p></p><p></p><p>Audeo dicere, inquit.??<code>Et nemo nimium beatus est;</code>??<code>Nihil enim hoc differt.</code>??Apud imperitos tum illa dicta sunt, aliquid etiam coronae datum; Nescio quo modo praetervolavit oratio. Cum autem in quo sapienter dicimus, id a primo rectissime dicitur.</p><p></p><p></p><ol>\n<li>Laboro autem non sine causa;</li>\n<li>Ita fit cum gravior, tum etiam splendidior oratio.</li>\n</ol><p></p><p></p><h3>Primum in nostrane potestate est, quid meminerimus?</h3><p></p><p></p><p>Hoc loco discipulos quaerere videtur, ut, qui asoti esse velint, philosophi ante fiant.??<a href=\"http://loripsum.net/\" target=\"_blank\">An haec ab eo non dicuntur?</a>??<code>Ut aliquid scire se gaudeant?</code>??Itaque hic ipse iam pridem est reiectus; Sed erat aequius Triarium aliquid de dissensione nostra iudicare.</p><p></p><p></p><h2>Hic ambiguo ludimur.</h2><p></p><p></p><p>Egone non intellego, quid sit don Graece, Latine voluptas? Et certamen honestum et disputatio splendida! omnis est enim de virtutis dignitate contentio. Quod si ita se habeat, non possit beatam praestare vitam sapientia. An haec ab eo non dicuntur? Graecum enim hunc versum nostis omnes-: Suavis laborum est praeteritorum memoria.</p><p></p><p></p><dl>\n<dt><dfn>Itaque fecimus.</dfn></dt>\n<dd>Sit hoc ultimum bonorum, quod nunc a me defenditur;</dd>\n<dt><dfn>Sed ad rem redeamus;</dfn></dt>\n<dd>Et ille ridens: Video, inquit, quid agas;</dd>\n<dt><dfn>Quo modo?</dfn></dt>\n<dd>Varietates autem iniurasque fortunae facile veteres philosophorum praeceptis instituta vita superabat.</dd>\n</dl><p></p><p></p><ul>\n<li>Sed quid attinet de rebus tam apertis plura requirere?</li>\n<li>Sed tamen omne, quod de re bona dilucide dicitur, mihi praeclare dici videtur.</li>\n<li>Sed ne, dum huic obsequor, vobis molestus sim.</li>\n<li>Cur, nisi quod turpis oratio est?</li>\n<li>Et homini, qui ceteris animantibus plurimum praestat, praecipue a natura nihil datum esse dicemus?</li>\n<li>Quid est, quod ab ea absolvi et perfici debeat?</li>\n<li>Bonum incolumis acies: misera caecitas.</li>\n</ul><p></p><p></p><p><b>Comprehensum, quod cognitum non habet?</b>??<a href=\"http://loripsum.net/\" target=\"_blank\">Non semper, inquam;</a>??Claudii libidini, qui tum erat summo ne imperio, dederetur. Roges enim Aristonem, bonane ei videantur haec: vacuitas doloris, divitiae, valitudo; Omnis enim est natura diligens sui. Ut id aliis narrare gestiant? Beatus sibi videtur esse moriens. Sic enim censent, oportunitatis esse beate vivere. At cum de plurimis eadem dicit, tum certe de maximis. Dempta enim aeternitate nihilo beatior Iuppiter quam Epicurus;</p><p></p><p></p><pre><p>Quae quidem adhuc peregrinari Romae videbatur nec offerre</p><p>sese nostris sermonibus, et ista maxime propter limatam</p><p>quandam et rerum et verborum tenuitatem.</p><p></p><p>Et ego: Piso, inquam, si est quisquam, qui acute in causis</p><p>videre soleat quae res agatur.</p></pre>">, 
+            body="<p><h1>Sequitur disserendi ratio cognitioque naturae;</h1></p><p></p><p><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.??Hunc vos beatum;??Nemo igitur esse beatus potest.</p></p><p></p><p><p><code>Scrupulum, inquam, abeunti;</code>??Ita credo. Nihil sane. Non igitur bene.??<b>Scrupulum, inquam, abeunti;</b>??Sed quod proximum fuit non vidit.??Pauca mutat vel plura sane;</p></p><p></p><p><h2>Vide, quantum, inquam, fallare, Torquate.</h2></p><p></p><p><p><a href='http://loripsum.net/' target='_blank'>Magna laus.</a>??Scaevolam M.??<i>Age, inquies, ista parva sunt.</i>??Eam stabilem appellas. ALIO MODO.</p></p><p></p><p><blockquote>Vidit Homerus probari fabulam non posse, si cantiunculis tantus irretitus vir teneretur;</blockquote></p><p></p><p><p>Disserendi artem nullam habuit.??<a href='http://loripsum.net/' target='_blank'>Certe non potest.</a>??Nonne igitur tibi videntur, inquit, mala? Hunc vos beatum; Bonum integritas corporis: misera debilitas. An hoc usque quaque, aliter in vita???<i>Audeo dicere, inquit.</i>??Sed plane dicit quod intellegit.</p></p><p></p><p><p>Duo Reges: constructio interrete. Nihil enim hoc differt. Ac tamen hic mallet non dolere.??<a href='http://loripsum.net/' target='_blank'>Quid enim possumus hoc agere divinius?</a></p></p><p></p><p><ol><li>Nunc ita separantur, ut disiuncta sint, quo nihil potest esse perversius.</li><li>Nullus est igitur cuiusquam dies natalis.</li><li>Ergo illi intellegunt quid Epicurus dicat, ego non intellego?</li><li>Quem Tiberina descensio festo illo die tanto gaudio affecit, quanto L.</li><li>Quos quidem tibi studiose et diligenter tractandos magnopere censeo.</li></ol></p><p></p><p><ul><li>Expectoque quid ad id, quod quaerebam, respondeas.</li><li>Quem Tiberina descensio festo illo die tanto gaudio affecit, quanto L.</li></ul></p><p></p><p><pre></p><p>Sed in ceteris artibus cum dicitur artificiose, posterum</p><p>quodam modo et consequens putandum est, quod illi</p><p>??pigennhmatik??n appellant;</p><p><img alt='P2 Logo' src='https://aha-attachments-prod.s3.amazonaws.com/accounts/a21e8d816b11deb7e453e76227e3fbf0be453270/thumb.png?1472054295'></img></p><p>Causa autem fuit huc veniendi ut quosdam hinc libros</p><p>promerem.</p><p></pre></p><p></p><p><dl><dt><dfn>Tenent mordicus.</dfn></dt><dd>An est aliquid per se ipsum flagitiosum, etiamsi nulla comitetur infamia?</dd><dt><dfn>Recte dicis;</dfn></dt><dd>Non quaero, quid dicat, sed quid convenienter possit rationi et sententiae suae dicere.</dd><dt><dfn>Nos commodius agimus.</dfn></dt><dd>Mihi, inquam, qui te id ipsum rogavi?</dd><dt><dfn>Optime, inquam.</dfn></dt><dd>Omnes, qui non sint sapientes, aeque miseros esse, sapientes omnes summe beatos, recte facta omnia aequalia, omnia peccata paria;</dd></dl></p>" 
+            created_at="2017-06-09T23:26:41.501Z" 
+            id="6429784232907897828" 
+            key="bug_repro_steps" 
+            name="Bug Repro Steps" 
+            type="note" 
+            value="<p></p><h1>Sequitur disserendi ratio cognitioque naturae;</h1><p></p><p></p><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.??Hunc vos beatum;??Nemo igitur esse beatus potest.</p><p></p><p></p><p><code>Scrupulum, inquam, abeunti;</code>??Ita credo. Nihil sane. Non igitur bene.??<b>Scrupulum, inquam, abeunti;</b>??Sed quod proximum fuit non vidit.??Pauca mutat vel plura sane;</p><p></p><p></p><h2>Vide, quantum, inquam, fallare, Torquate.</h2><p></p><p></p><p><a href=\"http://loripsum.net/\" target=\"_blank\">Magna laus.</a>??Scaevolam M.??<i>Age, inquies, ista parva sunt.</i>??Eam stabilem appellas. ALIO MODO.</p><p></p><p></p><blockquote>Vidit Homerus probari fabulam non posse, si cantiunculis tantus irretitus vir teneretur;</blockquote><p></p><p></p><p>Disserendi artem nullam habuit.??<a href=\"http://loripsum.net/\" target=\"_blank\">Certe non potest.</a>??Nonne igitur tibi videntur, inquit, mala? Hunc vos beatum; Bonum integritas corporis: misera debilitas. An hoc usque quaque, aliter in vita???<i>Audeo dicere, inquit.</i>??Sed plane dicit quod intellegit.</p><p></p><p></p><p>Duo Reges: constructio interrete. Nihil enim hoc differt. Ac tamen hic mallet non dolere.??<a href=\"http://loripsum.net/\" target=\"_blank\">Quid enim possumus hoc agere divinius?</a></p><p></p><p></p><ol>\n<li>Nunc ita separantur, ut disiuncta sint, quo nihil potest esse perversius.</li>\n<li>Nullus est igitur cuiusquam dies natalis.</li>\n<li>Ergo illi intellegunt quid Epicurus dicat, ego non intellego?</li>\n<li>Quem Tiberina descensio festo illo die tanto gaudio affecit, quanto L.</li>\n<li>Quos quidem tibi studiose et diligenter tractandos magnopere censeo.</li>\n</ol><p></p><p></p><ul>\n<li>Expectoque quid ad id, quod quaerebam, respondeas.</li>\n<li>Quem Tiberina descensio festo illo die tanto gaudio affecit, quanto L.</li>\n</ul><p></p><p></p><pre><p>Sed in ceteris artibus cum dicitur artificiose, posterum</p><p>quodam modo et consequens putandum est, quod illi</p><p>??pigennhmatik??n appellant;</p><p><img alt=\"P2 Logo\" src=\"https://aha-attachments-prod.s3.amazonaws.com/accounts/a21e8d816b11deb7e453e76227e3fbf0be453270/thumb.png?1472054295\"></p><p>Causa autem fuit huc veniendi ut quosdam hinc libros</p><p>promerem.</p><p></p></pre><p></p><p></p><dl>\n<dt><dfn>Tenent mordicus.</dfn></dt>\n<dd>An est aliquid per se ipsum flagitiosum, etiamsi nulla comitetur infamia?</dd>\n<dt><dfn>Recte dicis;</dfn></dt>\n<dd>Non quaero, quid dicat, sed quid convenienter possit rationi et sententiae suae dicere.</dd>\n<dt><dfn>Nos commodius agimus.</dfn></dt>\n<dd>Mihi, inquam, qui te id ipsum rogavi?</dd>\n<dt><dfn>Optime, inquam.</dfn></dt>\n<dd>Omnes, qui non sint sapientes, aeque miseros esse, sapientes omnes summe beatos, recte facta omnia aequalia, omnia peccata paria;</dd>\n</dl>"
+        >, 
         #<Hashie::Mash 
             key="salesforce_id" 
             name="Salesforce ID" 
             type="string" 
-            value="00373357">
-        ] 
-        description=#<Hashie::Mash 
-            attachments=[] 
-            body="" 
-            created_at="2017-06-08T22:00:01.049Z" 
-            id="6429390811975478302"> 
-        due_date=nil 
-        feature_links=[] 
-        goals=[] 
-        id="6429390810002292191" 
-        integration_fields=[] 
-        name="00373357 - Testing the Aha! Integration for a Rejected Bug Pass Number 2" 
-        position=1 
-        reference_num="SHIELD-146" 
-        release=#<Hashie::Mash 
+            value="00373360"
+        >
+    ] 
+    description=#<Hashie::Mash 
+        attachments=[] 
+        body="<p>AT2320 supports several depreciation methods for Classic Asset processing, Straight Line (SL) being the most commonly used. The SL method distributes depreciation evenly throughout the life of the asset. However, when subsequent cost basis additions are made (after the initial addition / purchase), BOLO essentially extends the useful life of the asset because the new addition uses the same / original useful life but starting from a later date. We need a new depreciation method that works like SL depreciation (distributing the new additions evenly) but keeps the useful life \"fixed\" rather than extending it. This approach is commonly called \"SL over Remaining Useful Life.\"</p>" 
+        created_at="2017-06-09T23:26:41.933Z" 
+        id="6429784234766066828"
+    > 
+    due_date=nil 
+    feature_links=[] 
+    goals=[] 
+    id="6429784232479436317" 
+    integration_fields=[] 
+    name="00373360 - Demo for Dave" 
+    position=1 
+    reference_num="SHIELD-149" 
+    release=
+        #<Hashie::Mash 
             created_at="2017-04-03T17:28:39.329Z" 
             id="6404829261003629546" 
             integration_fields=[] 
             name="New Salesforce Cases" 
-            owner=#<Hashie::Mash 
-                created_at="2016-06-22T17:25:24.973Z" 
-                email="eschneider@p2es.com" 
-                id="6299069149710915505" 
-                name="Erik Schneider" 
-                updated_at="2017-05-12T18:09:58.897Z"> 
+            owner=
+                #<Hashie::Mash 
+                    created_at="2016-06-22T17:25:24.973Z" 
+                    email="eschneider@p2es.com" 
+                    id="6299069149710915505" 
+                    name="Erik Schneider" 
+                    updated_at="2017-05-12T18:09:58.897Z"
+                > 
             parking_lot=true 
-            project=#<Hashie::Mash 
-                created_at="2016-06-24T15:43:42.489Z" 
-                id="6299785111899741307" 
-                name="P2 ProShield" 
-                product_line=false 
-                reference_prefix="SHIELD"> 
+            project=
+                #<Hashie::Mash 
+                    created_at="2016-06-24T15:43:42.489Z" 
+                    id="6299785111899741307" 
+                    name="P2 ProShield" 
+                    product_line=false 
+                    reference_prefix="SHIELD"
+                > 
             reference_num="SHIELD-R-3" 
             resource="https://p2platform.aha.io/api/v1/releases/SHIELD-R-3" 
-            url="https://p2platform.aha.io/releases/SHIELD-R-3"> 
-            requirements=[] 
-            resource="https://p2platform.aha.io/api/v1/features/SHIELD-146" 
-            score=0 
-            score_facts=[] 
-            start_date=nil 
-            tags=[] 
-            updated_at="2017-06-09T20:23:50.337Z" 
-            url="https://p2platform.aha.io/features/SHIELD-146" 
-            workflow_kind=#<Hashie::Mash 
-                id="6322436160482981363" 
-                name="Bug fix"> 
-            workflow_status=#<Hashie::Mash 
-                complete=false 
-                id="6322436160474595418" 
-                name="Under consideration">
+            url="https://p2platform.aha.io/releases/SHIELD-R-3"
+        > 
+    requirements=[
+        #<Hashie::Mash 
+            assigned_to_user=nil 
+            attachments=[] 
+            comments_count=0 
+            created_at="2017-06-12T14:15:40.865Z" 
+            created_by_user=
+                #<Hashie::Mash 
+                    created_at="2016-06-22T17:41:01.338Z" 
+                    email="p2ahaadmin@p2energysolutions.com" 
+                    id="6299073172345110648" 
+                    name="P2 AhaAdmin" 
+                    updated_at="2017-06-08T20:44:14.252Z"
+                > 
+        custom_fields=[] 
+        description=
+            #<Hashie::Mash 
+            attachments=[] 
+            body="<p>The primary issue is BOLO does not allow the customer to add subsequent investments to the book value of the asset and depreciate the &nbsp;investment over the remaining useful life in an effective way.</p>\r\n<p>BOLO forces the user to treat each additional investment as a new asset this change would allow the user to record changes to the asset and depreciate the new balance over the useful life of the asset.</p>\r\n<p>Straight line depreciation method charges cost evenly throughout the useful life of a fixed asset.</p>\r\n<p>This <a href=\"http://accounting-simplified.com/financial/fixed-assets/depreciation-methods/types.html\" target=\"_blank\" rel=\"noopener noreferrer\">depreciation method</a> is appropriate where economic benefits from an asset are expected to be realized evenly over its useful life.</p>\r\n<p>Straight line method is also convenient to use where no reliable estimate can be made regarding the pattern of economic benefits expected to be derived over an asset's useful life.</p>\r\n<h2>Formula</h2>\r\n<p>Straight line depreciation can be calculated using any of the following formulas:</p>\r\n<p>&nbsp;</p>\r\n<div>\r\n<table>\r\n<tbody>\r\n<tr>\r\n<td rowspan=\"2\">??? Depreciation per annum</td>\r\n<td rowspan=\"2\" width=\"35\">=</td>\r\n<td>( <a href=\"http://accounting-simplified.com/financial/fixed-assets/depreciation-methods/straight-line.html#cost\">Cost</a> &ensp; &minus; &ensp; <a href=\"http://accounting-simplified.com/financial/fixed-assets/depreciation-methods/straight-line.html#residual-value\">Residual Value</a> )</td>\r\n</tr>\r\n<tr>\r\n<td><a href=\"http://accounting-simplified.com/financial/fixed-assets/depreciation-methods/straight-line.html#useful-life\">Useful Life</a></td>\r\n</tr>\r\n</tbody>\r\n</table>\r\n<br />\r\n<table>\r\n<tbody>\r\n<tr>\r\n<td>??? Depreciation per annum</td>\r\n<td rowspan=\"2\" width=\"35\">=</td>\r\n<td>( Cost &nbsp; &minus; &nbsp; Residual Value ) &nbsp; x &nbsp; Rate of depreciation</td>\r\n</tr>\r\n</tbody>\r\n</table>\r\n<br />\r\n<p><i>Where:</i></p>\r\n<table>\r\n<tbody>\r\n<tr>\r\n<td>???</td>\r\n<td><b>Cost</b> is the initial acquisition or construction costs related to the asset as well as any subsequent <a href=\"http://accounting-simplified.com/financial/fixed-assets/capital-and-revenue-expenditure.html\" target=\"_blank\" rel=\"noopener noreferrer\">capital expenditure</a>.</td>\r\n</tr>\r\n</tbody>\r\n</table>\r\n<hr />\r\n<table>\r\n<tbody>\r\n<tr>\r\n<td>???</td>\r\n<td><b>Residual Value</b>, also known as its scrap value, is the estimated proceeds expected from the disposal of an asset at the end of its useful life. The portion of an asset's cost equal to residual value is <b>not</b> depreciated because it is expected to be recovered at the end of an asset's useful life.</td>\r\n</tr>\r\n</tbody>\r\n</table>\r\n<hr />\r\n<table>\r\n<tbody>\r\n<tr>\r\n<td>???</td>\r\n<td><b>Useful Life</b> is the estimated <b>time period</b> that the asset is expected to be used starting from the date it is available for useup to the date of its disposal or termination of use. Useful life is normally expressed in units of years or months.</td>\r\n</tr>\r\n</tbody>\r\n</table>\r\n<hr />\r\n<table>\r\n<tbody>\r\n<tr>\r\n<td>???</td>\r\n<td><b>Rate of depreciation</b> is the percentage of useful life that is consumed in a single accounting period. Rate of depreciation can be calculated as follows:</td>\r\n</tr>\r\n</tbody>\r\n</table>\r\n<br />\r\n<table>\r\n<tbody>\r\n<tr>\r\n<td rowspan=\"2\">Rate of depreciation</td>\r\n<td rowspan=\"2\" width=\"30\">=</td>\r\n<td>1</td>\r\n<td rowspan=\"2\">&ensp;&ensp;x &ensp; 100%</td>\r\n</tr>\r\n<tr>\r\n<td>Useful Life</td>\r\n</tr>\r\n</tbody>\r\n</table>\r\n<p>e.g. rate of depreciation of an asset having a useful life of 8 years is 12.5% p.a.</p>\r\n<table>\r\n<tbody>\r\n<tr>\r\n<td width=\"25\">1</td>\r\n<td rowspan=\"2\">&ensp;&ensp;x &ensp; 100%</td>\r\n<td rowspan=\"2\" width=\"30\">=</td>\r\n<td rowspan=\"2\">12.5% per year</td>\r\n</tr>\r\n</tbody>\r\n</table>\r\n</div>" created_at="2017-06-12T14:15:40.950Z" id="6430755494438007708"> id="6430755494082965960" integration_fields=[] name="The primary issue is BOLO does not allow the customer to add subsequent investments to the book value of the asset and depreciate the  investment over the remaining useful life in an effective way." 
+            position=1 
+            reference_num="SHIELD-149-1" 
+            resource="https://p2platform.aha.io/api/v1/requirements/SHIELD-149-1" 
+            updated_at="2017-06-12T14:15:41.081Z" 
+            url="https://p2platform.aha.io/requirements/SHIELD-149-1" 
+            workflow_status=
+                #<Hashie::Mash 
+                    complete=false id="6322436160474595418" 
+                    name="Under consideration"
+                >
+            >
+        ] 
+    resource="https://p2platform.aha.io/api/v1/features/SHIELD-149" 
+    score=0 
+    score_facts=[] 
+    start_date=nil 
+    tags=[] 
+    updated_at="2017-06-12T14:22:46.660Z" 
+    url="https://p2platform.aha.io/features/SHIELD-149" 
+    workflow_kind=
+        #<Hashie::Mash 
+            id="6322436160474078097" 
+            name="New - Parity"
+        > 
+    workflow_status=
+        #<Hashie::Mash 
+            complete=false 
+            id="6322436160474595418" 
+            name="Under consideration"
         >
+>
