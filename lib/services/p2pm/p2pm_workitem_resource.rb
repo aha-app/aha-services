@@ -58,7 +58,7 @@ class P2PMWorkItemResource < P2PMResource
       logger.debug "myrequirement: #{myrequirement}"
       logger.debug "name: #{myrequirement['name']}"
       logger.debug "body: #{myrequirement['description']['body']}"
-      #send_requirement = myrequirement['name'] + "<br>" + myrequirement['body']
+      send_requirement += "#{myrequirement['name']}<br><br>#{myrequirement['description']['body']}<br>"
     end
     logger.debug "send_requirement: #{send_requirement}"
     body = {
