@@ -51,7 +51,7 @@ class P2PMWorkItemResource < P2PMResource
     #logger.debug "PM Task ID: #{taskid}"
     description = aha_feature.description.to_hash;
     logger.debug "description hash: #{description}";
-    logger.debug "description.body #{description.body}"
+    logger.debug "description.body #{description['body']}"
     requirement = aha_feature.requirements.to_hash;
     logger.debug "requirements hash #{requirements}"
     body = {
