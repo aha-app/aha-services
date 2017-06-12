@@ -52,10 +52,13 @@ class P2PMWorkItemResource < P2PMResource
     description = aha_feature.description.to_hash;
     #requirement = aha_feature.requirements.to_hash;
     #logger.debug "requirements hash #{requirement}"
+    send_requirement = ""
     aha_feature.requirements.each do |requirement|
       myrequirement = requirement.to_hash
       logger.debug "myrequirement: #{myrequirement}"
+      send_requirement = myrequirement['name'] + "<br>" + myrequirement['body']
     end
+    logger.debug "send_requirement: #{send_requirement}"
     body = {
       "pro_uid" => projid,
 	    "usr_uid" => userid,
@@ -71,7 +74,7 @@ class P2PMWorkItemResource < P2PMResource
 			    "reproSteps" => get_custom_field_value(aha_feature,"bug_repro_steps"),
 			    "salesforceId" => get_custom_field_value(aha_feature,"salesforce_id"),
 			    "title" => aha_feature.name,
-          #"requirements" => aha_feature.requirements[0].body,
+          "requirements" => send_requirement,
           "description" => description['body'],
 			    "type" => aha_feature.workflow_kind.name
 		    }
