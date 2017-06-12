@@ -18,7 +18,7 @@ class P2PMFeatureMappingResource < P2PMResource
     puts dev_manager
     puts aha_feature.workflow_kind.name
     puts aha_feature.release.project.name
-    if aha_feature.workflow_kind.name == 'Bug fix'
+    if aha_feature.workflow_kind.name != 'Research'
       # Get the DEV_MANGER from the TABLE for the Aha project
       #http://52.39.212.230:8080/api/1.0/workflow/pmtable/58415494458d0549dd1f0b3088492444/data?q={"where": {"product": "P2 ProShield"}}
       body = {
@@ -54,7 +54,7 @@ class P2PMFeatureMappingResource < P2PMResource
 
   def update workitem_id, aha_feature, table
     puts aha_feature.workflow_kind.name
-    if aha_feature.workflow_kind.name == 'Bug fix'
+    if aha_feature.workflow_kind.name != 'Research'
       sec_token = get_security_token
       workitem = workitem_resource.by_id workitem_id, table, sec_token
       puts workitem["rows"][0]["title"]
