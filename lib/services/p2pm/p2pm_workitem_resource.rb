@@ -41,16 +41,19 @@ class P2PMWorkItemResource < P2PMResource
   end
 
   def create_case aha_feature, security_token
-    logger.debug "\n#{aha_feature}\n"
-    logger.debug "Creating case for #{aha_feature.reference_num}\n"
+    #logger.debug "\n#{aha_feature}\n"
+    #logger.debug "Creating case for #{aha_feature.reference_num}\n"
     projid = get_projectid security_token
-    logger.debug "PM Project ID: #{projid}"
+    #logger.debug "PM Project ID: #{projid}"
     userid = get_userid security_token
-    logger.debug "PM User ID: #{userid}"
+    #logger.debug "PM User ID: #{userid}"
     taskid = get_taskid projid, security_token
-    logger.debug "PM Task ID: #{taskid}"
+    #logger.debug "PM Task ID: #{taskid}"
     description = aha_feature.description.to_hash;
-    puts description;
+    logger.debug "description hash: #{description}";
+    logger.debug "description.body #{description.body}"
+    requirement = aha_feature.requirements.to_hash;
+    logger.debug "requirements hash #{requirements}"
     body = {
       "pro_uid" => projid,
 	    "usr_uid" => userid,
@@ -67,7 +70,7 @@ class P2PMWorkItemResource < P2PMResource
 			    "salesforceId" => get_custom_field_value(aha_feature,"salesforce_id"),
 			    "title" => aha_feature.name,
           "requirements" => aha_feature.requirements[0].body,
-          "description" => aha_feature.description.body,
+          "description" => description.body,
 			    "type" => aha_feature.workflow_kind.name
 		    }
       ]
