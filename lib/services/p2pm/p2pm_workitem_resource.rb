@@ -52,6 +52,10 @@ class P2PMWorkItemResource < P2PMResource
     description = aha_feature.description.to_hash;
     #requirement = aha_feature.requirements.to_hash;
     #logger.debug "requirements hash #{requirement}"
+    aha_feature.requirements.each do |requirement|
+      myrequirement = requirement.to_hash
+      logger.debug "myrequirement: #{myrequirement}"
+    end
     body = {
       "pro_uid" => projid,
 	    "usr_uid" => userid,
