@@ -78,6 +78,7 @@ class P2PMWorkItemResource < P2PMResource
 			    "title" => aha_feature.name,
           "requirements" => send_requirement,
           "description" => description['body'],
+          "valuestream" => get_custom_field_value(aha_feature,"value_stream"),
 			    "type" => aha_feature.workflow_kind.name
 		    }
       ]
