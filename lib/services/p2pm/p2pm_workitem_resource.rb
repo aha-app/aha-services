@@ -56,8 +56,8 @@ class P2PMWorkItemResource < P2PMResource
     aha_feature.requirements.each do |requirement|
       myrequirement = requirement.to_hash
       logger.debug "myrequirement: #{myrequirement}"
-      logger.debug "name: #{myrequirment['name']}"
-      logger.debug "body: #{myrequirment['body']}"
+      logger.debug "name: #{myrequirement['name']}"
+      logger.debug "body: #{myrequierment['body']}"
       #send_requirement = myrequirement['name'] + "<br>" + myrequirement['body']
     end
     logger.debug "send_requirement: #{send_requirement}"
