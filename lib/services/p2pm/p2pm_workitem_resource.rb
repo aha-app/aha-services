@@ -50,8 +50,8 @@ class P2PMWorkItemResource < P2PMResource
     taskid = get_taskid projid, security_token
     #logger.debug "PM Task ID: #{taskid}"
     description = aha_feature.description.to_hash;
-    requirement = aha_feature.requirements.to_hash;
-    logger.debug "requirements hash #{requirement}"
+    #requirement = aha_feature.requirements.to_hash;
+    #logger.debug "requirements hash #{requirement}"
     body = {
       "pro_uid" => projid,
 	    "usr_uid" => userid,
@@ -67,7 +67,7 @@ class P2PMWorkItemResource < P2PMResource
 			    "reproSteps" => get_custom_field_value(aha_feature,"bug_repro_steps"),
 			    "salesforceId" => get_custom_field_value(aha_feature,"salesforce_id"),
 			    "title" => aha_feature.name,
-          "requirements" => aha_feature.requirements[0].body,
+          #"requirements" => aha_feature.requirements[0].body,
           "description" => description['body'],
 			    "type" => aha_feature.workflow_kind.name
 		    }
