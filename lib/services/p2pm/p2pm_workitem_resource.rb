@@ -133,6 +133,9 @@ class P2PMWorkItemResource < P2PMResource
         when 200
           p "It worked !"
           response
+        when 400
+          p "Error!"
+          response
         when 423
           raise SomeCustomExceptionIfYouWant
         else
