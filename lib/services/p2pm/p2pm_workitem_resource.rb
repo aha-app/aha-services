@@ -88,6 +88,8 @@ class P2PMWorkItemResource < P2PMResource
           "requirements" => send_requirement,
           "description" => description['body'],
           "valuestream" => get_custom_field_value(aha_feature,"value_stream"),
+          "severity" => get_custom_field_value(aha_feature, "bug_severity"),
+          "customer_priority" => get_custom_field_value(aha_feature, "customer_priority"),
           "epic" => epic_name,
           "theme" => theme_name,
 			    "type" => aha_feature.workflow_kind.name
