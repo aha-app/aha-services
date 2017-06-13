@@ -234,7 +234,7 @@ protected
     end
     if table_id != ""
       pm_userid = ""
-      response = http_get @service.data.data_url + "/api/1.0/workflow/pmtable/" + table_id + 'data?q={"where": {"product": "' + product + '"}}'
+      response = http_get @service.data.data_url + "/api/1.0/workflow/pmtable/" + table_id + '/data?q={"where": {"product": "' + product + '"}}'
       process_response response do |body|
         parsed = JSON.parse(body)
         parsed.each do |row|
