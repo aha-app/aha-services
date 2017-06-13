@@ -62,12 +62,12 @@ class P2PMWorkItemResource < P2PMResource
     end
     logger.debug "send_requirement: #{send_requirement}"
     epic = aha_feature.initiative.to_hash
-    epic_name = epic.name;
+    epic_name = epic['name']
     logger.debug "epic: #{epic_name}"
     aha_feature.goals.each do |goal|
       theme = goal.to_hash
-      logger.debug "theme: #{theme.name}"
-      theme_name = theme.name
+      logger.debug "theme: #{theme['name']}"
+      theme_name = theme['name']
     end
     body = {
       "pro_uid" => projid,
