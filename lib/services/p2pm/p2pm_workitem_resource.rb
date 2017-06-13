@@ -45,7 +45,7 @@ class P2PMWorkItemResource < P2PMResource
     #logger.debug "Creating case for #{aha_feature.reference_num}\n"
     projid = get_projectid security_token
     #logger.debug "PM Project ID: #{projid}"
-    userid = get_userid security_token
+    userid = get_userid security_token, aha_feature.realease.project.name
     #logger.debug "PM User ID: #{userid}"
     taskid = get_taskid projid, security_token
     #logger.debug "PM Task ID: #{taskid}"
@@ -218,21 +218,47 @@ protected
     end
   end
 
-  def get_userid sec_token
+  def get_userid sec_token, product
     logger.debug "In get_userid\n"
     http.headers["Authorization"] = "Bearer " + sec_token
-    response = http_get @service.data.data_url + "/api/1.0/workflow/users"
+    table_id = ""
+    # Get the table ID from process maker 
+    response = http_get @service.data.data_url + "/api/1.0/workflow/pmtable"
     process_response response do |body|
-      
-      users = Hashie::Mash.new
       parsed = JSON.parse(body)
-      user_id = nil
-      parsed.each do |user|
-        if user['usr_username'] == "pwaller"
-          user_id = user['usr_uid']
+      parsed.each do |table|
+        if table['pmt_tab_name'] == "PMT_TFS_DEV_MANAGER"
+          table_id = table['pmt_uid']
         end
       end
-      user_id
+    end
+    if table_id != ""
+      pm_userid = ""
+      response = http_get @service.data.data_url + "/api/1.0/workflow/pmtable/" + table_id + 'data?q={"where": {"product": "' + product + '"}}'
+      process_response response do |body|
+        parsed = JSON.parse(body)
+        parsed.each do |row|
+          pm_userid = row['username']
+        end
+      end
+      
+      if pm_userid != ""
+
+        # Get the record in the table for the product
+        response = http_get @service.data.data_url + "/api/1.0/workflow/users"
+        process_response response do |body|
+          
+          users = Hashie::Mash.new
+          parsed = JSON.parse(body)
+          user_id = nil
+          parsed.each do |user|
+            if user['usr_username'] == pm_userid
+              user_id = user['usr_uid']
+            end
+          end
+          user_id
+        end
+      end
     end
   end
   
