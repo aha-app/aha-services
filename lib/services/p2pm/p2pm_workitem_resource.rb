@@ -237,8 +237,10 @@ protected
       response = http_get @service.data.data_url + "/api/1.0/workflow/pmtable/" + table_id + '/data?q={"where": {"product": "' + product + '"}}'
       process_response response do |body|
         parsed = JSON.parse(body)
+        
         parsed.each do |row|
-          pm_userid = row['username']
+          myrow = row.to_hash
+          pm_userid = myrow['username']
         end
       end
       
