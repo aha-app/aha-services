@@ -51,9 +51,15 @@ protected
     !["Description", "Theme", "Body"].include?(field_name)
   end
 
+  def url
+    data.url || data.webhook_url
+  end
+
   def send_message(message)
+    raise AhaService::RemoteError, "Integration has not been configured" unless url
+
     http.headers['Content-Type'] = 'application/json'
-    response = http_post(data.url || data.webhook_url, message.to_json)
+    response = http_post(url, message.to_json)
     if [200, 201, 204].include?(response.status)
       return
     elsif response.status == 404
