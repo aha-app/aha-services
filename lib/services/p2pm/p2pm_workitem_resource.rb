@@ -61,9 +61,9 @@ class P2PMWorkItemResource < P2PMResource
       send_requirement += "#{myrequirement['name']}<br><br>#{myrequirement['description']['body']}<br>"
     end
     logger.debug "send_requirement: #{send_requirement}"
-    epic = aha_feature.initiative.to_hash
-    epic_name = epic['name']
-    logger.debug "epic: #{epic_name}"
+    #epic = aha_feature.initiative.to_hash
+    #epic_name = epic['name']
+    #logger.debug "epic: #{epic_name}"
     theme_name = ""
     aha_feature.goals.each do |goal|
       theme = goal.to_hash
