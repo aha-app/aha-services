@@ -216,7 +216,7 @@ protected
     process_response response do |body|
       parsed = JSON.parse(body)
       logger.debug "\nparsed: #{parsed}\n"
-      if (type == "goal")
+      if (type == "goals")
         logger.debug "\ncustom_fields: #{parsed['goal']['custom_fields']}\n"
         tfs_id = parsed['goal']['custom_fields'].find {|field| field['key'] == "tfs_id"}
       else
