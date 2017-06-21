@@ -218,7 +218,7 @@ protected
       logger.debug "\nparsed: #{parsed}\n"
       logger.debug "\ncustom_fields: #{parsed['goal']['custom_fields']}\n"
       tfs_id = parsed['goal']['custom_fields'].find {|field| field['key'] == "tfs_id"}
-      logger.debug "\ntfs_id: #{tfs_id}\n"
+      logger.debug "\ntfs_id: #{tfs_id['value']}\n"
       nil
     end
   end
