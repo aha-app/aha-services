@@ -199,6 +199,7 @@ protected
   end
 
   def get_custom_field_value(resource, key)
+    @logger.debug("resource: #{resource}")
     field = resource.custom_fields.find {|field| field['key'] == key}
     if field
       field.value
