@@ -72,6 +72,8 @@ class P2PMWorkItemResource < P2PMResource
       theme_id = theme['id']
       logger.debug "theme: #{theme_id}: #{theme_name}"
     end
+    theme_tfs_id = get_theme_info "goals", theme_id, projid
+    epic_tfs_id = get_theme_info "initiatives", epic_id, projid
     body = {
       "pro_uid" => projid,
 	    "usr_uid" => userid,
@@ -92,8 +94,8 @@ class P2PMWorkItemResource < P2PMResource
           "valuestream" => get_custom_field_value(aha_feature,"value_stream"),
           "severity" => get_custom_field_value(aha_feature, "bug_severity"),
           "customer_priority" => get_custom_field_value(aha_feature, "customer_priority"),
-          "epic" => epic_id,
-          "theme" => theme_id,
+          "epic" => epic_tfs_id,
+          "theme" => theme_tfs_id,
 			    "type" => aha_feature.workflow_kind.name
 		    }
       ]
@@ -203,6 +205,21 @@ protected
     else
       nil
     end
+  end
+
+  def get_theme_info(type, theme_id, project_id)
+    logger.debug "In get_theme_info\n"
+    http.headers["Authorization"] = "Bearer cef088bcdaecbfb6ea8563394a17f1e2ccece4f335fdac75809a6e8ac54c07cb"
+    response = http_get "https://secure.aha.io/api/v1/products/" + project_id + "/" + type + "/" + theme_id
+    process_response response do |body|
+      parsed = JSON.parse(body)
+      logger.debug "parsed: #{parsed}"
+      tfs_id = nil
+      parsed.each do |object|
+        logger.debug "object: #{object}"
+        tfs_id = get_custom_field_value(object, "tfs_id")
+      end
+      tfs_id
   end
 
   def get_projectid sec_token
