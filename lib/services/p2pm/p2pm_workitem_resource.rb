@@ -74,8 +74,8 @@ class P2PMWorkItemResource < P2PMResource
     end
     theme_tfs_id = nil
     epic_tfs_id = nil
-    #theme_tfs_id = get_theme_info "goals", theme_id, projid
-    #epic_tfs_id = get_theme_info "initiatives", epic_id, projid
+    theme_tfs_id = get_theme_info "goals", theme_id, projid
+    epic_tfs_id = get_theme_info "initiatives", epic_id, projid
     body = {
       "pro_uid" => projid,
 	    "usr_uid" => userid,
@@ -201,7 +201,6 @@ protected
   end
 
   def get_custom_field_value(resource, key)
-    @logger.debug("resource: #{resource}")
     field = resource.custom_fields.find {|field| field['key'] == key}
     if field
       field.value
@@ -217,6 +216,7 @@ protected
     process_response response do |body|
       parsed = JSON.parse(body)
       logger.debug "\nparsed: #{parsed}\n"
+      logger.debug "\ncustom_fields: #{parsed.custom_fields}"
       tfs_id = nil
       tfs_id = get_custom_field_value(parsed, "tfs_id")
       tfs_id
