@@ -213,12 +213,12 @@ protected
     response = http_get "https://secure.aha.io/api/v1/products/" + project_id + "/" + type + "/" + theme_id
     process_response response do |body|
       parsed = JSON.parse(body)
-      logger.debug "parsed: #{parsed}"
+      logger.debug "\nparsed: #{parsed}\n"
       tfs_id = nil
       parsed.each do |object|
-        logger.debug "oject: #{object}"
+        logger.debug "\noject: #{object}\n"
         object.each do |row|
-          logger.debug "row: #{row}"
+          logger.debug "\nrow: #{row}\n"
           tfs_id = get_custom_field_value(row, "tfs_id")
         end
       end
