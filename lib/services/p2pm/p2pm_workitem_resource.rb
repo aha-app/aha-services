@@ -216,8 +216,13 @@ protected
     process_response response do |body|
       parsed = JSON.parse(body)
       logger.debug "\nparsed: #{parsed}\n"
-      logger.debug "\ncustom_fields: #{parsed['goal']['custom_fields']}\n"
-      tfs_id = parsed['goal']['custom_fields'].find {|field| field['key'] == "tfs_id"}
+      if (type == "goal")
+        logger.debug "\ncustom_fields: #{parsed['goal']['custom_fields']}\n"
+        tfs_id = parsed['goal']['custom_fields'].find {|field| field['key'] == "tfs_id"}
+      else
+        logger.debug "\ncustom_fields: #{parsed['initiative']['custom_fields']}\n"
+        tfs_id = parsed['initiative']['custom_fields'].find {|field| field['key'] == "tfs_id"}
+      end
       logger.debug "\ntfs_id: #{tfs_id['value']}\n"
       tfs_id['value']
     end
