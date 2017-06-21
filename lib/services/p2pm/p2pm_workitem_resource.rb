@@ -62,14 +62,15 @@ class P2PMWorkItemResource < P2PMResource
     end
     logger.debug "send_requirement: #{send_requirement}"
     epic_name = ""
-    #epic = aha_feature.initiative.to_hash
-    #epic_name = epic['name']
-    #logger.debug "epic: #{epic_name}"
+    epic_id = aha_feature.initiative.id
+    epic_name aha_feature.initiative.name
+    logger.debug "epic: #{epic_id}: #{epic_name}"
     theme_name = ""
     aha_feature.goals.each do |goal|
       theme = goal.to_hash
-      logger.debug "theme: #{theme['name']}"
       theme_name = theme['name']
+      theme_id = them['id']
+      logger.debug "theme: #{theme_id}: #{theme_name}"
     end
     body = {
       "pro_uid" => projid,
@@ -91,8 +92,8 @@ class P2PMWorkItemResource < P2PMResource
           "valuestream" => get_custom_field_value(aha_feature,"value_stream"),
           "severity" => get_custom_field_value(aha_feature, "bug_severity"),
           "customer_priority" => get_custom_field_value(aha_feature, "customer_priority"),
-          "epic" => epic_name,
-          "theme" => theme_name,
+          "epic" => epic_id,
+          "theme" => theme_id,
 			    "type" => aha_feature.workflow_kind.name
 		    }
       ]
