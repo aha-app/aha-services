@@ -219,7 +219,7 @@ protected
       logger.debug "\ncustom_fields: #{parsed['goal']['custom_fields']}\n"
       tfs_id = parsed['goal']['custom_fields'].find {|field| field['key'] == "tfs_id"}
       if tfs_id
-        tfs_id.value
+        tfs_id['value']
       else
         nil
       end
