@@ -215,13 +215,7 @@ protected
       parsed = JSON.parse(body)
       logger.debug "\nparsed: #{parsed}\n"
       tfs_id = nil
-      parsed.each do |object|
-        logger.debug "\noject: #{object}\n"
-        object.each do |row|
-          logger.debug "\nrow: #{row}\n"
-          tfs_id = get_custom_field_value(row, "tfs_id")
-        end
-      end
+      tfs_id = get_custom_field_value(parsed, "tfs_id")
       tfs_id
     end
   end
