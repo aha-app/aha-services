@@ -69,7 +69,7 @@ class P2PMWorkItemResource < P2PMResource
     aha_feature.goals.each do |goal|
       theme = goal.to_hash
       theme_name = theme['name']
-      theme_id = them['id']
+      theme_id = theme['id']
       logger.debug "theme: #{theme_id}: #{theme_name}"
     end
     body = {
