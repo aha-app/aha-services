@@ -63,7 +63,7 @@ class P2PMWorkItemResource < P2PMResource
     logger.debug "send_requirement: #{send_requirement}"
     epic_name = ""
     epic_id = aha_feature.initiative.id
-    epic_name aha_feature.initiative.name
+    epic_name = aha_feature.initiative.name
     logger.debug "epic: #{epic_id}: #{epic_name}"
     theme_name = ""
     aha_feature.goals.each do |goal|
