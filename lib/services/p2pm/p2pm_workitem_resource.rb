@@ -22,7 +22,7 @@ class P2PMWorkItemResource < P2PMResource
     #url = "http://52.39.212.230:8080/api/1.0/workflow/pmtable/" + table + "/data"
     url = @service.data.data_url + "/api/1.0/workflow/pmtable/" + table + "/data"
     #url = mstfs_project_url project, "wit/workitems/$" + ERB::Util.url_encode(type)
-    logger.debug "Sending request to #{url}\nBody: #{body}\n"
+    #logger.debug "Sending request to #{url}\nBody: #{body}\n"
     bearer = 'Bearer ' + security_token
     #response = http_patch url, body.to_json, my_header
     response = RestClient.post url, body.to_json, { content_type: :json,:Authorization => bearer } { |response, request, result, &block|
@@ -41,7 +41,7 @@ class P2PMWorkItemResource < P2PMResource
   end
 
   def create_case aha_feature, security_token
-    logger.debug "\n#{aha_feature}\n"
+    #logger.debug "\n#{aha_feature}\n"
     #logger.debug "Creating case for #{aha_feature.reference_num}\n"
     projid = get_projectid security_token
     #logger.debug "PM Project ID: #{projid}"
@@ -55,22 +55,22 @@ class P2PMWorkItemResource < P2PMResource
     send_requirement = ""
     aha_feature.requirements.each do |requirement|
       myrequirement = requirement.to_hash
-      logger.debug "myrequirement: #{myrequirement}"
-      logger.debug "name: #{myrequirement['name']}"
-      logger.debug "body: #{myrequirement['description']['body']}"
+      #logger.debug "myrequirement: #{myrequirement}"
+      #logger.debug "name: #{myrequirement['name']}"
+      #logger.debug "body: #{myrequirement['description']['body']}"
       send_requirement += "#{myrequirement['name']}<br><br>#{myrequirement['description']['body']}<br>"
     end
-    logger.debug "send_requirement: #{send_requirement}"
+    #logger.debug "send_requirement: #{send_requirement}"
     epic_id = aha_feature.initiative.id
     epic_name = aha_feature.initiative.name
-    logger.debug "epic: #{epic_id}: #{epic_name}"
+    #logger.debug "epic: #{epic_id}: #{epic_name}"
     theme_name = ""
     theme_id = ""
     aha_feature.goals.each do |goal|
       theme = goal.to_hash
       theme_name = theme['name']
       theme_id = theme['id']
-      logger.debug "theme: #{theme_id}: #{theme_name}"
+      #logger.debug "theme: #{theme_id}: #{theme_name}"
     end
     theme_tfs_id = get_theme_info "goals", theme_id, projid
     epic_tfs_id = get_theme_info "initiatives", epic_id, projid
@@ -105,7 +105,7 @@ class P2PMWorkItemResource < P2PMResource
     #url = "http://52.39.212.230:8080/api/1.0/workflow/pmtable/" + table + "/data"
     url = @service.data.data_url + "/api/1.0/workflow/cases/impersonate"
     #url = mstfs_project_url project, "wit/workitems/$" + ERB::Util.url_encode(type)
-    logger.debug "Sending request to #{url}\nBody: #{body}\n"
+    #logger.debug "Sending request to #{url}\nBody: #{body}\n"
     bearer = 'Bearer ' + security_token
     #response = http_patch url, body.to_json, my_header
     response = RestClient.post url, body.to_json, { content_type: :json,:Authorization => bearer } { |response, request, result, &block|
@@ -120,12 +120,12 @@ class P2PMWorkItemResource < P2PMResource
           response.return!(&block)
       end
     }
-    logger.debug "response: #{response}"
+    #logger.debug "response: #{response}"
     process_RestClient_response response
   end
 
   def update_case app_uid, security_token
-    logger.debug "Updating case #{app_uid}\n"
+    #logger.debug "Updating case #{app_uid}\n"
     http.headers["Authorization"] = "Bearer " + security_token
     #url = "http://52.39.212.230:8080/api/1.0/workflow/pmtable/" + table + "/data"
     url = @service.data.data_url + "/api/1.0/workflow/cases/" + app_uid + "/execute-trigger/6970852345931ef3dc4ac54009416704"
@@ -147,7 +147,7 @@ class P2PMWorkItemResource < P2PMResource
           response.return!(&block)
       end
     }
-    logger.debug "response: #{response}"
+    #logger.debug "response: #{response}"
     process_RestClient_response response
   end
 
@@ -227,7 +227,7 @@ protected
   end
 
   def get_projectid sec_token
-    logger.debug "In get_projectid\n"
+    #logger.debug "In get_projectid\n"
     http.headers["Authorization"] = "Bearer " + sec_token
     response = http_get @service.data.data_url + "/api/1.0/workflow/project"
     process_response response do |body|
@@ -245,7 +245,7 @@ protected
   end
 
   def get_userid sec_token, product
-    logger.debug "In get_userid\n"
+    #logger.debug "In get_userid\n"
     http.headers["Authorization"] = "Bearer " + sec_token
     table_id = ""
     # Get the table ID from process maker 
@@ -287,22 +287,22 @@ protected
   end
   
   def get_taskid project_id, sec_token
-    logger.debug "In get_taskid\n"
+    #logger.debug "In get_taskid\n"
     http.headers["Authorization"] = "Bearer " + sec_token
     response = http_get @service.data.data_url + "/api/1.0/workflow/project/" + project_id
     process_response response do |body|
       
       tasks = Hashie::Mash.new
       parsed = JSON.parse(body)
-      logger.debug "\nbody: #{body}\n"
+      #logger.debug "\nbody: #{body}\n"
       x = parsed["diagrams"][0]
-      logger.debug "\ndiagrams #{x}\n"
+      #logger.debug "\ndiagrams #{x}\n"
       y = x["activities"][0]
-      logger.debug "\nactivities #{y}\n"
+      #logger.debug "\nactivities #{y}\n"
       z = y["act_name"]
-      logger.debug "\nact_name: #{z}\n"
+      #logger.debug "\nact_name: #{z}\n"
       z1 = y["act_uid"]
-      logger.debug "\nact_uid:  #{z1}\n"
+      #logger.debug "\nact_uid:  #{z1}\n"
       task_id = z1
       task_id
     end
