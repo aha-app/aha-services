@@ -72,8 +72,10 @@ class P2PMWorkItemResource < P2PMResource
       theme_id = theme['id']
       #logger.debug "theme: #{theme_id}: #{theme_name}"
     end
-    theme_tfs_id = get_theme_info "goals", theme_id, projid
-    epic_tfs_id = get_theme_info "initiatives", epic_id, projid
+    theme_tfs_id = nil
+    epic_tfs_id = nil
+    #theme_tfs_id = get_theme_info "goals", theme_id, projid
+    #epic_tfs_id = get_theme_info "initiatives", epic_id, projid
     body = {
       "pro_uid" => projid,
 	    "usr_uid" => userid,
