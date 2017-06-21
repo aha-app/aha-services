@@ -216,8 +216,9 @@ protected
       logger.debug "parsed: #{parsed}"
       tfs_id = nil
       parsed.each do |object|
-        logger.debug "object: #{object}"
-        tfs_id = get_custom_field_value(object, "tfs_id")
+        object.each do |row|
+        logger.debug "object: #{row}"
+        tfs_id = get_custom_field_value(row, "tfs_id")
       end
       tfs_id
     end
