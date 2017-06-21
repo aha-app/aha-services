@@ -216,7 +216,7 @@ protected
     process_response response do |body|
       parsed = JSON.parse(body)
       logger.debug "\nparsed: #{parsed}\n"
-      logger.debug "\ncustom_fields: #{parsed.goal.custom_fields}"
+      logger.debug "\ncustom_fields: #{parsed['goal']}"
       tfs_id = nil
       tfs_id = get_custom_field_value(parsed, "tfs_id")
       tfs_id
