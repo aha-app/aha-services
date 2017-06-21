@@ -217,8 +217,9 @@ protected
       tfs_id = nil
       parsed.each do |object|
         object.each do |row|
-        logger.debug "object: #{row}"
-        tfs_id = get_custom_field_value(row, "tfs_id")
+          logger.debug "object: #{row}"
+          tfs_id = get_custom_field_value(row, "tfs_id")
+        end
       end
       tfs_id
     end
