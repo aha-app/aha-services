@@ -220,6 +220,7 @@ protected
         tfs_id = get_custom_field_value(object, "tfs_id")
       end
       tfs_id
+    end
   end
 
   def get_projectid sec_token
