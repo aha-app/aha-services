@@ -155,8 +155,17 @@ class AhaServices::Trello < AhaService
   def attachments_match(aha_attachment, trello_attachment)
     uri = URI.parse(trello_attachment.url)
     trello_filename = File.basename(uri.path)
-    aha_attachment.file_name == trello_filename and
-      aha_attachment.file_size.to_i == trello_attachment.bytes.to_i
+    # Trello has modified its attachment naming normalization, but it is not
+    # clear whether they updated all previous attachments, so we are checking
+    # against the normalized value and the raw value for backwards
+    # compatibility
+    (trelloize_filename(aha_attachment.file_name) == trello_filename ||
+      aha_attachment.file_name == trello_filename
+    ) && aha_attachment.file_size.to_i == trello_attachment.bytes.to_i
+  end
+
+  def trelloize_filename(fname)
+    URI.encode(fname.gsub(/[ *\\\"\']/, "_"))
   end
 
   def upload_attachments(attachments, card)
