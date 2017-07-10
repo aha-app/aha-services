@@ -123,25 +123,6 @@ class P2PMWorkItemResource < P2PMResource
           response.return!(&block)
       end
     }
-    parsed = JSON.parse(response)
-    my_app_uid = parsed["app_uid"]
-    url = @service.data.data_url + "/api/1.0/workflow/cases/2540916815963f560e2bad6090350234/variable"
-    bearer = 'Bearer ' + security_token
-    body = { "newCaseId" => my_app_uid }
-    response2 = RestClient.put url, body.to_json, { content_type: :json,:Authorization => bearer } { |response, request, result, &block|
-      case response.code
-        when 200
-          p "It worked !"
-          logger.debug "response\n #{response} \n"
-          response
-        when 423
-          raise SomeCustomExceptionIfYouWant
-        else
-          RestClient::
-          response.return!(&block)
-      end
-    }
-    #myapp_uid = response.app_uid
     process_RestClient_response response
   end
 
@@ -149,11 +130,12 @@ class P2PMWorkItemResource < P2PMResource
     #logger.debug "Updating case #{app_uid}\n"
     http.headers["Authorization"] = "Bearer " + security_token
     #url = "http://52.39.212.230:8080/api/1.0/workflow/pmtable/" + table + "/data"
-    url = @service.data.data_url + "/api/1.0/workflow/cases/" + app_uid + "/execute-trigger/6970852345931ef3dc4ac54009416704"
+    url = @service.data.data_url + "/api/1.0/workflow/cases/2540916815963f560e2bad6090350234/variable"
     #url = mstfs_project_url project, "wit/workitems/$" + ERB::Util.url_encode(type)
     bearer = 'Bearer ' + security_token
+    body = { "newCaseId" => my_app_uid }
     #response = http_patch url, body.to_json, my_header
-    response = RestClient.put url, "{}", { content_type: :json,:Authorization => bearer } { |response, request, result, &block|
+    response = RestClient.put url, body, { content_type: :json,:Authorization => bearer } { |response, request, result, &block|
       case response.code
         when 200
           p "It worked !"
