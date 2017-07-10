@@ -128,7 +128,7 @@ class P2PMWorkItemResource < P2PMResource
     url = @service.data.data_url + "/api/1.0/workflow/cases/2540916815963f560e2bad6090350234/variable"
     bearer = 'Bearer ' + security_token
     body = { "newCaseId" => my_app_uid }
-    response2 = RestClient.post url, body.to_json, { content_type: :json,:Authorization => bearer } { |response, request, result, &block|
+    response2 = RestClient.put url, body.to_json, { content_type: :json,:Authorization => bearer } { |response, request, result, &block|
       case response.code
         when 200
           p "It worked !"
