@@ -63,14 +63,14 @@ class P2PMWorkItemResource < P2PMResource
     #logger.debug "send_requirement: #{send_requirement}"
     epic_id = aha_feature.initiative.id
     epic_name = aha_feature.initiative.name
-    logger.debug "epic: #{epic_id}: #{epic_name}"
+    #logger.debug "epic: #{epic_id}: #{epic_name}"
     theme_name = ""
     theme_id = ""
     aha_feature.goals.each do |goal|
       theme = goal.to_hash
       theme_name = theme['name']
       theme_id = theme['id']
-      logger.debug "theme: #{theme_id}: #{theme_name}"
+      #logger.debug "theme: #{theme_id}: #{theme_name}"
     end
     theme_tfs_id = nil
     epic_tfs_id = nil
@@ -114,7 +114,7 @@ class P2PMWorkItemResource < P2PMResource
       case response.code
         when 200
           p "It worked !"
-          logger.debug "response\n #{response} \n"
+          #logger.debug "response\n #{response} \n"
           response
         when 423
           raise SomeCustomExceptionIfYouWant
@@ -124,7 +124,7 @@ class P2PMWorkItemResource < P2PMResource
       end
     }
     parsed = JSON.parse(response)
-    logger.debug "app_uid:\n #{parsed.app_uid}\n"
+    logger.debug "app_uid:\n #{parsed}\n"
     #myapp_uid = response.app_uid
     process_RestClient_response response
   end
@@ -213,20 +213,20 @@ protected
   end
 
   def get_theme_info(type, theme_id, project_id)
-    logger.debug "In get_theme_info\n"
+    #loggerlogger.debug "In get_theme_info\n"
     http.headers["Authorization"] = "Bearer cef088bcdaecbfb6ea8563394a17f1e2ccece4f335fdac75809a6e8ac54c07cb"
     response = http_get "https://secure.aha.io/api/v1/products/" + project_id + "/" + type + "/" + theme_id
     process_response response do |body|
       parsed = JSON.parse(body)
-      logger.debug "\nparsed: #{parsed}\n"
+      #logger.debug "\nparsed: #{parsed}\n"
       if (type == "goals")
-        logger.debug "\ncustom_fields: #{parsed['goal']['custom_fields']}\n"
+        #logger.debug "\ncustom_fields: #{parsed['goal']['custom_fields']}\n"
         tfs_id = parsed['goal']['custom_fields'].find {|field| field['key'] == "tfs_id"}
       else
-        logger.debug "\ncustom_fields: #{parsed['initiative']['custom_fields']}\n"
+        #logger.debug "\ncustom_fields: #{parsed['initiative']['custom_fields']}\n"
         tfs_id = parsed['initiative']['custom_fields'].find {|field| field['key'] == "tfs_id"}
       end
-      logger.debug "\ntfs_id: #{tfs_id['value']}\n"
+      #logger.debug "\ntfs_id: #{tfs_id['value']}\n"
       tfs_id['value']
     end
   end
