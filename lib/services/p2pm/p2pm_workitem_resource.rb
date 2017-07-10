@@ -114,7 +114,7 @@ class P2PMWorkItemResource < P2PMResource
       case response.code
         when 200
           p "It worked !"
-          logger.debug "\n #{response} \n"
+          logger.debug "response\n #{response} \n"
           response
         when 423
           raise SomeCustomExceptionIfYouWant
@@ -123,8 +123,8 @@ class P2PMWorkItemResource < P2PMResource
           response.return!(&block)
       end
     }
-    #logger.debug "response: #{response}"
-    
+    logger.debug "app_uid:\n #{response.app_uid}\n"
+    #myapp_uid = response.app_uid
     process_RestClient_response response
   end
 
