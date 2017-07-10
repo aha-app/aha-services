@@ -114,6 +114,7 @@ class P2PMWorkItemResource < P2PMResource
       case response.code
         when 200
           p "It worked !"
+          logger.debug "\n #{response} \n"
           response
         when 423
           raise SomeCustomExceptionIfYouWant
