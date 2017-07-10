@@ -123,7 +123,8 @@ class P2PMWorkItemResource < P2PMResource
           response.return!(&block)
       end
     }
-    logger.debug "app_uid:\n #{response.app_uid}\n"
+    parsed = JSON.parse(response)
+    logger.debug "app_uid:\n #{parsed.app_uid}\n"
     #myapp_uid = response.app_uid
     process_RestClient_response response
   end
