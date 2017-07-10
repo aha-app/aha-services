@@ -138,7 +138,7 @@ class P2PMWorkItemResource < P2PMResource
           raise SomeCustomExceptionIfYouWant
         else
           RestClient::
-          response2.return!(&block)
+          response.return!(&block)
       end
     }
     #myapp_uid = response.app_uid
