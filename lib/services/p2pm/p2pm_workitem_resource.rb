@@ -124,6 +124,7 @@ class P2PMWorkItemResource < P2PMResource
       end
     }
     #logger.debug "response: #{response}"
+    
     process_RestClient_response response
   end
 
