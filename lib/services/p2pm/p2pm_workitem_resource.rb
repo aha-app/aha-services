@@ -133,7 +133,7 @@ class P2PMWorkItemResource < P2PMResource
         when 200
           p "It worked !"
           logger.debug "response\n #{response} \n"
-          response2
+          response
         when 423
           raise SomeCustomExceptionIfYouWant
         else
