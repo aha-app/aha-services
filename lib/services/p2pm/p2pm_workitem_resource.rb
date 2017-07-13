@@ -30,6 +30,10 @@ class P2PMWorkItemResource < P2PMResource
         when 201
           p "It worked !"
           response
+        when 400
+          puts response.code
+          msg = parse(response.body)
+          puts msg
         when 423
           raise SomeCustomExceptionIfYouWant
         else
