@@ -34,8 +34,8 @@ class P2PMWorkItemResource < P2PMResource
           raise SomeCustomExceptionIfYouWant
         else
           puts response.code
-          RestClient::
-          response.return!(&block)
+#          RestClient::
+#          response.return!(&block)
       end
     }
     process_RestClient_response response
