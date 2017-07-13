@@ -33,7 +33,7 @@ class P2PMWorkItemResource < P2PMResource
         when 423
           raise SomeCustomExceptionIfYouWant
         else
-          puts responce.code
+          puts response.code
           RestClient::
           response.return!(&block)
       end
