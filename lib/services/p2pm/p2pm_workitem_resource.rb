@@ -122,11 +122,16 @@ class P2PMWorkItemResource < P2PMResource
           p "It worked !"
           #logger.debug "response\n #{response} \n"
           response
+        when 400
+          p "Error"
+          msg = parse(response.body)
+          puts msg
+          response
         when 423
           raise SomeCustomExceptionIfYouWant
-        else
-          RestClient::
-          response.return!(&block)
+#        else
+#          RestClient::
+#          response.return!(&block)
       end
     }
     process_RestClient_response response
