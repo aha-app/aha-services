@@ -96,6 +96,8 @@ class P2PMWorkItemResource < P2PMResource
 			    "reproSteps" => get_custom_field_value(aha_feature,"bug_repro_steps"),
 			    "salesforceId" => get_custom_field_value(aha_feature,"salesforce_id"),
           "bugVersion" => get_custom_field_value(aha_feature,"bug_version_found_in"),
+          "areaPath" => get_custom_field_value(aha_feature,"area_path"),
+          "iterationPath" => get_custom_field_value(aha_feature,"iteration_path"),
 			    "title" => aha_feature.name,
           "requirements" => send_requirement,
           "description" => description['body'],
