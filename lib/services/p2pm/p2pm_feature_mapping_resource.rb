@@ -20,7 +20,6 @@ class P2PMFeatureMappingResource < P2PMResource
     puts aha_feature.release.project.name
     if aha_feature.workflow_kind.name != 'Research'
       # Get the DEV_MANGER from the TABLE for the Aha project
-      #http://52.39.212.230:8080/api/1.0/workflow/pmtable/58415494458d0549dd1f0b3088492444/data?q={"where": {"product": "P2 ProShield"}}
       body = {
         "ID" => nil,
         "REPRO_STEPS" => get_custom_field_value(aha_feature,"bug_repro_steps"),

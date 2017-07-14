@@ -6,7 +6,7 @@ class P2PMProjectResource < P2PMResource
 
     sec_token = get_security_token
     http.headers["Authorization"] = "Bearer " + sec_token
-    response = http_get "http://52.39.212.230:8080/api/1.0/workflow/pmtable"
+    response = http_get @service.data.data_url + "/api/1.0/workflow/pmtable"
     process_response response do |body|
       
       tables = Hashie::Mash.new
