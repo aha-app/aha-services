@@ -153,7 +153,7 @@ module Networking
   def http_method(method, url = nil, body = nil, headers = nil)
     block = Proc.new if block_given?
     
-    #@logger.debug("Sending #{method} request to #{url} with body: #{body} and headers: #{headers}")
+    @logger.debug("Sending #{method} request to #{url} with body: #{body} and headers: #{headers}")
     puts url
     puts headers
     puts body

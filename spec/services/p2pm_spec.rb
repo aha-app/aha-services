@@ -24,11 +24,11 @@ describe AhaServices::P2PM do
 
   end
 
-  before do
+  #before do
     # TODO - Copied these credentials from VSO. Validate that they're correct for TFS.
-    @account_name = "pwaller"
-    @password = "BaseBall24"
-  end
+  #  @account_name = "pwaller"
+  #  @password = "BaseBall24"
+  #end
 
   it "can be installed" do
     get_oauth
