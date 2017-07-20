@@ -39,10 +39,11 @@ module P2PMCommon
     end
 
     def receive_update_feature
-      workitem_id = payload.feature.integration_fields.detect{|field| field.name == "id"}.value rescue nil
-      unless workitem_id.nil?
-        feature_mapping_resource.update workitem_id, payload.feature, data.table
-      end
+      #workitem_id = payload.feature.integration_fields.detect{|field| field.name == "id"}.value rescue nil
+      #unless workitem_id.nil?
+        #feature_mapping_resource.update workitem_id, payload.feature, data.table
+      #end
+      created_workitem = feature_mapping_resource.create data.table, payload.feature
     end 
 
   end
