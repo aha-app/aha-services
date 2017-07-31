@@ -10,8 +10,6 @@ require File.expand_path("../../aha-services.rb", __FILE__)
 #
 class ProxyApp < Sinatra::Base
   enable :logging, :lock
-  # set :server, :webrick
-  
   #
   # Configure the server.
   #
