@@ -99,7 +99,7 @@ Please carefully follow these instructions to ensure that the integration is pro
 5. Map how you want new features to show up in JIRA and how the JIRA status fields should map to Aha!
 6. Copy the Webhook URL below, this step is required for the integration to be bi-directional.
 7. In JIRA, navigate to System Settings -> WebHooks.
-8. Create a new Webhook in JIRA and paste in the Webhook URL that you copied from step #5. Check the boxes for all _Worklog_ and _Issue_ events, do not check the box for _Exclude body._
+8. Create a new Webhook in JIRA and paste in the Webhook URL that you copied from step #6. Check the boxes for all _Worklog_ and _Issue_ events, do not check the box for _Exclude body._
 9. Save the Webhook.
 10. Enable the integration in Aha!
 11. Test the integration by going to one of your features in Aha! and using the _Send to JIRA_ item in the _Actions_ menu on the features page. You should then look at your project in JIRA and see that the feature (and any requirements) were properly created.
