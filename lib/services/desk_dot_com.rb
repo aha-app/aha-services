@@ -7,11 +7,12 @@ class AhaServices::DeskDotCom < AhaService
   internal :idea_portal_id
 
   boolean :use_customer_name,
-    description: "Use the customer name and email instead of the agents when creating a ticket"
+    label: "Create ideas using customer name",
+    description: "Disabling this will create ideas using the Desk.com agent as the idea creator."
 
   string :oauth_host,
-    label: "Desk Host",
-    description: "Your Desk.com domain. For example: mydeskdomain.desk.com."
+    label: "Desk.com URL",
+    description: "Your Desk.com domain. For example: mydeskdomain.desk.com. Do not include https:// in your URL."
 
   oauth_button request_token_path: "/oauth/request_token",
     access_token_path: "/oauth/access_token",
@@ -21,9 +22,10 @@ class AhaServices::DeskDotCom < AhaService
 
   install_button hide_fetch_message: true, label: "Create Integration URL"
 
-  internal :aha_integration_url
+  internal :aha_integration_url,
+    label: "Aha! integration URL"
 
-  string :shared_key, description: "Your Desk.com shared key. You can find this in the settings for the Integration URL"
+  string :shared_key, description: "You can find the shared key in the Integration URL in the Desk.com Admin dashboard."
 
   INTEGRATION_URL_NAME = "Aha!"
 
