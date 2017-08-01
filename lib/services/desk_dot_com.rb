@@ -76,12 +76,15 @@ class AhaServices::DeskDotCom < AhaService
   end
 
   def client
+    host = data.oauth_host
+    host = "https://#{host}" unless host.match("^https?://")
+
     DeskApi::Client.new({
       token: data.oauth_token,
       token_secret: data.oauth_secret,
       consumer_secret: data.consumer_secret,
       consumer_key: data.consumer_key,
-      endpoint: "https://#{data.oauth_host}"
+      endpoint: host
     })
   end
 end
