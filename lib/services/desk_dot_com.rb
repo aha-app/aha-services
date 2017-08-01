@@ -25,7 +25,7 @@ class AhaServices::DeskDotCom < AhaService
 
   string :shared_key, description: "Your Desk.com shared key"
 
-  INTEGRATION_URL_NAME = "Aha"
+  INTEGRATION_URL_NAME = "Aha!"
 
   # TODO When we convert to integrations 2, add a field to be able to change
   # the callback user just like we have on the callback_url field
@@ -36,7 +36,7 @@ class AhaServices::DeskDotCom < AhaService
         # Warning, you will likely get a validation error in development here
         # because of the http instead of https in the integration url.
         response = client.integration_urls.create(
-          name: "Aha Ideas",
+          name: INTEGRATION_URL_NAME,
           description: "Allows easy linking of cases to Aha ideas",
           enabled: true,
           markup: data.integration_url,
