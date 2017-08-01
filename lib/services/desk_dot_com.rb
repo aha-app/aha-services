@@ -23,7 +23,7 @@ class AhaServices::DeskDotCom < AhaService
 
   internal :aha_integration_url
 
-  string :shared_key, description: "Your Desk.com shared key"
+  string :shared_key, description: "Your Desk.com shared key. You can find this in the settings for the Integration URL"
 
   INTEGRATION_URL_NAME = "Aha!"
 
