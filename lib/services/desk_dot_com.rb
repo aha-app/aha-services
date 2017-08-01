@@ -32,6 +32,8 @@ class AhaServices::DeskDotCom < AhaService
 
   def receive_installed
     unless find_canvas_integration_url
+      logger.info("Connection established with Desk.com")
+
       begin
         # Warning, you will likely get a validation error in development here
         # because of the http instead of https in the integration url.
@@ -39,12 +41,11 @@ class AhaServices::DeskDotCom < AhaService
           name: INTEGRATION_URL_NAME,
           description: "Allows easy linking of cases to Aha ideas",
           enabled: true,
-          markup: data.integration_url,
+          markup: data.aha_integration_url,
           open_location: 'iframe_canvas')
       rescue DeskApi::Error::InternalServerError => e
-        raise AhaService::RemoteError, "Integration has not been configured"
-        logger.error("There was an error creating the integration. You may not be allowed to create any more integration URLs.")
-        return false
+        logger.error("We established a connection to Desk.com, but there was an error creating the integration. You may not be allowed to create any more integration URLs. You may need to manually create the integration URL")
+        raise AhaService::RemoteError, "Desk.com had an internal server error"
       end
     end
 
