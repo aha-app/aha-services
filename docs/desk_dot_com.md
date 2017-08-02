@@ -29,6 +29,6 @@ From the Desk.com admin dashboard:
 * Navigate to Cases, then in the left sidebar click Cases -> Next Gen Case Layouts
 * Click _Add Case Layout_
 * Expand the Integrations panel and drag the Aha! Integration (canvas) into the desired position on the layout
-* Click to edit the Aha! Integration (canvas) section and change the height to 500
+* Click to edit the Aha! Integration (canvas) section and change the height to 350
 * Add the layout and make it the default
 * Test the integration by opening a case and adding an idea
