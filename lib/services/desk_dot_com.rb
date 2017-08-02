@@ -29,9 +29,6 @@ class AhaServices::DeskDotCom < AhaService
 
   INTEGRATION_URL_NAME = "Aha!"
 
-  # TODO When we convert to integrations 2, add a field to be able to change
-  # the callback user just like we have on the callback_url field
-
   def receive_installed
     unless find_canvas_integration_url
       logger.info("Connection established with Desk.com")
