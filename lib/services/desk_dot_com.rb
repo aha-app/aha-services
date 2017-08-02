@@ -38,7 +38,7 @@ class AhaServices::DeskDotCom < AhaService
         # because of the http instead of https in the integration url.
         response = client.integration_urls.create(
           name: INTEGRATION_URL_NAME,
-          description: "Allows easy linking of cases to Aha ideas",
+          description: "Allows easy linking of cases to Aha! ideas",
           enabled: true,
           markup: data.aha_integration_url,
           open_location: 'iframe_canvas')
