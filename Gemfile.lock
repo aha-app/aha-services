@@ -41,7 +41,7 @@ GIT
 PATH
   remote: .
   specs:
-    aha-services (1.24.24)
+    aha-services (1.24.27)
       activesupport
       aha-api
       crack
@@ -71,6 +71,10 @@ GEM
       timers (~> 4.0.0)
     crack (0.4.2)
       safe_yaml (~> 1.0.0)
+    desk_api (0.6.0)
+      addressable (~> 2.3)
+      faraday (>= 0.8.0)
+      simple_oauth (~> 0.1)
     diff-lcs (1.2.5)
     domain_name (0.5.20170404)
       unf (>= 0.0.5, < 1.0.0)
@@ -150,7 +154,7 @@ GEM
       thread_safe (~> 0.1)
     unf (0.1.4)
       unf_ext
-    unf_ext (0.0.7.3)
+    unf_ext (0.0.7.4)
     webmock (1.20.2)
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
@@ -164,6 +168,7 @@ DEPENDENCIES
   aha-services!
   byebug
   crack
+  desk_api
   html2confluence!
   mail
   net-http-persistent

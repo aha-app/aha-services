@@ -15,6 +15,7 @@ gem "sinatra"
 gem "crack"
 gem "mail"
 gem "restforce"
+gem 'desk_api'
 gem "net-http-persistent"
 gem "rubyntlm"
 gem "ClothRed", :git => "https://github.com/aha-app/ClothRed", require: "clothred"
