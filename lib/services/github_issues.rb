@@ -69,9 +69,10 @@ class AhaServices::GithubIssues < AhaService
 
   def receive_webhook
     return unless payload.webhook
-    action = payload.webhook.action
-    issue = payload.webhook.issue
-    return unless issue and action
+    action, issue, repo = payload.webhook.action, payload.webhook.issue, payload.webhook.repository
+    return unless issue and action and repo
+    return unless repo.full_name == data.repository
+    
     results = api.search_integration_fields(data.integration_id, "number", issue.number)['records'] rescue []
     # only consider requirements or features. It is possible for a release to have
     # an issue number that matches a feature and a release - only consider the feature
