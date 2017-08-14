@@ -1,5 +1,5 @@
 class RallyWebhookResource < RallyResource
-  WEBHOOK_URL = "https://rally1.rallydev.com/notifications/api/v2/webhook"
+  WEBHOOK_URL = "https://rally1.rallydev.com/apps/pigeon/api/v2/webhook"
 	PROJECT_FIELD_UUID = "ae8ecc9f-b9a0-42a4-a6e3-c83d7f8a7070"
 
   # Rally requires you to pass in a key to access their API. You get the key by
