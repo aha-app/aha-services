@@ -11,20 +11,28 @@ class AhaServices::Salesforce < AhaService
   
   install_button
 
+  def receive_updated
+    validate_host
+  end
+
   def receive_installed
-    # Validate authentication.
-    client.user_info
-    
-    # Update settings.
-    client.post('/services/apexrest/ahaapp/aha_rest_api/settings', 
-      idea_portal_url: data.idea_portal_url, 
-      jwt_secret_key: data.jwt_secret_key)
-  rescue Exception => e
-    logger.debug("Salesforce authentication problem #{e.class}: #{e.message} #{e.backtrace.join("\n")}")
-    if e.message.include? 'The REST API is not enabled for this Organization.'
-      raise ConfigurationError, "The REST API is not enabled for this Organization."
-    else
-      raise ConfigurationError, "Authentication failed. Please use the 'Authenticate' button to connect to Salesforce."
+    validate_host or raise ConfigurationError, "Please ensure the custom host is a host ending in salesforce.com."
+
+    begin
+      # Validate authentication.
+      client.user_info
+      
+      # Update settings.
+      client.post('/services/apexrest/ahaapp/aha_rest_api/settings', 
+        idea_portal_url: data.idea_portal_url, 
+        jwt_secret_key: data.jwt_secret_key)
+    rescue Exception => e
+      logger.debug("Salesforce authentication problem #{e.class}: #{e.message} #{e.backtrace.join("\n")}")
+      if e.message.include? 'The REST API is not enabled for this Organization.'
+        raise ConfigurationError, "The REST API is not enabled for this Organization."
+      else
+        raise ConfigurationError, "Authentication failed. Please use the 'Authenticate' button to connect to Salesforce."
+      end
     end
   end
     
@@ -45,4 +53,17 @@ class AhaServices::Salesforce < AhaService
     end
   end  
   
+  def validate_host
+    if data["host"] =~ /^https?:\/\//
+      logger.error("Custom host should not include http:// or https://.")
+      return false
+    end
+
+    if data["host"] && data["host"] !~ /salesforce.com$/
+      logger.error("Custom host should end in salesforce.com.")
+      return false
+    end
+
+    return true
+  end
 end
