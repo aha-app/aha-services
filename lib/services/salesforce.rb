@@ -12,11 +12,13 @@ class AhaServices::Salesforce < AhaService
   install_button
 
   def receive_updated
-    validate_host
+    # Only do the validation if there is something in the host field. This
+    # prevents errors from showing up when their first create the integration.
+    validate_host if data["host"]
   end
 
   def receive_installed
-    validate_host or raise ConfigurationError, "Please ensure the custom host is a host ending in salesforce.com."
+    validate_host or raise ConfigurationError, "Please ensure the custom host ends in salesforce.com and does not include http:// or https://."
 
     begin
       # Validate authentication.
