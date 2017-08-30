@@ -66,7 +66,7 @@ Aha! instance.
   
     ```
     bundle
-    rerun ./bin/proxy_server
+    PORT=4567 foreman start
     ```
     
 2. In another terminal window start a tunnel to your running proxy server so that Aha! can access it, e.g. using ngrok:

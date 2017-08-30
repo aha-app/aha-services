@@ -41,7 +41,7 @@ GIT
 PATH
   remote: .
   specs:
-    aha-services (1.24.31)
+    aha-services (1.24.33)
       activesupport
       aha-api
       crack
@@ -96,6 +96,7 @@ GEM
     i18n (0.6.11)
     json (1.8.3)
     jwt (1.5.6)
+    kgio (2.10.0)
     listen (2.7.11)
       celluloid (>= 0.15.2)
       rb-fsevent (>= 0.9.3)
@@ -113,6 +114,7 @@ GEM
     rack (1.5.2)
     rack-protection (1.5.3)
       rack
+    raindrops (0.18.0)
     rb-fsevent (0.9.4)
     rb-inotify (0.9.5)
       ffi (>= 0.5.0)
@@ -155,6 +157,9 @@ GEM
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.4)
+    unicorn (5.3.0)
+      kgio (~> 2.6)
+      raindrops (~> 0.7)
     webmock (1.20.2)
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
@@ -182,6 +187,7 @@ DEPENDENCIES
   rspec_junit_formatter
   rubyntlm
   sinatra
+  unicorn
   webmock
 
 RUBY VERSION
