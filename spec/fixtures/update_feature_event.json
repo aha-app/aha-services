@@ -96,6 +96,7 @@
         "id": "61280369",
         "name": "id",
         "value": "dummy_trello_card_id",
+        "integration_id": "dummy_trello_integration_id",
         "service_name": "trello"
       },
       {
@@ -184,13 +185,13 @@
           {
             "id": "18669867",
             "name": "id",
-            "value": "dummy_trello_checklist_item_id",
+            "value": "dummy_trello_checklist_item_id",            
             "service_name": "trello"
           },
           {
             "id": "18669868",
             "name": "checklist_id",
-            "value": "dummy_trello_checklist_id",
+            "value": "dummy_trello_checklist_id",            
             "service_name": "trello"
           },
           {
