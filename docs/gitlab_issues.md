@@ -26,7 +26,7 @@ Please carefully follow these instructions to ensure that the integration is pro
 
 Create the integration in Aha!
 
-1. Enter your [GitLab Personal Token](https://gitlab.com/help/profile/two_factor_authentication.md#personal-access-tokens).
+1. Enter your [GitLab Personal Token](https://gitlab.com/help/user/profile/personal_access_tokens.md).
 Click the _Test connection_ button
 2. After a short delay, you will be able to choose the project the issues will be created in.
 3. Enable the integration.
