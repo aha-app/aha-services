@@ -7,8 +7,11 @@ class AhaServices::GitlabIssues < AhaService
                       label: 'Server URL'
   install_button
   select :project, collection: -> (meta_data, _data) do
-      return [] if meta_data.nil? || meta_data.repos.nil?
-      meta_data.repos.sort_by(&:name).collect { |repo| [repo.full_name, repo.full_name] }
+    name_method = legacy_full_name_setting?(meta_data) ? :full_name : :path_with_namespace
+
+    Array(meta_data.repos).sort_by(&name_method).collect do |repo|
+      [repo.public_send(name_method), repo.public_send(name_method)]
+    end
   end
 
   select :mapping, collection: [
@@ -25,7 +28,7 @@ class AhaServices::GitlabIssues < AhaService
   callback_url description: 'Use this URL to setup a two-way integration with GitLab issues.'
 
   def receive_installed
-    meta_data.repos = repo_resource.all.map { |repo| { full_name: repo['name'], id: repo['id'], web_url: repo['web_url']  } }
+    meta_data.repos = repo_resource.all.map { |repo| { full_name: repo['name'], id: repo['id'], web_url: repo['web_url'], path_with_namespace: repo['path_with_namespace'] } }
   end
 
   def server_url
@@ -291,6 +294,20 @@ class AhaServices::GitlabIssues < AhaService
     end.join("\n")
   end
 
+  def self.legacy_full_name_setting?(meta_data)
+    Array(meta_data.repos).none? { |repo| repo.path_with_namespace.present? }
+  end
+
+  def get_project
+    meta_data.repos.find do |repo|
+      repo.slice("path_with_namespace", "full_name").values.any? { |value| value.to_s == data.project }
+    end
+  end
+
+  def get_project_url
+    get_project&.web_url
+  end
+
   protected
 
   def repo_resource
@@ -321,13 +338,6 @@ class AhaServices::GitlabIssues < AhaService
   def integrate_resource_with_gitlab_issue(resource, issue)
     api.create_integration_fields(reference_num_to_resource_type(resource.reference_num), resource.reference_num, data.integration_id,
       {id: issue['id'], number: issue['iid'], url: "#{get_project_url}/issues/#{issue['iid']}"})
-  end
-
-  def get_project_url
-    repos = meta_data.repos.select {|repo| repo['full_name'] == data.project }
-    if repos.kind_of?(Array)
-      repos[0].web_url
-    end
   end
 
   def requirements_to_checklist?

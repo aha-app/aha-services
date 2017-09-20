@@ -30,9 +30,6 @@ class GitlabResource < GenericResource
   end
 
   def get_project_id
-    repos = @service.meta_data.repos.select { |repo| repo['full_name'] == @service.data.project }
-    if repos.kind_of?(Array)
-      repos[0].id
-    end
+    @service.get_project&.id
   end
 end
