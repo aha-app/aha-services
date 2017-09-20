@@ -32,11 +32,11 @@ describe AhaServices::GitlabIssues do
 
   context "can be installed" do
     it "and handles installed event" do
-      mock_repos = [ { 'name' => 'user/first_repo', 'id' => '123', 'web_url' => 'https://gitlab.com' } ]
+      mock_repos = [ { 'path_with_namespace' => 'user/first_report', 'name' => 'first_repo', 'id' => '123', 'web_url' => 'https://gitlab.com' } ]
       repo_resource.stub(:all).and_return(mock_repos)
       service.receive(:installed)
       expect(service.meta_data.repos.first)
-        .to eq Hashie::Mash.new({ 'full_name' => 'user/first_repo', 'id' => '123', 'web_url' => 'https://gitlab.com' })
+        .to eq Hashie::Mash.new({ 'full_name' => 'first_repo', 'id' => '123', 'web_url' => 'https://gitlab.com', path_with_namespace: 'user/first_report' })
     end
   end
 
@@ -533,6 +533,71 @@ describe AhaServices::GitlabIssues do
       before do
         mock_api_client.stub(:search_integration_fields).with(1000, "id", mock_issue[:id]).and_return(valid_search_integration_fields_response)
       end
+    end
+  end
+
+  describe ".legacy_full_name_setting?" do
+    it "is true when path_with_namespace is not present in the saved repos" do
+      meta_data = Hashie::Mash.new(repos: [Hashie::Mash.new({ full_name: "foo", path_with_namespace: "jjbohn/foo" })])
+      expect(described_class.legacy_full_name_setting?(meta_data)).to be(false)
+
+      meta_data = Hashie::Mash.new(repos: [Hashie::Mash.new({ full_name: "foo" })])
+      expect(described_class.legacy_full_name_setting?(meta_data)).to be(true)
+    end
+  end
+
+  describe "#get_project" do
+    let(:repos) do
+      [
+        Hashie::Mash.new({ full_name: "foo", path_with_namespace: "jjbohn/foo" }),
+        Hashie::Mash.new({ full_name: "docs", path_with_namespace: "jjbohn/docs" }),
+        Hashie::Mash.new({ full_name: "bar", path_with_namespace: "jjbohn/bar" }),
+      ]
+    end
+
+    it "finds with legacy project data" do
+      service.data.project = "docs"
+      service.meta_data.repos = repos
+
+      expect(service.get_project).to eql(repos[1])
+    end
+
+    it "finds with namespaced project data" do
+      service.data.project = "jjbohn/docs"
+      service.meta_data.repos = repos
+
+      expect(service.get_project).to eql(repos[1])
+    end
+
+    it "is nil when there's no match" do
+      service.data.project = "bing"
+      service.meta_data.repos = repos
+
+      expect(service.get_project).to be_nil
+    end
+  end
+
+  describe "#get_project_url" do
+    let(:repos) do
+      [
+        Hashie::Mash.new({ full_name: "foo", path_with_namespace: "jjbohn/foo", web_url: "https://gitlab.com/jjbohn/foo" }),
+        Hashie::Mash.new({ full_name: "docs", path_with_namespace: "jjbohn/docs", web_url: "https://gitlab.com/jjbohn/docs" }),
+        Hashie::Mash.new({ full_name: "bar", path_with_namespace: "jjbohn/bar", web_url: "https://gitlab.com/jjbohn/bar" }),
+      ]
+    end
+
+    it "finds with namespaced project data" do
+      service.data.project = "jjbohn/docs"
+      service.meta_data.repos = repos
+
+      expect(service.get_project_url).to eql("https://gitlab.com/jjbohn/docs")
+    end
+
+    it "is nil when there's no match" do
+      service.data.project = "bing"
+      service.meta_data.repos = repos
+
+      expect(service.get_project_url).to be_nil
     end
   end
 end
