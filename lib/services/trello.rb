@@ -23,6 +23,30 @@ class AhaServices::Trello < AhaService
     collection: [["Top", "top"], ["Bottom", "bottom"]],
     description: "Should the newly created features appear at the top or at the bottom of the Trello list."
 
+  boolean :send_releases, 
+    label: "Sync releases as labels?",
+    description: "Check to synchronize Aha! Release names as Trello card labels."
+  string :release_postfix,
+    label: "Release label post-fix",
+    default: "(Aha! release)",
+    description: "The postfix which will identify labels as an Aha! release label."
+  select :release_label_color,
+    label: "Label color for releases",
+    collection: ->(meta_data, data) {
+      [
+        ["Yellow", "yellow"], 
+        ["Purple", "purple"],
+        ["Blue", "blue"],
+        ["Red", "red"],
+        ["Green", "green"],
+        ["Orange", "orange"],
+        ["Black", "black"],
+        ["Sky", "sky"],
+        ["Pink", "pink"],
+        ["Lime", "lime"],
+        ["(none)", "null"]
+      ]
+    } 
   def receive_installed
     meta_data.boards = board_resource.all
   end
@@ -52,6 +76,7 @@ class AhaServices::Trello < AhaService
     end
     update_requirements(card, feature.requirements)
     update_attachments(card, feature)
+    update_release(card, feature)
   end
 
   def update_requirements(card, requirements)
@@ -178,6 +203,31 @@ class AhaServices::Trello < AhaService
     card_resource.create_webhook(card_id)
   end
 
+  def send_releases?
+    data.send_releases == "1"
+  end
+
+  def update_release(card, resource)
+    
+    return unless :send_releases?
+
+    release_postfix = ((data.release_postfix || "") == "") ? "(Aha! release)" : data.release_postfix
+    label_name = "#{resource.release.name} #{release_postfix}"
+    label_color = ((data.release_label_color || "") == "") ? "blue" : data.release_label_color
+
+    labels = label_resource.all_for_card(card.id)
+
+    labels
+      .select { |label| (label.name || "").ends_with? release_postfix }
+      .select { |label| label.name != label_name }
+      .each { |label| card_resource.remove_label(card.id, label.id) }
+
+    if labels.none? { |label| label.name == label_name }
+      card_resource.add_label(card.id, label_name, label_color)
+    end
+
+  end
+
 protected
 
   def reverse_markdown_convert(text)
@@ -198,6 +248,10 @@ protected
 
   def attachment_resource
     @attachment_resource ||= TrelloAttachmentResource.new(self)
+  end
+
+  def label_resource
+    @label_resource ||= TrelloLabelResource.new(self)
   end
 
   def list_id_by_feature_status(status)
