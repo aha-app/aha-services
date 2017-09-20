@@ -32,6 +32,7 @@ class AhaServices::Trello < AhaService
     description: "The postfix which will identify labels as an Aha! release label."
   select :release_label_color,
     label: "Label color for releases",
+    description: "The colour of the labels indicating releases. The default colour is Blue."
     collection: ->(meta_data, data) {
       [
         ["Yellow", "yellow"], 
