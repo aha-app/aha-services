@@ -16,6 +16,8 @@ class PivotalTrackerResource < GenericResource
 
   def auth_header
     http.headers['Content-Type'] = 'application/json'
+
+    raise AhaService::ConfigurationError, "Api token is missing" unless @service.data.api_token
     http.headers['X-TrackerToken'] = @service.data.api_token
   end
 
