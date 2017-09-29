@@ -92,7 +92,7 @@ module JiraMappedFields
   end
   
   def aha_type_to_number(aha_type, aha_value, jira_type_info, aha_field)
-    unless aha_value.responds_to?(:to_f) # Custom fields with multiple selects are arrays and dont respond to to_f
+    unless aha_value.respond_to?(:to_f) # Custom fields with multiple selects are arrays and dont respond to to_f
       raise AhaService::RemoteError, "Aha! Field '#{aha_field}' cannot be mapped to JIRA field '#{jira_type_info.name}'"
     end
 
