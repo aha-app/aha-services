@@ -68,7 +68,7 @@ module TfsCommon
   end
 
   def receive_update_feature
-    workitem_id = payload.feature.integration_fields.detect{|field| field.name == "id"}.value rescue nil
+    workitem_id = get_integration_field(payload.feature.integration_fields, "id")
     unless workitem_id.nil?
       feature_mapping_resource.update workitem_id, payload.feature
     end
