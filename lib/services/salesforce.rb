@@ -3,7 +3,7 @@ class AhaServices::Salesforce < AhaService
   
   oauth2_button authorize_url: "https://login.salesforce.com/services/oauth2/authorize",
     token_url: "https://login.salesforce.com/services/oauth2/token",
-    parameters: "display=popup&immediate=false"
+    parameters: {display: "popup", immediate: "false"}
   
   string :host, description: "The custom host to use for sandbox Salesforce organizations. Leave this blank if you are not using a sandbox organization."
   
