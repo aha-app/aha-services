@@ -17,7 +17,7 @@ class AhaServices::DeskDotCom < AhaService
   oauth_button request_token_path: "/oauth/request_token",
     access_token_path: "/oauth/access_token",
     authorize_path: "/oauth/authorize",
-    parameters: "name=Aha!%20Integration&scope=read,write&expiration=never",
+    parameters: {name: "Aha! Integration", scope: "read,write", expiration: "never"},
     callback_token_type: :access_token
 
   install_button hide_fetch_message: true, label: "Create Integration URL"
