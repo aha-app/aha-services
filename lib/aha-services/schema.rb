@@ -40,8 +40,12 @@ module Schema
       add_to_schema :oauth2_button, "oauth2_button", options
     end
 
-    def slack_button(options = {})
-      add_to_schema :slack_button, "slack_button", options
+    def commands_slack_button(options = {})
+      add_to_schema :commands_slack_button, "commands_slack_button", options
+    end
+
+    def webhooks_slack_button(options = {})
+      add_to_schema :webhooks_slack_button, "webhooks_slack_button", options
     end
     
     def internal(name, options = {})
