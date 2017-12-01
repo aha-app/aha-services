@@ -622,7 +622,7 @@ describe AhaServices::GithubIssues do
 
           it "should not propagate open labels" do
             service.stub(:payload).and_return(Hashie::Mash.new({label: {name: 'Aha!:Shipped'}, webhook: { action: 'opened', issue: opened_mock_issue, repository: mock_repository }}))
-            label_resource.should_receive(:update).with(opened_mock_issue[:number], ["First", "Second", "Third", "Aha!:In development"])
+            label_resource.should_not_receive(:update)
             service.stub(:label_resource).and_return(label_resource)
             mock_api_client.stub(:put).and_return(Hashie::Mash.new({feature: {workflow_status: {name: "In development"}}}))
           end

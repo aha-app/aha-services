@@ -138,6 +138,7 @@ class AhaServices::GithubIssues < AhaService
         # use current tags in open state when the workflow status changes
         if action == "opened"
           new_tags.push(*resource.tags)
+          new_tags.uniq!
         end
         label_resource.update(issue.number, [new_tags, workflow_status_to_github_label(updated_resource[resource_kind].workflow_status.name)].flatten) 
       end
