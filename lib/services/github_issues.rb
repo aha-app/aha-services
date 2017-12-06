@@ -91,7 +91,8 @@ class AhaServices::GithubIssues < AhaService
       return
     end
 
-    new_tags = issue.labels.map(&:name) rescue []
+    label_tags = issue.labels.map(&:name) rescue []
+    new_tags = label_tags.dup 
     aha_statuses = []
 
     # remove the aha_statuses as these are 'special' tags used to change the state
@@ -120,13 +121,40 @@ class AhaServices::GithubIssues < AhaService
     when "closed", "opened", "reopened"
       new_status = data.status_mapping.nil? ? nil : data.status_mapping[issue.state]
       diff[:workflow_status] = new_status if !new_status.nil? && new_status != resource.workflow_status.id
+
+      if action == "opened" && !new_status.nil? && new_status == resource.workflow_status.id
+        new_tags.push(workflow_status_to_github_label(resource.workflow_status.name))
+        new_tags.push(*resource.tags)
+      end
     end
-    diff[:tags] = new_tags if Set.new(resource.tags) != Set.new(new_tags)
+    
+    if sync_tags?(action, resource.tags, new_tags)
+      diff[:tags] = new_tags
+    end
+
     if diff.size > 0  then
       updated_resource = api.put(resource.resource, { resource_kind => diff })
       if add_status_labels_enabled? && %w(closed opened reopened).include?(action) && diff.key?(:workflow_status)
-        label_resource.update(issue.number, [new_tags, "Aha!:#{updated_resource[resource_kind].workflow_status.name}"].flatten) 
+        # use current tags in open state when the workflow status changes
+        if action == "opened"
+          new_tags.push(*resource.tags)
+          new_tags.uniq!
+        end
+        label_resource.update(issue.number, [new_tags, workflow_status_to_github_label(updated_resource[resource_kind].workflow_status.name)].flatten) 
       end
+    end
+  end
+
+  def sync_tags?(action, resource_tags, new_tags)
+    if Set.new(resource_tags) == Set.new(new_tags)
+      return false
+    end
+
+    case action
+    when "closed", "reopened", "unlabeled", "labeled"
+      true
+    else
+      false
     end
   end
 
@@ -214,7 +242,7 @@ class AhaServices::GithubIssues < AhaService
       .create(title: resource_name(resource),
               body: issue_body(resource),
               milestone: milestone['number'])
-      .tap { |issue| update_labels(issue, resource) }
+      .tap { |issue| update_labels(issue, resource, true) }
   end
 
   def update_issue(number, resource, milestone)
@@ -226,14 +254,26 @@ class AhaServices::GithubIssues < AhaService
       .tap { |issue| update_issue_status(issue, resource)}
   end
 
-  def update_labels(issue, resource)
+  def workflow_status_to_github_label(status)
+    "Aha!:#{status}"
+  end
+
+  def update_labels(issue, resource, created = false)
     return if resource.tags.nil?
     tags = resource.tags.dup
     if add_status_labels_enabled?
-      # remove that old aha statuses
-      tags = tags.delete_if {|val| val.starts_with? "Aha!:"}
-      # add a label for the status only if add_status_labels
-      tags.push("Aha!:" + resource.workflow_status.name) unless resource.nil? or resource.workflow_status.nil?
+      status_map = data.status_mapping.nil? ? nil : data.status_mapping[issue["state"]]
+      # Do not send status on create. 
+      if !created
+        # remove that old aha statuses
+        tags = tags.delete_if {|val| val.starts_with? "Aha!:"}
+        # add a label for the status only if add_status_labels
+        tags.push(workflow_status_to_github_label(resource.workflow_status.name)) unless resource.nil? or resource.workflow_status.nil?
+      elsif status_map && resource.workflow_status.id == status_map
+        # The workflow status change normally adds this label. If we are in the new state already
+        # we need to send it now.
+        tags.push(workflow_status_to_github_label(resource.workflow_status.name)) 
+      end
     end
     label_resource.update(issue['number'], tags)
   end
