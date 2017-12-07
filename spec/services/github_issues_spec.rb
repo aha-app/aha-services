@@ -120,6 +120,20 @@ describe AhaServices::GithubIssues do
     end
   end
 
+  describe "#github_url" do
+    it "builts url" do
+      expect(service.send(:github_url, ["a"])).to eq("https://api.github.com/user/repo/a")
+    end
+
+    it "with params" do
+      expect(service.send(:github_url, ["a"], {"b" => "c", "d" => "e"})).to eq("https://api.github.com/user/repo/a?b=c&d=e")
+    end
+
+    it "with extra slashes" do
+      expect(service.send(:github_url, ["/a","/b/"])).to eq("https://api.github.com/user/repo/a/b")
+    end
+  end
+
   describe "#update_or_attach_github_milestone" do
     let(:mock_milestone) { { number: 42 } }
     context "when the release is integrated with a github milestone" do

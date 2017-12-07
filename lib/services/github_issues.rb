@@ -342,14 +342,27 @@ protected
     end
   end
 
+  def github_url(paths, query = {})
+    paths = [ data.repository.split("/"), *paths.map{|path| path.split("/")}].flatten
+    paths.reject!(&:empty?)
+    server_slash = server_display_url =~ /\/\z/ ? "" : "/"
+    url_string = server_display_url + server_slash + paths.join("/")
+    url = URI.parse(url_string)
+    if query.present?
+      url.query= URI.encode_www_form(query)
+    end
+    url.to_s
+  end
+
   def integrate_release_with_github_milestone(release, milestone)
     api.create_integration_fields("releases", release.reference_num, data.integration_id,
-      {number: milestone['number'], url: "#{server_display_url}/#{data.repository}/issues?milestone=#{milestone['number']}"})
+      {number: milestone['number'], url: github_url(["issues"], {"milestone"=>milestone['number']})})
   end
 
   def integrate_resource_with_github_issue(resource, issue)
+    
     api.create_integration_fields(reference_num_to_resource_type(resource.reference_num), resource.reference_num, data.integration_id,
-      {number: issue['number'], url: "#{server_display_url}/#{data.repository}/issues/#{issue['number']}"})
+      {number: issue['number'], url: github_url(["issues", issue['number']])})
   end
 
   def requirements_to_checklist?
