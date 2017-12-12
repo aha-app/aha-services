@@ -1,5 +1,6 @@
 class AhaServices::Salesforce < AhaService
   caption "Receive ideas from Salesforce"
+  category "Ideas capture"
   
   oauth2_button authorize_url: "https://login.salesforce.com/services/oauth2/authorize",
     token_url: "https://login.salesforce.com/services/oauth2/token",

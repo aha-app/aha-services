@@ -1,38 +1,38 @@
 require 'html2confluence'
 
 class AhaServices::Jira < AhaService
-  title "JIRA"
-  caption "Send features to JIRA issue tracking (supports on-premise and cloud)"
+  title "Jira"
+  caption "Send features to Jira issue tracking (supports on-premise and cloud)"
 
-  string :server_url, description: "URL for the JIRA server, without a trailing slash, e.g. https://bigaha.atlassian.net"
-  string :username, description: "Use your verified JIRA email address or username from the JIRA profile page (see instructions above for details)."
+  string :server_url, description: "URL for the Jira server, without a trailing slash, e.g. https://bigaha.atlassian.net"
+  string :username, description: "Use your verified Jira email address or username from the Jira profile page (see instructions above for details)."
   password :password
   install_button
   select :project, collection: ->(meta_data, data) { meta_data.projects.collect{|p| [p.name, p[:key]] } },
-    description: "Choose the JIRA project to integrate with, then click 'Load project data' to fetch the configuration for that project.",
+    description: "Choose the Jira project to integrate with, then click 'Load project data' to fetch the configuration for that project.",
     configure_button: "Load project data",
     configure_button_highlight_if: -> (meta_data, data) { meta_data["configuration"]["attribute_project"]["project"] != data["project"] rescue true }
-  boolean :send_initiatives, description: "Check to use feature initiatives to create Epics in JIRA Agile"
+  boolean :send_initiatives, description: "Check to use feature initiatives to create Epics in Jira Agile"
   select :feature_issue_type,
     collection: ->(meta_data, data) {
       meta_data.issue_type_sets[meta_data.projects.detect {|p| p[:key] == data.project}.issue_types].find_all{|i| !i.subtype}.collect{|p| [p.name, p.id] }
-    }, description: "JIRA issue type that will be used when sending features. If you are using JIRA Agile then we recommend 'Story'."
+    }, description: "Jira issue type that will be used when sending features. If you are using Jira Agile then we recommend 'Story'."
   internal :feature_status_mapping
   internal :field_mapping
   select :requirement_issue_type,
     collection: ->(meta_data, data) {
       meta_data.issue_type_sets[meta_data.projects.detect {|p| p[:key] == data.project}.issue_types].find_all{|i| !i.subtype}.collect{|p| [p.name, p.id] }
-    }, description: "JIRA issue type that will be used when sending requirements. If you are using JIRA Agile then we recommend 'Sub-task'."
+    }, description: "Jira issue type that will be used when sending requirements. If you are using Jira Agile then we recommend 'Sub-task'."
   internal :requirement_field_mapping
   # internal :resolution_mapping  # TODO: we are not actually using this at the moment.
-  boolean :dont_send_releases, description: "Check to prevent Aha! from creating versions in JIRA and from populating the fixVersions field for issues. For most users this box should not be checked."
+  boolean :dont_send_releases, description: "Check to prevent Aha! from creating versions in Jira and from populating the fixVersions field for issues. For most users this box should not be checked."
 
   boolean :dont_auto_import, description: "Check to prevent Aha! from automatically importing issues that are related to a record that is already linked to Aha!"
   boolean :only_auto_import_mapped_issue_types, description: "Check to prevent Aha! from automatically importing issue types that are not mapped to Features or Requirements"
 
-  boolean :send_tags, description: "Check to synchronize Aha! tags and JIRA labels. We recommend enabling this for new integrations. Enabling this option once features are synced to JIRA may cause tags in Aha! or labels in JIRA to be removed from a feature if the corresponding label or tag doesn't exist in the other system."
+  boolean :send_tags, description: "Check to synchronize Aha! tags and Jira labels. We recommend enabling this for new integrations. Enabling this option once features are synced to Jira may cause tags in Aha! or labels in Jira to be removed from a feature if the corresponding label or tag doesn't exist in the other system."
 
-  callback_url description: "The webhook enables updates from JIRA to Aha! Follow the instructions above to install this webhook in JIRA. Only one hook is necessary, even if multiple products are integrated with JIRA."
+  callback_url description: "The webhook enables updates from Jira to Aha! Follow the instructions above to install this webhook in Jira. Only one hook is necessary, even if multiple products are integrated with Jira."
 
   def receive_installed
     get_common_configuration
@@ -121,7 +121,7 @@ class AhaServices::Jira < AhaService
     yield
   rescue SocketError => e
     if e.message =~ /getaddrinfo/
-      raise AhaService::RemoteError, "Aha! could not resolve a DNS record for your JIRA server. Please ensure that the address you have entered is reachable from outside of your network."
+      raise AhaService::RemoteError, "Aha! could not resolve a DNS record for your Jira server. Please ensure that the address you have entered is reachable from outside of your network."
     else
       raise # Reraise the exception.
     end
