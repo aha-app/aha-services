@@ -1,6 +1,7 @@
 class AhaServices::HipChat < AhaService
   title "HipChat"
   caption "Send customized activity from Aha! into group chat"
+  category "Communication"
   
   string :api_host, description: "API host for your on-premise HipChat installation such as 'hipchat.mycompany.com'. If you are using the cloud-hosted version of HipChat, leave this blank."
   string :auth_token,

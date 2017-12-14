@@ -3,6 +3,7 @@ require 'desk_api'
 class AhaServices::DeskDotCom < AhaService
   title "Desk.com"
   caption "Receive ideas from a Desk.com helpdesk"
+  category "Ideas capture"
 
   internal :idea_portal_id
 
