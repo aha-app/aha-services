@@ -19,7 +19,7 @@ gem 'desk_api'
 gem "net-http-persistent"
 gem "rubyntlm"
 gem "ClothRed", :git => "https://github.com/aha-app/ClothRed", require: "clothred"
-gem "nokogiri", "1.6.6.2"
+gem "nokogiri", '~> 1.8'
 gem "unicorn"
 
 # Auto reload sinatra
