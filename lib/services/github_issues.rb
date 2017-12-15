@@ -239,17 +239,21 @@ class AhaServices::GithubIssues < AhaService
 
   def create_issue_for(resource, milestone)
     issue_resource
-      .create(title: resource_name(resource),
-              body: issue_body(resource),
-              milestone: milestone['number'])
-      .tap { |issue| update_labels(issue, resource, true) }
+      .create({
+        title: resource_name(resource),
+        body: issue_body(resource),
+        milestone: milestone['number'],
+        labels: resource&.tags.dup # Send the normal tags immediately so we don't thrash them with a webhook
+      }).tap { |issue| update_labels(issue, resource, true) }
   end
 
   def update_issue(number, resource, milestone)
     issue_resource
-      .update(number, title: resource_name(resource),
-                      body: issue_body(resource),
-                      milestone: milestone['number'])
+      .update(number, {
+        title: resource_name(resource),
+        body: issue_body(resource),
+        milestone: milestone['number']
+      })
       .tap { |issue| update_labels(issue, resource) }
       .tap { |issue| update_issue_status(issue, resource)}
   end
