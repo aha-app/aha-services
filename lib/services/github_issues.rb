@@ -243,7 +243,7 @@ class AhaServices::GithubIssues < AhaService
         title: resource_name(resource),
         body: issue_body(resource),
         milestone: milestone['number'],
-        labels: resource&.tags.dup # Send the normal tags immediately so we don't thrash them with a webhook
+        labels: resource&.tags&.dup || []# Send the normal tags immediately so we don't thrash them with a webhook
       }).tap { |issue| update_labels(issue, resource, true) }
   end
 
