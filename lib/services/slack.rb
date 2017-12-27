@@ -1,5 +1,6 @@
 class AhaServices::Slack < AhaService
   caption "Send customized activity from Aha! into group chat"
+  category "Communication"
   
   slack_button
   install_button
