@@ -343,13 +343,13 @@ protected
   end
 
   def github_url(paths, query = {})
-    paths = [ data.repository.split("/"), *paths.map{|path| path.split("/")}].flatten
+    paths = [data.repository.split("/"), *paths.map{|path| path.split("/")}].flatten
     paths.reject!(&:empty?)
     server_slash = server_display_url =~ /\/\z/ ? "" : "/"
     url_string = server_display_url + server_slash + paths.join("/")
     url = URI.parse(url_string)
     if query.present?
-      url.query= URI.encode_www_form(query)
+      url.query = URI.encode_www_form(query)
     end
     url.to_s
   end

@@ -121,7 +121,7 @@ describe AhaServices::GithubIssues do
   end
 
   describe "#github_url" do
-    it "builts url" do
+    it "builds url" do
       expect(service.send(:github_url, ["a"])).to eq("https://api.github.com/user/repo/a")
     end
 
