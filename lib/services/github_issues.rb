@@ -347,7 +347,7 @@ protected
   end
 
   def github_url(paths, query = {})
-    paths = [data.repository.split("/"), *paths.map{|path| path.split("/")}].flatten
+    paths = [data.repository.split("/"), *paths.map{|path| path.to_s.split("/")}].flatten
     paths.reject!(&:empty?)
     server_slash = server_display_url =~ /\/\z/ ? "" : "/"
     url_string = server_display_url + server_slash + paths.join("/")

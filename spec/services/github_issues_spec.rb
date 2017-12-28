@@ -125,6 +125,10 @@ describe AhaServices::GithubIssues do
       expect(service.send(:github_url, ["a"])).to eq("https://api.github.com/user/repo/a")
     end
 
+    it "builds url with numbers" do
+      expect(service.send(:github_url, ["a", 33])).to eq("https://api.github.com/user/repo/a/33")
+    end
+
     it "with params" do
       expect(service.send(:github_url, ["a"], {"b" => "c", "d" => "e"})).to eq("https://api.github.com/user/repo/a?b=c&d=e")
     end
