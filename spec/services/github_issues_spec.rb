@@ -120,6 +120,24 @@ describe AhaServices::GithubIssues do
     end
   end
 
+  describe "#github_url" do
+    it "builds url" do
+      expect(service.send(:github_url, ["a"])).to eq("https://api.github.com/user/repo/a")
+    end
+
+    it "builds url with numbers" do
+      expect(service.send(:github_url, ["a", 33])).to eq("https://api.github.com/user/repo/a/33")
+    end
+
+    it "with params" do
+      expect(service.send(:github_url, ["a"], {"b" => "c", "d" => "e"})).to eq("https://api.github.com/user/repo/a?b=c&d=e")
+    end
+
+    it "with extra slashes" do
+      expect(service.send(:github_url, ["/a","/b/"])).to eq("https://api.github.com/user/repo/a/b")
+    end
+  end
+
   describe "#update_or_attach_github_milestone" do
     let(:mock_milestone) { { number: 42 } }
     context "when the release is integrated with a github milestone" do
@@ -616,11 +634,20 @@ describe AhaServices::GithubIssues do
         end
 
         context "and opened action" do
-          let(:mock_issue) { { number: 42, title: "The issue", state: "open", labels: [{name:"First"}, {name:"Second"}, {name: "Third"}, {name: "Aha!:Shipped"}] } }
+          let(:closed_mock_issue) { { number: 42, title: "The issue", state: "closed", labels: [{name:"First"}, {name:"Second"}, {name: "Third"}, {name: "Aha!:Shipped"}] } }
+          let(:opened_mock_issue) { { number: 42, title: "The issue", state: "opened", labels: [{name:"First"}, {name:"Second"}, {name: "Third"}, {name: "Aha!:Shipped"}] } }
+
+
+          it "should not propagate open labels" do
+            service.stub(:payload).and_return(Hashie::Mash.new({label: {name: 'Aha!:Shipped'}, webhook: { action: 'opened', issue: opened_mock_issue, repository: mock_repository }}))
+            label_resource.should_not_receive(:update)
+            service.stub(:label_resource).and_return(label_resource)
+            mock_api_client.stub(:put).and_return(Hashie::Mash.new({feature: {workflow_status: {name: "In development"}}}))
+          end
 
           it "should propagate the open status back to GitHub" do
-            service.stub(:payload).and_return(Hashie::Mash.new({label: {name: 'Aha!:Shipped'}, webhook: { action: 'opened', issue: mock_issue, repository: mock_repository }}))
-            label_resource.should_receive(:update).with(mock_issue[:number], ["First", "Second", "Third", "Aha!:In development"])
+            service.stub(:payload).and_return(Hashie::Mash.new({label: {name: 'Aha!:Shipped'}, webhook: { action: 'opened', issue: closed_mock_issue, repository: mock_repository }}))
+            label_resource.should_receive(:update).with(closed_mock_issue[:number], ["First", "Second", "Third", "Aha!:In development"])
             service.stub(:label_resource).and_return(label_resource)
             mock_api_client.stub(:put).and_return(Hashie::Mash.new({feature: {workflow_status: {name: "In development"}}}))
           end

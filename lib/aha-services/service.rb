@@ -157,7 +157,17 @@ class AhaService
         @caption || ""
       end
     end
-    attr_writer :service_name
+    attr_writer :caption
+ 
+    # Category that service should appear in in the UI.
+    def category(value = nil)
+      if value
+        @category = value
+      else
+        @category || "Development"
+      end
+    end
+    attr_writer :category
     
     def development_proxy?
       self.service_name == "development_proxy"

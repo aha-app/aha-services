@@ -40,7 +40,7 @@ If you want to be able to receive updates from VSTS you must setup a subscriptio
 3. Click the small cog in the top center of the main navigation menu and click on the _Service Hooks_ option.
 4. Add a new service hook by clicking the _+ Create subscription_ button.
 5. Scroll to the option for the Web Hooks service and click Next.
-6. Under _Trigger on this type of event_ choose the Work item updated trigger from the dropdown menu. You can leave the filters unchanged and click _Next_.
+6. Under _Trigger on this type of event_ choose the Work item updated trigger from the dropdown menu. To reduce unnecessary webhooks, add filters for the specific area, item type, or tags that you plan to integrate with Aha!. Click _Next_.
 7. In the _Action > Settings_, paste the Webhook URL from Aha! into the _URL_ field. You can leave the option fields unchanged and click _Finish_ to create the subscription.
 
 ## Troubleshooting

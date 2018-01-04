@@ -1,6 +1,7 @@
 class AhaServices::AuditWebhook < AhaService
   title "Activity webhook"
   caption "Generic HTTP webhook for all activity"
+  category "API"
 
   string :hook_url
   

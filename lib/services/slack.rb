@@ -1,6 +1,7 @@
 class AhaServices::Slack < AhaService
   title "Slack - Send Updates"
   caption "Send customized activity from Aha! into group chat"
+  category "Communication"
   
   webhooks_slack_button
   install_button
