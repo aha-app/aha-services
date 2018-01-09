@@ -1,6 +1,6 @@
 class AhaServices::SlackCommands < AhaService
-  title "Slack - Create Records"
-  caption "Create new records directly from Slack using the /aha command."
+  title "Slack [to Aha!]"
+  caption "Send new ideas and features from Slack to Aha!"
   category "Communication"
 
   commands_slack_button
