@@ -6,12 +6,12 @@ Enable the integration.
 Creating records
 Product owners and contributors can create records directly from Slack using the following commands:
 
-* /aha idea [Idea name]
-* /aha to-do [To-do name] or /aha todo [To-do name]
-* /aha feature [Feature name]
-* /aha master feature [Master feature name]
-* /aha release [Release name]
-* /aha initiative [Initiative name]
+* /aha idea *[Idea name]*
+* /aha to-do *[To-do name]* or /aha todo *[To-do name]*
+* /aha feature *[Feature name]*
+* /aha master feature *[Master feature name]*
+* /aha release *[Release name]*
+* /aha initiative *[Initiative name]*
 
 ## Troubleshooting
 To help you troubleshoot an error, we provide the detailed integration logs below. Contact us at support@aha.io if you need further help.
