@@ -43,8 +43,7 @@ private
 
   def attachments_match(aha_attachment, pivotal_attachment)
     logger.debug("MATCHING: #{aha_attachment.file_name} #{pivotal_attachment.filename} #{aha_attachment.file_size.to_i} #{pivotal_attachment['size'].to_i}")
-    aha_attachment.file_name == pivotal_attachment.filename and
-      aha_attachment.file_size.to_i == pivotal_attachment['size'].to_i
+    aha_attachment.file_name == pivotal_attachment.filename
   end
 
   def upload_single_attachment(attachment)

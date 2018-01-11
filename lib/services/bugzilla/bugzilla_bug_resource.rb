@@ -63,10 +63,7 @@ class BugzillaBugResource < BugzillaResource
     bz_attachments = process_response(http_get(url)).bugs[bug_id.to_s]
     aha_attachments.each do |aha_a|
       bz_a = bz_attachments.find{|e| e.file_name == aha_a.file_name }
-      if bz_a and bz_a[:size] != aha_a.file_size then
-        # TODO: updating an attachment currently fails in Bugzilla
-        #attachment_resource.update bz_a.id, aha_a
-      elsif bz_a.nil?
+      if bz_a.nil?
         attachment_resource.create bug_id, aha_a
       end
     end

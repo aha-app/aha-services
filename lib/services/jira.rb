@@ -499,18 +499,8 @@ protected
     aha_attachments
   end
 
-  def file_size_matches size_1, size_2
-    # Jira returns 1 for files of size 0 bytes
-    size_1 == size_2 ||
-      (
-        (size_1 == 0 && size_2 == 1) ||
-        (size_1 == 1 && size_2 == 0)
-      )
-  end
-
   def attachments_match(aha_attachment, jira_attachment)
-    aha_attachment.file_name == jira_attachment.filename &&
-      file_size_matches(aha_attachment.file_size.to_i, jira_attachment[:size].to_i)
+    aha_attachment.file_name == jira_attachment.filename
   end
 
   def upload_attachments(attachments, issue_id)
