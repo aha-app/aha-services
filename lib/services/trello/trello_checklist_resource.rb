@@ -2,7 +2,9 @@ class TrelloChecklistResource < TrelloResource
   def find_item(checklist_id, checklist_item_id)
     prepare_request
     response = http_get trello_url("checklists/#{checklist_id}/checkitems/#{checklist_item_id}")
-    found_resource(response).merge(checklist_id: checklist_id)
+    found_resource(response).tap do |resource|
+      resource&.merge!(checklist_id: checklist_id)
+    end
   end
 
   def find_by_name(checklist_name, card)
