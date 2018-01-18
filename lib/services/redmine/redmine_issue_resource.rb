@@ -51,8 +51,7 @@ private
   end
   
   def attachments_match(aha_attachment, redmine_attachment)
-    aha_attachment.file_name == redmine_attachment.filename and
-      aha_attachment.file_size.to_i == redmine_attachment.filesize.to_i
+    aha_attachment.file_name == redmine_attachment.filename
   end
   
   def redmine_issues_path *concat

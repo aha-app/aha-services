@@ -161,7 +161,7 @@ class AhaServices::Trello < AhaService
     # compatibility
     (trelloize_filename(aha_attachment.file_name) == trello_filename ||
       aha_attachment.file_name == trello_filename
-    ) && aha_attachment.file_size.to_i == trello_attachment.bytes.to_i
+    )
   end
 
   def trelloize_filename(fname)
