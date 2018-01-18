@@ -87,7 +87,7 @@ module JiraMappedFields
     email_add = aha_type == "string" ? field.value : field.email_value
     Array(email_add).each do |email|
       key = user_resource.picker(email.strip).try(:[], :key)
-    end
+    end.compact
     key
   end
   
