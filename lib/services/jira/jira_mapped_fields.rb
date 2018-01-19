@@ -106,9 +106,9 @@ module JiraMappedFields
   def aha_type_to_array(aha_type, aha_value, jira_type_info)
     values = case aha_type
       when "array"
-        aha_value
+        aha_value.compact
       else
-        [aha_value]
+        [aha_value].compact
       end
 
     # Recurse for the array 
