@@ -118,7 +118,7 @@ class AhaServices::GithubIssues < AhaService
         # update the status
         diff[:workflow_status] = new_status if !new_status.nil? && new_status != resource.workflow_status.name
       end
-    when "closed", "opened", "reopened"
+    when "closed", "reopened"
       new_status = data.status_mapping.nil? ? nil : data.status_mapping[issue.state]
       diff[:workflow_status] = new_status if !new_status.nil? && new_status != resource.workflow_status.id
 
