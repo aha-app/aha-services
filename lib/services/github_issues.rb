@@ -234,6 +234,7 @@ class AhaServices::GithubIssues < AhaService
   def attach_issue_to(resource, milestone)
     issue = create_issue_for(resource, milestone)
     integrate_resource_with_github_issue(resource, issue)
+    update_issue_status(issue, resource)
     issue
   end
 
@@ -244,7 +245,8 @@ class AhaServices::GithubIssues < AhaService
         body: issue_body(resource),
         milestone: milestone['number'],
         labels: resource&.tags&.dup || []# Send the normal tags immediately so we don't thrash them with a webhook
-      }).tap { |issue| update_labels(issue, resource, true) }
+      })
+      .tap { |issue| update_labels(issue, resource, true) }
   end
 
   def update_issue(number, resource, milestone)
