@@ -24,7 +24,6 @@ class AhaServices::GithubIssues < AhaService
   callback_url description: "Use this URL to setup a two-way integration with Github issues."
 
   def receive_installed
-    meta_data.opened_from_aha ||= []
     meta_data.repos = repo_resource.all.map { |repo| { full_name: repo['full_name'] } }
   end
 
@@ -122,12 +121,9 @@ class AhaServices::GithubIssues < AhaService
     when "closed", "reopened"
       diff = diff_status_change(resource, issue, diff)
     when "opened"
-      meta_data.opened_from_aha ||= []
-      # Check if this issue was just sent from Aha!
-      if meta_data.opened_from_aha.include?(resource.id)
+      if get_integration_field(resource.integration_fields, "sent_from_aha")
         # force issue status to match Aha! (since we can't control it on creation)
         update_issue_status(issue, resource)
-        meta_data.opened_from_aha -= [resource.id]
       else
         # else update Aha! to match issue status
         diff = diff_status_change(resource, issue, diff)
@@ -157,11 +153,11 @@ class AhaServices::GithubIssues < AhaService
   end
   
   def mapped_status(issue)
-    data.status_mapping.nil? ? nil : data.status_mapping[issue.state]
+    data.status_mapping.to_h[issue.state]
   end
   
   def diff_status_change(resource, issue, diff)
-    if status = mapped_status(issue) && status != resource.workflow_status.id
+    if status = mapped_status(issue) and status != resource.workflow_status.id
       diff[:workflow_status] = status
     end
     diff
@@ -260,9 +256,12 @@ class AhaServices::GithubIssues < AhaService
   end
 
   def create_issue_for(resource, milestone)
-    meta_data.opened_from_aha ||= []
-    meta_data.opened_from_aha << resource.id
-    
+    api.create_integration_fields(
+      reference_num_to_resource_type(resource.reference_num),
+      resource.reference_num, 
+      data.integration_id,
+      "sent_from_aha" => true
+    )
     issue_resource
       .create({
         title: resource_name(resource),
@@ -316,7 +315,6 @@ class AhaServices::GithubIssues < AhaService
   end
 
   def issue_body(resource)
-
     issue_body_parts = []
     if resource.description.body.present?
       body = html_to_markdown(resource.description.body, true)
@@ -389,7 +387,6 @@ protected
   end
 
   def integrate_resource_with_github_issue(resource, issue)
-    
     api.create_integration_fields(reference_num_to_resource_type(resource.reference_num), resource.reference_num, data.integration_id,
       {number: issue['number'], url: github_url(["issues", issue['number']])})
   end

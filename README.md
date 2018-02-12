@@ -50,6 +50,8 @@ When an object is created in a third party system, the integration code can use 
     api.create_integration_fields('features', feature.id, data.integration_id,
       {id: issue.id, key: issue[:key]})
 
+That is, `api.create_integration_fields(resource_type, resource_id, integration_id, data_hash)`
+
 The payload for each feature and release event will contain the integration fields that have previously been set.
 
 Running an integration in development
