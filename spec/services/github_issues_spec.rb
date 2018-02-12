@@ -713,14 +713,12 @@ describe AhaServices::GithubIssues do
     end
     
     let(:api_client) { double }
-    let(:repo_resource) { double }
     let(:milestone_resource) { double }
     let(:issue_resource) { double }
     let(:label_resource) { double }
 
     before do
       service.stub(:api).and_return(api_client)
-      service.stub(:repo_resource).and_return(repo_resource)
       service.stub(:milestone_resource).and_return(milestone_resource)
       service.stub(:issue_resource).and_return(issue_resource)
       service.stub(:label_resource).and_return(label_resource)
@@ -728,6 +726,7 @@ describe AhaServices::GithubIssues do
     
     let(:aha_feature) do
       Hashie::Mash.new(
+        id: "uuid",
         name: 'Existing Feature',
         workflow_status: workflow_status,
         description: { body: 'Existing feature description' },
@@ -741,6 +740,7 @@ describe AhaServices::GithubIssues do
       api_client.stub(:search_integration_fields).and_return(Hashie::Mash.new(records: [
         { feature: aha_feature.merge(resource: 'existing-feature') },
       ]))
+      api_client.stub(:create_integration_fields)
     end
     
     let(:github_milestone) do
@@ -766,8 +766,10 @@ describe AhaServices::GithubIssues do
     end
     
     before do
-      service.stub(:find_or_attach_github_milestone).and_return(github_issue)
-      service.stub(:find_or_attach_github_issue).and_return(github_issue)
+      milestone_resource.stub(:find_by_title).and_return(nil)
+      milestone_resource.stub(:create).and_return(github_milestone)
+      issue_resource.stub(:create).and_return(github_issue)
+      label_resource.stub(:update)
     end
     
     def trigger_feature_send
@@ -812,13 +814,13 @@ describe AhaServices::GithubIssues do
         
         it "leaves the feature as closed" do
           send_to_github do
+            allow(issue_resource).to receive(:update)
             expect(api_client).to_not receive(:put)
           end
         end
         
         it "remembers to go back and close the issue" do
           send_to_github do
-            allow(api_client).to receive(:put) # temp to ignore above failure
             expect(issue_resource).to receive(:update)
           end
         end
@@ -827,7 +829,7 @@ describe AhaServices::GithubIssues do
       context "when the feature status does not match a mapping" do
         let(:workflow_status) { { id: '404' } }
         
-        it "leaves the feature status alone", focus: true do
+        it "leaves the feature status alone" do
           send_to_github do
             expect(api_client).to_not receive(:put)
           end
@@ -835,7 +837,6 @@ describe AhaServices::GithubIssues do
         
         it "does not try to modify the issue status" do
           send_to_github do
-            allow(api_client).to receive(:put) # temp to ignore above failure
             expect(issue_resource).to_not receive(:update)
           end
         end

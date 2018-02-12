@@ -24,6 +24,7 @@ class AhaServices::GithubIssues < AhaService
   callback_url description: "Use this URL to setup a two-way integration with Github issues."
 
   def receive_installed
+    meta_data.opened_from_aha ||= []
     meta_data.repos = repo_resource.all.map { |repo| { full_name: repo['full_name'] } }
   end
 
@@ -118,11 +119,21 @@ class AhaServices::GithubIssues < AhaService
         # update the status
         diff[:workflow_status] = new_status if !new_status.nil? && new_status != resource.workflow_status.name
       end
-    when "closed", "opened", "reopened"
-      new_status = data.status_mapping.nil? ? nil : data.status_mapping[issue.state]
-      diff[:workflow_status] = new_status if !new_status.nil? && new_status != resource.workflow_status.id
-
-      if action == "opened" && !new_status.nil? && new_status == resource.workflow_status.id
+    when "closed", "reopened"
+      diff = diff_status_change(resource, issue, diff)
+    when "opened"
+      meta_data.opened_from_aha ||= []
+      # Check if this issue was just sent from Aha!
+      if meta_data.opened_from_aha.include?(resource.id)
+        # force issue status to match Aha! (since we can't control it on creation)
+        update_issue_status(issue, resource)
+        meta_data.opened_from_aha -= [resource.id]
+      else
+        # else update Aha! to match issue status
+        diff = diff_status_change(resource, issue, diff)
+      end
+      
+      if status = mapped_status(issue) && status == resource.workflow_status.id
         new_tags.push(workflow_status_to_github_label(resource.workflow_status.name))
         new_tags.push(*resource.tags)
       end
@@ -143,6 +154,17 @@ class AhaServices::GithubIssues < AhaService
         label_resource.update(issue.number, [new_tags, workflow_status_to_github_label(updated_resource[resource_kind].workflow_status.name)].flatten) 
       end
     end
+  end
+  
+  def mapped_status(issue)
+    data.status_mapping.nil? ? nil : data.status_mapping[issue.state]
+  end
+  
+  def diff_status_change(resource, issue, diff)
+    if status = mapped_status(issue) && status != resource.workflow_status.id
+      diff[:workflow_status] = status
+    end
+    diff
   end
 
   def sync_tags?(action, resource_tags, new_tags)
@@ -238,6 +260,9 @@ class AhaServices::GithubIssues < AhaService
   end
 
   def create_issue_for(resource, milestone)
+    meta_data.opened_from_aha ||= []
+    meta_data.opened_from_aha << resource.id
+    
     issue_resource
       .create({
         title: resource_name(resource),
