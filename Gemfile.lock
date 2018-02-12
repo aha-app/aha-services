@@ -68,6 +68,7 @@ GEM
     byebug (6.0.2)
     celluloid (0.16.0)
       timers (~> 4.0.0)
+    coderay (1.1.2)
     concurrent-ruby (1.0.5)
     crack (0.4.2)
       safe_yaml (~> 1.0.0)
@@ -104,6 +105,7 @@ GEM
       rb-inotify (>= 0.9)
     mail (2.6.4)
       mime-types (>= 1.16, < 4)
+    method_source (0.9.0)
     mime-types (2.99.2)
     mini_portile2 (2.3.0)
     minitest (5.10.3)
@@ -112,6 +114,9 @@ GEM
     net-http-persistent (2.9.4)
     nokogiri (1.8.1)
       mini_portile2 (~> 2.3.0)
+    pry (0.11.3)
+      coderay (~> 1.1.0)
+      method_source (~> 0.9.0)
     rack (1.6.8)
     rack-protection (1.5.3)
       rack
@@ -180,6 +185,7 @@ DEPENDENCIES
   net-http-persistent
   nokogiri (~> 1.8)
   plain-david!
+  pry
   redcarpet
   rerun
   restforce

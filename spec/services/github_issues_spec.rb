@@ -696,4 +696,172 @@ describe AhaServices::GithubIssues do
       end
     end
   end
+  
+  # These are integration tests after fashion, playing out
+  # some ping-pong interactions between Aha! and GitHub.
+  # I've isolated their setup from the tests above so they
+  # are resilient to breakage.
+  
+  context "when sending an existing feature to GitHub" do
+    
+    let(:service) do
+      AhaServices::GithubIssues.new(
+        'server_url' => "https://api.github.com",
+        'username' => 'user', 'password' => 'secret',
+        'repository' => 'user/repo'
+      )
+    end
+    
+    let(:api_client) { double }
+    let(:repo_resource) { double }
+    let(:milestone_resource) { double }
+    let(:issue_resource) { double }
+    let(:label_resource) { double }
+
+    before do
+      service.stub(:api).and_return(api_client)
+      service.stub(:repo_resource).and_return(repo_resource)
+      service.stub(:milestone_resource).and_return(milestone_resource)
+      service.stub(:issue_resource).and_return(issue_resource)
+      service.stub(:label_resource).and_return(label_resource)
+    end
+    
+    let(:aha_feature) do
+      Hashie::Mash.new(
+        name: 'Existing Feature',
+        workflow_status: workflow_status,
+        description: { body: 'Existing feature description' },
+        release: { name: 'Existing Feature Release' },
+        tags: [],
+        requirements: [],
+      )
+    end
+    
+    before do  
+      api_client.stub(:search_integration_fields).and_return(Hashie::Mash.new(records: [
+        { feature: aha_feature.merge(resource: 'existing-feature') },
+      ]))
+    end
+    
+    let(:github_milestone) do
+      Hashie::Mash.new(
+        number: 1,
+        title: aha_feature.release.name,
+      )
+    end
+    let(:github_issue) do
+      Hashie::Mash.new(
+        number: 1,
+        title: aha_feature.name,
+        description: aha_feature.description.body,
+        state: "open", # New issues always start open
+      )
+    end
+    let(:github_webhook) do
+      Hashie::Mash.new(
+        action: 'opened', # New issues always fire opened webhook
+        issue: github_issue,
+        repository: { full_name: 'user/repo' },
+      )
+    end
+    
+    before do
+      service.stub(:find_or_attach_github_milestone).and_return(github_issue)
+      service.stub(:find_or_attach_github_issue).and_return(github_issue)
+    end
+    
+    def trigger_feature_send
+      service.stub(:payload).and_return(Hashie::Mash.new(feature: aha_feature))
+      service.receive_create_feature
+    end
+    
+    def trigger_issue_receive
+      service.stub(:payload).and_return(Hashie::Mash.new(webhook: github_webhook))
+      service.receive_webhook
+    end
+    
+    def send_to_github
+      trigger_feature_send
+      yield
+      trigger_issue_receive
+    end
+    
+    context "with mapped workflow statuses" do
+      before do
+        service.data[:status_mapping] = {open: '12345', closed: '67890'}
+      end
+      
+      context "when the feature is mapped to open" do
+        let(:workflow_status) { { id: '12345' } }
+        
+        it "leaves the feature as open" do
+          send_to_github do
+            expect(api_client).to_not receive(:put)
+          end
+        end
+        
+        it "doesn't try to needlessly re-update the issue status" do
+          send_to_github do
+            expect(issue_resource).to_not receive(:update)
+          end
+        end
+      end
+      
+      context "when the feature is mapped to closed" do
+        let(:workflow_status) { { id: '67890' } }
+        
+        it "leaves the feature as closed" do
+          send_to_github do
+            expect(api_client).to_not receive(:put)
+          end
+        end
+        
+        it "remembers to go back and close the issue" do
+          send_to_github do
+            allow(api_client).to receive(:put) # temp to ignore above failure
+            expect(issue_resource).to receive(:update)
+          end
+        end
+      end
+      
+      context "when the feature status does not match a mapping" do
+        let(:workflow_status) { { id: '404' } }
+        
+        it "leaves the feature status alone", focus: true do
+          send_to_github do
+            expect(api_client).to_not receive(:put)
+          end
+        end
+        
+        it "does not try to modify the issue status" do
+          send_to_github do
+            allow(api_client).to receive(:put) # temp to ignore above failure
+            expect(issue_resource).to_not receive(:update)
+          end
+        end
+      end
+    end
+    
+    context "without mapped workflow statuses" do
+      before do
+        service.data[:status_mapping] = {}
+      end
+      
+      let(:workflow_status) { { id: '9001' } }
+      
+      it "leaves the feature status alone" do
+        send_to_github do
+          expect(api_client).to_not receive(:put)
+        end
+      end
+      
+      it "does not try to modify the issue status" do
+        send_to_github do
+          expect(issue_resource).to_not receive(:update)
+        end
+      end
+    end
+    
+  end
+  
 end
