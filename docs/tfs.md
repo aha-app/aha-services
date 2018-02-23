@@ -5,7 +5,7 @@ This integration works with the online version of Visual Studio. If you run Team
 ## Features
 
 * One Aha! product is associated with one VSTS project.
-* A feature can be sent to VSTS using the _Send to Visual Studio Team Services_ item in the _Send_ dropdown next to the integrations field on the features page.
+* A feature can be sent to VSTS using the _Send to Visual Studio Team Services_ item in the _Send_ dropdown next to the Integrations field on the features page.
 * Requirements are sent to VSTS together with the feature.
 * Only the name, description and attachments of features and requirements are sent.
 * If you set up a subscription in VSTS the integration can receive updates about name changes, description changes or status changes.
