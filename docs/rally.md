@@ -3,7 +3,7 @@ This integration allows you to push features and requirements from Aha! to Rally
 ## Features
 
 * One Aha! product is associated with one Rally project.
-* A feature can be sent to the Rally server using the _Send to Rally_ item in the _Action_ menu on the features page.
+* A feature can be sent to the Rally server using the _Send to Rally_ item in the _Send_ dropdown next to the Integrations field on the features page.
 * Requirements are sent to Rally together with the feature.
 * The name, description and attachments of features and requirements are sent. If a feature has a start and due date these will be sent to Rally portfolio items.
 * Releases in Aha! will create releases in Rally.
@@ -22,7 +22,7 @@ Create the integration in Aha!
 4. Choose the project to integrate with. 
 5. Based on the project you will be able to choose the mapping between Aha! and Rally resources.
 6. Enable the integration.
-7. Test the integration by going to one of your features in Aha! and using the _Send to Rally_ item in the _Actions_ menu on the features page. You should then look at your project in Rally and see that the feature (and any requirements) were properly converted to user stories. 
+7. Test the integration by going to one of your features in Aha! and using the _Send to Rally_ item in the _Send_ dropdown next to the Integrations field on the features page. You should then look at your project in Rally and see that the feature (and any requirements) were properly converted to user stories.
 
 ## Troubleshooting
 

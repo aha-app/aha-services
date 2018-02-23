@@ -5,7 +5,7 @@ This integration uses the REST API of Bugzilla version 5.0.
 ## Features
 
 * One Aha! product is associated with one product and component in Bugzilla.
-* A feature can be sent to Bugzilla using the _Send to Bugzilla_ item in the _Action_ menu on the features page.
+* A feature can be sent to Bugzilla using the _Send_ dropdown next to the Integrations field for feature pages.
 * Requirements are sent to Bugzilla together with the feature.
 * Only the name, description and attachments of features and requirements are sent. Any other fields that are marked as mandatory in Bugzilla will be automatically populated with the last option for the field.
 * Bugs created from a requirement will block the bug created from the feature.
@@ -25,7 +25,7 @@ Next create the integration in Aha!
 2. Enter the API key you created in Bugzilla.
 3. Click the _Test connection_ button.
 4. On success, you should be able to choose a product and a component from Bugzilla.
-5. Enable the integration and test it by going to one of your features in Aha! and using the _Send to Bugzilla_ item in the _Action_ menu.
+5. Enable the integration and test it by going to one of your features in Aha! and using the _Send_ dropdown next to the Integrations field for feature page.
 6. The feature should appear as a bug in Bugzilla and the requirements should appear as bugs that block the first bug.
 
 ## Troubleshooting
