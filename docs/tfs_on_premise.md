@@ -6,7 +6,7 @@ This integration works with the on-premise version of TFS. If you use Visual Stu
 
 * Authentication with TFS is done using NTLM.
 * One Aha! product is associated with one TFS project.
-* A feature can be sent to the TFS server using the _Send to Team Foundation Server_ item in the _Action_ menu on the features page.
+* A feature can be sent to the TFS server using the _Send to Team Foundation Server_ item in the _Send_ dropdown next to the integrations field on the features page.
 * Requirements are sent to TFS together with the feature.
 * Only the name, description and attachments of features and requirements are sent.
 * If you set up a subscription in TFS the integration can receive updates about name changes, description changes or status changes.
@@ -24,7 +24,7 @@ To configure this integration, first create the integration in Aha!
 4. On success, you should be able to choose which project to integrate with. You also must select an area of this project where features and requirements should be created.
 5. Select the workitemtype to which features should be mapped. Then select for each TFS state to which Aha! workflow status it should be mapped.
 6. Repeat step 5 for requirements.
-7. Enable the integration and test it by going to one of your features in Aha! and using the _Send to Team Foundation Server_ item in the _Action_ menu.
+7. Enable the integration and test it by going to one of your features in Aha! and using the _Send to Team Foundation Server_ item in the _Send_ dropdown next to the integrations field.
 8. The feature should now appear in your TFS project together with its requirements.
 
 If you want to be able to receive updates from TFS you must setup a subscription.

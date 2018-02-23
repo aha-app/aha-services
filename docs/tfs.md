@@ -5,7 +5,7 @@ This integration works with the online version of Visual Studio. If you run Team
 ## Features
 
 * One Aha! product is associated with one VSTS project.
-* A feature can be sent to VSTS using the _Send to Visual Studio Team Services_ item in the _Action_ menu on the features page.
+* A feature can be sent to VSTS using the _Send to Visual Studio Team Services_ item in the _Send_ dropdown next to the integrations field on the features page.
 * Requirements are sent to VSTS together with the feature.
 * Only the name, description and attachments of features and requirements are sent.
 * If you set up a subscription in VSTS the integration can receive updates about name changes, description changes or status changes.
@@ -30,7 +30,7 @@ Next create the integration in Aha!
 4. On success, you should be able to choose a project from Visual Studio Team Services. You also must select an area of this project where features and requirements should be created.
 5. Select the workitemtype to which features should be mapped. Then select for each VSTS state to which Aha! workflow status it should be mapped.
 6. Repeat step 5 for requirements.
-7. Enable the integration and test it by going to one of your features in Aha! and using the _Send to Visual Studio Team Services_ item in the _Action_ menu.
+7. Enable the integration and test it by going to one of your features in Aha! and using the _Send to Visual Studio Team Services_ item in the _Send_ dropdown next to the Integrations field on the features page.
 8. The feature should now appear in your Visual Studio Team Services project together with its requirements.
 
 If you want to be able to receive updates from VSTS you must setup a subscription.

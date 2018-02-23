@@ -1,2 +1,1 @@
-This integration allows generic integration using webhooks. When a user
-chooses _Send to Webhook_ under the _Actions_ menu for a feature or a release  then an HTTP POST will be made to the URL you specify in the _Hook URL_ parameter.
+This integration allows generic integration using webhooks. When a user chooses _Send to Webhook_ under the _Send_ dropdown next to the integrations field for a feature or a release then an HTTP POST will be made to the URL you specify in the Hook URL parameter.

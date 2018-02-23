@@ -86,7 +86,7 @@ There is also a set of advanced functionality unique to the Jira integration, su
 
 ## Integration configuration
 
-You need to be a Product Owner in Aha! and an Administrator in Jira to set up this integration. If you have already configured an integration that you wish to use as a [template](http://support.aha.io/hc/en-us/articles/210385463), you can skip these steps and simply apply your template through the Actions menu.
+You need to be a Product Owner in Aha! and an Administrator in JIRA to set up this integration. If you have already configured an integration that you wish to use as a [template](http://support.aha.io/hc/en-us/articles/210385463), you can skip these steps and simply apply your template through the _More options_ menu.
 
 This integration works with both the cloud and on premise versions of Jira. If you are running the on premise version of Jira you will need to create a [firewall exception](http://support.aha.io/entries/40842777) so Aha! can make calls to the Jira API. The exception should forward requests to the internal Jira server.
 
@@ -102,7 +102,13 @@ Please carefully follow these instructions to ensure that the integration is pro
 8. Create a new Webhook in Jira and paste in the Webhook URL that you copied from step #6. Check the boxes for all _Worklog_ and _Issue_ events, do not check the box for _Exclude body._
 9. Save the Webhook.
 10. Enable the integration in Aha!
+<<<<<<< HEAD
 11. Test the integration by going to one of your features in Aha! and using the _Send to Jira_ item in the _Actions_ menu on the features page. You should then look at your project in Jira and see that the feature (and any requirements) were properly created.
+||||||| parent of 3363598... Update instructions copy
+11. Test the integration by going to one of your features in Aha! and using the _Send to JIRA_ item in the _Actions_ menu on the features page. You should then look at your project in JIRA and see that the feature (and any requirements) were properly created.
+=======
+11. Test the integration by going to one of your features in Aha! and using the _Send to JIRA_ item in the _Send_ dropdown on the features page. You should then look at your project in JIRA and see that the feature (and any requirements) were properly created.
+>>>>>>> 3363598... Update instructions copy
 
 ## Troubleshooting
 

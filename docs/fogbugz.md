@@ -3,13 +3,13 @@ This two-way integration allows you to push your features and requirements in Ah
 ## Features
 
 * One Aha! product is associated with one FogBugz project.
-* Individual features can be sent to FogBugz using the _Send to FogBugz_ item in the _Actions_ menu on the features page.
-* All features in a release (that have not already been implemented or sent to FogBugz previously) can be sent to FogBugz using the _Send to FogBugz_ item in the _Actions_ menu on the release page.
+* Individual features can be sent to FogBugz using the _Send to FogBugz_ item in the _Send_ dropdown on the features page.
+* All features in a release (that have not already been implemented or sent to FogBugz previously) can be sent to FogBugz using the _Send_ dropdown next to the Integrations field for for release pages.
 * When a feature is copied to FogBugz one issue will be created for the feature.
 * Only the description of a feature is sent and its requirements are created as sub-cases. No tasks or comments are included. 
 * Attachments of a feature and requirements are also sent.
 * Tags on a feature in Aha! will becomes tags in FogBugz.
-* After a feature is first sent to FogBugz, changes to the name, description and tags, can also be sent to FogBugz using the _Update FogBugz item in the _Actions_ menu on the features page. If an attachment is deleted in Aha! the corresponding attachment in FogBugz is not deleted. 
+* After a feature is first sent to FogBugz, changes to the name, description and tags, can also be sent to FogBugz using the _Update FogBugz_ item in the _Send_ dropdown next to the Integrations field. If an attachment is deleted in Aha! the corresponding attachment in FogBugz is not deleted.
 
 
 ## Configuration
@@ -23,7 +23,7 @@ Create the integration in Aha!
 1. Enter your FogBugz URL and API token. Click the _Test connection_ button
 2. After a short delay, you will be able to choose the Projects the cases will be created in.
 3. Enable the integration.
-4. Test the integration by going to one of your features in Aha! and using the _Send to FogBugz_ item in the _Actions_ menu on the features page. You should then look at your FogBugz project and see that the feature were properly copied to a case. 
+4. Test the integration by going to one of your features in Aha! and using the FogBugz using the _Send_ dropdown next to the Integrations field for the features pages. You should then look at your FogBugz project and see that the feature were properly copied to a case.
 
 Enable URL triggers in FogBugz to get status changes back:
 
