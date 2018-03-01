@@ -21,7 +21,7 @@ class AhaServices::DeskDotCom < AhaService
     parameters: {name: "Aha! Integration", scope: "read,write", expiration: "never"},
     callback_token_type: :access_token
 
-  install_button hide_fetch_message: true, label: "Create Integration URL"
+  install_button hide_fetch_message: true, label: "Create integration URL"
 
   internal :aha_integration_url,
     label: "Aha! integration URL"
