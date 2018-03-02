@@ -102,13 +102,7 @@ Please carefully follow these instructions to ensure that the integration is pro
 8. Create a new Webhook in Jira and paste in the Webhook URL that you copied from step #6. Check the boxes for all _Worklog_ and _Issue_ events, do not check the box for _Exclude body._
 9. Save the Webhook.
 10. Enable the integration in Aha!
-<<<<<<< HEAD
-11. Test the integration by going to one of your features in Aha! and using the _Send to Jira_ item in the _Actions_ menu on the features page. You should then look at your project in Jira and see that the feature (and any requirements) were properly created.
-||||||| parent of 3363598... Update instructions copy
-11. Test the integration by going to one of your features in Aha! and using the _Send to JIRA_ item in the _Actions_ menu on the features page. You should then look at your project in JIRA and see that the feature (and any requirements) were properly created.
-=======
 11. Test the integration by going to one of your features in Aha! and using the _Send to JIRA_ item in the _Send_ dropdown on the features page. You should then look at your project in JIRA and see that the feature (and any requirements) were properly created.
->>>>>>> 3363598... Update instructions copy
 
 ## Troubleshooting
 
