@@ -116,7 +116,7 @@ class AhaServices::GitlabIssues < AhaService
       diff[:tags] = new_tags unless resource.tags && resource.tags.sort == new_tags.sort
 
     when "close", "open", "reopen"
-      new_state = (objattr.state == "reopened") ? "open" : objattr.state
+      new_state = (["reopened", "opened"].include?(objattr.state)) ? "open" : objattr.state
       new_status = data.status_mapping.nil? ? nil : data.status_mapping[new_state]
       diff[:workflow_status] = new_status if new_status.present? && new_status != resource.workflow_status.id
     end
