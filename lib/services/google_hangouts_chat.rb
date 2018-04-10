@@ -31,7 +31,7 @@ class AhaServices::GoogleHangoutsChat < AhaService
     description = [user, audit.description].join(' ')
       
     kvs = audit.changes.map do |change|
-      { keyValue: { topLabel: change["field_name"], content: change["value"] } }
+      { keyValue: { topLabel: change["field_name"], content: change["value"] contentMultiline: true } }
     end
     send_message(
       cards: [
