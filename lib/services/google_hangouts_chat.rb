@@ -30,39 +30,38 @@ class AhaServices::GoogleHangoutsChat < AhaService
 
     description = [user, audit.description].join(' ')
       
+    title_section = {
+      widgets: [ { textParagraph: { text: description } } ]
+    }
+
     kvs = audit.changes.map do |change|
-      { keyValue: { topLabel: change["field_name"], content: change["value"], contentMultiline: true } }
+      { keyValue: { topLabel: change["field_name"], content: change["value"].to_s, contentMultiline: "true" } }
     end
-    send_message(
-      cards: [
+
+    update_section = {
+      widgets: kvs
+    }
+
+    link_section = {
+      widgets: [
         {
-          sections: [
+          buttons: [
             {
-              widgets: [ { textParagraph: { text: description } } ]
-            },
-            {
-              widgets: kvs
-            },
-            {
-              widgets: [
-                {
-                  buttons: [
-                    {
-                      textButton: {
-                        text: "GO TO OBJECT",
-                        onClick: {
-                          openLink: { url: audit.auditable_url }
-                        }
-                      }
-                    }
-                  ]
+              textButton: {
+                text: "GO TO OBJECT",
+                onClick: {
+                  openLink: { url: audit.auditable_url }
                 }
-              ]
+              }
             }
           ]
         }
       ]
-    )
+    }
+
+    sections = kvs.empty? ? [title_section, link_section] : [title_section, update_section, link_section]
+    message = { cards: [ { sections: sections } ] }
+    send_message(message)
   end
     
   
