@@ -22,20 +22,17 @@ class AhaServices::GoogleHangoutsChat < AhaService
         "Aha!"
       end
     
-    link = if audit.auditable_url
-        "<#{audit.auditable_url}|#{audit.description}>"
-      else
-        audit.description
-      end
-
-    description = [user, audit.description].join(' ')
+    description = "<b>#{user}</b> #{audit.description}"
       
     title_section = {
       widgets: [ { textParagraph: { text: description } } ]
     }
 
     kvs = audit.changes.map do |change|
-      { keyValue: { topLabel: change["field_name"], content: change["value"].to_s, contentMultiline: "true" } }
+      frag = Nokogiri::HTML.fragment(change["value"].to_s)
+      frag.css('.deleted').each { |el| el.name= "font"; el.set_attribute("color" , "#9d261d") } # modifies frag in place
+      frag.css('.inserted').each { |el| el.name= "font"; el.set_attribute("color" , "#46a546") } # modifies frag in place
+      { keyValue: { topLabel: change["field_name"], content: frag.to_html, contentMultiline: "true" } }
     end
 
     update_section = {
@@ -48,7 +45,7 @@ class AhaServices::GoogleHangoutsChat < AhaService
           buttons: [
             {
               textButton: {
-                text: "GO TO OBJECT",
+                text: "VIEW IN AHA!",
                 onClick: {
                   openLink: { url: audit.auditable_url }
                 }
