@@ -3,7 +3,7 @@ class AhaServices::GoogleHangoutsChat < AhaService
   category "Communication"
   
   string :google_hangouts_chat_webhook_url,
-    description: "The webhook that you copied from the room"
+    description: "The URL that you copied when creating the webhook in Google Hangouts Chat"
   install_button
   
   audit_filter
