@@ -29,7 +29,7 @@ class TFSRequirementMappingResource < TFSResource
     integration_field = aha_requirement.integration_fields.find {|field| field.name == "id" and field.integration_id.to_i == @service.data.integration_id}
     if integration_field
       workitem = update integration_field.value, aha_requirement
-      relation = workitem.relations.find { |rel| rel.rel == "System.LinkTypes.Hierarchy-Reverse" && rel.url != parent.url }
+      relation = Array(workitem.relations).find { |rel| rel.rel == "System.LinkTypes.Hierarchy-Reverse" && rel.url != parent.url }
 
       if relation
         workitem_resource.update workitem.id, [{
