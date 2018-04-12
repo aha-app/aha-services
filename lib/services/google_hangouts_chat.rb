@@ -29,10 +29,8 @@ class AhaServices::GoogleHangoutsChat < AhaService
     }
 
     kvs = audit.changes.map do |change|
-      frag = Nokogiri::HTML.fragment(change["value"].to_s)
-      frag.css('.deleted').each { |el| el.name= "font"; el.set_attribute("color" , "#9d261d") } # modifies frag in place
-      frag.css('.inserted').each { |el| el.name= "font"; el.set_attribute("color" , "#46a546") } # modifies frag in place
-      { keyValue: { topLabel: change["field_name"], content: frag.to_html, contentMultiline: "true" } }
+      content = html_change_colors(change["value"])
+      { keyValue: { topLabel: change["field_name"], content: content, contentMultiline: "true" } }
     end
 
     update_section = {
@@ -60,12 +58,14 @@ class AhaServices::GoogleHangoutsChat < AhaService
     message = { cards: [ { sections: sections } ] }
     send_message(message)
   end
-    
   
 protected
 
-  def is_wide_field(field_name)
-    !["Description", "Theme", "Body"].include?(field_name)
+  def html_change_colors(val)
+    frag = Nokogiri::HTML.fragment(val.to_s)
+    frag.css('.deleted').each { |el| el.name= "font"; el.set_attribute("color" , "#9d261d") } # modifies frag in place
+    frag.css('.inserted').each { |el| el.name= "font"; el.set_attribute("color" , "#46a546") } # modifies frag in place
+    frag.to_html
   end
 
   def url
