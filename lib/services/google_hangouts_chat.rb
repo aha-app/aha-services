@@ -1,8 +1,8 @@
 class AhaServices::GoogleHangoutsChat < AhaService
-  caption "Send customized activity from Aha! into group chat"
+  caption "Send product notifications from Aha! to Google Hangouts Chat"
   category "Communication"
   
-  string :google_hangouts_chat_webhook_url,
+  string :webhook_url,
     description: "The URL that you copied when creating the webhook in Google Hangouts Chat"
   install_button
   
@@ -69,7 +69,7 @@ protected
   end
 
   def url
-    data.google_hangouts_chat_webhook_url
+    data.webhook_url
   end
 
   def send_message(message)
