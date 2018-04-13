@@ -13,31 +13,36 @@ class AhaServices::GoogleHangoutsChat < AhaService
   end
   
   def receive_audit
-    audit = payload.audit
-    return unless audit.interesting
+    return unless payload.audit.interesting
     
-    user = if audit.user
-        audit.user.name
-      else
-        "Aha!"
-      end
-    
-    description = "<b>#{user}</b> #{audit.description}"
-      
-    title_section = {
-      widgets: [ { textParagraph: { text: description } } ]
+    update_section = {
+      widgets: update_kvs
     }
 
-    kvs = audit.changes.map do |change|
+    sections = update_kvs.empty? ? [title_section, link_section] : [title_section, update_section, link_section]
+    message = { cards: [ { sections: sections } ] }
+    send_message(message)
+  end
+  
+protected
+
+  def title_section
+    user = payload.audit.user&.name || "Aha!"
+
+    description = "<b>#{user}</b> #{payload.audit.description}"
+      
+    { widgets: [ { textParagraph: { text: description } } ] }
+  end
+
+  def update_kvs
+    @update_kvs ||= payload.audit.changes.map do |change|
       content = html_change_colors(change["value"])
       { keyValue: { topLabel: change["field_name"], content: content, contentMultiline: "true" } }
     end
+  end
 
-    update_section = {
-      widgets: kvs
-    }
-
-    link_section = {
+  def link_section
+    {
       widgets: [
         {
           buttons: [
@@ -45,7 +50,7 @@ class AhaServices::GoogleHangoutsChat < AhaService
               textButton: {
                 text: "VIEW IN AHA!",
                 onClick: {
-                  openLink: { url: audit.auditable_url }
+                  openLink: { url: payload.audit.auditable_url }
                 }
               }
             }
@@ -53,13 +58,7 @@ class AhaServices::GoogleHangoutsChat < AhaService
         }
       ]
     }
-
-    sections = kvs.empty? ? [title_section, link_section] : [title_section, update_section, link_section]
-    message = { cards: [ { sections: sections } ] }
-    send_message(message)
   end
-  
-protected
 
   def html_change_colors(val)
     frag = Nokogiri::HTML.fragment(val.to_s)

@@ -59,6 +59,15 @@ describe AhaServices::GoogleHangoutsChat do
       end
       service_with_voted_idea.receive_audit
     end
+
+    context "when audit is not interesting" do
+      subject { described_class.new({}, { "audit" => {} }) }
+
+      it "returns without sending message" do
+        expect(subject).to_not receive(:send_message)
+        subject.receive_audit
+      end
+    end
   end
 
   context("#html_change_colors") do
