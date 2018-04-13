@@ -41,7 +41,7 @@ GIT
 PATH
   remote: .
   specs:
-    aha-services (1.24.54)
+    aha-services (1.24.55)
       activesupport (< 5)
       aha-api
       crack
@@ -112,7 +112,7 @@ GEM
     multi_json (1.12.1)
     multipart-post (2.0.0)
     net-http-persistent (2.9.4)
-    nokogiri (1.8.1)
+    nokogiri (1.8.2)
       mini_portile2 (~> 2.3.0)
     pry (0.11.3)
       coderay (~> 1.1.0)
@@ -183,7 +183,7 @@ DEPENDENCIES
   html2confluence!
   mail
   net-http-persistent
-  nokogiri (~> 1.8)
+  nokogiri (~> 1.8.2)
   plain-david!
   pry
   redcarpet
