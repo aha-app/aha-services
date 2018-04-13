@@ -82,7 +82,7 @@ class AhaServices::GithubIssues < AhaService
       logger.warn("Multiple entries returned for issue number '#{issue.number}' - none will be updated.")
       return
     elsif results.size == 0
-      logger.warn("Issue '#{issue.number}' is not linked in Aha! - link in Aha! to get issue updates")
+      logger.warn("Issue '#{issue.number}' is not linked to a record in Aha! - skipping webhook")
       return
     end
 
