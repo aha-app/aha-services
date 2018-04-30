@@ -22,7 +22,7 @@ class FogbugzResource < GenericResource
       params[:nFileCount] = attachments.size
       attachments.each_with_index do |attachment, index|
         params["File#{index + 1}"] = Faraday::UploadIO.new(
-          open(attachment[:file_url]),
+          URI.parse(attachment[:file_url]).open,
           attachment[:content_type] || 'application/octet-stream',
           attachment[:filename]
           )

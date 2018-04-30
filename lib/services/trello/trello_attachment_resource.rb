@@ -10,15 +10,13 @@ class TrelloAttachmentResource < TrelloResource
 
     return unless attachment.download_url
 
-    open(attachment.download_url) do |downloaded_file|
-      # Reset Faraday and switch to multipart to do the file upload.
-      http_reset
-      http(:encoding => :multipart)
+    downloaded_file = URI.parse(attachment.download_url).open
+    # Reset Faraday and switch to multipart to do the file upload.
+    http_reset
+    http(:encoding => :multipart)
 
-      file = Faraday::UploadIO.new(downloaded_file, attachment.content_type, attachment.file_name)
-      response = http_post trello_url("cards/#{card_id}/attachments"), { file: file }
-    end
-
+    file = Faraday::UploadIO.new(downloaded_file, attachment.content_type, attachment.file_name)
+    response = http_post trello_url("cards/#{card_id}/attachments"), { file: file }
   rescue AhaService::RemoteError => e
     logger.error("Failed to upload attachment to #{card_id}: #{e.message}")
   ensure

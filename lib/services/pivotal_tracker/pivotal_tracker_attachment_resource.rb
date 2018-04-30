@@ -51,19 +51,18 @@ private
     
     return unless attachment.download_url
 
-    open(attachment.download_url) do |downloaded_file|
-      # Reset Faraday and switch to multipart to do the file upload.
-      http_reset
-      http(:encoding => :multipart)
-      http.headers['X-TrackerToken'] = @service.data.api_token
+    downloaded_file = URI.parse(attachment.download_url).open
 
-      file = Faraday::UploadIO.new(downloaded_file, attachment.content_type, attachment.file_name)
-      response = http_post("#{api_url}/projects/#{project_id}/uploads", {:file => file})
-      process_response(response, 200) do |file_attachment|
-        return file_attachment
-      end
+    # Reset Faraday and switch to multipart to do the file upload.
+    http_reset
+    http(:encoding => :multipart)
+    http.headers['X-TrackerToken'] = @service.data.api_token
+
+    file = Faraday::UploadIO.new(downloaded_file, attachment.content_type, attachment.file_name)
+    response = http_post("#{api_url}/projects/#{project_id}/uploads", {:file => file})
+    process_response(response, 200) do |file_attachment|
+      return file_attachment
     end
-
   rescue AhaService::RemoteError => e
     logger.error("Failed to upload attachment to #{project_id}: #{e.message}")
   ensure

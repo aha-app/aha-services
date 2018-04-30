@@ -22,18 +22,17 @@ class JiraAttachmentResource < JiraResource
     
     return unless attachment.download_url
     
-    open(attachment.download_url) do |downloaded_file|
-      # Reset Faraday and switch to multipart to do the file upload.
-      http_reset
-      http(:encoding => :multipart)
-      http.headers['X-Atlassian-Token'] = 'nocheck'
-      auth_header
+    downloaded_file = URI.parse(attachment.download_url).open
 
-      file = Faraday::UploadIO.new(downloaded_file, attachment.content_type, attachment.file_name)
-      response = http_post "#{api_url}/issue/#{issue_id}/attachments", { file: file }
-      process_response(response, 200)
-    end
+    # Reset Faraday and switch to multipart to do the file upload.
+    http_reset
+    http(:encoding => :multipart)
+    http.headers['X-Atlassian-Token'] = 'nocheck'
+    auth_header
 
+    file = Faraday::UploadIO.new(downloaded_file, attachment.content_type, attachment.file_name)
+    response = http_post "#{api_url}/issue/#{issue_id}/attachments", { file: file }
+    process_response(response, 200)
   rescue AhaService::RemoteError, Zlib::BufError => e
     logger.error("Unable to attach '#{attachment.file_name}', perhaps it is too large.")
   ensure
