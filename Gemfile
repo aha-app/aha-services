@@ -10,13 +10,13 @@ gem "aha-api", :git => "https://github.com/aha-app/aha-api"
 gem "html2confluence", :git => "https://github.com/JeremyGeros/html2confluence.git", branch: "patch-1"
 gem "reverse_markdown", :git => "https://github.com/JeremyGeros/reverse_markdown.git"
 gem "redcarpet"
-gem "plain-david", github: "k1w1/plain-david" # HTML to plain text conversion.
+gem "plain-david", git: "https://github.com/k1w1/plain-david.git" # HTML to plain text conversion.
 gem "sinatra"
 gem "crack"
 gem "mail"
 gem "restforce"
 gem 'desk_api'
-gem "net-http-persistent"
+gem "net-http-persistent", "~> 2.9"
 gem "rubyntlm"
 gem "ClothRed", :git => "https://github.com/aha-app/ClothRed", require: "clothred"
 gem "nokogiri", '~> 1.8'
