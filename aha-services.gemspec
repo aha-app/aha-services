@@ -22,7 +22,7 @@ Gem::Specification.new do |s|
   s.add_dependency "faraday_middleware", "~> 0.9.0"
   s.add_dependency "faraday-cookie_jar"
   s.add_dependency "simple_oauth", '>= 0.1', '< 0.3'
-  s.add_dependency "activesupport", '< 5'
+  s.add_dependency "activesupport", '< 6'
   s.add_dependency "htmlentities"
 
   # For Jira integration.
