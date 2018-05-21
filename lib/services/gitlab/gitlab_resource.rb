@@ -4,7 +4,8 @@ class GitlabResource < GenericResource
   end
 
   def gitlab_http_get_paginated(url, page = 1, previous_response = [], &block)
-    response = http_get("#{url}?per_page=100&page=#{page}", nil, {'PRIVATE-TOKEN': @service.data.private_token})
+    append_with = url.include?('?') ? '&' : '?'
+    response = http_get("#{url}#{append_with}per_page=100&page=#{page}", nil, {'PRIVATE-TOKEN': @service.data.private_token})
     process_response(response, 200) do |parsed_response|
       if has_paginated_header?(response)
         gitlab_http_get_paginated(url, page + 1, previous_response + parsed_response, &block)
@@ -30,6 +31,6 @@ class GitlabResource < GenericResource
   end
 
   def get_project_id
-    @service.get_project&.id
+    @service.get_project.try(issue_id_selector.to_sym)
   end
 end

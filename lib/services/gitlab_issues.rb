@@ -38,12 +38,16 @@ class AhaServices::GitlabIssues < AhaService
   def issue_id issue
     api_version == :v3 ? issue['id'] : issue['number']
   end
+
+  def issue_id_selector
+    api_version == :v3 ? 'id' : 'iid'
+  end
   
   def server_url
     if data.server_url.present?
       data.server_url
     else
-      'https://gitlab.com/api/v3'
+      'https://gitlab.com/api/v4'
     end
   end
 
@@ -93,7 +97,7 @@ class AhaServices::GitlabIssues < AhaService
     else
       return
     end
-    issue = issue_resource.find_by_id_and_milestone(objattr["id"], { id: objattr["milestone_id"] })
+    issue = issue_resource.find_by_id_and_milestone(objattr[issue_id_selector], { id: objattr["milestone_id"] })
     return unless issue
 
     # Go back to GitLab to retrieve labels
@@ -114,7 +118,7 @@ class AhaServices::GitlabIssues < AhaService
       if add_status_labels_enabled? && aha_statuses.any?
         aha_status = aha_statuses.pop
         # If there are multiple aha_statuses then clear all except for the last status
-        issue_resource.update(issue.id, labels: [new_tags, aha_status].flatten) unless aha_statuses.empty?
+        issue_resource.update(issue_id(issue), labels: [new_tags, aha_status].flatten) unless aha_statuses.empty?
         # trim the Aha!: prefix to match the aha workflow_status name
         new_status = aha_status[5..-1]
         # update the status
@@ -132,7 +136,7 @@ class AhaServices::GitlabIssues < AhaService
     if diff.size > 0  then
       updated_resource = api.put(resource.resource, { resource_kind => diff })
       if add_status_labels_enabled? && %w(close open reopen).include?(action) && diff.key?(:workflow_status)
-        issue_resource.update(issue.id, labels: [new_tags, "Aha!:#{updated_resource[resource_kind].workflow_status.name}"].flatten)
+        issue_resource.update(issue_id(issue), labels: [new_tags, "Aha!:#{updated_resource[resource_kind].workflow_status.name}"].flatten)
       end
     end
   end
