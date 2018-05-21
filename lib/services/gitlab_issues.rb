@@ -31,6 +31,14 @@ class AhaServices::GitlabIssues < AhaService
     meta_data.repos = repo_resource.all.map { |repo| { full_name: repo['name'], id: repo['id'], web_url: repo['web_url'], path_with_namespace: repo['path_with_namespace'] } }
   end
 
+  def api_version
+    server_url.ends_with?('v3') ? :v3 : :v4
+  end
+
+  def issue_id issue
+    api_version == :v3 ? issue['id'] : issue['number']
+  end
+  
   def server_url
     if data.server_url.present?
       data.server_url
@@ -247,16 +255,16 @@ class AhaServices::GitlabIssues < AhaService
       # add new status label
       tags.push("Aha!:#{resource.workflow_status.name}") unless resource.nil? or resource.workflow_status.nil?
     end
-    issue_resource.update(issue['id'], labels: tags) if tags && tags.length > 0
+    issue_resource.update(issue_id(issue), labels: tags) if tags && tags.length > 0
   end
 
   def update_issue_status(issue, resource)
     # Close or reopen the issue if needed to match the new status.
     status = data.status_mapping.key(resource.workflow_status.id)
     if status == 'closed' && issue['state'] != 'closed'
-      issue_resource.update(issue['id'], { state_event: 'close' })
+      issue_resource.update(issue_id(issue), { state_event: 'close' })
     elsif status == 'open' && issue['state'] != 'opened'
-      issue_resource.update(issue['id'], { state_event: 'reopen' })
+      issue_resource.update(issue_id(issue), { state_event: 'reopen' })
     end
   end
 
