@@ -35,15 +35,7 @@ class AhaServices::GitlabIssues < AhaService
     server_url.ends_with?('v3') ? :v3 : :v4
   end
 
-  def issue_id issue
-    api_version == :v3 ? issue['id'] : issue['number']
-  end
-
   def issue_id_selector
-    api_version == :v3 ? 'id' : 'iid'
-  end
-
-  def milestone_id_selector
     api_version == :v3 ? 'id' : 'iid'
   end
 
