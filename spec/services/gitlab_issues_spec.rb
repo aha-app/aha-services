@@ -41,7 +41,7 @@ describe AhaServices::GitlabIssues do
   end
 
   context "switches between v3 and v4 of Gitlab API correctly" do
-    let(:mock_issue) { { 'id' => 42, 'number' => 124 } }
+    let(:mock_issue) { { 'id' => 42, 'iid' => 124, 'number' => 21 } }
 
     it "detects the API version" do
       ["v3", "v4"].each do |version|
@@ -52,9 +52,11 @@ describe AhaServices::GitlabIssues do
         expect(versioned_service.api_version).to eq version.to_sym
 
         if version == "v3"
-          expect(versioned_service.issue_id(mock_issue)).to eq 42
+          expect(mock_issue[versioned_service.issue_id_selector]).to eq 42
+          expect(mock_issue[versioned_service.issue_integration_selector]).to eq 42
         else
-          expect(versioned_service.issue_id(mock_issue)).to eq 124
+          expect(mock_issue[versioned_service.issue_id_selector]).to eq 124
+          expect(mock_issue[versioned_service.issue_integration_selector]).to eq 21
         end
       end
     end
