@@ -42,7 +42,11 @@ class AhaServices::GitlabIssues < AhaService
   def issue_id_selector
     api_version == :v3 ? 'id' : 'iid'
   end
-  
+
+  def project_id_selector
+    api_version == :v3 ? 'id' : 'name'
+  end
+
   def server_url
     if data.server_url.present?
       data.server_url
@@ -316,6 +320,10 @@ class AhaServices::GitlabIssues < AhaService
     end
   end
 
+  def get_project_id
+    get_project.try(project_id_selector.to_sym)
+  end
+  
   def get_project_url
     get_project&.web_url
   end

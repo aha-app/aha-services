@@ -31,6 +31,7 @@ class GitlabResource < GenericResource
   end
 
   def get_project_id
-    @service.get_project.try(issue_id_selector.to_sym)
+    binding.pry
+    @service.get_project_id
   end
 end
