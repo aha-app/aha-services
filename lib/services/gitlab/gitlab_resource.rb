@@ -31,7 +31,6 @@ class GitlabResource < GenericResource
   end
 
   def get_project_id
-    binding.pry
-    @service.get_project_id
+    @service.get_project&.id
   end
 end

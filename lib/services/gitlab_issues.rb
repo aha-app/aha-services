@@ -214,7 +214,7 @@ class AhaServices::GitlabIssues < AhaService
   end
 
   def update_or_attach_gitlab_issue(resource, milestone)
-    if issue_id = get_integration_field(resource.integration_fields, 'id')
+    if issue_id = get_integration_field(resource.integration_fields, issue_id_selector)
       update_issue(issue_id, resource, milestone["id"])
     else
       attach_issue_to(resource, milestone)
@@ -222,7 +222,7 @@ class AhaServices::GitlabIssues < AhaService
   end
 
   def existing_issue_integrated_with(resource, milestone)
-    if issue_id = get_integration_field(resource.integration_fields, 'id')
+    if issue_id = get_integration_field(resource.integration_fields, issue_id_selector)
       issue_resource.find_by_id_and_milestone(issue_id, milestone)
     end
   end
