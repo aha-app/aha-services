@@ -43,6 +43,14 @@ class AhaServices::GitlabIssues < AhaService
     api_version == :v3 ? 'id' : 'iid'
   end
 
+  def milestone_id_selector
+    api_version == :v3 ? 'id' : 'iid'
+  end
+
+  def issue_integration_selector
+    api_version == :v3 ? 'id' : 'number'
+  end
+
   def project_id_selector
     api_version == :v3 ? 'id' : 'name'
   end
@@ -122,7 +130,7 @@ class AhaServices::GitlabIssues < AhaService
       if add_status_labels_enabled? && aha_statuses.any?
         aha_status = aha_statuses.pop
         # If there are multiple aha_statuses then clear all except for the last status
-        issue_resource.update(issue_id(issue), labels: [new_tags, aha_status].flatten) unless aha_statuses.empty?
+        issue_resource.update(issue[issue_id_selector], labels: [new_tags, aha_status].flatten) unless aha_statuses.empty?
         # trim the Aha!: prefix to match the aha workflow_status name
         new_status = aha_status[5..-1]
         # update the status
@@ -140,7 +148,7 @@ class AhaServices::GitlabIssues < AhaService
     if diff.size > 0  then
       updated_resource = api.put(resource.resource, { resource_kind => diff })
       if add_status_labels_enabled? && %w(close open reopen).include?(action) && diff.key?(:workflow_status)
-        issue_resource.update(issue_id(issue), labels: [new_tags, "Aha!:#{updated_resource[resource_kind].workflow_status.name}"].flatten)
+        issue_resource.update(issue[issue_id_selector], labels: [new_tags, "Aha!:#{updated_resource[resource_kind].workflow_status.name}"].flatten)
       end
     end
   end
@@ -214,15 +222,15 @@ class AhaServices::GitlabIssues < AhaService
   end
 
   def update_or_attach_gitlab_issue(resource, milestone)
-    if issue_id = get_integration_field(resource.integration_fields, issue_id_selector)
-      update_issue(issue_id, resource, milestone["id"])
+    if issue_id = get_integration_field(resource.integration_fields, issue_integration_selector)
+      update_issue(issue_id, resource, milestone['id'])
     else
       attach_issue_to(resource, milestone)
     end
   end
 
   def existing_issue_integrated_with(resource, milestone)
-    if issue_id = get_integration_field(resource.integration_fields, issue_id_selector)
+    if issue_id = get_integration_field(resource.integration_fields, issue_integration_selector)
       issue_resource.find_by_id_and_milestone(issue_id, milestone)
     end
   end
@@ -256,23 +264,22 @@ class AhaServices::GitlabIssues < AhaService
     else
       tags = resource.tags.dup
     end
-
     if add_status_labels_enabled?
       # remove the old Aha! statuses
       tags = tags.delete_if { |val| val.starts_with? "Aha!:" }
       # add new status label
       tags.push("Aha!:#{resource.workflow_status.name}") unless resource.nil? or resource.workflow_status.nil?
     end
-    issue_resource.update(issue_id(issue), labels: tags) if tags && tags.length > 0
+    issue_resource.update(issue[issue_id_selector], labels: tags) if tags && tags.length > 0
   end
 
   def update_issue_status(issue, resource)
     # Close or reopen the issue if needed to match the new status.
     status = data.status_mapping.key(resource.workflow_status.id)
     if status == 'closed' && issue['state'] != 'closed'
-      issue_resource.update(issue_id(issue), { state_event: 'close' })
+      issue_resource.update(issue[issue_id_selector], { state_event: 'close' })
     elsif status == 'open' && issue['state'] != 'opened'
-      issue_resource.update(issue_id(issue), { state_event: 'reopen' })
+      issue_resource.update(issue[issue_id_selector], { state_event: 'reopen' })
     end
   end
 
