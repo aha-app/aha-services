@@ -3,7 +3,7 @@ class AhaServices::GitlabIssues < AhaService
   caption 'Send features to GitLab Issues'
 
   password :private_token
-  string :server_url, description: 'If you are using your own GitLab server please enter your server URL without a trailing slash (https://example.com/api/v3). If you are using gitlab.com leave this field empty.',
+  string :server_url, description: 'If you are using your own GitLab server please enter your server URL without a trailing slash (https://example.com/api/v4). If you are using gitlab.com leave this field empty.',
                       label: 'Server URL'
   install_button
   select :project, collection: -> (meta_data, _data) do
