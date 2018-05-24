@@ -319,10 +319,6 @@ class AhaServices::GitlabIssues < AhaService
     end
   end
 
-  def get_project_id
-    get_project.try(project_id_selector.to_sym)
-  end
-  
   def get_project_url
     get_project&.web_url
   end
