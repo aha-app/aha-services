@@ -3,8 +3,8 @@ class AhaServices::GitlabIssues < AhaService
   caption 'Send features to GitLab Issues'
 
   password :private_token
-  string :server_url, description: 'If you are using your own GitLab server please enter your server URL without a trailing slash (https://example.com/api/v4). If you are using gitlab.com leave this field empty.',
-                      label: 'Server URL'
+  string :server_url, description: 'If you are using GitLab 9 or above on your own server, please enter your server URL ending with "/v4", with no trailing slash (e.g. https://example.com/api/v4). If you are using an earlier version of GitLab your URL should end with "/v3". If you are using gitlab.com leave this field empty.',
+         label: 'Server URL'
   install_button
   select :project, collection: -> (meta_data, _data) do
     name_method = legacy_full_name_setting?(meta_data) ? :full_name : :path_with_namespace
