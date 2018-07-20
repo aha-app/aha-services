@@ -225,8 +225,9 @@ module Networking
     yield
   rescue OpenSSL::SSL::SSLError => e
     raise_config_error "Invalid SSL certificate"
-  rescue Faraday::SSLError 
-    raise_config_error "SSL certificate verify failed"
+  rescue Faraday::SSLError => e
+    msg = e.message.presence || 'SSL certificate verify failed'
+    raise_config_error(msg)
   end
 
   def reportable_http_env(env, time)
