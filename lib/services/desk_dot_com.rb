@@ -1,6 +1,11 @@
 require 'desk_api'
 
 class AhaServices::DeskDotCom < AhaService
+  # Disable Desk.com until we are ready to remove it
+  def self.experimental
+    true
+  end
+
   title "Desk.com"
   caption "Receive ideas from a Desk.com helpdesk"
   category "Ideas capture"
