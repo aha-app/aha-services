@@ -42,6 +42,23 @@ describe AhaService do
       expect { service.verify_url("http://10.0.1.2/") }.to raise_error(AhaService::InvalidUrlError)
       expect { service.verify_url("http://192.168.2.1/") }.to raise_error(AhaService::InvalidUrlError)
     end
+
+    it "raises faraday errors as config erros" do
+      allow(service).to receive(:http) do |method|
+        raise Faraday::SSLError, ''
+      end
+
+      expect { service.http_method(:get, "http://google.com/") }.to raise_error(Errors::ConfigurationError)
+    end
+  
+    it "passes faraday error messages to config erros" do
+      allow(service).to receive(:http) do |method|
+        raise Faraday::SSLError, 'test message'
+      end
+
+      expect { service.http_method(:get, "http://google.com/") }.to raise_error.with_message('test message')
+    end
+
     
     it "accepts remote addresses" do
       service.verify_url("http://4.4.4.4/").should == "http://4.4.4.4/"
