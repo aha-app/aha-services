@@ -23,8 +23,9 @@ describe AhaServices::Bugzilla do
 
   before do
     stub_download_feature_attachments
+    allow(IPSocket).to receive(:getaddress).and_return("1.1.1.1")
   end
-  
+
   context "when installing" do
     before do
       @stub_get_product_enterable = stub_request(:get, "#{server_url}/rest/product_enterable?api_key=#{api_key}").
