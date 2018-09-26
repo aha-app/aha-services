@@ -1,0 +1,26 @@
+version: 2
+jobs:
+  test:
+    working_directory: ~/aha-services
+    docker:
+      - image: circleci/ruby:2.3
+        environment:
+          GEM_HOME: ~/aha-services/vendor/bundle
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-1-{{ checksum "aha-services.gemspec" }}
+      - run:
+          name: Install bundle dependencies
+          command: bundle check --path=vendor/bundle || bundle install --jobs=4 --retry=3 --path=vendor/bundle
+      - save_cache:
+          key: dependency-cache-1-{{ checksum "aha-services.gemspec" }}
+          paths:
+            - vendor/bundle
+      - run:
+          name: RSpec
+          command: bundle exec rspec -r rspec_junit_formatter --format RspecJunitFormatter -o /tmp/rspec/junit.xml --format documentation
+      - store_test_results:
+          path: /tmp/rspec
+      - store_artifacts:
+          path: spec/coverage
