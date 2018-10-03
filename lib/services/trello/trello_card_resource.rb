@@ -36,4 +36,18 @@ class TrelloCardResource < TrelloResource
     # Don't fail if we can't create webhook.
     logger.warn(e.message)
   end
+
+  def add_label(id, text, color)
+    prepare_request
+    escaped_text = CGI::escape(text)
+    response = http_post trello_url("cards/#{id}/labels?color=#{color}&name=#{escaped_text}")
+    process_response(response, 200)
+  end
+
+  def remove_label(card_id, label_id)
+    prepare_request
+    response = http_delete trello_url("cards/#{card_id}/idLabels/#{label_id}")
+    process_response(response, 200)
+  end
+
 end

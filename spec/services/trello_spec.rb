@@ -7,8 +7,9 @@ describe AhaServices::Trello do
   let(:oauth_key) { "my_key" }
   let(:oauth_token) { "my_token" }
   let(:feature_integration_id) { "dummy_trello_integration_id" }
+  let(:board_id) { "59ad3e586ab8794a732067bf" }
   let(:service) do
-    AhaServices::Trello.new "server_url" => base_url, "integration_id" => :feature_integration_id
+    AhaServices::Trello.new "server_url" => base_url, "integration_id" => feature_integration_id, "board" => board_id
   end
 
   let(:card_id) { "dummy_trello_card_id" }  
@@ -20,7 +21,11 @@ describe AhaServices::Trello do
   end
 
   def trello_url(path)
-    "#{base_url}/#{path}?key=#{oauth_key}&token=#{oauth_token}"
+    if path.include? "?"
+      "#{base_url}/#{path}&key=#{oauth_key}&token=#{oauth_token}"
+    else
+      "#{base_url}/#{path}?key=#{oauth_key}&token=#{oauth_token}"
+    end
   end
 
   def stub_requests
@@ -87,17 +92,27 @@ describe AhaServices::Trello do
     @integrate_requirement_with_checklist_item = stub_request(:post, "#{aha_api_url}/requirements/#{new_feature.requirements[0].reference_num}/integrations/#{feature_integration_id}/fields")
       .with(body: {
         integration_fields: [
-        {
-          name: "id",
-          value: checklist_item_id
-        },
-        {
-          name: "checklist_id",
-          value: checklist_id
-        }
-      ]
-    })
-    # attachments
+          {
+            name: "id",
+            value: checklist_item_id
+          },
+          {
+            name: "checklist_id",
+            value: checklist_id
+          }
+        ]
+      })
+    # query for labels on board
+    @get_labels_for_card = stub_request(:get, trello_url("cards/#{card_id}/labels"))
+      .to_return(status: 200, body: [ 
+        { id: "599c6c131314a33999364202", idBoard: board_id, name: "3.18.2 (Aha! release)", color: "blue", uses: 0 } 
+      ].to_json)
+    @delete_label_for_card = stub_request(:delete, trello_url("cards/#{card_id}/idLabels/599c6c131314a33999364202"))
+      .to_return(status: 200)
+    @post_label_for_card = stub_request(:post, 
+      trello_url("cards/#{card_id}/labels?name=#{new_feature.release.name}%20(Aha!%20release)&color=blue"))
+
+      # attachments
     @get_attachments = stub_request(:get, trello_url("cards/#{card_id}/attachments"))
       .to_return(status: 200, body: "[]")
     @create_attachment = stub_request(:post, trello_url("cards/#{card_id}/attachments"))
@@ -135,6 +150,7 @@ describe AhaServices::Trello do
     end
 
     it "creates cards, comments, checklists and attachments" do
+
       expect(@create_card).to have_been_requested.once
       expect(@create_comment).to have_been_requested.once
       expect(@get_checklists).to have_been_requested.once
@@ -151,6 +167,12 @@ describe AhaServices::Trello do
     it "integrates features and requirements" do
       expect(@integrate_feature_with_card).to have_been_requested.once
       expect(@integrate_requirement_with_checklist_item).to have_been_requested.once
+    end
+
+    it "sets the label for the release" do
+      expect(@get_labels_for_card).to have_been_requested.once
+      expect(@delete_label_for_card).to have_been_requested.once
+      expect(@post_label_for_card).to have_been_requested.once
     end
 
   end
@@ -176,6 +198,12 @@ describe AhaServices::Trello do
       # since one of them is already attached to the card
       expect(@create_attachment).to have_been_requested.times(3)
     end    
+
+    it "sets the label for the release" do
+      expect(@get_labels_for_card).to have_been_requested.once
+      expect(@delete_label_for_card).to have_been_requested.once
+      expect(@post_label_for_card).to have_been_requested.once
+    end
 
   end
 
