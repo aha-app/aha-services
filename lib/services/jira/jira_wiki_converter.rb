@@ -1,3 +1,5 @@
+require "reverse_markdown"
+
 module AhaServices
   class JiraWikiConverter
 
