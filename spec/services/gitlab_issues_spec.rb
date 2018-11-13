@@ -475,7 +475,7 @@ describe AhaServices::GitlabIssues do
       context "with a gitlab todo in the body" do
         let(:resource) { Hashie::Mash.new( description: { body: "<ul><li>[ ] Todo<br></li></ul>" }) }
         it "returns the body" do
-          expect(service.issue_body(resource).delete(' ')).to eq "- [ ] Todo\n\n".delete(' ')
+          expect(service.issue_body(resource).delete(' ')).to eq "-[]Todo\n"
         end
       end
     end

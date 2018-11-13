@@ -1,4 +1,4 @@
-require 'html2confluence'
+require_relative "jira/jira_wiki_converter"
 
 class AhaServices::Jira < AhaService
   title "Jira"
@@ -673,9 +673,8 @@ protected
 
   # Convert HTML from Aha! into Confluence-style wiki markup.
   def convert_html(html)
-    parser = HTMLToConfluenceParser.new
-    parser.feed(html)
-    parser.to_wiki_markup
+    converter = AhaServices::JiraWikiConverter.new
+    converter.convert_html_from_aha(html)
   end
 
   def integrate_release_with_jira_version(release, version)
