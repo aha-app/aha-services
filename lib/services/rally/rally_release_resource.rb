@@ -9,7 +9,7 @@ class RallyReleaseResource < RallyResource
 
   def create aha_release
     body = { :Release => map_release(aha_release) }.to_json
-    url = rally_secure_url "/release/create"
+    url = rally_secure_url_without_workspace "/release/create"
     response = http_put url, body
     process_response response, 200, 201 do |document|
       rally_release = document.CreateResult.Object

@@ -11,7 +11,7 @@ class RallyAttachmentResource < RallyResource
     return unless aha_attachment.download_url
     
     attachmentcontent = rally_attachment_content_resource.create aha_attachment.download_url
-    url = rally_secure_url "/attachment/create"
+    url = rally_secure_url_without_workspace "/attachment/create"
     body = { :Attachment => {
       :Artifact => parent.ObjectID,
       :Content => attachmentcontent.ObjectID,
