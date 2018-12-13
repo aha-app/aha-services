@@ -172,6 +172,10 @@ class AhaService
     def development_proxy?
       self.service_name == "development_proxy"
     end
+
+    def analytics_integration?
+      ["google_analytics"].include?(self.service_name)
+    end
   end
 
   def allocate_logger
