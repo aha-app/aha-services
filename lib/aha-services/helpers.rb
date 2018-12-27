@@ -91,7 +91,7 @@ module Helpers
   
   
   def reference_num_to_resource_type(reference_num)
-    if reference_num =~ /-R-\d+$/ or reference_num =~ /-R-PL$/
+    if reference_num =~ /-R-\d+$/ || reference_num =~ /-R-PL$/ || reference_num =~ /-P-\d+$/ || reference_num =~ /-P-PL$/
       "releases"
     elsif reference_num =~ /-\d+-\d+$/
       "requirements"

@@ -78,8 +78,11 @@ class AhaServices::GithubIssues < AhaService
     # an issue number that matches a feature and a release - only consider the feature
     results = results.select {|result| result.requirement || result.feature }
 
-    unless results.size == 1
+    if results.size > 1
       logger.warn("Multiple entries returned for issue number '#{issue.number}' - none will be updated.")
+      return
+    elsif results.size == 0
+      logger.warn("Issue '#{issue.number}' is not linked to a record in Aha! - skipping webhook")
       return
     end
 

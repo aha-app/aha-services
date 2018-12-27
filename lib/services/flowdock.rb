@@ -1,5 +1,5 @@
 class AhaServices::Flowdock < AhaService
-  caption "Send customized activity from Aha! into group chat"
+  caption "Send product notifications from Aha! to Flowdock"
   category "Communication"
   
   string :flow_api_token,
