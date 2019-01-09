@@ -2,6 +2,8 @@ require "reverse_markdown"
 
 module AhaServices
   class JiraWikiConverter
+    COLSPAN_CELL = "\uFEFF".freeze
+    ROWSPAN_CELL = "\uFEFF\uFEFF".freeze
 
     def convert_html_from_aha(html)
       preprocess html
@@ -23,6 +25,7 @@ module AhaServices
 
     def converter
       ReverseMarkdown.new(unknown_tags: :bypass) do |c|
+        c.register(:p, P.new)
         c.register(:hr, Hr.new)
         c.register(:li, Li.new)
         c.register(:a, A.new)
@@ -31,6 +34,7 @@ module AhaServices
         c.register(:code, Code.new)
         c.register(:blockquote, Blockquote.new)
         c.register(:font, Font.new)
+        c.register(:table, Table.new)
         c.register(:tr, Tr.new)
         c.register(:td, Td.new)
         c.register(:th, Th.new)
@@ -46,6 +50,22 @@ module AhaServices
         6.times do |n|
           c.register(:"h#{n + 1}", H.new(n + 1))
         end
+      end
+    end 
+       
+    class AnchorBase < ReverseMarkdown::Converters::Base
+      def treat_children(node)
+        children = ''
+        if (anchor = node['data-anchor']).present?
+          children << "{anchor:#{anchor}}"
+        end
+        children += super(node)
+      end
+    end
+    
+    class P < AnchorBase
+      def convert(node, index)
+        "\n\n" << treat_children(node).strip << "\n\n"
       end
     end
 
@@ -140,17 +160,18 @@ module AhaServices
       end
 
       def prefix_for(node)
+        if node.respond_to?(:parent) && node.parent["class"].to_s.include?("checklist")
+          return prefix_for_checklist(node) + " "
+        end
+
         prefix = ""
         pnode = node.respond_to?(:parent) ? node.parent : nil
         while pnode
-          next_prefix = if pnode == node.parent && pnode["class"].to_s.include?("checklist")
-            prefix_for_checklist(node)
-          elsif pnode.name == "ol"
-            "#"
+          if pnode.name == "ol"
+            prefix = "#" + prefix
           elsif pnode.name == "ul"
-            "*"
+            prefix = "*" + prefix
           end
-          prefix = next_prefix + prefix if next_prefix
           pnode = pnode.respond_to?(:parent) ? pnode.parent : nil
         end
         prefix + " "
@@ -161,7 +182,14 @@ module AhaServices
       end
     end
 
-    module Table
+    # rubocop:disable Style/ClassVars
+    class TableBase < ReverseMarkdown::Converters::Base
+      def table_did_begin
+        super
+        @@next_row_spans = {}
+        @@inserted_col_spans = 0
+      end
+
       def cleanup_table_cell(content)
         clean_content = content.strip.gsub(/\n{2,}/, "\n" + '\\\\\\' + "\n")
 
@@ -176,29 +204,100 @@ module AhaServices
       def first_col?(node)
         node == node.parent.first_element_child
       end
-    end
 
-    class Tr < ReverseMarkdown::Converters::Tr
-      include Table
-
-      def convert(node, index)
-        content = treat_children(node).strip
-        "#{content}\n"
+      def treat_elements(node)
+        # @table_did_begin = false
+        node.element_children.each_with_index.inject('') do |memo, pair|
+          child = pair[0]
+          index = pair[1]
+          memo << treat(child, index)
+        end
       end
     end
 
-    class Td < ReverseMarkdown::Converters::Td
-      include Table
+    class Table < TableBase
+      def convert(node, index)
+        table_did_begin
+        content = "\n\n" << treat_children(node) << "\n"
+        table_did_end
+        content
+      end
+    end
 
+    class Tr < TableBase
+      def convert(node, index)
+        next_row_spans = {}
+
+        # As we go down each row check if the prior row set some rowspan info.
+        # If it did then insert extra cells at the given index and decrement the
+        # rowspan count in the structure.
+        if @@next_row_spans.any?
+          tds = node.element_children
+
+          @@next_row_spans.each do |td_index, rs|
+            if rs > 2
+              next_row_spans[td_index] = rs - 1
+            end
+
+            td = tds[td_index]
+
+            if td
+              td.add_previous_sibling("<td>#{ROWSPAN_CELL}</td>")
+            else
+              node.add_child("<td>#{ROWSPAN_CELL}</td>")
+            end
+
+            tds = node.element_children
+          end
+        end
+
+        @@next_row_spans = next_row_spans
+        @@inserted_col_spans = 0
+
+        content = treat_elements(node).strip
+        content = "#{content}\n"
+
+        content
+      end
+    end
+
+    class Td < TableBase
       def convert(node, index)
         content = cleanup_table_cell(treat_children(node))
-        "#{first_col?(node) ? '|' : ''}#{content}|"
+        content = "#{first_col?(node) ? '|' : ''}#{content}|"
+
+        # For each spanned column add a column
+        colspan = node['colspan'].to_i
+        if colspan > 1
+          (colspan - 1).times do
+            content << "#{COLSPAN_CELL}|"
+          end
+        end
+
+        # For each spanned row put the information in a variable to be used by
+        # the next row
+        rowspan = node['rowspan'].to_i
+        if rowspan > 1
+          iindex = index + @@inserted_col_spans
+          @@next_row_spans[iindex] = rowspan
+
+          if colspan > 1
+            (colspan - 1).times do |n|
+              @@next_row_spans[iindex + n + 1] = rowspan
+            end
+          end
+        end
+
+        # Keep track of the number of inserted cells so that we can adjust the
+        # rowspan index (above) on the next cell with a rowspan
+        @@inserted_col_spans += (colspan - 1) if colspan > 1
+
+        content
       end
     end
+    # rubocop:enable Style/ClassVars
 
-    class Th < ReverseMarkdown::Converters::Td
-      include Table
-
+    class Th < TableBase
       def convert(node, index)
         content = cleanup_table_cell(treat_children(node))
         "#{first_col?(node) ? '||' : ''}#{content}||"
@@ -248,7 +347,7 @@ module AhaServices
       end
     end
 
-    class H < ReverseMarkdown::Converters::Base
+    class H < AnchorBase
       def initialize(level)
         @level = level
         super()
