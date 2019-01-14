@@ -173,7 +173,7 @@ class AhaService
       self.service_name == "development_proxy"
     end
 
-    def analytics_integration?
+    def engagement_integration?
       ["google_analytics"].include?(self.service_name)
     end
   end
