@@ -63,8 +63,7 @@ module Helpers
   end
   
   def html_to_markdown(html, github_style = false)
-    ReverseMarkdown.convert(html, unknown_tags: 
-    :bypass, github_flavored: github_style)
+    ReverseMarkdown.convert(html, unknown_tags: :bypass, github_flavored: github_style)
   end
   
   def html_to_slack_markdown(html)
