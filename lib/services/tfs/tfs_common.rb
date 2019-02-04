@@ -15,7 +15,7 @@ module TfsCommon
     
     install_button
 
-    select :project, description: "The project you want to create new workitems in.",
+    select :project, description: "The project you want to create new work items in.",
       collection: ->(meta_data, data) {
       return [] if meta_data.nil? or meta_data.projects.nil?
       meta_data.projects.collect do |id, project|
@@ -23,7 +23,7 @@ module TfsCommon
       end
     }
 
-    select :area, description: "The area of the project you want to create new workitems in.", collection: ->(meta_data, data) {
+    select :area, description: "The area of the project you want to create new work items in.", collection: ->(meta_data, data) {
       return [] if meta_data.nil? or meta_data.projects.nil? or data.project.nil?
       project = meta_data.projects[data.project]
       return [] if project.nil? or project.areas.nil?
@@ -54,7 +54,7 @@ module TfsCommon
     internal :requirement_status_mapping
     internal :requirement_default_fields
 
-    callback_url description: "This url will be used to receive updates from TFS."
+    callback_url description: "This url will be used to receive updates from Azure DevOps Server."
   end
   
   def receive_installed
