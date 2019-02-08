@@ -8,4 +8,6 @@ class AhaServices::TFS < AhaService
   password :user_password, description: "Enter the password for your Azure DevOps Server account."
 
   include TfsCommon
+
+  callback_url description: "This url will be used to receive updates from Azure DevOps Server."
 end

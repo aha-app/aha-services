@@ -9,4 +9,5 @@ class AhaServices::VSO < AhaService
   
   include TfsCommon
   
+  callback_url description: "This url will be used to receive updates from Azure DevOps Services."
 end
