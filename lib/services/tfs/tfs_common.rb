@@ -53,8 +53,6 @@ module TfsCommon
 
     internal :requirement_status_mapping
     internal :requirement_default_fields
-
-    callback_url description: "This url will be used to receive updates from Azure DevOps Server."
   end
   
   def receive_installed
