@@ -48,6 +48,10 @@ class FogbugzResource < GenericResource
     else
       raise RemoteError, "Unhandled error: STATUS=#{response.status} BODY=#{response.body}"
     end
+  rescue REXML::ParseException
+    message =" Error message: Could not parse xml body"
+    message = "Error message: Account not found" if response.body.include?(">Account Not Found</p>")
+    raise RemoteError, message
   end
 
   def hashie_from_response(parsed_response_body)
