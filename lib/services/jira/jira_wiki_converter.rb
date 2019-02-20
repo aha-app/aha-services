@@ -3,6 +3,7 @@ require "reverse_markdown"
 module AhaServices
   class JiraWikiConverter
     def convert_html_from_aha(html)
+      return html if html.blank?
       preprocess html
       wiki = converter.convert(html)
       postprocess wiki
@@ -24,6 +25,7 @@ module AhaServices
       ReverseMarkdown.new(unknown_tags: :bypass) do |c|
         c.register(:p, P.new)
         c.register(:hr, Hr.new)
+        c.register(:br, Br.new)
         c.register(:li, Li.new)
         c.register(:a, A.new)
         c.register(:img, Img.new)
@@ -47,14 +49,14 @@ module AhaServices
         end
       end
     end 
-       
+      
     class AnchorBase < ReverseMarkdown::Converters::Base
       def treat_children(node)
         children = ''
         if (anchor = node['data-anchor']).present?
           children << "{anchor:#{anchor}}"
         end
-        children += super(node)
+        children + super(node)
       end
     end
     
@@ -115,13 +117,24 @@ module AhaServices
 
     class Pre < ReverseMarkdown::Converters::Base
       def convert(node, index)
-        "\n{noformat}\n#{node.text.strip}\n{noformat}\n"
+        if node.children.length == 1 && node.children.first.name == 'code'
+          node = node.children.first
+        end
+
+        content = treat_children(node)
+        "\n{noformat}\n#{content}\n{noformat}\n"
       end
     end
 
     class Hr < ReverseMarkdown::Converters::Base
       def convert(node, index)
         "\n----\n"
+      end
+    end
+
+    class Br < ReverseMarkdown::Converters::Base
+      def convert(node, index)
+        "\n"
       end
     end
 
@@ -257,6 +270,7 @@ module AhaServices
       }.freeze
 
       def convert(node, index)
+        return "" unless node['src']
         if node['src'].include?('emoticons/')
           did_convert = convert_emoticon(node)
           return did_convert if did_convert.present?
@@ -275,7 +289,7 @@ module AhaServices
 
       def convert_emoticon(node)
         emoticon = node['src'].scan(/\/emoticons\/(.+)\.(?:png|gif)/).flatten.first
-        EMOTICONS[emoticon.to_sym]
+        EMOTICONS[emoticon.to_sym] if emoticon
       end
     end
 

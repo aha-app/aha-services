@@ -293,11 +293,13 @@ RSpec.describe AhaServices::JiraWikiConverter do
         Plain paragraph
 
         {noformat}
-        Preformatted paragraph
+         Preformatted paragraph 
         {noformat}
 
         {noformat}
-        Preformatted code paragraph
+        {{
+              Preformatted code paragraph
+            }}
         {noformat}
       WIKI
     end
@@ -412,7 +414,7 @@ RSpec.describe AhaServices::JiraWikiConverter do
 
       it do
         is_expected.to eq(<<~WIKI.strip)
-          {color:red}  
+          {color:red}
           look ma, red text!{color}
         WIKI
       end
