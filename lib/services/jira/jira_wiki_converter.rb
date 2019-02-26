@@ -298,7 +298,7 @@ module AhaServices
       def convert(node, index)
         content = treat_children(node)
         style = node.attributes["style"]&.value
-        if (color = style&.match(/(?<=color:)[^,]{3,}/))
+        if (color = style&.match(/(?<=color:)[^;]{3,}/))
           "{color:#{color[0]}}#{content}{color}"
         else
           content
