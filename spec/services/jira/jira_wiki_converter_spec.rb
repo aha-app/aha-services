@@ -392,6 +392,35 @@ RSpec.describe AhaServices::JiraWikiConverter do
     end
   end
 
+  describe "span color" do
+    let(:input) do
+      <<~HTML
+        <p><span style="color:red">look ma, red text!</span></p>
+      HTML
+    end
+
+    it do
+      is_expected.to eq(<<~WIKI.strip)
+        {color:red}look ma, red text!{color}
+      WIKI
+    end
+
+    context "retain breaks" do
+      let(:input) do
+        <<~HTML
+          <p><span style="color:red"><br>look ma, red text!</span></p>
+        HTML
+      end
+
+      it do
+        is_expected.to eq(<<~WIKI.strip)
+          {color:red}
+          look ma, red text!{color}
+        WIKI
+      end
+    end
+  end
+
   describe "font color" do
     let(:input) do
       <<~HTML
