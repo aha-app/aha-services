@@ -25,6 +25,7 @@ class JiraUserResource < JiraResource
   private
 
   def lookup_user(query)
+    prepare_request
     return nil if query.blank?
     response = http_get "#{api_url}/user/picker?query=#{CGI.escape(query)}"
     return nil if response.status == 404
