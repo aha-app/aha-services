@@ -1,5 +1,13 @@
 class AhaServices::GoogleHangoutsChat < AhaService
-  caption "Send product notifications from Aha! to Google Hangouts Chat"
+  caption do |workspace_type|
+    subject =
+      case workspace_type
+      when "multi_workspace" then "product or workspace"
+      when "product_workspace" then "product"
+      when "marketing_workspace" then "workspace"
+      end
+    "Send #{subject} notifications from Aha! to Google Hangouts Chat"
+  end
   category "Communication"
   
   string :webhook_url,

@@ -2,7 +2,14 @@ require_relative "jira/jira_wiki_converter"
 
 class AhaServices::Jira < AhaService
   title "Jira"
-  caption "Send features to Jira issue tracking (supports on-premise and cloud)"
+  caption do |workspace_type|
+    feature_object =
+      case workspace_type
+      when "product_workspace" then "features"
+      when "marketing_workspace" then "activities"
+      end
+    "Send #{feature_object} to Jira issue tracking (supports on-premise and cloud)"
+  end
 
   string :server_url, description: "URL for the Jira server, without a trailing slash, e.g. https://bigaha.atlassian.net"
   string :username, description: "Use your verified Jira email address or username from the Jira profile page (see instructions above for details)."

@@ -150,14 +150,24 @@ class AhaService
     attr_writer :service_name
 
     # A short description of the service that will appear in the user interface.
-    def caption(value = nil)
+    def caption(value = nil, &block)
       if value
         @caption = value
+      elsif block_given?
+        @caption = block
       else
         @caption || ""
       end
     end
     attr_writer :caption
+
+    def caption_display(workspace_type)
+      if @caption.is_a?(Proc)
+        @caption.call(workspace_type)
+      else
+        @caption
+      end
+    end
  
     # Category that service should appear in in the UI.
     def category(value = nil)

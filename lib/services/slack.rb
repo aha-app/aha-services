@@ -1,6 +1,14 @@
 class AhaServices::Slack < AhaService
   title "Slack [from Aha!]"
-  caption "Send product notifications from Aha! to Slack"
+  caption do |workspace_type|
+    subject =
+      case workspace_type
+      when "multi_workspace" then "product or workspace"
+      when "product_workspace" then "product"
+      when "marketing_workspace" then "workspace"
+      end
+    "Send #{subject} notifications from Aha! to Slack"
+  end
   category "Communication"
   
   webhooks_slack_button
