@@ -1,6 +1,13 @@
 class AhaServices::TFS < AhaService
   title "Azure DevOps Server"
-  caption "Send features and requirements to Microsoft Azure DevOps Server"
+  caption do |workspace_type|
+    feature_object =
+      case workspace_type
+      when "product_workspace" then "features"
+      when "marketing_workspace" then "activities"
+      end
+    "Send #{feature_object} and requirements to Microsoft Azure DevOps Server (formerly TFS)"
+  end
   service_name "tfs_on_premise"
   
   string :server_url, description: "Server URL including the collection part of the path with no trailing slash. e.g. https://tfs.mycompany.com/tfs/DefaultCollection"

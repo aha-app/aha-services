@@ -1,5 +1,12 @@
 class AhaServices::Rally < AhaService
-  caption "Send releases, features and requirements to Rally"
+  caption do |workspace_type|
+    object =
+      case workspace_type
+      when "product_workspace" then "releases, features"
+      when "marketing_workspace" then "schedules, activities"
+      end
+    "Send #{object} and requirements to Rally"
+  end
 
   string :user_name, description: "The username for the Rally account."
   password :user_password
