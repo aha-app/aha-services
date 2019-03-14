@@ -1,10 +1,15 @@
 require "spec_helper"
-require "services/jira/jira_wiki_converter"
 
 RSpec.describe AhaServices::JiraWikiConverter do
   let(:converter) { described_class.new }
 
-  subject(:output) { converter.convert_html_from_aha(input).strip }
+  subject(:output) { converter.convert_html_from_aha(input)&.strip }
+
+  context "nil input" do
+    let(:input) { nil }
+
+    it { is_expected.to eq(nil) }
+  end
 
   context "marks" do
     let(:input) do
@@ -63,57 +68,270 @@ RSpec.describe AhaServices::JiraWikiConverter do
   end
 
   context "tables" do
-    let(:input) do
-      <<~HTML
-        <table>
-          <tbody>
-            <tr>
-              <th>
-                <p>header
-                  1</p>
-              </th>
-              <th>
-                <p>header 2</p>
-              </th>
-              <th>
-                <p>header
-                  3</p>
-              </th>
-            </tr>
-            <tr>
-              <td>
-                <p>1.1</p>
-              </td>
-              <td>
-              </td>
-              <td>
-                <p>1.3</p>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <p>2.1</p>
-              </td>
-              <td>
-                <p><pre>2.2</pre></p>
-              </td>
-              <td>
-                <p>2.3</p>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      HTML
+    context "normal table" do
+      let(:input) do
+        <<~HTML
+          <table>
+            <tbody>
+              <tr>
+                <th>
+                  <p>header
+                    1</p>
+                </th>
+                <th>
+                  <p>header 2</p>
+                </th>
+                <th>
+                  <p>header
+                    3</p>
+                </th>
+              </tr>
+              <tr>
+                <td>
+                  <p>1.1</p>
+                </td>
+                <td>
+                </td>
+                <td>
+                  <p>1.3</p>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <p>2.1</p>
+                </td>
+                <td>
+                  <p><pre>2.2</pre></p>
+                </td>
+                <td>
+                  <p>2.3</p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        HTML
+      end
+
+      it "makes a wiki table" do
+        expect(output).to eq(<<~WIKI.strip)
+          ||header 1||header 2||header 3||
+          |1.1| |1.3|
+          |2.1|{noformat}
+          2.2
+          {noformat}|2.3|
+        WIKI
+      end
     end
 
-    it "makes a wiki table" do
-      expect(output).to eq(<<~WIKI.strip)
-        ||header 1||header 2||header 3||
-        |1.1| |1.3|
-        |2.1|{noformat}
-        2.2
-        {noformat}|2.3|
-      WIKI
+    context "table with rowspan and colspan" do
+      let(:input) do
+        <<~HTML
+          <table>
+            <tbody>
+              <tr><td>One</td><td>Two</td><td>Three</td></tr>
+              <tr>
+                <td colspan="2">One&Two</td>
+                <td>Three</td>
+              </tr>
+              <tr>
+                <td rowspan="2">One&One</td>
+                <td>Two</td>
+                <td>Three</td>
+              </tr>
+              <tr>
+                <td>Two</td>
+                <td>Three</td>
+              </tr>
+              <tr>
+                <td>One</td>
+                <td rowspan="3">Two&Two&Two</td>
+                <td>Three</td>
+              </tr>
+              <tr>
+                <td>One</td>
+                <td>Three</td>
+              </tr>
+              <tr>
+                <td>One</td>
+                <td>Three</td>
+              </tr>
+            </tbody>
+          </table>
+        HTML
+      end
+
+      it "Outputs a correct table" do
+        expect(output).to eq(<<~WIKI.strip)
+          |One|Two|Three|
+          |One&Two|\uFEFF|Three|
+          |One&One|Two|Three|
+          |\uFEFF\uFEFF|Two|Three|
+          |One|Two&Two&Two|Three|
+          |One|\uFEFF\uFEFF|Three|
+          |One|\uFEFF\uFEFF|Three|
+        WIKI
+      end
+    end
+
+    context "rowspan and colspan on td top left" do
+      let(:input) do
+        <<~HTML
+          <table>
+            <tr>
+              <td colspan="3" rowspan="2">Top left</td>
+              <td>Top right</td>
+            </tr>
+            <tr>
+              <td>Center right</td>
+            </tr>
+            <tr>
+              <td>Bottom left</td>
+              <td>Bottom</td>
+              <td>Bottom</td>
+              <td>Bottom right</td>
+            </tr>
+          </table>
+        HTML
+      end
+
+      it "Outputs a correct table" do
+        expect(output).to eq(<<~WIKI.strip)
+          |Top left|\uFEFF|\uFEFF|Top right|
+          |\uFEFF\uFEFF|\uFEFF\uFEFF|\uFEFF\uFEFF|Center right|
+          |Bottom left|Bottom|Bottom|Bottom right|
+        WIKI
+      end
+    end
+
+    context "rowspan and colspan on td bottom right" do
+      let(:input) do
+        <<~HTML
+          <table>
+            <tr>
+              <td>Top left</td>
+              <td>Top</td>
+              <td>Top</td>
+              <td>Top right</td>
+            </tr>
+            <tr>
+              <td>Center left</td>
+              <td colspan="3" rowspan="2">Bottom right</td>
+            </tr>
+            <tr>
+              <td>Bottom left</td>
+            </tr>
+          </table>
+        HTML
+      end
+
+      it "Outputs a correct table" do
+        expect(output).to eq(<<~WIKI.strip)
+          |Top left|Top|Top|Top right|
+          |Center left|Bottom right|\uFEFF|\uFEFF|
+          |Bottom left|\uFEFF\uFEFF|\uFEFF\uFEFF|\uFEFF\uFEFF|
+        WIKI
+      end
+    end
+
+    context "rowspan and colspan centered" do
+      let(:input) do
+        <<~HTML
+          <table>
+            <tr>
+              <td>Top left</td>
+              <td>Top</td>
+              <td>Top</td>
+              <td>Top right</td>
+            </tr>
+            <tr>
+              <td>Center left</td>
+              <td colspan="2" rowspan="2">Center</td>
+              <td>Center right</td>
+            </tr>
+            <tr>
+              <td>Center left</td>
+              <td>Center right</td>
+            </tr>
+            <tr>
+              <td>Bottom left</td>
+              <td>Bottom</td>
+              <td>Bottom</td>
+              <td>Bottom right</td>
+            </tr>
+          </table>
+        HTML
+      end
+
+      it "Outputs a correct table" do
+        expect(output).to eq(<<~WIKI.strip)
+          |Top left|Top|Top|Top right|
+          |Center left|Center|\uFEFF|Center right|
+          |Center left|\uFEFF\uFEFF|\uFEFF\uFEFF|Center right|
+          |Bottom left|Bottom|Bottom|Bottom right|
+        WIKI
+      end
+    end
+
+    context "rowspan and colspan left center right" do
+      let(:input) do
+        <<~HTML
+          <table>
+            <tr>
+              <td rowspan="3">Left</td>
+              <td colspan="2">Top</td>
+              <td rowspan="3">Right</td>
+            </tr>
+            <tr>
+              <td>1</td>
+              <td>2</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>4</td>
+            </tr>
+          </table>
+        HTML
+      end
+
+      it "Outputs a correct table" do
+        expect(output).to eq(<<~WIKI.strip)
+          |Left|Top|\uFEFF|Right|
+          |\uFEFF\uFEFF|1|2|\uFEFF\uFEFF|
+          |\uFEFF\uFEFF|3|4|\uFEFF\uFEFF|
+        WIKI
+      end
+    end
+
+    context "colgroups" do
+      let(:input) do
+        <<~HTML
+          <p></p>
+          <div class="table-wrapper" style="width:567px;max-width:100%">
+            <table>
+              <colgroup>
+                <col style="width:38%"/>
+                <col style="width:62%"/>
+              </colgroup>
+              <tbody>
+                <tr>
+                  <td style="width:38%">
+                    <p>Col 1</p>
+                  </td>
+                  <td style="width:62%">
+                    <p>Col 2</p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        HTML
+      end
+
+      it "makes some output" do
+        expect(output).to eq(<<~WIKI.strip)
+          |Col 1|Col 2|
+        WIKI
+      end
     end
   end
 
@@ -202,8 +420,14 @@ RSpec.describe AhaServices::JiraWikiConverter do
     let(:input) do
       <<~HTML
         <ul class="checklist">
-        <li class="checklist--unchecked">check 1</li>
-        <li>check 2</li>
+          <li class="checklist--unchecked">check 1</li>
+          <li class="checkbox">
+            <span>check 2</span>
+            <ul class="checklist">
+              <li class="checkbox checklist--checked">check 2.1</li>
+            </ul>
+          </li>
+          <li class="checklist--checked">check 3</li>
         </ul>
       HTML
     end
@@ -212,6 +436,8 @@ RSpec.describe AhaServices::JiraWikiConverter do
       expect(output).to eq(<<~WIKI.strip)
         (x) check 1
         (/) check 2
+          (/) check 2.1
+        (/) check 3
       WIKI
     end
   end
@@ -276,14 +502,8 @@ RSpec.describe AhaServices::JiraWikiConverter do
       <<~HTML
         <body>
           <p>Plain paragraph</p>
-          <pre>
-            Preformatted paragraph
-          </pre>
-          <pre>
-            <code>
-              Preformatted code paragraph
-            </code>
-          </pre>
+          <pre>Preformatted paragraph</pre>
+          <pre><code>Preformatted code paragraph</code></pre>
         </body>
       HTML
     end
@@ -293,15 +513,26 @@ RSpec.describe AhaServices::JiraWikiConverter do
         Plain paragraph
 
         {noformat}
-         Preformatted paragraph 
+        Preformatted paragraph
         {noformat}
 
         {noformat}
-        {{
-              Preformatted code paragraph
-            }}
+        Preformatted code paragraph
         {noformat}
       WIKI
+    end
+
+    context "containing brs" do
+      let(:input) do
+        <<~HTML
+          <body>
+            <pre>Line 1<br>Line 2</pre>
+            <pre><code>Line 1a<br>Line 2a</code></pre>
+          </body>
+        HTML
+      end
+
+      it { is_expected.to eq("{noformat}\nLine 1\nLine 2\n{noformat}\n\n{noformat}\nLine 1a\nLine 2a\n{noformat}") }
     end
   end
 
@@ -348,7 +579,18 @@ RSpec.describe AhaServices::JiraWikiConverter do
     end
 
     it { is_expected.to eq "!https://example.net/image.png|width=100, height=200!" }
-    
+
+    context "no src attrbiute" do
+
+      let(:input) do
+        <<~HTML
+          <p><img  width="100" height="200"></p>
+        HTML
+      end
+
+      it { is_expected.to eq "" }
+    end
+
     context "emoji" do
       let(:images) do
         {
@@ -388,6 +630,53 @@ RSpec.describe AhaServices::JiraWikiConverter do
           expect(output).to_not include(name.to_s)
           expect(output).to include(emoji)
         end
+      end
+
+      context "bad input" do
+
+        let(:input) do
+          "<p>" +
+            images.map do |name, _|
+              %(<img src="https://example.net/images/icons/emoticons/#{name}.oft" class="emoticon">)
+            end.join(" ") + "</p>"
+        end
+
+        it "convert emoji from jira" do
+          images.each do |name, emoji|
+            expect(output).to include(name.to_s)
+            expect(output).to_not include(emoji)
+          end
+        end
+
+      end
+    end
+  end
+
+  describe "span color" do
+    let(:input) do
+      <<~HTML
+        <p>now the <span style="background-color:#9973CF; color:#0073CF; becker:left">blue</span> pants are <span style="becker: left;color:#D50000">red</span></p>
+      HTML
+    end
+
+    it do
+      is_expected.to eq(<<~WIKI.strip)
+        now the {color:#59afe1}blue{color} pants are {color:#d04437}red{color}
+      WIKI
+    end
+
+    context "retain breaks" do
+      let(:input) do
+        <<~HTML
+          <p>now the <span style="color:#0073CF">blue</span> pants<br> are <span style="color:#D50000">red</span></p>
+        HTML
+      end
+
+      it do
+        is_expected.to eq(<<~WIKI.strip)
+          now the {color:#59afe1}blue{color} pants
+           are {color:#d04437}red{color}
+        WIKI
       end
     end
   end
@@ -444,6 +733,20 @@ RSpec.describe AhaServices::JiraWikiConverter do
 
         by hrs
       WIKI
+    end
+  end
+
+  describe "<br>" do
+    let(:input) do
+      <<~HTML
+        <p>
+          text on<br/>two lines
+        </p>
+      HTML
+    end
+
+    it do
+      is_expected.to eq("text on\ntwo lines")
     end
   end
 

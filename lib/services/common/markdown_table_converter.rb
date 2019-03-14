@@ -92,10 +92,10 @@ module AhaServices
             rows = node.element_children.flat_map do |child|
               if child.name == "tr"
                 [child]
-              elsif %w[tbody thead].include?(child.name)
+              elsif %w[tbody thead tfoot].include?(child.name)
                 child.element_children
               end
-            end
+            end.compact # we ignore `colgroup`, so we compact out the nils
     
             row_content = rows.each_with_index.map do |row, row_index|
               treat(row, row_index)
@@ -122,7 +122,12 @@ module AhaServices
             end
     
             table_did_end
-            content
+
+            if @options[:wrap]
+              @options[:wrap].call(content)
+            else
+              content
+            end
           end
         end
 

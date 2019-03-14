@@ -32,6 +32,7 @@ module AhaServices
         c.register(:pre, Pre.new)
         c.register(:code, Code.new)
         c.register(:blockquote, Blockquote.new)
+        c.register(:span, Span.new)
         c.register(:font, Font.new)
 
         AhaServices::Services::Common::MarkdownTableConverter.register(c, header_cap: "||")
@@ -290,6 +291,19 @@ module AhaServices
       def convert_emoticon(node)
         emoticon = node['src'].scan(/\/emoticons\/(.+)\.(?:png|gif)/).flatten.first
         EMOTICONS[emoticon.to_sym] if emoticon
+      end
+    end
+
+    class Span < ReverseMarkdown::Converters::Base
+      def convert(node, index)
+        content = treat_children(node)
+        style = node.attributes["style"]&.value
+        if (color = style&.match(/([^-]|\A)color:([^;]{3,})/))
+          converted = AhaServices::Services::Common::ColorConverter.aha_color_to_jira(color[2])
+          "{color:#{converted}}#{content}{color}"
+        else
+          content
+        end
       end
     end
 
