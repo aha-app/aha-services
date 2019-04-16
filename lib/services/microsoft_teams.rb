@@ -24,7 +24,26 @@ class AhaServices::MicrosoftTeams < AhaService
     return unless payload.audit.interesting
     
     # array of elements with {"name": "asdf", "value": "the change"}
-    facts = payload.audit.changes.each { |obj| obj["name"] = obj.delete("field_name") }
+    facts = payload.audit.changes.each do |obj|
+      obj["name"] = obj.delete("field_name")
+      # convert textual fields to markdown that Microsoft can display
+      if obj["value"].include?("</span>")
+        old_val = obj["value"]
+        parsed = Nokogiri::HTML::fragment(obj["value"])
+
+        # remove existing styles to make modification styles more clear
+        parsed.css('b,strong').each do |node|
+          node.replace Nokogiri::XML::Text.new(node.text, node.document)
+        end
+        parsed.css('strike').each do |node|
+          node.replace Nokogiri::XML::Text.new(node.text, node.document)
+        end
+
+        parsed.css('span.deleted').each { |node| node.name = 'strike' }
+        parsed.css('span.inserted').each { |node| node.name = 'strong' }
+        obj["value"] = parsed.to_s
+      end
+    end
 
     message = {
       "@type": "MessageCard",
