@@ -48,14 +48,26 @@ class AhaServices::MicrosoftTeams < AhaService
     message = {
       "@type": "MessageCard",
       "@context": "http://schema.org/extensions",
-      "themeColor": "0076D7",
-      "summary": "Larry Bryant created a new task",
+      "themeColor": "FF0000",
+      "Summary": title,
       "sections": [{
           "activityTitle": title,
           "activitySubtitle": payload.audit.created_at.to_time.strftime('%Y-%m-%d %l:%M %P'),
           "facts": facts,
           "markdown": true
-      }]
+      }],
+      "potentialAction": [
+        {
+          "@type": "OpenUri",
+          "name": "View in Aha!",
+          "targets": [
+            {
+              "os": "default",
+              "uri": payload.audit.auditable_url
+            }
+          ]
+        }
+      ]
     }
     send_message(message)
   end
@@ -65,7 +77,7 @@ protected
   def title
     user = payload.audit.user&.name || "Aha!"
 
-    "[#{user} #{payload.audit.description}](#{payload.audit.auditable_url})"
+    "#{user} #{payload.audit.description}"
   end
 
   def url
