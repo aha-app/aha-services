@@ -27,7 +27,7 @@ class AhaServices::MicrosoftTeams < AhaService
     facts = payload.audit.changes.each do |obj|
       obj["name"] = obj.delete("field_name")
       # convert textual fields to markdown that Microsoft can display
-      if obj["value"].include?("</span>")
+      if obj["value"].to_s.include?("</span>")
         old_val = obj["value"]
         parsed = Nokogiri::HTML::fragment(obj["value"])
 
