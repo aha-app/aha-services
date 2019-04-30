@@ -48,7 +48,7 @@ class AhaServices::MicrosoftTeams < AhaService
     message = {
       "@type": "MessageCard",
       "@context": "http://schema.org/extensions",
-      "themeColor": "FF0000",
+      "themeColor": "0073CF",
       "Summary": title,
       "sections": [{
           "activityTitle": title,
