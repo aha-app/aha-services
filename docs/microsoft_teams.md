@@ -11,7 +11,7 @@ Create an incoming webhook in Microsoft Teams
 1. Enter your Microsoft Team and click Install.
 1. Select the channel where you want to receive updates and click Set up.
 1. Name your webhook (e.g. Aha! product updates). 
-1. Download the Aha! avatar from [https://www.aha.io/aha_square_256.png] and upload it as the webhook image.
+1. Download the Aha! avatar from https://www.aha.io/aha_square_large.png and upload it as the webhook image.
 1. Click Create. 
 1. Copy the webhook URL.
 
