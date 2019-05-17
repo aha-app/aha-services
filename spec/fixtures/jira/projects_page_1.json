@@ -1,0 +1,47 @@
+{
+  "self": "https://bigaha.atlassian.net/rest/api/2/project/search?maxResults=2&startAt=0",
+  "nextPage": "https://bigaha.atlassian.net/rest/api/2/project/search?maxResults=2&startAt=2",
+  "maxResults": 2,
+  "startAt": 0,
+  "total": 167,
+  "isLast": false,
+  "values": [
+    {
+      "expand": "description,lead,issueTypes,url,projectKeys,permissions",
+      "self": "https://bigaha.atlassian.net/rest/api/2/project/11500",
+      "id": "11500",
+      "key": "AC",
+      "name": "Analyze Classic",
+      "avatarUrls": {
+        "48x48": "https://bigaha.atlassian.net/secure/projectavatar?avatarId=10803",
+        "24x24": "https://bigaha.atlassian.net/secure/projectavatar?size=small&s=small&avatarId=10803",
+        "16x16": "https://bigaha.atlassian.net/secure/projectavatar?size=xsmall&s=xsmall&avatarId=10803",
+        "32x32": "https://bigaha.atlassian.net/secure/projectavatar?size=medium&s=medium&avatarId=10803"
+      },
+      "projectTypeKey": "software",
+      "simplified": false,
+      "style": "classic",
+      "isPrivate": false,
+      "properties": {}
+    },
+    {
+      "expand": "description,lead,issueTypes,url,projectKeys,permissions",
+      "self": "https://bigaha.atlassian.net/rest/api/2/project/12800",
+      "id": "12800",
+      "key": "ADP",
+      "name": "Austin Demo Project",
+      "avatarUrls": {
+        "48x48": "https://bigaha.atlassian.net/secure/projectavatar?avatarId=10803",
+        "24x24": "https://bigaha.atlassian.net/secure/projectavatar?size=small&s=small&avatarId=10803",
+        "16x16": "https://bigaha.atlassian.net/secure/projectavatar?size=xsmall&s=xsmall&avatarId=10803",
+        "32x32": "https://bigaha.atlassian.net/secure/projectavatar?size=medium&s=medium&avatarId=10803"
+      },
+      "projectTypeKey": "software",
+      "simplified": false,
+      "style": "classic",
+      "isPrivate": false,
+      "properties": {}
+    }
+  ]
+}
+
