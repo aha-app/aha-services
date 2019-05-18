@@ -18,7 +18,7 @@ class AhaServices::BitbucketCommitHook < AhaService
                      end
     commits = Array(commit_payload&.push&.changes&.flat_map(&:commits)).compact
     commits.each do |commit|
-      commit.message.scan(/([A-Z]+-[0-9]+(?:-[0-9]+)?)/) do |m|
+      commit.message.scan(/([A-Z][A-Z0-9]*-[0-9]+(?:-[0-9]+)?)/) do |m|
         m.each do |ref|
           comment_on_record(ref, commit)
         end
