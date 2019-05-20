@@ -2,11 +2,31 @@ class JiraProjectResource < JiraResource
   # Get a list of all projects
   def list
     prepare_request
-    process_response(http_get("#{api_url}/project"), 200) do |projects_data|
-      projects_data.map do |project|
-        {'id' => project.id, 'key' => project[:key], 'name' => project.name}
+
+    start_at = 0
+    projects = []
+
+    while start_at >= 0
+      projects_url = "#{api_url}/project/search?startAt=#{start_at}"
+
+      process_response(http_get(projects_url), 200) do |projects_data|
+        projects_data[:values].each do |project|
+          projects << {
+            'id' => project.id,
+            'key' => project[:key],
+            'name' => project.name
+          }
+        end
+
+        if projects_data.isLast
+          start_at = -1
+        else
+          start_at += projects_data.maxResults
+        end
       end
     end
+
+    projects
   end
 
   def populate_project_data(project_id, meta_data)
