@@ -91,6 +91,8 @@ protected
     response = http_post(url, message.to_json)
     if [200, 201, 204].include?(response.status)
       return
+    elsif response.body == 'Webhook Bad Request - Null or empty event'
+      raise AhaService::RemoteError, "Please use the Microsoft Teams Webhook connector (not the Aha! connector) for this integration."
     elsif response.status == 404
       raise AhaService::RemoteError, "URL is not recognized"
     else
