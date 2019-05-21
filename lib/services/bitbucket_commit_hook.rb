@@ -30,16 +30,21 @@ protected
 
   def comment_on_record(ref_num, commit)
     record_type = ref_num =~ /-[0-9]+-/ ? "requirements" : "features"
+    
+    begin
+      email = Mail::Address.new(commit.author.raw)
+    rescue Mail::Field::IncompleteParseError
+      email = commit.author.raw
+    end
 
-    email = Mail::Address.new(commit.author.raw)
-    message = <<-EOF
-      <p>#{email.display_name || email.address} committed:</p>
-      <pre>#{commit.message}</pre>
-      <p>Commit: <a href="#{commit.links.html.href}">#{commit["hash"]}</a></p>
-    EOF
+    message = <<-MESSAGE
+        <p>#{email.try(:display_name) || email.try(:address) || email} committed:</p>
+        <pre>#{commit.message}</pre>
+        <p>Commit: <a href="#{commit.links.html.href}">#{commit['hash']}</a></p>
+    MESSAGE
 
     begin
-      api.create_comment(record_type, ref_num, email.address, message)
+      api.create_comment(record_type, ref_num, email.try(:address), message)
     rescue AhaApi::NotFound
       # Ignore errors for unknown references - it might not have really
       # been a reference.
