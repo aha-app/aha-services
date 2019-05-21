@@ -10,13 +10,7 @@ class JiraProjectResource < JiraResource
       projects_url = "#{api_url}/project/search?startAt=#{start_at}"
 
       process_response(http_get(projects_url), 200) do |projects_data|
-        projects_data[:values].each do |project|
-          projects << {
-            'id' => project.id,
-            'key' => project[:key],
-            'name' => project.name
-          }
-        end
+        projects_data[:values].each { |p| projects << project_hash(p) }
 
         if projects_data.isLast
           start_at = -1
@@ -27,6 +21,14 @@ class JiraProjectResource < JiraResource
     end
 
     projects
+  rescue AhaService::RemoteError => error
+    raise unless error.message =~ /Unhandled error: STATUS=404/
+
+    # Jira cloud API is removing /project in favor of /project/search, but
+    # older on-prem Jira versions do not support the newer endpoint
+    process_response(http_get("#{api_url}/project"), 200) do |projects_data|
+      projects_data.map { |p| project_hash(p) }
+    end
   end
 
   def populate_project_data(project_id, meta_data)
@@ -142,5 +144,9 @@ protected
     else
       {}
     end
+  end
+
+  def project_hash(project)
+    { 'id' => project.id, 'key' => project[:key], 'name' => project.name }
   end
 end

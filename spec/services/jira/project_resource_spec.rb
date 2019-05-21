@@ -71,16 +71,42 @@ describe JiraProjectResource do
     end
 
     context 'when there is an error' do
-      let(:project_error_stub) do
+      before do
         stub_request(:get, "#{base_url}/project/search")
           .with(query: { 'startAt' => 0 })
-          .to_return(status: 401)
+          .to_return(status: status_code)
       end
 
-      before { project_error_stub }
+      context 'with status 401' do
+        let(:status_code) { 401 }
 
-      it 'raises an error' do
-        expect { list }.to raise_error(AhaService::RemoteError, /Authentication failed/)
+        it 'raises an auth error' do
+          expect { list }.to raise_error(AhaService::RemoteError, /Authentication failed/)
+        end
+      end
+
+      context 'with status 404' do
+        let(:status_code) { 404 }
+
+        let(:projects) { json_fixture('jira/projects_all.json')['values'] }
+        let(:unpaginated_stub) do
+          stub_request(:get, "#{base_url}/project")
+            .to_return(status: 200, body: projects.to_json)
+        end
+
+        before { unpaginated_stub }
+
+        it 'does not raise an error' do
+          expect { list }.to_not raise_error
+        end
+
+        it 'falls back to the unpaginated endpoint' do
+          list
+          expect(unpaginated_stub).to have_been_requested
+        end
+
+        it { is_expected.to include_project(projects[0]) }
+        it { is_expected.to include_project(projects[1]) }
       end
     end
   end
