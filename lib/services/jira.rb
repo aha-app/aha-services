@@ -558,7 +558,11 @@ protected
 
   def assignee_fields(resource, issue_type)
     if (issue_type.has_field_assignee.nil? || issue_type.has_field_assignee) && resource.assigned_to_user && !resource.assigned_to_user.default_assignee && (user = user_resource.picker(resource.assigned_to_user.email, resource.assigned_to_user.name))
-      { assignee: { name: user.name } }
+      if user.accountId
+        { assignee: { accountId: user.accountId } }
+      else
+        { assignee: { name: user.name } }
+      end
     else
       Hash.new
     end
@@ -566,7 +570,11 @@ protected
 
   def reporter_fields(resource, issue_type)
     if (issue_type.has_field_reporter.nil? || issue_type.has_field_reporter) && resource.created_by_user && (user = user_resource.picker(resource.created_by_user.email, resource.created_by_user.name))
-      { reporter: { name: user.name } }
+      if user.accountId
+        { reporter: { accountId: user.accountId } }
+      else
+        { reporter: { name: user.name } }
+      end
     else
       Hash.new
     end
