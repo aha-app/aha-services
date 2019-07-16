@@ -908,6 +908,10 @@ describe AhaServices::Jira do
   describe "Sends assignee" do
     let(:initiative) { Hashie::Mash.new }
     let(:version) { Hashie::Mash.new({ name: 'Existing version', :id => 2350823958 }) }
+    let(:resource) { json_fixture("create_feature_event_assignee.json") }
+    before do
+      service.stub(:issue_type_by_id).and_return(Hashie::Mash.new(id: 239509, fields: []))
+    end
 
     it "jira user resource parses user/picker response" do
       stub_request(:get, "#{base_url}/user/picker?query=someemail@someemail.com").
@@ -927,8 +931,6 @@ describe AhaServices::Jira do
     end
 
     it "adds the assignee when valid" do
-      resource = json_fixture("create_feature_event_assignee.json")
-      service.stub(:issue_type_by_id).and_return(Hashie::Mash.new(id: 239509, fields: []))
       user_resource.should_receive(:picker).exactly(2).times.with("watersco@gmail.com", "Chris Waters").and_return(Hashie::Mash.new("name" => "chris","emailAddress" => "watersco@gmail.com"))
 
       issue_resource.should_receive(:create).
@@ -938,6 +940,22 @@ describe AhaServices::Jira do
       service.send(:create_issue_for, Hashie::Mash.new(resource['feature']), initiative, version, nil)
     end
 
-
+    it 'adds the assignee and reporter by accountId when available' do
+      expect(user_resource).to receive(:picker).with('watersco@gmail.com', 'Chris Waters')
+        .and_return(
+          Hashie::Mash.new(
+            'name' => 'chris',
+            'emailAddress' => 'watersco@gmail.com',
+            'accountId' => '1234-5678-abcd-efgh'
+          )
+        ).exactly(2).times
+      expect(issue_resource).to receive(:create).with(
+        'fields' => hash_including(
+          'assignee' => { 'accountId' => '1234-5678-abcd-efgh' },
+          'reporter' => { 'accountId' => '1234-5678-abcd-efgh' }
+        )
+      ).and_return(Hashie::Mash.new(id: 53498, key: 'key'))
+      service.send(:create_issue_for, Hashie::Mash.new(resource['feature']), initiative, version, nil)
+    end
   end
 end
