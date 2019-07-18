@@ -63,8 +63,7 @@ module Helpers
   end
   
   def html_to_markdown(html, github_style = false)
-    ReverseMarkdown.convert(html, unknown_tags: 
-    :bypass, github_flavored: github_style)
+    ReverseMarkdown.convert(html, unknown_tags: :bypass, github_flavored: github_style)
   end
   
   def html_to_slack_markdown(html)
@@ -91,7 +90,7 @@ module Helpers
   
   
   def reference_num_to_resource_type(reference_num)
-    if reference_num =~ /-R-\d+$/ or reference_num =~ /-R-PL$/
+    if reference_num =~ /-R-\d+$/ || reference_num =~ /-R-PL$/ || reference_num =~ /-P-\d+$/ || reference_num =~ /-P-PL$/
       "releases"
     elsif reference_num =~ /-\d+-\d+$/
       "requirements"

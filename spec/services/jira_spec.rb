@@ -1,24 +1,7 @@
 require 'spec_helper'
 
 describe AhaServices::Jira do
-  let(:integration_data) { {"projects"=>[{"id"=>"10000", "key"=>"DEMO", "name"=>"Aha! App Development", "issue_types"=>"-3382654735848632001"}], "epic_name_field"=>"customfield_10009", "epic_link_field"=>"customfield_10008", "aha_reference_field"=>"customfield_10206", "story_points_field"=>"customfield_10004", "fields"=>{}, "issue_type_sets"=>{"-3382654735848632001"=>[{"id"=>"1", "name"=>"Bug", "subtask"=>false, "has_field_fix_versions"=>true, "has_field_aha_reference"=>true, "has_field_story_points"=>false, "has_field_epic_name"=>false, "has_field_epic_link"=>true, "has_field_labels"=>true, "has_field_time_tracking"=>true, "fields"=>["assignee", "attachment", "components", "customfield_10006", "customfield_10007", "customfield_10008", "customfield_10206", "customfield_10300", "description", "duedate", "environment", "fixVersions", "issuetype", "labels", "priority", "project", "reporter", "summary", "timetracking", "versions"], "statuses"=>"-2325688562603618987"}, {"id"=>"2", "name"=>"New Feature", "subtask"=>false, "has_field_fix_versions"=>true, "has_field_aha_reference"=>true, "has_field_story_points"=>false, "has_field_epic_name"=>false, "has_field_epic_link"=>true, "has_field_labels"=>true, "has_field_time_tracking"=>true, "fields"=>["assignee", "attachment", "components", "customfield_10006", "customfield_10007", "customfield_10008", "customfield_10206", "customfield_10300", "description", "duedate", "environment", "fixVersions", "issuetype", "labels", "priority", "project", "reporter", "summary", "timetracking", "versions"], "statuses"=>"-2325688562603618987"}, {"id"=>"3", "name"=>"Task", "subtask"=>false, "has_field_fix_versions"=>true, "has_field_aha_reference"=>true, "has_field_story_points"=>false, "has_field_epic_name"=>false, "has_field_epic_link"=>true, "has_field_labels"=>true, "has_field_time_tracking"=>true, "fields"=>["assignee", "attachment", "components", "customfield_10006", "customfield_10007", "customfield_10008", "customfield_10206", "customfield_10300", "description", "duedate", "environment", "fixVersions", "issuetype", "labels", "priority", "project", "reporter", "summary", "timetracking", "versions"], "statuses"=>"-2325688562603618987"}, {"id"=>"4", "name"=>"Improvement", "subtask"=>false, "has_field_fix_versions"=>true, "has_field_aha_reference"=>true, "has_field_story_points"=>false, "has_field_epic_name"=>false, "has_field_epic_link"=>true, "has_field_labels"=>true, "has_field_time_tracking"=>true, "fields"=>["assignee", "attachment", "components", "customfield_10006", "customfield_10007", "customfield_10008", "customfield_10206", "customfield_10300", "description", "duedate", "environment", "fixVersions", "issuetype", "labels", "priority", "project", "reporter", "summary", "timetracking", "versions"], "statuses"=>"-2325688562603618987"}, {"id"=>"5", "name"=>"Sub-task", "subtask"=>true, "has_field_fix_versions"=>true, "has_field_aha_reference"=>true, "has_field_story_points"=>false, "has_field_epic_name"=>false, "has_field_epic_link"=>true, "has_field_labels"=>true, "has_field_time_tracking"=>true, "fields"=>["assignee", "attachment", "components", "customfield_10006", "customfield_10007", "customfield_10008", "customfield_10206", "customfield_10300", "description", "duedate", "environment", "fixVersions", "issuetype", "labels", "parent", "priority", "project", "reporter", "summary", "timetracking", "versions"], "statuses"=>"-2325688562603618987"}, {"id"=>"6", "name"=>"Epic", "subtask"=>false, "has_field_fix_versions"=>true, "has_field_aha_reference"=>true, "has_field_story_points"=>true, "has_field_epic_name"=>true, "has_field_epic_link"=>true, "has_field_labels"=>true, "has_field_time_tracking"=>true, "fields"=>["assignee", "attachment", "components", "customfield_10004", "customfield_10006", "customfield_10007", "customfield_10008", "customfield_10009", "customfield_10206", "customfield_10300", "description", "duedate", "environment", "fixVersions", "issuetype", "labels", "priority", "project", "reporter", "summary", "timetracking", "versions"], "statuses"=>"-2325688562603618987"}, {"id"=>"7", "name"=>"User Story", "subtask"=>false, "has_field_fix_versions"=>true, "has_field_aha_reference"=>true, "has_field_story_points"=>true, "has_field_epic_name"=>false, "has_field_epic_link"=>true, "has_field_labels"=>true, "has_field_time_tracking"=>true, "fields"=>["assignee", "attachment", "components", "customfield_10004", "customfield_10006", "customfield_10007", "customfield_10008", "customfield_10206", "customfield_10300", "description", "duedate", "environment", "fixVersions", "issuetype", "labels", "priority", "project", "reporter", "summary", "timetracking", "versions"], "statuses"=>"-2325688562603618987"}, {"id"=>"8", "name"=>"Technical task", "subtask"=>true, "has_field_fix_versions"=>true, "has_field_aha_reference"=>true, "has_field_story_points"=>false, "has_field_epic_name"=>false, "has_field_epic_link"=>true, "has_field_labels"=>true, "has_field_time_tracking"=>true, "fields"=>["assignee", "attachment", "components", "customfield_10006", "customfield_10007", "customfield_10008", "customfield_10206", "customfield_10300", "description", "duedate", "environment", "fixVersions", "issuetype", "labels", "parent", "priority", "project", "reporter", "summary", "timetracking", "versions"], "statuses"=>"-2325688562603618987"}]}, "status_sets"=>{"-2325688562603618987"=>[{"id"=>"1", "name"=>"Open"}, {"id"=>"3", "name"=>"In Progress"}, {"id"=>"4", "name"=>"Reopened"}, {"id"=>"5", "name"=>"Resolved"}, {"id"=>"6", "name"=>"Closed"}], "3633375702085623271"=>[{"id"=>"1", "name"=>"Open"}, {"id"=>"10000", "name"=>"In QA"}, {"id"=>"3", "name"=>"In Progress"}, {"id"=>"4", "name"=>"Reopened"}, {"id"=>"5", "name"=>"Resolved"}, {"id"=>"6", "name"=>"Closed"}]}}
-    }
-  let(:protocol) { 'http' }
-  let(:server_url) { 'foo.com/a' }
-  let(:api_url) { 'rest/api/2' }
-  let(:username) { 'u' }
-  let(:password) { 'p' }
-  let(:base_url) { "#{protocol}://#{username}:#{password}@#{server_url}/#{api_url}" }
-  let(:service_params) do
-    {
-      'server_url' => "#{protocol}://#{server_url}",
-      'username' => username, 'password' => password,
-      'project' => 'DEMO', 'feature_issue_type' => '6'
-    }
-  end
-  let(:service) do
-    AhaServices::Jira.new service_params
-  end
+  include_context 'jira'
 
   def stub_creating_version
     # Verify release.
@@ -925,6 +908,10 @@ describe AhaServices::Jira do
   describe "Sends assignee" do
     let(:initiative) { Hashie::Mash.new }
     let(:version) { Hashie::Mash.new({ name: 'Existing version', :id => 2350823958 }) }
+    let(:resource) { json_fixture("create_feature_event_assignee.json") }
+    before do
+      service.stub(:issue_type_by_id).and_return(Hashie::Mash.new(id: 239509, fields: []))
+    end
 
     it "jira user resource parses user/picker response" do
       stub_request(:get, "#{base_url}/user/picker?query=someemail@someemail.com").
@@ -944,8 +931,6 @@ describe AhaServices::Jira do
     end
 
     it "adds the assignee when valid" do
-      resource = json_fixture("create_feature_event_assignee.json")
-      service.stub(:issue_type_by_id).and_return(Hashie::Mash.new(id: 239509, fields: []))
       user_resource.should_receive(:picker).exactly(2).times.with("watersco@gmail.com", "Chris Waters").and_return(Hashie::Mash.new("name" => "chris","emailAddress" => "watersco@gmail.com"))
 
       issue_resource.should_receive(:create).
@@ -955,6 +940,22 @@ describe AhaServices::Jira do
       service.send(:create_issue_for, Hashie::Mash.new(resource['feature']), initiative, version, nil)
     end
 
-
+    it 'adds the assignee and reporter by accountId when available' do
+      expect(user_resource).to receive(:picker).with('watersco@gmail.com', 'Chris Waters')
+        .and_return(
+          Hashie::Mash.new(
+            'name' => 'chris',
+            'emailAddress' => 'watersco@gmail.com',
+            'accountId' => '1234-5678-abcd-efgh'
+          )
+        ).exactly(2).times
+      expect(issue_resource).to receive(:create).with(
+        'fields' => hash_including(
+          'assignee' => { 'accountId' => '1234-5678-abcd-efgh' },
+          'reporter' => { 'accountId' => '1234-5678-abcd-efgh' }
+        )
+      ).and_return(Hashie::Mash.new(id: 53498, key: 'key'))
+      service.send(:create_issue_for, Hashie::Mash.new(resource['feature']), initiative, version, nil)
+    end
   end
 end

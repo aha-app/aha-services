@@ -40,6 +40,28 @@ describe AhaServices::GitlabIssues do
     end
   end
 
+  context "switches between v3 and v4 of Gitlab API correctly" do
+    let(:mock_issue) { { 'id' => 42, 'iid' => 124, 'number' => 21 } }
+
+    it "detects the API version" do
+      ["v3", "v4"].each do |version|
+        domain = "gitlab.com/api/#{version}"
+        versioned_service = AhaServices::GitlabIssues.new 'server_url' => "#{protocol}://#{domain}",
+                                                          'private_token' => private_token
+
+        expect(versioned_service.api_version).to eq version.to_sym
+
+        if version == "v3"
+          expect(mock_issue[versioned_service.issue_id_selector]).to eq 42
+          expect(mock_issue[versioned_service.issue_integration_selector]).to eq 42
+        else
+          expect(mock_issue[versioned_service.issue_id_selector]).to eq 124
+          expect(mock_issue[versioned_service.issue_integration_selector]).to eq 21
+        end
+      end
+    end
+  end
+
   it "handles the 'create feature' event" do
     mock_payload = Hashie::Mash.new(feature: feature)
     mock_milestone = { id: 1 }
@@ -453,7 +475,7 @@ describe AhaServices::GitlabIssues do
       context "with a gitlab todo in the body" do
         let(:resource) { Hashie::Mash.new( description: { body: "<ul><li>[ ] Todo<br></li></ul>" }) }
         it "returns the body" do
-          expect(service.issue_body(resource).delete(' ')).to eq "- [ ] Todo\n\n".delete(' ')
+          expect(service.issue_body(resource).delete(' ')).to eq "-[]Todo\n"
         end
       end
     end

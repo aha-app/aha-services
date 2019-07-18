@@ -2,7 +2,14 @@ require "#{File.dirname(__FILE__)}/jira"
 
 class AhaServices::JiraConnect < AhaServices::Jira
   title "Jira via Connect"
-  caption "Send features to Jira (supports cloud only)"
+  caption do |workspace_type|
+    feature_object =
+      case workspace_type
+      when "product_workspace" then "features"
+      when "marketing_workspace" then "activities"
+      end
+    "Send #{feature_object} to Jira (supports cloud only)"
+  end
   
   install_button
   select :project, collection: ->(meta_data, data) { meta_data.projects.collect{|p| [p.name, p[:key]] } },

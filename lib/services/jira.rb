@@ -1,8 +1,15 @@
-require 'html2confluence'
+require_relative "jira/jira_wiki_converter"
 
 class AhaServices::Jira < AhaService
   title "Jira"
-  caption "Send features to Jira issue tracking (supports on-premise and cloud)"
+  caption do |workspace_type|
+    feature_object =
+      case workspace_type
+      when "product_workspace" then "features"
+      when "marketing_workspace" then "activities"
+      end
+    "Send #{feature_object} to Jira issue tracking (supports on-premise and cloud)"
+  end
 
   string :server_url, description: "URL for the Jira server, without a trailing slash, e.g. https://bigaha.atlassian.net"
   string :username, description: "Use your verified Jira email address or username from the Jira profile page (see instructions above for details)."
@@ -551,7 +558,11 @@ protected
 
   def assignee_fields(resource, issue_type)
     if (issue_type.has_field_assignee.nil? || issue_type.has_field_assignee) && resource.assigned_to_user && !resource.assigned_to_user.default_assignee && (user = user_resource.picker(resource.assigned_to_user.email, resource.assigned_to_user.name))
-      { assignee: { name: user.name } }
+      if user.accountId
+        { assignee: { accountId: user.accountId } }
+      else
+        { assignee: { name: user.name } }
+      end
     else
       Hash.new
     end
@@ -559,7 +570,11 @@ protected
 
   def reporter_fields(resource, issue_type)
     if (issue_type.has_field_reporter.nil? || issue_type.has_field_reporter) && resource.created_by_user && (user = user_resource.picker(resource.created_by_user.email, resource.created_by_user.name))
-      { reporter: { name: user.name } }
+      if user.accountId
+        { reporter: { accountId: user.accountId } }
+      else
+        { reporter: { name: user.name } }
+      end
     else
       Hash.new
     end
@@ -673,9 +688,8 @@ protected
 
   # Convert HTML from Aha! into Confluence-style wiki markup.
   def convert_html(html)
-    parser = HTMLToConfluenceParser.new
-    parser.feed(html)
-    parser.to_wiki_markup
+    converter = AhaServices::JiraWikiConverter.new
+    converter.convert_html_from_aha(html)
   end
 
   def integrate_release_with_jira_version(release, version)

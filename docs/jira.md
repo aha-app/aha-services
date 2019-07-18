@@ -5,11 +5,11 @@ Note there are two separate integrations with Jira, we recommend that you use th
 1. Jira (RECOMMENDED) - This integration uses the username and password of a Jira user to authenticate with Jira. It can be used with on premise or cloud versions of Jira.
 2. Jira via Connect - This integration uses an Add-on that is installed into your Jira instance by an administrator. It can only be used with Jira cloud and is restricted to integration with a single Jira server.
 
-
 ## Aha! to Jira workflow
+
 Aha! is for the "why" and "what" and Jira is for the "how."
 Do your product strategy, roadmapping, and feature definition in Aha! and push the items to Jira for engineering to build.
-Aha! comes first and Jira second. We then keep the features up-to-date in Aha! as engineering does their work. 
+Aha! comes first and Jira second. We then keep the features up-to-date in Aha! as engineering does their work.
 
 ## Integration functionality
 
@@ -26,6 +26,7 @@ This integration supports sending the following items:
 
       <th>One Way (Jira to Aha!)</th>
     </tr>
+
   </thead>
   <tbody>
     <tr>
@@ -73,6 +74,7 @@ This integration supports sending the following items:
         </ul>
       </td>
     </tr>
+
   </tbody>
 </table>
 <br/>
@@ -92,7 +94,7 @@ This integration works with both the cloud and on premise versions of Jira. If y
 
 Please carefully follow these instructions to ensure that the integration is properly configured.
 
-1. Configure the Server URL, Username and Password below. After May 2017 [you may need to use your email address rather than username](https://confluence.atlassian.com/cloud/the-upgrade-to-atlassian-account-873871204.html#TheupgradetoAtlassianaccount-RESTAPIs) if you are using Jira Cloud. In this case your email address must be *verified* in Jira for the integration to work.
+1. Configure the Server URL, Username and Password below. After May 2017 [you may need to use your email address rather than username](https://confluence.atlassian.com/cloud/the-upgrade-to-atlassian-account-873871204.html#TheupgradetoAtlassianaccount-RESTAPIs) if you are using Jira Cloud. In this case your email address must be _verified_ in Jira for the integration to work.
 2. Click the _Test connection_ button
 3. After a short delay, you will be able to choose the Project the issues will be created in.
 4. Select the Jira project you wish to connect to and click _Load project data_.
@@ -106,7 +108,7 @@ Please carefully follow these instructions to ensure that the integration is pro
 
 ## Troubleshooting
 
-We have a support section dedicated to [troubleshooting the Jira integration.](http://support.aha.io/hc/en-us/sections/201102925) If you run into an error, we recommend you take a look at the logs below and search the support site. Almost every Jira integration error has a documented solution. If you cannot solve the issue please reach out to our team at  [support@aha.io](mailto:support@aha.io), we will be happy to help get your integration up and running!
+We have a support section dedicated to [troubleshooting the Jira integration](https://support.aha.io/hc/en-us/sections/360002622412). If you run into an error, we recommend you take a look at the logs below and search the support site. Almost every Jira integration error has a documented solution. If you cannot solve the issue please reach out to our team at [support@aha.io](mailto:support@aha.io), we will be happy to help get your integration up and running!
 
 A few common issues and their answers are below:
 

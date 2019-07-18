@@ -34,9 +34,18 @@ class TrelloChecklistResource < TrelloResource
 
   def update_item(card, updated_checklist_item)
     prepare_request
-    response = http_put trello_url(
-        "cards/#{card.id}/checklist/#{updated_checklist_item[:idChecklistCurrent]}/checkItem/#{updated_checklist_item[:idCheckItem]}"
-      ), updated_checklist_item.to_json
-    found_resource(response).merge(checklist_id: updated_checklist_item[:idChecklistCurrent])
+
+    response = found_resource(
+      http_put(
+        trello_url(
+          "cards/#{card.id}/checklist/#{updated_checklist_item[:idChecklistCurrent]}/checkItem/#{updated_checklist_item[:idCheckItem]}"
+        ),
+        updated_checklist_item.to_json
+      )
+    )
+
+    if response
+      response.merge(checklist_id: updated_checklist_item[:idChecklistCurrent])
+    end
   end
 end
