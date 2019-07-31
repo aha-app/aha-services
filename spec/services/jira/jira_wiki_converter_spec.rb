@@ -420,14 +420,14 @@ RSpec.describe AhaServices::JiraWikiConverter do
     let(:input) do
       <<~HTML
         <ul class="checklist">
-          <li class="checklist--unchecked">check 1</li>
+          <li class="checklist-item--unchecked"><span class="checklist-item__indicator">☐</span>check 1</li>
           <li class="checkbox">
-            <span>check 2</span>
+            <span class="checklist-item__indicator">☑</span><span>check 2</span>
             <ul class="checklist">
-              <li class="checkbox checklist--checked">check 2.1</li>
+              <li class="checkbox checklist-item--checked">check 2.1</li>
             </ul>
           </li>
-          <li class="checklist--checked">check 3</li>
+          <li class="checklist-item--checked"><span class="checklist-item__indicator">☑</span>check 3</li>
         </ul>
       HTML
     end
