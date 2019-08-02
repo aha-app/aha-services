@@ -74,10 +74,36 @@ class AhaService
   # Returns a list of the services.
   def self.service_classes
     return @service_classes if @service_classes
-    
-    subclasses = []
-    ObjectSpace.each_object(Module) {|m| subclasses << m if m.ancestors.include?(AhaService) && m != AhaService}
-    
+
+    subclasses = [
+      AhaServices::AuditWebhook,
+      AhaServices::BitbucketCommitHook,
+      AhaServices::BitbucketIssues,
+      AhaServices::Bugzilla,
+      AhaServices::DevelopmentProxy,
+      AhaServices::Flowdock,
+      AhaServices::Fogbugz,
+      AhaServices::GithubCommitHook,
+      AhaServices::GithubIssues,
+      AhaServices::GitlabIssues,
+      AhaServices::GoogleHangoutsChat,
+      AhaServices::HipChat,
+      AhaServices::Jira,
+      AhaServices::JiraConnect,
+      AhaServices::MicrosoftTeams,
+      AhaServices::PivotalTracker,
+      AhaServices::Rally,
+      AhaServices::Redmine,
+      AhaServices::Salesforce,
+      AhaServices::Slack,
+      AhaServices::SlackCommands,
+      AhaServices::TFS,
+      AhaServices::Trello,
+      AhaServices::VSO,
+      AhaServices::Webhooks,
+      AhaServices::Zendesk,
+    ]
+
     # Remove under development services.
     #if defined?(Rails) && !["development", "staging"].include?(Rails.env)
     #  subclasses.reject! {|s| [AhaServices::Zendesk].include?(s) }
