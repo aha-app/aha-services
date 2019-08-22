@@ -78,7 +78,6 @@ class AhaService
     subclasses = [
       AhaServices::AuditWebhook,
       AhaServices::BitbucketCommitHook,
-      AhaServices::BitbucketIssues,
       AhaServices::Bugzilla,
       AhaServices::DevelopmentProxy,
       AhaServices::Flowdock,
