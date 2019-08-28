@@ -296,6 +296,7 @@ module AhaServices
 
     class Span < ReverseMarkdown::Converters::Base
       def convert(node, index)
+        return "" if node["class"].to_s.include?("checklist-item__indicator")
         content = treat_children(node)
         style = node.attributes["style"]&.value
         if (color = style&.match(/([^-]|\A)color:([^;]{3,})/))

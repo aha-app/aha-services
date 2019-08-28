@@ -1,6 +1,13 @@
 class AhaServices::GitlabIssues < AhaService
   title 'GitLab Issues'
-  caption 'Send features to GitLab Issues'
+  caption do |workspace_type|
+    object =
+      case workspace_type
+      when "product_workspace" then "features"
+      when "marketing_workspace" then "activities"
+      end
+    "Send #{object} to GitLab Issues"
+  end
 
   password :private_token
   string :server_url, description: 'If you are using GitLab 9 or above on your own server, please enter your server URL ending with "/v4", with no trailing slash (e.g. https://example.com/api/v4). If you are using an earlier version of GitLab your URL should end with "/v3". If you are using gitlab.com leave this field empty.',
@@ -290,7 +297,7 @@ class AhaServices::GitlabIssues < AhaService
     if resource.key?("parent_id")
       issue_body_parts << "Parent: ##{resource['parent_id']}"
     end
-    
+
     issue_body_parts << "Created from Aha! #{resource.url}" if resource.respond_to?(:url)
 
     issue_body_parts.join("\n\n")

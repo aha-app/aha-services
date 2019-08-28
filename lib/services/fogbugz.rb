@@ -1,6 +1,13 @@
 class AhaServices::Fogbugz < AhaService
   title 'FogBugz'
-  caption "Send features to FogBugz bug tracking software"
+  caption do |workspace_type|
+    object =
+      case workspace_type
+      when "product_workspace" then "features"
+      when "marketing_workspace" then "activities"
+      end
+    "Send #{object} to FogBugz bug tracking software"
+  end
 
   string :fogbugz_url, description: "URL for your FogBugz server without the trailing slash, e.g. https://bigaha.fogbugz.com"
   string :api_token, description: "API token for the FogBugz server. You can generate this token using the instructions here: http://help.fogcreek.com/8447/how-to-get-a-fogbugz-xml-api-token"
@@ -8,7 +15,7 @@ class AhaServices::Fogbugz < AhaService
   install_button
   select :projects, collection: -> (meta_data, data) do
     meta_data.projects.sort_by(&:sProject).collect { |project| [project.sProject, project.ixProject] }
-  end, description: "FogBugz project that this Aha! product should integrate with." 
+  end, description: "FogBugz project that this Aha! product should integrate with."
 
   callback_url description: "Add '?case_number={CaseNumber}' to this url before creating the trigger in FogBugz."
 
@@ -37,7 +44,7 @@ class AhaServices::Fogbugz < AhaService
     fogbugz_case = fetch_case(payload.case_number)
     # Do nothing if we can't find the case.
     return if fogbugz_case.nil?
-    
+
     begin
       results = find_resource_with_case(fogbugz_case)['records']
     rescue AhaApi::NotFound
@@ -70,7 +77,7 @@ class AhaServices::Fogbugz < AhaService
     old_attachments = []
 
     parameters = {
-      sTitle: feature.name, 
+      sTitle: feature.name,
       sEvent: html_to_plain(feature.description.body),
       ixProject: data.projects
     }
@@ -137,13 +144,13 @@ class AhaServices::Fogbugz < AhaService
     def fogbugz_resource
       @fogbugz_resource ||= FogbugzResource.new(self)
     end
-    
+
     def fogbugz_case_resource
       @fogbugz_case_resource ||= FogbugzCaseResource.new(self)
     end
 
     def integrate_resource_with_case(feature, fogbugz_case)
-      api.create_integration_fields(reference_num_to_resource_type(feature.reference_num), feature.reference_num, data.integration_id, 
+      api.create_integration_fields(reference_num_to_resource_type(feature.reference_num), feature.reference_num, data.integration_id,
         {number: fogbugz_case.ixBug, url: "#{ URI.join(data.fogbugz_url, "/f/cases/#{fogbugz_case.ixBug}") }"})
     end
 
