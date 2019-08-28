@@ -1,6 +1,13 @@
 class AhaServices::Bugzilla < AhaService
   title "Bugzilla"
-  caption "Send features and requirements to a Bugzilla installation"
+  caption do |workspace_type|
+    object =
+      case workspace_type
+      when "product_workspace" then "features"
+      when "marketing_workspace" then "activities"
+      end
+    "Send #{object} and requirements to a Bugzilla installation"
+  end
 
   string :server_url, description: "The URL of the Bugzilla installation, without trailing slash, e.g. https://landfill.bugzilla.org/bugzilla-tip"
   string :api_key, description: "The API key used to access the Bugzilla REST API."
@@ -22,7 +29,7 @@ class AhaServices::Bugzilla < AhaService
   end
 
   def receive_create_feature
-    bug_resource.create_from_feature payload.feature 
+    bug_resource.create_from_feature payload.feature
   end
 
   def receive_update_feature

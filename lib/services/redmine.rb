@@ -1,6 +1,13 @@
 class AhaServices::Redmine < AhaService
   title 'Redmine'
-  caption "Send features to Redmine open source issue tracking"
+  caption do |workspace_type|
+    object =
+      case workspace_type
+      when "product_workspace" then "features"
+      when "marketing_workspace" then "activities"
+      end
+    "Send #{object} to Redmine open source issue tracking"
+  end
 
   string :redmine_url
   string :api_key
@@ -89,7 +96,7 @@ private
   def project_resource
     @project_resource ||= RedmineProjectResource.new(self)
   end
-  
+
   def tracker_resource
     @tracker_resource ||= RedmineTrackerResource.new(self)
   end

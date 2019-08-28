@@ -1,5 +1,12 @@
 class AhaServices::PivotalTracker < AhaService
-  caption "Send features to Pivotal Tracker agile boards"
+  caption do |workspace_type|
+    object =
+      case workspace_type
+      when "product_workspace" then "features"
+      when "marketing_workspace" then "activities"
+      end
+    "Send #{object} to Pivotal Tracker agile boards"
+  end
   string :api_host, description: "API host for your on-premise pivotal tracker installation such as 'tracker.mycompany.com'. If you are using www.pivotaltracker.com, leave this blank."
   string :api_token, description: "API token from user profile screen at www.pivotaltracker.com"
   install_button
