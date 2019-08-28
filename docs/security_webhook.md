@@ -1,0 +1,3 @@
+This integration sends security events HTTP webhook. All events will be sent using an HTTP POST to the URL you specify in the _Hook URL_ parameter.
+
+The server receiving the webhook must respond within five seconds.

@@ -1,13 +1,11 @@
-class AhaServices::AuditWebhook < AhaService
-  title "Activity webhook"
-  caption "HTTP webhook for all record changes"
+class AhaServices::SecurityWebhook < AhaService
+  title "Security webhook"
+  caption "HTTP webhook for security related activity"
   category "API"
 
   string :hook_url
   
-  audit_filter
-  
-  def receive_audit
+  def receive_security
     http.headers['Content-Type'] = 'application/json'
     
     # We only allow 5 seconds for webhooks.
