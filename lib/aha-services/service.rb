@@ -95,6 +95,7 @@ class AhaService
       AhaServices::Rally,
       AhaServices::Redmine,
       AhaServices::Salesforce,
+      AhaServices::SecurityWebhook,
       AhaServices::Slack,
       AhaServices::SlackCommands,
       AhaServices::TFS,
