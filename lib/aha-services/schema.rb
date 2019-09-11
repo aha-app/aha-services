@@ -44,6 +44,10 @@ module Schema
       add_to_schema :commands_slack_button, "commands_slack_button", options
     end
 
+    def confluence_button(options = {})
+      add_to_schema :confluence_button, "confluence_button", options
+    end
+
     def webhooks_slack_button(options = {})
       add_to_schema :webhooks_slack_button, "webhooks_slack_button", options
     end
