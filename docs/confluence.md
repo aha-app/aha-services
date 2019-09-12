@@ -1,6 +1,6 @@
-This integration allows you to embed saved shared roadmaps, reports, as well as presentations into Confluence pages. As you make updates to views in Aha!, they will be reflected automatically in Confluence.
+This integration allows you to embed shared roadmaps, reports, and presentations into Confluence pages. As you make updates to views in Aha!, they will be reflected automatically in Confluence.
 
-This integration is configured in Confluence:
+To get started, configure this integration in Confluence:
 
 1. Log in to your Confluence account.
 2. From the homepage, click **Settings**.
