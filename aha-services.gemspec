@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = ">= 1.3.6"
 
   s.add_development_dependency "rspec"
-  s.add_development_dependency "webmock", "~> 1.20"
+  s.add_development_dependency "webmock"
   s.add_development_dependency "rspec_junit_formatter"
   s.add_dependency "hashie", "~> 2.1.1"
   s.add_dependency "faraday", "~> 0.9.0"

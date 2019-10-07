@@ -5,9 +5,10 @@ describe GithubIssueResource do
   let(:domain) { 'api.github.com' }
   let(:username) { 'user' }
   let(:password) { 'secret' }
+  let(:headers) { {"Authorization" => "Basic dXNlcjpzZWNyZXQ=" } }
   let(:repo) { 'user/my_repo' }
   let(:base_request_url) do
-    "#{protocol}://#{username}:#{password}@#{domain}/repos/#{repo}/issues"
+    "#{protocol}://#{domain}/repos/#{repo}/issues"
   end
   let(:service) do
     AhaServices::GithubIssues.new 'server_url' => "#{protocol}://#{domain}",
@@ -25,6 +26,7 @@ describe GithubIssueResource do
     context "when an issue with such number doesn't exist" do
       it "returns nil" do
         stub_request(:get, "#{base_request_url}/#{number}")
+          .with(headers: headers)
           .to_return(status: 404)
         expect(issue_resource.find_by_number_and_milestone(number, mock_milestone))
           .to be_nil
@@ -35,6 +37,7 @@ describe GithubIssueResource do
       context "when it doesn't have a milestone field" do
         it "returns nil" do
           stub_request(:get, "#{base_request_url}/#{number}")
+            .with(headers: headers)
             .to_return(status: 200, body: mock_issue_without_milestone)
           expect(issue_resource.find_by_number_and_milestone(number, mock_milestone))
             .to be_nil
@@ -44,6 +47,7 @@ describe GithubIssueResource do
       context "when its milestone is the same as the milestone in the parameter" do
         it "returns the issue" do
           stub_request(:get, "#{base_request_url}/#{number}")
+            .with(headers: headers)
             .to_return(status: 200, body: mock_issue_with_milestone)
           expect(issue_resource.find_by_number_and_milestone(number, mock_milestone))
             .to eq JSON.parse(mock_issue_with_milestone)
@@ -55,6 +59,7 @@ describe GithubIssueResource do
   describe "#create" do
     it "creates the new issue" do
       stub_request(:post, base_request_url)
+        .with(headers: headers)
         .to_return(status: 201, body: mock_issue_with_milestone)
       expect(issue_resource.create(title: "First issue"))
         .to eq JSON.parse(mock_issue_with_milestone)
@@ -65,6 +70,7 @@ describe GithubIssueResource do
     it "updates the issue" do
       number = 42
       stub_request(:patch, "#{base_request_url}/#{number}")
+        .with(headers: headers)
         .to_return(status: 200, body: mock_issue_with_milestone)
       expect(issue_resource.update(number, title: "Updated issue"))
         .to eq JSON.parse(mock_issue_with_milestone)

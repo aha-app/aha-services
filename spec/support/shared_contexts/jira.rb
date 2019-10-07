@@ -361,7 +361,7 @@ shared_context 'jira' do
   let(:api_url) { 'rest/api/2' }
   let(:username) { 'u' }
   let(:password) { 'p' }
-  let(:base_url) { "#{protocol}://#{username}:#{password}@#{server_url}/#{api_url}" }
+  let(:base_url) { "#{protocol}://#{server_url}/#{api_url}" }
   let(:service_params) do
     {
       'server_url' => "#{protocol}://#{server_url}",
