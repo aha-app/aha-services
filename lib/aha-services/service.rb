@@ -79,6 +79,7 @@ class AhaService
       AhaServices::AuditWebhook,
       AhaServices::BitbucketCommitHook,
       AhaServices::Bugzilla,
+      AhaServices::Confluence,
       AhaServices::DevelopmentProxy,
       AhaServices::Flowdock,
       AhaServices::Fogbugz,
