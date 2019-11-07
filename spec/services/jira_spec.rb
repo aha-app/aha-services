@@ -19,7 +19,7 @@ describe AhaServices::Jira do
       with(:body => {:integration_fields => [{:name => "id", :value => "666"}, {:name => "url", :value => "http://foo.com/a/browse/DEMO/fixforversion/666"}]}).
       to_return(:status => 201, :body => "", :headers => {})
     # Link to user picker
-    stub_request(:get, "http://u:p@foo.com/a/rest/api/2/user/picker?query=watersco@gmail.com").
+    stub_request(:get, "http://foo.com/a/rest/api/2/user/picker?query=watersco@gmail.com").
       to_return(:status => 200, :body => raw_fixture('jira/jira_user.json'))
   end
 
@@ -186,11 +186,11 @@ describe AhaServices::Jira do
   end
 
   before do
-    service.stub(:issue_resource).and_return(double)
-    service.stub(:field_resource).and_return(double)
-    service.stub(:version_resource).and_return(double)
-    service.stub(:issue_link_resource).and_return(double)
-    service.stub(:attachment_resource).and_return(double)
+    allow(service).to receive(:issue_resource).and_return(double)
+    allow(service).to receive(:field_resource).and_return(double)
+    allow(service).to receive(:version_resource).and_return(double)
+    allow(service).to receive(:issue_link_resource).and_return(double)
+    allow(service).to receive(:attachment_resource).and_return(double)
   end
 
   let(:issue_resource) { service.send(:issue_resource) }

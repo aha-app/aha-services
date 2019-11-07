@@ -5,7 +5,7 @@ describe GithubRepoResource do
   let(:domain) { 'api.github.com' }
   let(:username) { 'user' }
   let(:password) { 'secret' }
-  let(:base_request_url) { "#{protocol}://#{username}:#{password}@#{domain}" }
+  let(:base_request_url) { "#{protocol}://#{domain}" }
   let(:service) do
     AhaServices::GithubIssues.new 'server_url' => "#{protocol}://#{domain}",
                                   'username' => username, 'password' => password

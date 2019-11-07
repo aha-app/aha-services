@@ -4,6 +4,10 @@ RSpec.describe JiraResource do
   let(:resource) { described_class.new(service) }
   let(:service) { AhaServices::Jira.new(service_options) }
 
+  before do
+    allow(IPSocket).to receive(:getaddress).with("test.host").and_return("123.123.123.123")
+  end
+
   context 'jwt handling' do
     let(:api_url) { 'https://test.host/api/v2' }
     let(:service_options) do
