@@ -285,7 +285,7 @@ class AhaServices::GitlabIssues < AhaService
   def issue_body(resource)
     issue_body_parts = []
     if resource.description.body.present?
-      body = html_to_markdown(resource.description.body, true)
+      body = html_to_markdown(resource.description.body)
       body = bugfix_escaping_in_method_name(body)
       issue_body_parts << body
     end
@@ -370,7 +370,7 @@ class AhaServices::GitlabIssues < AhaService
     resource.requirements.map do |requirement|
       status = (requirement.workflow_status.try(:complete) || false) ? "x" : " "
       head = "- [#{status}] #{requirement.name}\n"
-      body = html_to_markdown(requirement.description.body, true)
+      body = html_to_markdown(requirement.description.body)
       body += attachments_in_body(requirement.description.attachments) if requirement.description.attachments.present?
       head + indent(body, "    ")
     end.join("\n").gsub(/\n+/m, "\n")
@@ -378,5 +378,9 @@ class AhaServices::GitlabIssues < AhaService
 
   def indent text, prefix
     text.lines.map{|line| prefix + line.chomp }.join("\n")
+  end
+
+  def html_to_markdown(html)
+    GithubMarkdownConverter.new.convert_html_from_aha(html) 
   end
 end
