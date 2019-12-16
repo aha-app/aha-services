@@ -1,9 +1,10 @@
 class AhaServices::Rally < AhaService
   caption do |workspace_type|
     object =
-      case workspace_type
-      when "product_workspace" then "releases, features"
-      when "marketing_workspace" then "schedules, activities"
+      if workspace_type == "marketing_workspace"
+        "schedules, activities"
+      else
+        "releases, features"
       end
     "Send #{object} and requirements to Rally"
   end

@@ -3,12 +3,13 @@ require "#{File.dirname(__FILE__)}/jira"
 class AhaServices::JiraConnect < AhaServices::Jira
   title "Jira via Connect"
   caption do |workspace_type|
-    feature_object =
-      case workspace_type
-      when "product_workspace" then "features"
-      when "marketing_workspace" then "activities"
+    object =
+      if workspace_type == "marketing_workspace"
+        "activities"
+      else
+        "features"
       end
-    "Send #{feature_object} to Jira (supports cloud only)"
+    "Send #{object} to Jira (supports cloud only)"
   end
   
   install_button

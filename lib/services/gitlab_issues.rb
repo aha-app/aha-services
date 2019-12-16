@@ -2,9 +2,10 @@ class AhaServices::GitlabIssues < AhaService
   title 'GitLab Issues'
   caption do |workspace_type|
     object =
-      case workspace_type
-      when "product_workspace" then "features"
-      when "marketing_workspace" then "activities"
+      if workspace_type == "marketing_workspace"
+        "activities"
+      else
+        "features"
       end
     "Send #{object} to GitLab Issues"
   end

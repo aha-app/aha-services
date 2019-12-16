@@ -1,13 +1,5 @@
 class AhaServices::Flowdock < AhaService
-  caption do |workspace_type|
-    subject =
-      case workspace_type
-      when "multi_workspace" then "product or workspace"
-      when "product_workspace" then "product"
-      when "marketing_workspace" then "workspace"
-      end
-    "Send #{subject} notifications from Aha! to Flowdock"
-  end
+  caption "Send workspace notifications from Aha! to Flowdock"
   category "Communication"
   
   string :flow_api_token,

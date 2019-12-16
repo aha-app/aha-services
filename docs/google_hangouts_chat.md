@@ -1,4 +1,4 @@
-Send a log of activity from Aha! to a Google Hangouts Chat room. Configure the integration for a product to send only activity for that product. Configure the integration for the account to send all activity that you have access to.
+Send a log of activity from Aha! to a Google Hangouts Chat room. Configure the integration for a workspace to send only activity for that workspace. Configure the integration for the account to send all activity that you have access to.
 
 **WARNING** Sending activity from Aha! into Google Hangouts Chat bypasses the security controls in your Aha! account. Anyone who has access to your Google Hangouts Chat room will be able to see the activity, regardless of whether they have access to that information in Aha!
 
