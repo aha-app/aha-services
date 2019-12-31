@@ -2,7 +2,7 @@ This two-way integration allows you to push your features and requirements in Ah
 
 ## Features
 
-* One Aha! product can be associated with one or many GitHub repositories. If the association is one to many, you need to set up different integrations for each product - repository mapping.
+* One Aha! workspace can be associated with one or many GitHub repositories. If the association is one to many, you need to set up different integrations for each workspace - repository mapping.
 * Individual features can be sent to GitHub using the _Send to GitHub_ issues item in the _Send_ dropdown on the features page.
 * All features in a release (that have not already been implemented or sent to GitHub previously) can be sent to GitHub using the _Send_ dropdown next to the Integrations field on the release page.
 * When a feature is copied to GitHub one issue will be created for the feature.
@@ -19,7 +19,7 @@ This two-way integration allows you to push your features and requirements in Ah
 
 ## Configuration
 
-You need to be a Product Owner in Aha! to set up this integration.
+You need to be an owner in Aha! to set up this integration.
 
 Please carefully follow these instructions to ensure that the integration is properly configured.
 

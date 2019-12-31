@@ -1,10 +1,10 @@
-This integration enables users to create records in Aha! directly from Slack. The integration is enabled at the account level and each user will be able to create records for products in which they have Contributor or Product Owner permission.
+This integration enables users to create records in Aha! directly from Slack. The integration is enabled at the account level and each user will be able to create records for products in which they have contributor or owner permission.
 
 ## Configuration
 Click on the Add to Slack button. This will take you to Slack to enable the use of the /aha command.
 Enable the integration.
 Creating records
-Product owners and contributors can create records directly from Slack using the following commands:
+Owners and contributors can create records directly from Slack using the following commands:
 
 * /aha idea **[Idea name]**
 * /aha to-do **[To-do name]** or /aha todo **[To-do name]**

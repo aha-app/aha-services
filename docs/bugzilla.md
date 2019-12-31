@@ -4,7 +4,7 @@ This integration uses the REST API of Bugzilla version 5.0.
 
 ## Features
 
-* One Aha! product is associated with one product and component in Bugzilla.
+* One Aha! workspace is associated with one product and component in Bugzilla.
 * A feature can be sent to Bugzilla using the _Send_ dropdown next to the Integrations field for feature pages.
 * Requirements are sent to Bugzilla together with the feature.
 * Only the name, description and attachments of features and requirements are sent. Any other fields that are marked as mandatory in Bugzilla will be automatically populated with the last option for the field.
@@ -12,7 +12,7 @@ This integration uses the REST API of Bugzilla version 5.0.
 
 ## Configuration
 
-You need to be Product Owner in Aha! to set up this integration.
+You need to be an owner in Aha! to set up this integration.
 
 To configure this integration you need an API key from Bugzilla.
 

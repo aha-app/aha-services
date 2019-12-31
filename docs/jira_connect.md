@@ -21,7 +21,7 @@ The integration supports features and requirements being sent from Aha! to Jira 
 
 ## Configuration
 
-You need to be a Product Owner in Aha! and an Administrator in Jira to set up this integration.
+You need to be an owner in Aha! and an Administrator in Jira to set up this integration.
 
 This integration only works with the cloud version of Jira. 
 

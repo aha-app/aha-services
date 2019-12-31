@@ -2,7 +2,7 @@ This two-way integration allows you to push your features and requirements in Ah
 
 ## Features
 
-* One Aha! product is associated with one Trello board.
+* One Aha! workspace is associated with one Trello board.
 * Individual features can be sent to Trello using the _Send to Trello_ item in the _Send_ dropdown next to the Integrations field on the features page.
 * All features in a release (that have not already been implemented or sent to Trello previously) can be sent to Trello using the _Send to Trello_ item in the _Send_ dropdown next to the Integrations field on the release page.
 * When a feature is copied to Trello one card will be created for the feature. If the feature has requirements then each requirement will become a checklist item on the feature card. The requirement description will be concatenated with the name - so Trello does not work well with long requirement descriptions.
@@ -13,7 +13,7 @@ This two-way integration allows you to push your features and requirements in Ah
 
 ## Configuration
 
-You need to be a Product Owner in Aha! to set up this integration.
+You need to be an owner in Aha! to set up this integration.
 
 Please carefully follow these instructions to ensure that the integration is properly configured.
 

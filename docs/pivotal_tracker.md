@@ -2,7 +2,7 @@ This two-way integration allows you to push your features and requirements in Ah
 
 ## Features
 
-* One Aha! product is associated with one Pivotal Tracker project.
+* One Aha! workspace is associated with one Pivotal Tracker project.
 * Individual features can be sent to Pivotal Tracker using the _Send to Pivotal Tracker_ item in the _Send_ dropdown next to the Integrations field on the features page.
 * All features in a release (that have not already been implemented or sent to Pivotal Tracker previously) can be sent to Pivotal Tracker using the _Send to Pivotal Tracker_ item in the _Send_ dropdown next to the Integrations field on the release page.
 * How the features and requirements will be mapped to epics, stories and tasks
@@ -14,7 +14,7 @@ are mapped to tasks in which case no requirement attachments will be sent.
 
 ## Configuration
 
-You need to be a Product Owner in Aha! to set up this integration.
+You need to be an owner in Aha! to set up this integration.
 
 Please carefully follow these instructions to ensure that the integration is properly configured.
 

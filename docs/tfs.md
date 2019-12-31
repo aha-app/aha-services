@@ -4,7 +4,7 @@ This integration works with the online version of Azure DevOps Services. If you 
 
 ## Features
 
-* One Aha! product is associated with one Azure DevOps Services project.
+* One Aha! workspace is associated with one Azure DevOps Services project.
 * A feature can be sent to Azure DevOps Services using the _Send to Azure DevOps Services_ item in the _Send_ dropdown next to the Integrations field on the features page.
 * Requirements are sent together with the feature.
 * Only the name, description and attachments of features and requirements are sent.
@@ -13,7 +13,7 @@ This integration works with the online version of Azure DevOps Services. If you 
 
 ## Configuration
 
-You need to be Product Owner in Aha! to set up this integration.
+You need to be an owner in Aha! to set up this integration.
 
 To configure this integration, first configure your Azure DevOps Services Services account.
 

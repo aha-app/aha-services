@@ -2,7 +2,7 @@ This two-way integration allows you to push your features and requirements in Ah
 
 ## Features
 
-* One Aha! product can be associated with one or many GitLab projects. If the association is one to many, you need to set up different integrations for each product - project mapping.
+* One Aha! workspace can be associated with one or many GitLab projects. If the association is one to many, you need to set up different integrations for each workspace - project mapping.
 * Individual features can be sent to GitLab using the _Send to GitLab Issues_ item in the _Send_ dropdown on the features page.
 * All features in a release (that have not already been implemented or sent to GitLab previously) can be sent to GitLab using the _Send to GitLab Issues_ item in the _Send_ dropdown on the release page.
 
@@ -21,7 +21,7 @@ This two-way integration allows you to push your features and requirements in Ah
 
 ## Configuration
 
-You need to be a Product Owner in Aha! to set up this integration.
+You need to be an owner in Aha! to set up this integration.
 
 Please carefully follow these instructions to ensure that the integration is properly configured.
 

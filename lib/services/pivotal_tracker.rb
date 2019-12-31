@@ -12,7 +12,7 @@ class AhaServices::PivotalTracker < AhaService
   string :api_token, description: "API token from user profile screen at www.pivotaltracker.com"
   install_button
   select :project, collection: -> (meta_data, data) { meta_data.projects.collect { |p| [p.name, p.id] } },
-    description: "Tracker project that this Aha! product will integrate with."
+    description: "Tracker project that this Aha! workspace will integrate with."
   select :integration,
     collection: ->(meta_data, data) { meta_data.projects.detect {|p| p.id.to_s == data.project.to_s }.integrations.collect{|p| [p.name, p.id] } },
     description: "Pivotal integration that you added for Aha!"

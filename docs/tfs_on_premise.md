@@ -5,7 +5,7 @@ This integration works with the on-premise version of Azure DevOps Server. If yo
 ## Features
 
 * Authentication with Azure DevOps Services is done using NTLM.
-* One Aha! product is associated with one Azure DevOps Services project.
+* One Aha! workspace is associated with one Azure DevOps Services project.
 * A feature can be sent to the Azure DevOps server using the _Send to Azure DevOps Server_ item in the _Send_ dropdown next to the Integrations field on the features page.
 * Requirements are sent with the feature.
 * Only the name, description and attachments of features and requirements are sent.
@@ -14,7 +14,7 @@ This integration works with the on-premise version of Azure DevOps Server. If yo
 
 ## Configuration
 
-You need to be Product Owner in Aha! to set up this integration.
+You need to be an owner in Aha! to set up this integration.
 
 To configure this integration, first create the integration in Aha!
 
