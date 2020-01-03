@@ -16,7 +16,7 @@ class AhaServices::Fogbugz < AhaService
   install_button
   select :projects, collection: -> (meta_data, data) do
     meta_data.projects.sort_by(&:sProject).collect { |project| [project.sProject, project.ixProject] }
-  end, description: "FogBugz project that this Aha! product should integrate with."
+  end, description: "FogBugz project that this Aha! workspace will integrate with."
 
   callback_url description: "Add '?case_number={CaseNumber}' to this url before creating the trigger in FogBugz."
 
