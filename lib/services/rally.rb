@@ -1,9 +1,10 @@
 class AhaServices::Rally < AhaService
   caption do |workspace_type|
     object =
-      case workspace_type
-      when "product_workspace" then "releases, features"
-      when "marketing_workspace" then "schedules, activities"
+      if workspace_type == "marketing_workspace"
+        "schedules, activities"
+      else
+        "releases, features"
       end
     "Send #{object} and requirements to Rally"
   end
@@ -13,12 +14,12 @@ class AhaServices::Rally < AhaService
 
   install_button
 
-  select :workspace, description: "The Rally workspace containing the product Aha! will integrate with. After changing the workspace click the 'Test Connection' button to retrieve the projects for the workspace.", collection: -> (meta_data, data) {
+  select :workspace, description: "The Rally workspace containing the project Aha! will integrate with. After changing the workspace click the 'Test Connection' button to retrieve the projects for the workspace.", collection: -> (meta_data, data) {
     return [] unless meta_data && meta_data.workspaces
     meta_data.workspaces.collect{|p| [p.Name, p.ObjectID]}
   }
 
-  select :project, description: "The Rally project that this Aha! product will integrate with. Click 'Test Connection' to refresh this list.", collection: -> (meta_data,data) {
+  select :project, description: "The Rally project that this Aha! workspace will integrate with. Click 'Test Connection' to refresh this list.", collection: -> (meta_data,data) {
     return [] unless meta_data && meta_data.projects
     meta_data.projects.collect {|p| [p.Name, p.ObjectID] }
   }

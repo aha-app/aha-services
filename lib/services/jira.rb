@@ -3,12 +3,13 @@ require_relative "jira/jira_wiki_converter"
 class AhaServices::Jira < AhaService
   title "Jira"
   caption do |workspace_type|
-    feature_object =
-      case workspace_type
-      when "product_workspace" then "features"
-      when "marketing_workspace" then "activities"
+    object =
+      if workspace_type == "marketing_workspace"
+        "activities"
+      else
+        "features"
       end
-    "Send #{feature_object} to Jira issue tracking (supports on-premise and cloud)"
+    "Send #{object} to Jira issue tracking (supports on-premise and cloud)"
   end
 
   string :server_url, description: "URL for the Jira server, without a trailing slash, e.g. https://bigaha.atlassian.net"

@@ -2,7 +2,7 @@ This one-way integration allows you to push your features and requirements in Ah
 
 ## Features
 
-* One Aha! product is associated with one Redmine project.
+* One Aha! workspace is associated with one Redmine project.
 * Individual features can be sent to Redmine using the _Send to Redmine Issues_ item in the _Send_ dropdown next to the Integrations field on the features page.
 * When a feature is copied to Redmine one issue will be created for the feature. If
 the feature has requirements then each requirement will also be sent as an issue.
@@ -14,7 +14,7 @@ the feature has requirements then each requirement will also be sent as an issue
 
 ## Configuration
 
-You need to be a Product Owner in Aha! to set up this integration.
+You need to be an owner in Aha! to set up this integration.
 
 Please carefully follow these instructions to ensure that the integration is properly configured.
 

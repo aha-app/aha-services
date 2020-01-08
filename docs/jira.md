@@ -88,7 +88,7 @@ There is also a set of advanced functionality unique to the Jira integration, su
 
 ## Integration configuration
 
-You need to be a Product Owner in Aha! and an Administrator in JIRA to set up this integration. If you have already configured an integration that you wish to use as a [template](http://support.aha.io/hc/en-us/articles/210385463), you can skip these steps and simply apply your template through the _More options_ menu.
+You need to be an owner in Aha! and an Administrator in JIRA to set up this integration. If you have already configured an integration that you wish to use as a [template](http://support.aha.io/hc/en-us/articles/210385463), you can skip these steps and simply apply your template through the _More options_ menu.
 
 This integration works with both the cloud and on premise versions of Jira. If you are running the on premise version of Jira you will need to create a [firewall exception](http://support.aha.io/entries/40842777) so Aha! can make calls to the Jira API. The exception should forward requests to the internal Jira server.
 

@@ -1,13 +1,5 @@
 class AhaServices::Salesforce < AhaService
-  caption do |workspace_type|
-    object =
-      case workspace_type
-      when "multi_workspace" then "ideas or requests"
-      when "product_workspace" then "ideas"
-      when "marketing_workspace" then "requests"
-      end
-    "Receive #{object} from Salesforce"
-  end
+  caption "Receive ideas from Salesforce"
   category "Ideas capture"
   
   oauth2_button authorize_url: "https://login.salesforce.com/services/oauth2/authorize",

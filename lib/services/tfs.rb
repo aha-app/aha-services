@@ -1,12 +1,13 @@
 class AhaServices::TFS < AhaService
   title "Azure DevOps Server"
   caption do |workspace_type|
-    feature_object =
-      case workspace_type
-      when "product_workspace" then "features"
-      when "marketing_workspace" then "activities"
+    object =
+      if workspace_type == "marketing_workspace"
+        "activities"
+      else
+        "features"
       end
-    "Send #{feature_object} and requirements to Microsoft Azure DevOps Server (formerly TFS)"
+    "Send #{object} and requirements to Microsoft Azure DevOps Server (formerly TFS)"
   end
   service_name "tfs_on_premise"
   

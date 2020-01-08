@@ -1,4 +1,4 @@
-Send a log of activity from Aha! to a Slack channel. Configure the integration for a product to send only activity for that product. Configure the integration for the account to send all activity that you have access to.
+Send a log of activity from Aha! to a Slack channel. Configure the integration for a workspace to send only activity for that workspace. Configure the integration for the account to send all activity that you have access to.
 
 **WARNING** Sending activity out of Aha! and into Slack bypasses the security controls in Aha!. Anyone who has access to your Slack channel will be able to see the activity, regardless of whether they have access to that information in Aha!
 

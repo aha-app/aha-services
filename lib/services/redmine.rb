@@ -2,9 +2,10 @@ class AhaServices::Redmine < AhaService
   title 'Redmine'
   caption do |workspace_type|
     object =
-      case workspace_type
-      when "product_workspace" then "features"
-      when "marketing_workspace" then "activities"
+      if workspace_type == "marketing_workspace"
+        "activities"
+      else
+        "features"
       end
     "Send #{object} to Redmine open source issue tracking"
   end
@@ -16,7 +17,7 @@ class AhaServices::Redmine < AhaService
     collection: -> (meta_data, data) do
       meta_data.projects.collect { |p| [p.name, p.id] }
     end,
-    description: "Redmine project that this Aha! product will integrate with."
+    description: "Redmine project that this Aha! workspace will integrate with."
   select :tracker,
     collection: -> (meta_data, data) do
       meta_data.trackers.collect { |p| [p.name, p.id] }

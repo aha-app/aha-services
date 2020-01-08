@@ -2,9 +2,10 @@ class AhaServices::Fogbugz < AhaService
   title 'FogBugz'
   caption do |workspace_type|
     object =
-      case workspace_type
-      when "product_workspace" then "features"
-      when "marketing_workspace" then "activities"
+      if workspace_type == "marketing_workspace"
+        "activities"
+      else
+        "features"
       end
     "Send #{object} to FogBugz bug tracking software"
   end
@@ -15,7 +16,7 @@ class AhaServices::Fogbugz < AhaService
   install_button
   select :projects, collection: -> (meta_data, data) do
     meta_data.projects.sort_by(&:sProject).collect { |project| [project.sProject, project.ixProject] }
-  end, description: "FogBugz project that this Aha! product should integrate with."
+  end, description: "FogBugz project that this Aha! workspace will integrate with."
 
   callback_url description: "Add '?case_number={CaseNumber}' to this url before creating the trigger in FogBugz."
 

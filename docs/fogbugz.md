@@ -2,7 +2,7 @@ This two-way integration allows you to push your features and requirements in Ah
 
 ## Features
 
-* One Aha! product is associated with one FogBugz project.
+* One Aha! workspace is associated with one FogBugz project.
 * Individual features can be sent to FogBugz using the _Send to FogBugz_ item in the _Send_ dropdown on the features page.
 * All features in a release (that have not already been implemented or sent to FogBugz previously) can be sent to FogBugz using the _Send_ dropdown next to the Integrations field for for release pages.
 * When a feature is copied to FogBugz one issue will be created for the feature.
@@ -14,7 +14,7 @@ This two-way integration allows you to push your features and requirements in Ah
 
 ## Configuration
 
-You need to be a Product Owner in Aha! to set up this integration.
+You need to be an owner in Aha! to set up this integration.
 
 Please carefully follow these instructions to ensure that the integration is properly configured.
 
