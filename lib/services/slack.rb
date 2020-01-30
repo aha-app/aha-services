@@ -2,32 +2,32 @@ class AhaServices::Slack < AhaService
   title "Slack [from Aha!]"
   caption "Send workspace notifications from Aha! to Slack"
   category "Communication"
-  
+
   webhooks_slack_button
   install_button
-  
+
   audit_filter
-  
+
   def receive_installed
     send_message(text: "Aha! integration installed successfully. Make sure you enable the integration!")
   end
-  
+
   def receive_audit
     audit = payload.audit
     return unless audit.interesting
-    
+
     user = if audit.user
         audit.user.name
       else
         "Aha!"
       end
-    
+
     link = if audit.auditable_url
         "<#{audit.auditable_url}|#{audit.description}>"
       else
         audit.description
       end
-      
+
     send_message(
       username: "Aha!",
       icon_url: "https://secure.aha.io/assets/logos/aha_square_300.png",
@@ -45,9 +45,8 @@ class AhaServices::Slack < AhaService
       ]
     )
   end
-    
-  
-protected
+
+  protected
 
   def is_wide_field(field_name)
     !["Description", "Theme", "Body"].include?(field_name)
@@ -66,11 +65,12 @@ protected
       return
     elsif response.status == 404
       raise AhaService::RemoteError, "URL is not recognized"
+    elsif response.body == "invalid_token"
+      raise AhaService::RemoteError, "An invalid token was provided"
     else
       error = Hashie::Mash.new(JSON.parse(response.body))
-      
+
       raise AhaService::RemoteError, "Unhandled error: STATUS=#{response.status} BODY=#{error.message}"
     end
   end
-  
 end
