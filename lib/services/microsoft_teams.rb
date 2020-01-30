@@ -1,20 +1,20 @@
 class AhaServices::MicrosoftTeams < AhaService
   caption "Send workspace notifications from Aha! to Microsoft Teams"
   category "Communication"
-  
+
   string :webhook_url,
     description: "The URL that you copied when creating the webhook in Microsoft Teams"
   install_button
-  
+
   audit_filter
-  
+
   def receive_installed
     send_message(text: "Aha! integration installed successfully. Make sure you enable the integration!")
   end
-  
+
   def receive_audit
     return unless payload.audit.interesting
-    
+
     # array of elements with {"name": "asdf", "value": "the change"}
     facts = payload.audit.changes.each do |obj|
       obj["name"] = obj.delete("field_name")
@@ -63,8 +63,8 @@ class AhaServices::MicrosoftTeams < AhaService
     }
     send_message(message)
   end
-  
-protected
+
+  protected
 
   def title
     user = payload.audit.user&.name || "Aha!"
@@ -85,13 +85,14 @@ protected
       return
     elsif response.body == 'Webhook Bad Request - Null or empty event'
       raise AhaService::RemoteError, "Please use the Microsoft Teams Webhook connector (not the Aha! connector) for this integration."
+    elsif response.body == "Connector configuration not found"
+      raise AhaService::RemoteError, "The connector configuration was not found"
     elsif response.status == 404
       raise AhaService::RemoteError, "URL is not recognized"
     else
       error = Hashie::Mash.new(JSON.parse(response.body))
-      
+
       raise AhaService::RemoteError, "Unhandled error: STATUS=#{response.status} BODY=#{error.message}"
     end
   end
-  
 end

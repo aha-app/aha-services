@@ -6,7 +6,7 @@ gemspec
 gem "aha-api", :git => "https://github.com/aha-app/aha-api"
 
 gem "html2confluence", :git => "https://github.com/aha-app/html2confluence.git"
-gem "reverse_markdown", :git => "https://github.com/aha-app/reverse_markdown.git", branch: "instances"
+gem "reverse_markdown", :git => "https://github.com/aha-app/reverse_markdown.git"
 gem "redcarpet"
 gem "plain-david", git: "https://github.com/k1w1/plain-david.git" # HTML to plain text conversion.
 gem "sinatra"
