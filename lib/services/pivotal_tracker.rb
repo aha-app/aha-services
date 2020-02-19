@@ -83,7 +83,7 @@ protected
 
   def apply_change(kind, new_values, resource, resource_type)
     new_values.each do |change_kind, value|
-      if kind == "story"
+      if %w[story epic].include?(kind)
         if change_kind == "current_state"
           api.put(resource, { resource_type => { workflow_status: pivotal_to_aha_category(value) } })
         elsif change_kind == "name"
