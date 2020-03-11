@@ -11,6 +11,9 @@ module JiraMappedFields
     custom_fields = Hash.new
 
     field_mappings_for(resource).each do |field_mapping|
+      if field_mapping.is_a?(ActionController::Parameters)
+        field_mapping = Hashie::Mash.new(field_mapping)
+      end
       next unless field_mapping.is_a? Hashie::Mash
       info = jira_field_info(field_mapping.jira_field)
       if info
