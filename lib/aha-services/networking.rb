@@ -173,7 +173,12 @@ module Networking
   # services. We reject any that resolve to a local address.
   #
   def verify_url(url_to_check)
-    uri = URI.parse(url_to_check)
+    uri =
+      begin
+        URI.parse(url_to_check)
+      rescue StandardError
+        nil
+      end
     
     if uri.nil? || uri.host.nil?
       raise AhaService::InvalidUrlError, "URL is empty or invalid"
