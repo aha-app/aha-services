@@ -1,6 +1,7 @@
 class AhaServices::GoogleHangoutsChat < AhaService
   caption "Send workspace notifications from Aha! to Google Hangouts Chat"
   category "Communication"
+  title "Google Chat"
   
   string :webhook_url,
     description: "The URL that you copied when creating the webhook in Google Hangouts Chat"
