@@ -18,5 +18,6 @@ require 'services/github/github_milestone_resource'
 Dir[File.expand_path(File.join(File.dirname(__FILE__),'support','**','*.rb'))].each {|f| require f}
 
 RSpec.configure do |config|
+  config.run_all_when_everything_filtered = true
 end
 
