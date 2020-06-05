@@ -64,18 +64,6 @@ class AhaServices::MicrosoftTeams < AhaService
     send_message(message)
   end
 
-  protected
-
-  def title
-    user = payload.audit.user&.name || "Aha!"
-
-    "#{user} #{payload.audit.description}"
-  end
-
-  def url
-    data.webhook_url
-  end
-
   def send_message(message)
     raise AhaService::RemoteError, "Integration has not been configured" unless url
 
@@ -90,9 +78,28 @@ class AhaServices::MicrosoftTeams < AhaService
     elsif response.status == 404
       raise AhaService::RemoteError, "URL is not recognized"
     else
-      error = Hashie::Mash.new(JSON.parse(response.body))
+      body_message =
+        begin
+          error = Hashie::Mash.new(JSON.parse(response.body))
+          error.message
+        rescue
+          response.body
+        end
 
-      raise AhaService::RemoteError, "Unhandled error: STATUS=#{response.status} BODY=#{error.message}"
+      raise AhaService::RemoteError, "Unhandled error: STATUS=#{response.status} BODY=#{body_message}"
     end
   end
+
+  protected
+
+  def title
+    user = payload.audit.user&.name || "Aha!"
+
+    "#{user} #{payload.audit.description}"
+  end
+
+  def url
+    data.webhook_url
+  end
+
 end
