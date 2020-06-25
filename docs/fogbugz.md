@@ -35,9 +35,7 @@ Enable URL triggers in FogBugz to get status changes back:
 6. Name you trigger Aha and create it.
 
 ## API token
-
-You need an API token to use the FogBugz integration. You find out how to get an api token [here](http://help.fogcreek.com/8447/how-to-get-a-fogbugz-xml-api-token).
-
+You need an API token to use the FogBugz integration. You can find out how to generate an API token [here](https://support.aha.io/hc/en-us/articles/201106849).
 
 ## Troubleshooting
 

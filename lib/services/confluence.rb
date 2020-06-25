@@ -3,7 +3,7 @@ class AhaServices::Confluence < AhaService
 
   # Integrations in this category do not directly receive or send data but are rather
   # presentational integrations from our shared webpages.
-  category 'Wiki'
+  category 'Knowledge management'
 
   confluence_button
 
