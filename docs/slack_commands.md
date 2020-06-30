@@ -9,7 +9,7 @@ Owners and contributors can create records directly from Slack using the followi
 * /aha idea **[Idea name]**
 * /aha to-do **[To-do name]** or /aha todo **[To-do name]**
 * /aha feature **[Feature name]**
-* /aha master feature **[Master feature name]**
+* /aha epic **[Epic name]**
 * /aha release **[Release name]**
 * /aha initiative **[Initiative name]**
 
