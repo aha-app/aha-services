@@ -35,7 +35,7 @@ class PivotalTrackerStoryResource < PivotalTrackerProjectDependentResource
       logger.info("Updated story #{story_id}")
     end
   end
-  
+
   def find_by_id(story_id)
     prepare_request
     response = http_get "#{api_url}/projects/#{project_id}/stories/#{story_id}"
@@ -79,7 +79,7 @@ protected
     if resource.work_units == 20 # Only send estimates if using story points
       story[:estimate] = resource.original_estimate
     end
-    
+
     file_attachments = attachment_resource.upload(resource.description.attachments | resource.attachments)
     if file_attachments.any?
       story[:comments] = [{file_attachments: file_attachments}]
@@ -111,20 +111,20 @@ protected
       if label_id.present?
         # We need to read the current labels from the story so we can merge our
         # label.
-        existing_story = find_by_id(resource_mapping.id)
-        
-        story[:label_ids] = existing_story.labels.collect {|l| l.id } | [label_id.to_i]
-        
+        if (existing_story = find_by_id(resource_mapping.id))
+          story[:label_ids] = existing_story.labels.collect {|l| l.id } | [label_id.to_i]
+        end
+
         # TODO: Unfortunately PT doesn't make it easy for us to remove the old epic, so now the story will be in two epics.
       end
     end
-    
+
     updated_story = update(resource_mapping.id, story)
 
     # Add the new attachments.
     new_attachments = attachment_resource.update(resource, attachment_resource.all_for_story(resource_mapping.id))
     add_attachments(resource_mapping.id, new_attachments)
-    
+
     updated_story
   end
 
