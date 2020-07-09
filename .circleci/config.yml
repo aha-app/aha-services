@@ -24,3 +24,9 @@ jobs:
           path: /tmp/rspec
       - store_artifacts:
           path: spec/coverage
+
+workflows:
+  version: 2
+  test:
+    jobs:
+      - test
