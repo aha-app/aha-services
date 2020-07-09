@@ -17,5 +17,4 @@ protected
       body
     end
   end
-
 end

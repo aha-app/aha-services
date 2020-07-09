@@ -46,5 +46,4 @@ class PivotalTrackerResource < GenericResource
       end
     resource
   end
-
 end
