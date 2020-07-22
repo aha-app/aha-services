@@ -15,7 +15,7 @@ module Networking
 
       encoding = options.delete(:encoding)
       adapter = options.delete(:adapter)
-      
+
       Faraday.new(options) do |b|
         b.request (encoding || :url_encoded)
         faraday_builder(b)
@@ -66,7 +66,7 @@ module Networking
   # Returns a Faraday::Response instance.
   def http_get(url = nil, params = nil, headers = nil)
     @logger.debug("Sending GET request to #{url}")
-    
+
     check_ssl do
       http.get do |req|
         req.url(verify_url(url))    if url
@@ -152,9 +152,9 @@ module Networking
   # Returns a Faraday::Response instance.
   def http_method(method, url = nil, body = nil, headers = nil)
     block = Proc.new if block_given?
-    
+
     @logger.debug("Sending #{method} request to #{url} with body: #{body} and headers: #{headers}")
-    
+
     check_ssl do
       http.send(method) do |req|
         req.url(verify_url(url))    if url
@@ -179,11 +179,11 @@ module Networking
       rescue StandardError
         nil
       end
-    
+
     if uri.nil? || uri.host.nil?
       raise AhaService::InvalidUrlError, "URL is empty or invalid"
     end
-    
+
     if (verified = @@verified_urls[uri.host]) == false
       raise AhaService::InvalidUrlError, "Invalid local address #{uri.host}"
     elsif verified
@@ -259,7 +259,7 @@ module Networking
       end
     end
   end
-  
+
   class Gzip < Faraday::Response::Middleware
     def on_complete(env)
       encoding = env[:response_headers]['content-encoding'].to_s.downcase
