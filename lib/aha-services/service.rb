@@ -138,7 +138,7 @@ class AhaService
     end
     self
   rescue AhaService::ConfigurationError, Errno::EHOSTUNREACH, Errno::ECONNRESET,
-    SocketError, Net::ProtocolError, Faraday::Error::ConnectionFailed => err
+    SocketError, Net::ProtocolError, Faraday::ConnectionFailed => err
     if !err.is_a?(AhaService::Error)
       err = ConfigurationError.new(err)
     end

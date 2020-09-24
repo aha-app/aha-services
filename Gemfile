@@ -2,8 +2,7 @@ source "https://rubygems.org"
 
 gemspec
 
-# gem "aha-api", :path => "~/Documents/projects/aha/aha-api"
-gem "aha-api", :git => "https://github.com/aha-app/aha-api"
+gem "aha-api", git: "https://github.com/aha-app/aha-api", branch: "PF-1301-upgrade-faraday"
 
 gem "html2confluence", :git => "https://github.com/aha-app/html2confluence.git"
 gem "reverse_markdown", :git => "https://github.com/aha-app/reverse_markdown.git"
