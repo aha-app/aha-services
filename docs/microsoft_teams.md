@@ -6,14 +6,12 @@ Send a log of activity from Aha! to a Microsoft Teams channel. Configure the int
 
 Create an incoming webhook in Microsoft Teams
 
-1. Open Microsoft Teams and select Store. 
-1. Select Incoming Webhook.
-1. Enter your Microsoft Team and click Install.
-1. Select the channel where you want to receive updates and click Set up.
-1. Name your webhook (e.g. Aha! product updates). 
-1. Download the Aha! avatar from https://www.aha.io/aha_square_large.png and upload it as the webhook image.
-1. Click Create. 
-1. Copy the webhook URL.
+1. Navigate to the channel where you want to add the webhook and select (**•••**) More Options from the top navigation bar. 
+1. Choose **Connectors** from the drop-down menu and search for **Incoming Webhook**.
+1. Select the **Configure** button, provide a name, and, optionally, upload an image avatar for your webhook.
+1. The dialog window will present a unique URL that will map to the channel. Make sure that you **copy and save the URL**—you will need to provide it to the outside service.
+1. Select the **Done** button. The webhook will be available in the team channel.
+
 
 Create the integration in Aha! 
 
