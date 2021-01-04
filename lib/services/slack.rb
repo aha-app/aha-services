@@ -72,5 +72,10 @@ class AhaServices::Slack < AhaService
 
       raise AhaService::RemoteError, "Unhandled error: STATUS=#{response.status} BODY=#{error.message}"
     end
+  rescue JSON::ParserError
+    raise(
+      AhaService::RemoteError,
+      "Unhandled error with invalid payload. BODY=#{response.body}"
+    )
   end
 end
