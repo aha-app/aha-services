@@ -5,11 +5,11 @@ require 'securerandom'
 # Use a custom table renderer to match Aha table style, so incoming markdown is transformed correctly
 class AhaTableRender < Redcarpet::Render::HTML
   def table(header, body)
-    "<table class='mce-item-table'>" + 
+    "<table class='mce-item-table'>" +
       "<tbody>#{header}#{body}</tbody>" +
     "</table>"
   end
-  
+
   def table_cell(content, alignment)
     "<td>#{content}</td>"
   end
@@ -17,7 +17,6 @@ end
 
 # Utility routines specific to Aha! data.
 module Helpers
-  
   def resource_name(resource)
     if resource.name.present?
       resource.name
@@ -61,13 +60,12 @@ module Helpers
     end
     html
   end
-  
+
   def html_to_markdown(html, github_style = false)
     ReverseMarkdown.convert(html, unknown_tags: :bypass, github_flavored: github_style)
   end
-  
-  def html_to_slack_markdown(html)
 
+  def html_to_slack_markdown(html)
     html = (html || "").to_s.gsub(/\n$/, '').gsub(/<del[^>]*>([^<]*)<\/del>/, '')
     # Keep slack links though plain
     html, keys = links_to_keys(html)
@@ -84,11 +82,15 @@ module Helpers
   end
 
   def markdown_to_html(markdown)
-    converter = Redcarpet::Markdown.new(AhaTableRender.new, autolink: true, tables: true)
-    converter.render(markdown)
+    converter = Redcarpet::Markdown.new(AhaTableRender.new(hard_wrap: true), autolink: true, tables: true)
+    converter.render(markdown).tap do |html|
+      # The :hard_wrap option leaves the old newlines in place after adding <br/>
+      # elements. This results in \n\n when converted back to plain text which is
+      # not good. So clean them up.
+      html.gsub!("\n", "")
+    end
   end
-  
-  
+
   def reference_num_to_resource_type(reference_num)
     if reference_num =~ /-R-\d+$/ || reference_num =~ /-R-PL$/ || reference_num =~ /-P-\d+$/ || reference_num =~ /-P-PL$/
       "releases"
@@ -99,7 +101,7 @@ module Helpers
     end
   end
 
-private
+  private
 
   # Convert a description field to a title - e.g. for requirements which
   # do not have a title.
@@ -116,7 +118,7 @@ private
   end
 
   def html_link_pattern
-      / <a (?:.*?) href=['"](.+?)['"] (?:.*?)> (.+?) <\/a> /x
+    / <a (?:.*?) href=['"](.+?)['"] (?:.*?)> (.+?) <\/a> /x
   end
 
   def slack_link(link, text = nil)
@@ -126,5 +128,4 @@ private
 
     return out
   end
-
 end
