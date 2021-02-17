@@ -18,6 +18,12 @@ describe Helpers do
       it { is_expected.to eq("<p>line 1</p><p>line 2</p><p>line 3</p>") }
     end
 
+    context "whitespace before newlines don't create multiple line breaks" do
+      let(:md) { "line 1  \nline 2" }
+
+      it { is_expected.to eq("<p>line 1<br>line 2</p>") }
+    end
+
     context "single newlines are converted to <br>" do
       let(:md) { "this text has\na newline\nand another" }
 

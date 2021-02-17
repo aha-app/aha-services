@@ -82,8 +82,12 @@ module Helpers
   end
 
   def markdown_to_html(markdown)
+    # hard_wrap will respect newlines in the markdown and convert them to link break elements
     converter = Redcarpet::Markdown.new(AhaTableRender.new(hard_wrap: true), autolink: true, tables: true)
-    converter.render(markdown).tap do |html|
+
+    # If there is any whitespace before the end of a line the hard_wrap option
+    # will convert that into multiple line breaks which is not desirable
+    converter.render(markdown.gsub(/ *$/, "")).tap do |html|
       # The :hard_wrap option leaves the old newlines in place after adding <br/>
       # elements. This results in \n\n when converted back to plain text which is
       # not good. So clean them up.
