@@ -3,7 +3,7 @@ jobs:
   test:
     working_directory: ~/aha-services
     docker:
-      - image: circleci/ruby:2.5
+      - image: circleci/ruby:2.6.6-buster
         environment:
           GEM_HOME: ~/aha-services/vendor/bundle
     steps:
