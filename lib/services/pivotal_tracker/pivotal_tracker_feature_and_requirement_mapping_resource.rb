@@ -43,6 +43,8 @@ private
     end
   end
   
+  # Looks like this code was never fully hooked up. We removed the options to
+  # use "epic-story-task".
   def initiative_mapping_resource
     @initiative_mapping_resource ||= (mapping == "epic-story-task") ?
       PivotalTrackerEpicResource.new(@service, project_id) :
