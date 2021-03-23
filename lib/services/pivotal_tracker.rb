@@ -19,8 +19,7 @@ class AhaServices::PivotalTracker < AhaService
   select :mapping, collection: [
         ["Feature -> Story, Requirement -> Story", "story-story"],
         ["Feature -> Epic, Requirement -> Story", "epic-story"],
-        ["Feature -> Story, Requirement -> Task", "story-task"],
-        ["Initiative -> Epic, Feature -> Story, Requirement -> Task", "epic-story-task"]
+        ["Feature -> Story, Requirement -> Task", "story-task"]
       ],
     description: "Choose how features and requirements in Aha! will map to epics, stories and tasks in Pivotal Tracker."
   internal :feature_status_mapping
