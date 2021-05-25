@@ -1,5 +1,11 @@
 require 'active_support/core_ext/string'
 
+unless defined?(Faraday::ConnectionFailed)
+  # faraday pre v1 the errors are class spaced. Post v1 they have moved. This should
+  # allow us to remove the version limit for the gem
+  class Faraday::ConnectionFailed < Faraday::Error::ConnectionFailed; end
+end
+
 class AhaService
   include Networking
   include Errors
