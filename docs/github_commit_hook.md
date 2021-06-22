@@ -4,7 +4,7 @@ requirement is referenced in a [Github](http://www.github.com/) commit message.
 Installation
 ------------
 
-1. On the _Settings_ tab of the Github repository, open the Webhooks & Services_ section.
+1. On the _Settings_ tab of the Github repository, open the Webhooks section.
 2. Click _Add webhook_. 
 3. Paste the payload URL from _Hook URL_ section below.
 4. The _Content type_ should be `application/x-www-form-urlencoded`, the _secret_ should be empty and select _Just the push event_.
