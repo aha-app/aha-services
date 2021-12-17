@@ -165,7 +165,7 @@ class AhaServices::Trello < AhaService
   end
 
   def trelloize_filename(fname)
-    URI.encode(fname.gsub(/[ *\\\"\']/, "_"))
+    ERB::Util.url_encode(fname.gsub(/[ *\\\"\']/, "_"))
   end
 
   def upload_attachments(attachments, card)

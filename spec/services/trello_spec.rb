@@ -182,7 +182,7 @@ describe AhaServices::Trello do
   it "escapes file names properly" do
     # this filename is the result of aha doing all of its escaping
     expect(service.trelloize_filename("Screen Shot 2017-06-26 at 9.51.26 AM !______*() -___ __ __ __ _'\"___.__ ī ™.png")).
-      to eq("Screen_Shot_2017-06-26_at_9.51.26_AM_!_______()_-___________________.___i%CC%84_%E2%84%A2.png")
+      to eq("Screen_Shot_2017-06-26_at_9.51.26_AM_%21_______%28%29_-___________________.___i%CC%84_%E2%84%A2.png")
   end
 
 end

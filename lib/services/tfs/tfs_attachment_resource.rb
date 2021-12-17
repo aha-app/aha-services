@@ -7,8 +7,8 @@ class TFSAttachmentResource < TFSResource
     return unless aha_attachment.download_url
 
     http.headers["Transfer-Encoding"] = "chunked"
-    open(aha_attachment.download_url) do |downloaded_file|
-      url = mstfs_url("wit/attachments?fileName=" + URI.escape(aha_attachment.file_name))
+    URI.open(aha_attachment.download_url) do |downloaded_file|
+      url = mstfs_url("wit/attachments?fileName=" + ERB::Util.url_encode(aha_attachment.file_name))
       response = http_post url, downloaded_file.read, "Content-Length" => downloaded_file.length.to_s
       process_response response, 201
     end

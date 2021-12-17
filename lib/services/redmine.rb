@@ -75,9 +75,9 @@ private
     version_resource.create
   end
 
-  def create_issue **options
+  def create_issue(**options)
     check_projects
-    issue_resource.create options
+    issue_resource.create(**options)
   end
 
   def update_version
@@ -85,9 +85,9 @@ private
     version_resource.update
   end
 
-  def update_issue **options
+  def update_issue(**options)
     check_projects
-    issue_resource.update options
+    issue_resource.update(**options)
   end
 
 #===========
