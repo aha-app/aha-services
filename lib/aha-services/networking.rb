@@ -184,27 +184,15 @@ module Networking
       raise AhaService::InvalidUrlError, "URL is empty or invalid"
     end
 
-    if (verified = @@verified_urls[uri.host]) == false
-      raise AhaService::InvalidUrlError, "Invalid local address #{uri.host}"
-    elsif verified
-      return url_to_check
-    end
-
     ip_to_check = IPSocket::getaddress(uri.host)
     @@prohibited_addresses.each do |addr|
       if addr === ip_to_check
-        @@verified_urls[uri.host] = false
         raise AhaService::InvalidUrlError, "Invalid local address #{uri.host}"
       end
     end
 
-    @@verified_urls[uri.host] = true
     url_to_check
   end
-
-  # URLs that we have already checked. Hash of address to true/false if the
-  # URL is valid.
-  @@verified_urls = {}
 
   # CIDR ranges that could be the local network and are prohibited.
   @@prohibited_addresses = [
