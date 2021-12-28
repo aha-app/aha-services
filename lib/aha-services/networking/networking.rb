@@ -1,4 +1,5 @@
 require "zlib"
+require_relative "verify_net_adapter"
 
 module Networking
   # Public: Lazily loads the Faraday::Connection for the current Service
@@ -14,12 +15,12 @@ module Networking
       end
 
       encoding = options.delete(:encoding)
-      adapter = options.delete(:adapter)
+      adapter = options.delete(:adapter) || AhaServices::Networking::VerifyNetAdapter
 
       Faraday.new(options) do |b|
         b.request (encoding || :url_encoded)
         faraday_builder(b)
-        b.adapter (adapter || :net_http)
+        b.adapter (adapter)
         b.use(HttpReporter, self)
         b.use(Gzip)
       end
