@@ -3,7 +3,7 @@ class Net::HTTP::Persistent
     @request_class ||= Net::HTTP
   end
 
-  def self.request_class=(klass)
+  def self.request_class=(klass) # rubocop:disable Style/TrivialAccessors
     @request_class = klass
   end
 
