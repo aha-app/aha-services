@@ -19,12 +19,14 @@ require 'hashie'
 require 'aha-api'
 require 'jwt'
 
+require_relative 'net_http_persistent_override'
+
 # This is brutal, but we need it to the backwards compatible behavior of 
 # not logging warnings without rewriting all our code to use a new subclass.
 Hashie::Mash.instance_variable_set(:@disable_warnings, true)
 
 require 'aha-services/version'
-require 'aha-services/networking'
+require 'aha-services/networking/networking'
 require 'aha-services/schema'
 require 'aha-services/errors'
 require 'aha-services/api'
