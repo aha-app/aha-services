@@ -26,7 +26,7 @@ require_relative 'net_http_persistent_override'
 Hashie::Mash.instance_variable_set(:@disable_warnings, true)
 
 require 'aha-services/version'
-require 'aha-services/networking'
+require 'aha-services/networking/networking'
 require 'aha-services/schema'
 require 'aha-services/errors'
 require 'aha-services/api'
