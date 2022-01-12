@@ -164,8 +164,24 @@ class AhaServices::Trello < AhaService
     )
   end
 
-  def trelloize_filename(fname)
-    URI.encode(fname.gsub(/[ *\\\"\']/, "_"))
+  def trelloize_filename(filename)
+    filename.gsub!(/[ *\\\"\']/, "_")
+
+    # This method used to call URI.escape but in Ruby 3 this method was removed.
+    # In an effort to preserve the same behavior, which replacements such as CGI.escape
+    # do not match exactly, we replicate the same logic from URI.escape here.
+    # See https://github.com/ruby/ruby/blob/f69aeb83146be640995753667fdd6c6f157527f5/lib/uri/rfc2396_parser.rb#L300
+    unsafe_characters = Regexp.new("[^\\-_.!~*'()a-zA-Z\\d;/?:@&=+$,\\[\\]]")
+
+    filename.gsub(unsafe_characters) do |match|
+      escaped_filename = ''
+
+      match.each_byte do |character|
+        escaped_filename << sprintf('%%%02X', character)
+      end
+
+      escaped_filename
+    end.force_encoding(Encoding::US_ASCII)
   end
 
   def upload_attachments(attachments, card)

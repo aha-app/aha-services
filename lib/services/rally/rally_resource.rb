@@ -14,7 +14,7 @@ class RallyResource < GenericResource
     b.headers['Content-Type'] = "application/json"
     b.headers['X-RallyIntegrationName'] = "Aha! Integration"
     b.headers['X-RallyIntegrationVendor'] = "Aha! Labs Inc."
-    b.basic_auth @service.data.user_name, @service.data.user_password
+    b.request(:basic_auth, @service.data.user_name, @service.data.user_password)
     b.use :cookie_jar
   end
 

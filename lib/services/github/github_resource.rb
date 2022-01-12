@@ -1,13 +1,8 @@
 class GithubResource < GenericResource
   API_URL = "https://api.github.com"
 
-  def prepare_request
-    super
-    auth_header
-  end
-
-  def auth_header
-    http.basic_auth @service.data.username, @service.data.password
+  def faraday_builder(builder)
+    builder.request(:basic_auth, @service.data.username, @service.data.password)
   end
 
   def github_http_get_paginated(url, page = 1, previous_response = [], &block)
@@ -35,6 +30,4 @@ class GithubResource < GenericResource
   def has_paginated_header?(response)
     response.headers['link'] && response.headers['link'].match(/rel=\"next\"/)
   end
-
-
 end

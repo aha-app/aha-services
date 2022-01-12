@@ -10,7 +10,7 @@ class TrelloAttachmentResource < TrelloResource
 
     return unless attachment.download_url
 
-    open(attachment.download_url) do |downloaded_file|
+    URI.open(attachment.download_url) do |downloaded_file|
       # Reset Faraday and switch to multipart to do the file upload.
       http_reset
       http(:encoding => :multipart)

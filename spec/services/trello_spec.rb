@@ -11,7 +11,7 @@ describe AhaServices::Trello do
     AhaServices::Trello.new "server_url" => base_url, "integration_id" => :feature_integration_id
   end
 
-  let(:card_id) { "dummy_trello_card_id" }  
+  let(:card_id) { "dummy_trello_card_id" }
   let(:checklist_id) { "dummy_trello_checklist_id" }
   let(:checklist_item_id) { "dummy_trello_checklist_item_id" }
   let(:callback_url) { "http://some_url.com"}
@@ -26,8 +26,8 @@ describe AhaServices::Trello do
   def stub_requests
     WebMock.reset!
     new_feature = @new_feature_event.feature
-    updated_feature = @update_feature_event.feature    
-    # cards        
+    updated_feature = @update_feature_event.feature
+    # cards
     @create_card = stub_request(:post, trello_url("cards"))
       .to_return(status: 200, body: {id: card_id}.to_json)
     @get_card = stub_request(:get, trello_url("cards/#{card_id}"))
@@ -60,7 +60,7 @@ describe AhaServices::Trello do
     @create_comment = stub_request(:post, trello_url("cards/#{card_id}/actions/comments"))
       .with(body: { text: "Created from Aha! #{new_feature.url}" }.to_json)
       .to_return(status: 200)
-    # checklists      
+    # checklists
     @get_checklists = stub_request(:get, trello_url("cards/#{card_id}/checklists"))
       .to_return(status: 200, body: "[]")
     @create_checklist = stub_request(:post, trello_url("checklists"))
@@ -101,7 +101,7 @@ describe AhaServices::Trello do
     @get_attachments = stub_request(:get, trello_url("cards/#{card_id}/attachments"))
       .to_return(status: 200, body: "[]")
     @create_attachment = stub_request(:post, trello_url("cards/#{card_id}/attachments"))
-      .to_return(status: 200)  
+      .to_return(status: 200)
     # attachment resources
     stub_request(:get, "https://attachments.s3.amazonaws.com/attachments/80641a3d3141ce853ea8642bb6324534fafef5b3/original.png?1370458143").
       to_return(:status => 200, :body => "", :headers => {})
@@ -114,7 +114,7 @@ describe AhaServices::Trello do
 
   end
 
-  before do    
+  before do
     service.data.stub(:create_features_at).and_return("bottom")
     service.data.stub(:list_for_new_features).and_return("list_id1")
     service.data.stub(:oauth_key).and_return(oauth_key)
@@ -122,7 +122,7 @@ describe AhaServices::Trello do
     service.data.stub(:callback_url).and_return(callback_url)
     service.data.stub(:feature_statuses).and_return(feature_statuses)
     service.data.stub(:integration_id).and_return(feature_integration_id)
-    @new_feature_event = Hashie::Mash.new(json_fixture("create_feature_event.json"))    
+    @new_feature_event = Hashie::Mash.new(json_fixture("create_feature_event.json"))
     @update_feature_event = Hashie::Mash.new(json_fixture("update_feature_event.json"))
     stub_requests
   end
@@ -130,7 +130,7 @@ describe AhaServices::Trello do
   describe "receiving new features" do
 
     before do
-      service.stub(:payload).and_return(@new_feature_event)      
+      service.stub(:payload).and_return(@new_feature_event)
       service.receive(:create_feature)
     end
 
@@ -156,26 +156,26 @@ describe AhaServices::Trello do
   end
 
   describe "updating an existing feature" do
-    
+
     before do
         service.stub(:payload).and_return(@update_feature_event)
         # but lets pretend that 1 of these attachments already exists
         @get_attachments = stub_request(:get, trello_url("cards/#{card_id}/attachments"))
-          .to_return(status: 200, body: [{ 
+          .to_return(status: 200, body: [{
             url: "https://somedomain.com/Belgium.png",
             bytes: 28228
-          }].to_json)                  
-        service.receive(:update_feature)        
+          }].to_json)
+        service.receive(:update_feature)
     end
 
-    it "saves the card, checklist item and attachments" do            
+    it "saves the card, checklist item and attachments" do
       expect(@save_card).to have_been_requested.once
       # Checking if the checklist item integrated with the requirement was updated
-      expect(@save_checklist_item).to have_been_requested.once      
+      expect(@save_checklist_item).to have_been_requested.once
       # We are expecting only three of four attachments to be uploaded
       # since one of them is already attached to the card
       expect(@create_attachment).to have_been_requested.times(3)
-    end    
+    end
 
   end
 

@@ -6,7 +6,7 @@ class TFSResource < GenericResource
     if @service.class.service_name == "tfs_on_premise"
       b.request(:tfs_ntlm, self, @service.data.user_name, @service.data.user_password)
     else
-      b.basic_auth(@service.data.user_name, @service.data.user_password)
+      b.request(:basic_auth, @service.data.user_name, @service.data.user_password)
     end
   end
 

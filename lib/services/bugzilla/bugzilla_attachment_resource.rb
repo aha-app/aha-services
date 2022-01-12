@@ -3,7 +3,7 @@ require 'base64'
 
 class BugzillaAttachmentResource < BugzillaResource
   def create bug_id, aha_attachment
-    open(aha_attachment.download_url) do |file|
+    URI.open(aha_attachment.download_url) do |file|
       data = file.read()
       # TODO: The documentation states that the data should be base64 encoded if not plain ascii
       # but it seems that it ALWAYS expects it to be encoded

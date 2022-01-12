@@ -1,14 +1,8 @@
 class JiraResource < GenericResource
-
-  def prepare_request
-    super
-    auth_header
-  end
-
-  def auth_header
+  def faraday_builder(builder)
     # No auth in JiraConnect - we are doing it with middleware.
     unless jira_connect_resource?
-      http.basic_auth @service.data.username, @service.data.password
+      builder.request(:basic_auth, @service.data.username, @service.data.password)
     end
   end
 
@@ -20,7 +14,7 @@ class JiraResource < GenericResource
     else
       aha_field_name = "None"
     end
-    
+
     case value.strip
     when "Option id 'null' is not valid"
       "The value sent from the Aha! field '#{aha_field_name}' did not match any options for the JIRA Field '#{jira_field_name}'. Are you sure the options are identical?"
