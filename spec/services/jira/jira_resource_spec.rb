@@ -8,6 +8,28 @@ RSpec.describe JiraResource do
     allow(IPSocket).to receive(:getaddress).with("test.host").and_return("123.123.123.123")
   end
 
+  context 'basic auth' do
+    let(:api_url) { 'https://test.host/api/v2' }
+    let(:service_options) do
+      {
+        username: "testuser@jira.com",
+        password: "secret",
+        server_url: 'https://test.host'
+      }
+    end
+    let(:request_regex) { /#{api_url}/ }
+
+    before { stub_request(:get, request_regex).to_return(status: 200) }
+
+    it 'has an auth header' do
+      resource.http_get(api_url)
+      expect(
+        a_request(:get, api_url)
+          .with { |req| req.headers['Authorization'] =~ /^Basic / }
+      ).to have_been_made
+    end
+  end
+
   context 'jwt handling' do
     let(:api_url) { 'https://test.host/api/v2' }
     let(:service_options) do
