@@ -1,11 +1,4 @@
 class JiraResource < GenericResource
-  def faraday_builder(builder)
-    # No auth in JiraConnect - we are doing it with middleware.
-    unless jira_connect_resource?
-      builder.request(:basic_auth, @service.data.username, @service.data.password)
-    end
-  end
-
   def error_message_for_field key, value
     jira_field_name = @service.meta_data.fields[key]["name"] rescue key
     field_info = @service.data.field_mapping.grep(Hash).detect{|m| m["jira_field"] == key }
@@ -51,7 +44,7 @@ class JiraResource < GenericResource
           consumer_secret: @service.data.consumer_secret, signature_method: "RSA-SHA1"
       end
     else
-      super
+      builder.request(:basic_auth, @service.data.username, @service.data.password)
     end
   end
 
