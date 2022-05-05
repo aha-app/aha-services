@@ -956,6 +956,7 @@ describe AhaServices::Jira do
         )
       ).and_return(Hashie::Mash.new(id: 53498, key: 'key'))
       service.send(:create_issue_for, Hashie::Mash.new(resource['feature']), initiative, version, nil)
+
     end
   end
 end
