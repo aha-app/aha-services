@@ -106,7 +106,7 @@ class AddJiraJwt < Faraday::Middleware
   end
 
   def escape(value)
-    URI.escape(value.to_s, /[^a-z0-9\-\.\_\~]/i)
+    URI::Parser.new.escape(value.to_s, /[^a-z0-9\-\.\_\~]/i)
   end
 
   def sub_claim
