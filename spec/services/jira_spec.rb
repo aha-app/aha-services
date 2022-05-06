@@ -949,12 +949,14 @@ describe AhaServices::Jira do
             'accountId' => '1234-5678-abcd-efgh'
           )
         ).exactly(2).times
+
       expect(issue_resource).to receive(:create).with(
         'fields' => hash_including(
           'assignee' => { 'accountId' => '1234-5678-abcd-efgh' },
           'reporter' => { 'accountId' => '1234-5678-abcd-efgh' }
         )
       ).and_return(Hashie::Mash.new(id: 53498, key: 'key'))
+
       service.send(:create_issue_for, Hashie::Mash.new(resource['feature']), initiative, version, nil)
     end
   end
