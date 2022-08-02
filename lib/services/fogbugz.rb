@@ -11,7 +11,7 @@ class AhaServices::Fogbugz < AhaService
   end
 
   string :fogbugz_url, description: "URL for your FogBugz server without the trailing slash, e.g. https://bigaha.fogbugz.com"
-  string :api_token, description: "API token for the FogBugz server. You can generate this token using the instructions here: https://support.aha.io/hc/en-us/articles/201106849"
+  string :api_token, description: "API token for the FogBugz server. You can generate this token using the instructions here: https://www.aha.io/support/roadmaps/integrations/fogbugz/fogbugz-integration"
 
   install_button
   select :projects, collection: -> (meta_data, data) do
