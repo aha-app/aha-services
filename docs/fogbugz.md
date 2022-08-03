@@ -2,15 +2,14 @@ This two-way integration allows you to push your features and requirements in Ah
 
 ## Features
 
-* One Aha! workspace is associated with one FogBugz project.
-* Individual features can be sent to FogBugz using the _Send to FogBugz_ item in the _Send_ dropdown on the features page.
-* All features in a release (that have not already been implemented or sent to FogBugz previously) can be sent to FogBugz using the _Send_ dropdown next to the Integrations field for for release pages.
-* When a feature is copied to FogBugz one issue will be created for the feature.
-* Only the description of a feature is sent and its requirements are created as sub-cases. No tasks or comments are included. 
-* Attachments of a feature and requirements are also sent.
-* Tags on a feature in Aha! will becomes tags in FogBugz.
-* After a feature is first sent to FogBugz, changes to the name, description and tags, can also be sent to FogBugz using the _Update FogBugz_ item in the _Send_ dropdown next to the Integrations field. If an attachment is deleted in Aha! the corresponding attachment in FogBugz is not deleted.
-
+- One Aha! workspace is associated with one FogBugz project.
+- Individual features can be sent to FogBugz using the _Send to FogBugz_ item in the _Send_ dropdown on the features page.
+- All features in a release (that have not already been implemented or sent to FogBugz previously) can be sent to FogBugz using the _Send_ dropdown next to the Integrations field for for release pages.
+- When a feature is copied to FogBugz one issue will be created for the feature.
+- Only the description of a feature is sent and its requirements are created as sub-cases. No tasks or comments are included.
+- Attachments of a feature and requirements are also sent.
+- Tags on a feature in Aha! will becomes tags in FogBugz.
+- After a feature is first sent to FogBugz, changes to the name, description and tags, can also be sent to FogBugz using the _Update FogBugz_ item in the _Send_ dropdown next to the Integrations field. If an attachment is deleted in Aha! the corresponding attachment in FogBugz is not deleted.
 
 ## Configuration
 
@@ -35,7 +34,8 @@ Enable URL triggers in FogBugz to get status changes back:
 6. Name you trigger Aha and create it.
 
 ## API token
-You need an API token to use the FogBugz integration. You can find out how to generate an API token [here](https://support.aha.io/hc/en-us/articles/201106849).
+
+You need an API token to use the FogBugz integration. You can find out how to generate an API token [here](https://www.aha.io/support/roadmaps/integrations/fogbugz/fogbugz-integration).
 
 ## Troubleshooting
 

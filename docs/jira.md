@@ -13,7 +13,7 @@ Aha! comes first and Jira second. We then keep the features up-to-date in Aha! a
 
 ## Integration functionality
 
-The Jira integration is our most robust development tool integration. For a successful integration, it is very important to understand that the [integration workflow](http://support.aha.io/hc/en-us/articles/202001127) is based off of starting in Aha!
+The Jira integration is our most robust development tool integration. For a successful integration, it is very important to understand that the [integration workflow](https://www.aha.io/support/roadmaps/integrations/jira/jira-integration-version-1) is based off of starting in Aha!
 
 This integration supports sending the following items:
 
@@ -52,11 +52,12 @@ This integration supports sending the following items:
 
           <li>Estimates (if configured)</li>
 
-          <li><a href="http://support.aha.io/hc/en-us/articles/206934573">Custom fields</a></li>
+          <li><a href="https://www.aha.io/support/roadmaps/strategic-roadmaps/customizations/custom-fields">Custom fields</a></li>
 
           <li>Comments</li>
         </ul>
       </td>
+
 
       <td valign="top">
         <ul>
@@ -64,7 +65,7 @@ This integration supports sending the following items:
 
           <li>Release date</li>
 
-          <li><a href="http://support.aha.io/hc/en-us/articles/204755559">Aha! Rank</a></li>
+          <li><a href="https://www.aha.io/support/roadmaps/integrations/jira/jira-integration-version-1">Aha! Rank</a></li>
         </ul>
       </td>
 
@@ -81,16 +82,16 @@ This integration supports sending the following items:
 
 Depending on whether you are using Jira Agile or standard Agile, below are details regarding feature mapping:
 
-- If you use Jira Agile, [read this for feature mapping](http://support.aha.io/entries/40551483)
-- If you use Jira, [read this for feature mapping](http://support.aha.io/entries/40843667)
+- If you use Jira Agile, [read this for feature mapping](https://www.aha.io/support/roadmaps/integrations/jira/jira-integration-version-1)
+- If you use Jira, [read this for feature mapping](https://www.aha.io/support/roadmaps/integrations/jira/jira-integration-version-1)
 
-There is also a set of advanced functionality unique to the Jira integration, such as the ability to have content created in Jira populate into Aha! automatically. Read more [here](https://support.aha.io/hc/en-us/articles/204452355-Advanced-Jira-functionality).
+There is also a set of advanced functionality unique to the Jira integration, such as the ability to have content created in Jira populate into Aha! automatically. Read more [here](https://www.aha.io/support/roadmaps/integrations/jira/jira-integration-version-1).
 
 ## Integration configuration
 
-You need to be an owner in Aha! and an Administrator in JIRA to set up this integration. If you have already configured an integration that you wish to use as a [template](http://support.aha.io/hc/en-us/articles/210385463), you can skip these steps and simply apply your template through the _More options_ menu.
+You need to be an owner in Aha! and an Administrator in JIRA to set up this integration. If you have already configured an integration that you wish to use as a [template](https://www.aha.io/support/roadmaps/integrations/jira/jira-integration-version-1), you can skip these steps and simply apply your template through the _More options_ menu.
 
-This integration works with both the cloud and on premise versions of Jira. If you are running the on premise version of Jira you will need to create a [firewall exception](http://support.aha.io/entries/40842777) so Aha! can make calls to the Jira API. The exception should forward requests to the internal Jira server.
+This integration works with both the cloud and on premise versions of Jira. If you are running the on premise version of Jira you will need to create a [firewall exception](https://www.aha.io/support/roadmaps/integrations/introduction/allow-list-ip-addresses-on-premises-development-tools) so Aha! can make calls to the Jira API. The exception should forward requests to the internal Jira server.
 
 Please carefully follow these instructions to ensure that the integration is properly configured.
 
@@ -108,11 +109,11 @@ Please carefully follow these instructions to ensure that the integration is pro
 
 ## Troubleshooting
 
-We have a support section dedicated to [troubleshooting the Jira integration](https://support.aha.io/hc/en-us/sections/360002622412). If you run into an error, we recommend you take a look at the logs below and search the support site. Almost every Jira integration error has a documented solution. If you cannot solve the issue please reach out to our team at [support@aha.io](mailto:support@aha.io), we will be happy to help get your integration up and running!
+We have a support section dedicated to [troubleshooting the Jira integration](https://www.aha.io/support/roadmaps/integrations/jira/jira-integration-version-1). If you run into an error, we recommend you take a look at the logs below and search the support site. Almost every Jira integration error has a documented solution. If you cannot solve the issue please reach out to our team at [support@aha.io](mailto:support@aha.io), we will be happy to help get your integration up and running!
 
 A few common issues and their answers are below:
 
-- [Updates from Jira are not being reflected in Aha!](http://support.aha.io/hc/en-us/articles/204700139)
-- [Why is an Aha! field not being sent to Jira?](http://support.aha.io/hc/en-us/articles/204837595)
-- [Do I need to add multiple webhooks to Jira?](http://support.aha.io/hc/en-us/articles/206582153)
-- [Event ‘installed’ failed due to an unhandled error](http://support.aha.io/hc/en-us/articles/205401465)
+- [Updates from Jira are not being reflected in Aha!](https://www.aha.io/support/roadmaps/integrations/jira-troubleshooting/jira-updates-not-reflected-in-aha)
+- [Why is an Aha! field not being sent to Jira?](https://www.aha.io/support/roadmaps/integrations/jira-troubleshooting/jira-field-is-not-available-in-the-integration-mappings)
+- [Do I need to add multiple webhooks to Jira?](https://www.aha.io/support/roadmaps/integrations/jira/when-to-use-multiple-webhooks)
+- [Event ‘installed’ failed due to an unhandled error](https://www.aha.io/support/roadmaps/integrations/jira-troubleshooting/jira-error-event-installed-failed-due-to-an-unhandled-error)

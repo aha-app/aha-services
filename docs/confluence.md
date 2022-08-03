@@ -8,4 +8,4 @@ To get started, configure this integration in Confluence:
 4. Search for **Aha! roadmaps for Confluence**.
 5. Click the **Get app** button, then click **Get it now**.
 
-[Learn more](https://support.aha.io/hc/en-us/articles/360032589312-Integrate-Aha-with-Confluence#h_75cd8401-fdf5-453a-81b2-c8800f578959) about creating the integration and how to embed your roadmaps into Confluence pages.
+[Learn more](https://www.aha.io/support/roadmaps/integrations/confluence/confluence-integration) about creating the integration and how to embed your roadmaps into Confluence pages.
