@@ -1,5 +1,5 @@
 class RedmineIssueResource < RedmineResource
-  
+
   def create(payload_fragment: nil, parent_id: nil, version_id: nil)
     params = parse_payload \
       payload_fragment: payload_fragment,
@@ -23,10 +23,10 @@ class RedmineIssueResource < RedmineResource
     params[:issue].delete :priority_id # Don't override priority on upload
     prepare_request
     response = http_put redmine_issues_path(issue_id), params.to_json
-    process_response response, 200 do
+    process_response response, 200, 204 do
       logger.info("Updated feature #{issue_id}")
     end
-    
+
     {id: issue_id}
   end
 
@@ -49,11 +49,11 @@ private
       attachment.merge(token: attachment_resource.upload_attachment(attachment))
     end
   end
-  
+
   def attachments_match(aha_attachment, redmine_attachment)
     aha_attachment.file_name == redmine_attachment.filename
   end
-  
+
   def redmine_issues_path *concat
     str = "#{@service.data.redmine_url}/issues"
     str = str + '/' + concat.join('/') unless concat.empty?
@@ -79,7 +79,7 @@ private
       }}}) if attachments.present?
     hashie
   end
-  
+
   def parse_response response, payload_fragment=nil, requirement=false
     payload_fragment ||= @payload.feature
     resource = requirement ? 'requirements' : 'features'

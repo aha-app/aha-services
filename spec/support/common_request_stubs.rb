@@ -16,33 +16,52 @@ def stub_download_feature_attachments
 end
 
 def stub_redmine_projects more_projects=true
-  projects_index_raw = more_projects ? raw_fixture('redmine/projects/index.json') : raw_fixture('redmine/projects/index_2.json')
   trackers_index_raw = raw_fixture('redmine/trackers/index.json')
   issue_priorities_index_raw = raw_fixture('redmine/enumerations/issue_priorities.json')
 
-  stub_request(:get, "#{service.data.redmine_url}/projects.json?limit=200").
-    to_return(status: 200, body: projects_index_raw, headers: {})
+  stub_const("RedmineProjectResource::API_LIMIT", 2)
+  if more_projects
+    stub_request(:get, "#{service.data.redmine_url}/projects.json?limit=2&offset=0").
+      to_return(status: 200, body: raw_fixture('redmine/projects/index1-page1.json'), headers: {})
+    stub_request(:get, "#{service.data.redmine_url}/projects.json?limit=2&offset=2").
+      to_return(status: 200, body: raw_fixture('redmine/projects/index1-page2.json'), headers: {})
+  else
+    stub_request(:get, "#{service.data.redmine_url}/projects.json?limit=2&offset=0").
+      to_return(status: 200, body: raw_fixture('redmine/projects/index2-page1.json'), headers: {})
+    stub_request(:get, "#{service.data.redmine_url}/projects.json?limit=2&offset=2").
+      to_return(status: 200, body: raw_fixture('redmine/projects/index2-page2.json'), headers: {})
+  end
   stub_request(:get, "#{service.data.redmine_url}/projects/1/versions.json").
     to_return(status: 200, body: {}.to_json, headers: {})
   stub_request(:get, "#{service.data.redmine_url}/projects/2/versions.json").
     to_return(status: 200, body: {}.to_json, headers: {})
   stub_request(:get, "#{service.data.redmine_url}/projects/3/versions.json").
     to_return(status: 200, body: {}.to_json, headers: {})
-    
+
   stub_request(:get, "#{service.data.redmine_url}/trackers.json").
     to_return(:status => 200, :body => trackers_index_raw, :headers => {})
 
   stub_request(:get, "#{service.data.redmine_url}/enumerations/issue_priorities.json").
     to_return(:status => 200, :body => issue_priorities_index_raw, :headers => {})
-  
+
 end
 
 def stub_redmine_projects_and_versions more_projects=true, more_versions=true
-  projects_index_raw = more_projects ? raw_fixture('redmine/projects/index.json') : raw_fixture('redmine/projects/index_2.json')
   versions_index_raw = more_versions ? raw_fixture('redmine/versions/index.json') : raw_fixture('redmine/versions/index_2.json')
 
-  stub_request(:get, "#{service.data.redmine_url}/projects.json").
-    to_return(status: 200, body: projects_index_raw, headers: {})
+  stub_const("RedmineProjectResource::API_LIMIT", 2)
+  if more_projects
+    stub_request(:get, "#{service.data.redmine_url}/projects.json?limit=2&offset=0").
+      to_return(status: 200, body: raw_fixture('redmine/projects/index1-page1.json'), headers: {})
+    stub_request(:get, "#{service.data.redmine_url}/projects.json?limit=2&offset=2").
+      to_return(status: 200, body: raw_fixture('redmine/projects/index1-page2.json'), headers: {})
+  else
+    stub_request(:get, "#{service.data.redmine_url}/projects.json?limit=2&offset=0").
+      to_return(status: 200, body: raw_fixture('redmine/projects/index2-page1.json'), headers: {})
+    stub_request(:get, "#{service.data.redmine_url}/projects.json?limit=2&offset=2").
+      to_return(status: 200, body: raw_fixture('redmine/projects/index2-page2.json'), headers: {})
+  end
+
   stub_request(:get, "#{service.data.redmine_url}/projects/1/versions.json").
     to_return(status: 200, body: {}.to_json, headers: {})
   stub_request(:get, "#{service.data.redmine_url}/projects/2/versions.json").
