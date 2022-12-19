@@ -14,8 +14,12 @@ describe AhaServices::Redmine do
         integration_id: 111
       }, payload)
   end
-  let(:projects_index_raw) { raw_fixture('redmine/projects/index.json') }
-  let(:projects_index_json) { JSON.parse(projects_index_raw) }
+  let(:projects_index_json) do
+    page1 = JSON.parse(raw_fixture('redmine/projects/index1-page1.json'))
+    page2 = JSON.parse(raw_fixture('redmine/projects/index1-page2.json'))
+    page1["projects"].concat(page2["projects"])
+    page1
+  end
   let(:project_id) { 2 }
   let(:version_id) { 2 }
 
@@ -38,7 +42,7 @@ describe AhaServices::Redmine do
       {type: :string, field_name: :api_key},
       {type: :install_button, field_name: :install_button},
       {type: :select, field_name: :project},
-      {type: :select, field_name: :tracker}, 
+      {type: :select, field_name: :tracker},
       {type: :select, field_name: :issue_priority} ]}
 
     it "has required title and name" do
@@ -80,7 +84,7 @@ describe AhaServices::Redmine do
     end
     context 'redmine failsafe' do
       before do
-        stub_request(:get, "#{service.data.redmine_url}/projects.json?limit=200").
+        stub_request(:get, "#{service.data.redmine_url}/projects.json?limit=100&offset=0").
           to_return(status: 404, body: '{"errors": ["Error 1", "Error 2"]}', headers: {})
       end
       it_behaves_like 'RemoteError raiser', :installed

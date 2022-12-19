@@ -16,7 +16,7 @@ class RedmineVersionResource < RedmineResource
     params = parse_payload @payload.release
     version_id = get_integration_field @payload.release.integration_fields, 'id'
     response = http_put("#{@service.data.redmine_url}/versions/#{version_id}.json", params.to_json)
-    process_response response, 200 do
+    process_response response, 200, 204 do
       logger.info("Updated version #{version_id}")
     end
   end
