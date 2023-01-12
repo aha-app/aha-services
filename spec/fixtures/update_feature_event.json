@@ -1,7 +1,7 @@
 {
-  "event": "create_feature",
+  "event": "update_feature",
   "feature": {
-    "name": "Feature with attachments (new)",
+    "name": "Feature with attachments",
     "reference_num": "PROD-2",
     "position": 2,
     "score": 0,
@@ -185,13 +185,13 @@
           {
             "id": "18669867",
             "name": "id",
-            "value": "dummy_trello_checklist_item_id",            
+            "value": "dummy_trello_checklist_item_id",
             "service_name": "trello"
           },
           {
             "id": "18669868",
             "name": "checklist_id",
-            "value": "dummy_trello_checklist_id",            
+            "value": "dummy_trello_checklist_id",
             "service_name": "trello"
           },
           {
