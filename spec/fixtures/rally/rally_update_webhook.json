@@ -1,1258 +1,628 @@
-{  
-   "message":{  
-      "object_id":"78e61a1d-edfd-4a85-b1a0-72442acb834f",
-      "ref":"https://rally1.rallydev.com/slm/webservice/v2.x/portfolioitem/feature/78e61a1d-edfd-4a85-b1a0-72442acb834f",
-      "object_type":"Feature",
-      "transaction":{  
-         "timestamp":1476806022420,
-         "message_lag":95991,
-         "trace_id":"af0874ed-f6bb-4558-88c2-7cfda67ae00b",
-         "user":{  
-            "uuid":"f05fbe96-a1eb-4115-bbe9-e24bfd4715e2",
-            "username":"alex@aha.io",
-            "email":"alex@aha.io"
-         }
-      },
-      "state":{  
-         "c3d4f057-0781-4660-8ce7-bc8514bf0945":{  
-            "value":"78e61a1d-edfd-4a85-b1a0-72442acb834f",
-            "type":"Raw",
-            "name":"ObjectUUID",
-            "display_name":"ObjectUUID",
-            "ref":null
-         },
-         "133bcf42-74fe-4729-b512-6e445eb713fa":{  
-            "value":null,
-            "type":"Integer",
-            "name":"PreliminaryEstimateValue",
-            "display_name":"Preliminary Estimate Value",
-            "ref":null
-         },
-         "b0778de0-a927-11e2-9e96-0800200c9a66":{  
-            "value":"#848689",
-            "type":"String",
-            "name":"DisplayColor",
-            "display_name":"Display Color",
-            "ref":null
-         },
-         "0990deaa-7065-4c4f-b8df-504751663066":{  
-            "value":0,
-            "type":"Integer",
-            "name":"ValueScore",
-            "display_name":"Value Score",
-            "ref":null
-         },
-         "500a0d67-9c48-4145-920c-821033e4a832":{  
-            "value":"rhodes synth",
-            "type":"String",
-            "name":"Name",
-            "display_name":"Name",
-            "ref":null
-         },
-         "2f85dd1f-8d50-4f18-b859-fd25653ae795":{  
-            "value":0,
-            "type":"Integer",
-            "name":"LeafStoryCount",
-            "display_name":"Leaf Story Count",
-            "ref":null
-         },
-         "b2ba04a5-92fb-4d18-95d7-bcd2339b9726":{  
-            "value":0.0,
-            "type":"Decimal",
-            "name":"PercentDoneByStoryCount",
-            "display_name":"Percent Done By Story Count",
-            "ref":null
-         },
-         "beacf3d0-cbac-4003-b8bc-9adefa3f19d1":{  
-            "value":1,
-            "type":"Integer",
-            "name":"RROEValue",
-            "display_name":"RR/OE Value",
-            "ref":null
-         },
-         "07e85fe6-cefc-47b8-a3f3-99eb416d2d25":{  
-            "value":0.0,
-            "type":"Decimal",
-            "name":"PercentDoneByStoryPlanEstimate",
-            "display_name":"Percent Done By Story Plan Estimate",
-            "ref":null
-         },
-         "55c5512a-1518-4944-8597-3eb91875e8d1":{  
-            "value":"F32",
-            "type":"String",
-            "name":"FormattedID",
-            "display_name":"Formatted ID",
-            "ref":null
-         },
-         "d010637f-f52b-44d2-b78e-bddd92ef45ae":{  
-            "value":"from prod integration",
-            "type":"Text",
-            "name":"c_CustomField1Text",
-            "display_name":"Custom Field 1 - Text",
-            "ref":null
-         },
-         "17f72ea6-04fd-449e-925c-89ac079c0668":{  
-            "value":{  
-               "name":"Workspace 1",
-               "ref":"https://rally1.rallydev.com/slm/webservice/v2.x/workspace/84185cff-aa46-4efc-b3fa-f9f0ead52130",
-               "detail_link":"https://rally1.rallydev.com/slm/#/detail/workspace/22098603316",
-               "id":"84185cff-aa46-4efc-b3fa-f9f0ead52130",
-               "object_type":"Workspace"
-            },
-            "type":"Workspace",
-            "name":"Workspace",
-            "display_name":"Workspace",
-            "ref":null
-         },
-         "1160ddd6-86cf-4cce-883b-2465e993832a":{  
-            "value":"2016-10-18T15:53:42.349Z",
-            "type":"Date",
-            "name":"LastUpdateDate",
-            "display_name":"Last Update Date",
-            "ref":null
-         },
-         "b2d97c5f-f5f2-4fc4-8ce1-e0fe1386298c":{  
-            "value":null,
-            "type":"Collection",
-            "name":"UserStories",
-            "display_name":"UserStories",
-            "ref":"https://rally1.rallydev.com/slm/webservice/v2.x/PortfolioItem/Feature/69490535048/UserStories"
-         },
-         "009f93a4-e35f-4615-bc44-998716909e13":{  
-            "value":"2016-10-10T06:00:00.000Z",
-            "type":"Date",
-            "name":"c_CustomField4Date",
-            "display_name":"Custom Field 4 - Date",
-            "ref":null
-         },
-         "100bcf42-74fe-4729-b512-5e445eb713fa":{  
-            "value":null,
-            "type":"Preliminary Estimate",
-            "name":"PreliminaryEstimate",
-            "display_name":"Preliminary Estimate",
-            "ref":null
-         },
-         "be9efb75-abf4-412b-ba29-fb7b07926284":{  
-            "value":0.0,
-            "type":"Decimal",
-            "name":"LeafStoryPlanEstimateTotal",
-            "display_name":"Leaf Story Plan Estimate Total",
-            "ref":null
-         },
-         "a5245298-8a3f-0297-0a0c-79c2acf41406":{  
-            "value":false,
-            "type":"Boolean",
-            "name":"Recycled",
-            "display_name":"Recycled",
-            "ref":null
-         },
-         "3e539b10-c993-4879-b84e-3db1623274c9":{  
-            "value":false,
-            "type":"Boolean",
-            "name":"ChildStoryPredecessorScheduledInSameOrLaterIteration",
-            "display_name":"Child Story Predecessor Scheduled In Same Or Later Iteration",
-            "ref":null
-         },
-         "6776da91-9729-42c7-bab1-395b596013f2":{  
-            "value":[  
-               {  
-                  "name":"simpletag",
-                  "ref":"https://rally1.rallydev.com/slm/webservice/v2.x/tag/bb4a7615-ddd6-4068-84d0-1a818c2b1e56",
-                  "detail_link":null,
-                  "id":"bb4a7615-ddd6-4068-84d0-1a818c2b1e56",
-                  "object_type":"Tag"
-               },
-               {  
-                  "name":"Big Joe",
-                  "ref":"https://rally1.rallydev.com/slm/webservice/v2.x/tag/2f9eedc3-c372-4c08-a703-b24da997dff8",
-                  "detail_link":null,
-                  "id":"2f9eedc3-c372-4c08-a703-b24da997dff8",
-                  "object_type":"Tag"
-               }
-            ],
-            "type":"Collection",
-            "name":"Tags",
-            "display_name":"Tags",
-            "ref":"https://rally1.rallydev.com/slm/webservice/v2.x/PortfolioItem/Feature/69490535048/Tags"
-         },
-         "85d5d854-13b0-4bf3-88f3-a912038e728a":{  
-            "value":null,
-            "type":"Collection",
-            "name":"Milestones",
-            "display_name":"Milestones",
-            "ref":"https://rally1.rallydev.com/slm/webservice/v2.x/PortfolioItem/Feature/69490535048/Milestones"
-         },
-         "b1caf4cd-1dab-425e-bd2c-4ab3aa6e1d1a":{  
-            "value":7337,
-            "type":"Integer",
-            "name":"c_CustomField3Integer",
-            "display_name":"Custom Field 3 - Integer",
-            "ref":null
-         },
-         "31945129-9066-43e5-b8bb-629a4d6ee009":{  
-            "value":1,
-            "type":"Integer",
-            "name":"TimeCriticality",
-            "display_name":"Time Criticality",
-            "ref":null
-         },
-         "7342ea30-0929-4f9a-b432-70ff9f959cb2":{  
-            "value":false,
-            "type":"Boolean",
-            "name":"Archived",
-            "display_name":"Archived",
-            "ref":null
-         },
-         "49bc14e8-a399-4547-98d7-5f36d3bcf8c7":{  
-            "value":"P!!!R~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
-            "type":"String",
-            "name":"DragAndDropRank",
-            "display_name":"Drag And Drop Rank",
-            "ref":null
-         },
-         "f1f8bc62-30b4-4944-939b-e943370a98e3":{  
-            "value":{  
-               "name":"higher scope - first project",
-               "ref":"https://rally1.rallydev.com/slm/webservice/v2.x/release/57d37e77-6e39-491b-a9fa-c968f4c4b290",
-               "detail_link":"https://rally1.rallydev.com/slm/#/detail/release/69490303368",
-               "id":"57d37e77-6e39-491b-a9fa-c968f4c4b290",
-               "object_type":"Release"
-            },
-            "type":"Release",
-            "name":"Release",
-            "display_name":"Release",
-            "ref":null
-         },
-         "ce10e5af-ef87-49ce-a09d-5d01acc73389":{  
-            "value":{  
-               "name":"Feature",
-               "ref":"https://rally1.rallydev.com/slm/webservice/v2.x/typedefinition/a0faf3b8-a0b6-4205-a38d-31155b3b2535",
-               "detail_link":null,
-               "id":"a0faf3b8-a0b6-4205-a38d-31155b3b2535",
-               "object_type":"TypeDefinition"
-            },
-            "type":"Type Definition",
-            "name":"PortfolioItemType",
-            "display_name":"Portfolio Item Type",
-            "ref":null
-         },
-         "ad93a14a-0295-456e-a2ad-e9f06c43bd22":{  
-            "value":null,
-            "type":"Date",
-            "name":"ActualStartDate",
-            "display_name":"Actual Start Date",
-            "ref":null
-         },
-         "fb2fd9c9-acb2-489e-97fc-bf7f9e28e6b5":{  
-            "value":null,
-            "type":"State",
-            "name":"State",
-            "display_name":"State",
-            "ref":null
-         },
-         "3ddb7c96-72ba-4c37-a63b-106aa5423138":{  
-            "value":null,
-            "type":"Date",
-            "name":"PlannedStartDate",
-            "display_name":"Planned Start Date",
-            "ref":null
-         },
-         "f705ed17-9239-427e-8f34-10bbe088297e":{  
-            "value":{  
-               "name":"Tech Partner - chris@aha.io",
-               "ref":"https://rally1.rallydev.com/slm/webservice/v2.x/subscription/7d264871-cb52-4223-b5ea-bded4ad17d8f",
-               "detail_link":"https://rally1.rallydev.com/slm/#/detail/subscription/22098603174",
-               "id":"7d264871-cb52-4223-b5ea-bded4ad17d8f",
-               "object_type":"Subscription"
-            },
-            "type":"Subscription",
-            "name":"Subscription",
-            "display_name":"Subscription",
-            "ref":null
-         },
-         "fd76667a-5974-4750-a1e1-7d704576f0b0":{  
-            "value":0,
-            "type":"Integer",
-            "name":"RiskScore",
-            "display_name":"Risk Score",
-            "ref":null
-         },
-         "95ac2b13-e4ee-413e-af83-42aaf4b53626":{  
-            "value":"2016-10-17T19:57:40.267Z",
-            "type":"Date",
-            "name":"CreationDate",
-            "display_name":"Creation Date",
-            "ref":null
-         },
-         "557393c4-131b-4df7-b01e-5319b11edd24":{  
-            "value":null,
-            "type":"User",
-            "name":"Owner",
-            "display_name":"Owner",
-            "ref":null
-         },
-         "a706408a-25c8-4767-b7cb-66873a529eb6":{  
-            "value":null,
-            "type":"Collection",
-            "name":"Successors",
-            "display_name":"Successors",
-            "ref":"https://rally1.rallydev.com/slm/webservice/v2.x/PortfolioItem/Feature/69490535048/Successors"
-         },
-         "4ee51483-d97b-4f9a-a067-78120226db06":{  
-            "value":0.0,
-            "type":"Decimal",
-            "name":"WSJFScore",
-            "display_name":"WSJF Score",
-            "ref":null
-         },
-         "f46996bb-f128-4865-a058-2624afb84df4":{  
-            "value":null,
-            "type":"Collection",
-            "name":"Discussion",
-            "display_name":"Discussion",
-            "ref":"https://rally1.rallydev.com/slm/webservice/v2.x/PortfolioItem/Feature/69490535048/Discussion"
-         },
-         "f5b1fb22-6c15-44b5-a592-19189fafe5f2":{  
-            "value":27,
-            "type":"Integer",
-            "name":"VersionId",
-            "display_name":"VersionId",
-            "ref":null
-         },
-         "fff26e0d-12f8-4fd0-b497-941fca3d682a":{  
-            "value":null,
-            "type":"Collection",
-            "name":"Collaborators",
-            "display_name":"Collaborators",
-            "ref":"https://rally1.rallydev.com/slm/webservice/v2.x/PortfolioItem/Feature/69490535048/Collaborators"
-         },
-         "00c3114f-75a6-4a9e-b92b-793b68c21326":{  
-            "value":false,
-            "type":"Boolean",
-            "name":"ChildStoryPredecessorNotScheduled",
-            "display_name":"Child Story Predecessor Not Scheduled",
-            "ref":null
-         },
-         "6a1045e7-3d05-41bb-a27e-5964515e3f6a":{  
-            "value":false,
-            "type":"Boolean",
-            "name":"Expedite",
-            "display_name":"Expedite",
-            "ref":null
-         },
-         "727a8977-f3a5-4713-9415-ac97471cc736":{  
-            "value":false,
-            "type":"Boolean",
-            "name":"Ready",
-            "display_name":"Ready",
-            "ref":null
-         },
-         "c9e91358-64a6-4732-a868-eb77c470eb19":{  
-            "value":1,
-            "type":"Integer",
-            "name":"JobSize",
-            "display_name":"Job Size",
-            "ref":null
-         },
-         "32e57d37-36f0-44a6-bc2f-34cf755ff91b":{  
-            "value":null,
-            "type":"Collection",
-            "name":"Attachments",
-            "display_name":"Attachments",
-            "ref":"https://rally1.rallydev.com/slm/webservice/v2.x/PortfolioItem/Feature/69490535048/Attachments"
-         },
-         "8fec8ffd-051c-4403-977b-9085f390b647":{  
-            "value":null,
-            "type":"Date",
-            "name":"ActualEndDate",
-            "display_name":"Actual End Date",
-            "ref":null
-         },
-         "5736cb0d-4ef8-4e83-a086-cb11e9a705e2":{  
-            "value":{  
-               "value":"None",
-               "ordinal_index":0
-            },
-            "type":"Rating",
-            "name":"InvestmentCategory",
-            "display_name":"Investment Category",
-            "ref":null
-         },
-         "81d11053-021a-4711-ad03-26c3c5f1cf22":{  
-            "value":null,
-            "type":"Collection",
-            "name":"Predecessors",
-            "display_name":"Predecessors",
-            "ref":"https://rally1.rallydev.com/slm/webservice/v2.x/PortfolioItem/Feature/69490535048/Predecessors"
-         },
-         "5441f34a-6308-4a09-869c-bcd01963302a":{  
-            "value":null,
-            "type":"Initiative",
-            "name":"Parent",
-            "display_name":"Parent",
-            "ref":null
-         },
-         "8cd45c27-07b9-41b0-a91b-8464306234ad":{  
-            "value":null,
-            "type":"Collection",
-            "name":"c_CustomField7DropDownList",
-            "display_name":"Custom Field 7 - Drop Down List",
-            "ref":"https://rally1.rallydev.com/slm/webservice/v2.x/PortfolioItem/Feature/69490535048/c_CustomField7DropDownList"
-         },
-         "ae8ecc9f-b9a0-42a4-a6e3-c83d7f8a7070":{  
-            "value":{  
-               "name":"First Project",
-               "ref":"https://rally1.rallydev.com/slm/webservice/v2.x/project/b6431455-7543-4383-84bd-7210b592896a",
-               "detail_link":"https://rally1.rallydev.com/slm/#/detail/project/22098603406",
-               "id":"b6431455-7543-4383-84bd-7210b592896a",
-               "object_type":"Project"
-            },
-            "type":"Project",
-            "name":"Project",
-            "display_name":"Project",
-            "ref":null
-         },
-         "2dc135f2-a7db-4084-b258-42a24b05e3dd":{  
-            "value":"2016-10-17T19:57:40.267Z",
-            "type":"Date",
-            "name":"StateChangedDate",
-            "display_name":"State Changed Date",
-            "ref":null
-         },
-         "f6d58321-4699-417d-8ae1-c102666321e7":{  
-            "value":null,
-            "type":"Integer",
-            "name":"LatestDiscussionAgeInMinutes",
-            "display_name":"Latest Discussion Age In Minutes",
-            "ref":null
-         },
-         "09877ea1-2678-4e62-83e9-748d851913fc":{  
-            "value":{  
-               "name":"RevisionHistory_69490535052",
-               "ref":"https://rally1.rallydev.com/slm/webservice/v2.x/revisionhistory/2438aece-42b7-499f-b82b-382ff97de57e",
-               "detail_link":null,
-               "id":"2438aece-42b7-499f-b82b-382ff97de57e",
-               "object_type":"RevisionHistory"
-            },
-            "type":"Revision History",
-            "name":"RevisionHistory",
-            "display_name":"Revision History",
-            "ref":null
-         },
-         "b5bae981-bfe6-4980-844a-b5ecf3e9a156":{  
-            "value":"\u003cp\u003ea piano...\u003c/p\u003e",
-            "type":"Text",
-            "name":"Description",
-            "display_name":"Description",
-            "ref":null
-         },
-         "fc133104-b85c-4f38-ac41-65ebefb39900":{  
-            "value":true,
-            "type":"Boolean",
-            "name":"c_CustomField2Boolean",
-            "display_name":"Custom Field 2 - Boolean",
-            "ref":null
-         },
-         "ec1e34aa-41a0-4c64-bfee-15600e3933ae":{  
-            "value":0,
-            "type":"Integer",
-            "name":"LateChildCount",
-            "display_name":"Late Child Count",
-            "ref":null
-         },
-         "5ffa6b55-449e-4753-a22e-4cb6e303af84":{  
-            "value":"Feature",
-            "type":"String",
-            "name":"PortfolioItemTypeName",
-            "display_name":"Portfolio Item Type Name",
-            "ref":null
-         },
-         "e43aaa85-96f9-4983-a8ad-1552e1ff5e71":{  
-            "value":1,
-            "type":"Integer",
-            "name":"UserBusinessValue",
-            "display_name":"User/Business Value",
-            "ref":null
-         },
-         "2910ca71-9779-4e7b-8fcf-d718c919aff8":{  
-            "value":69490535048,
-            "type":"Integer",
-            "name":"ObjectID",
-            "display_name":"Object ID",
-            "ref":null
-         },
-         "34fe855d-70fe-4f03-ac2b-6b465fede6fb":{  
-            "value":10.01,
-            "type":"Decimal",
-            "name":"c_CustomField6Decimal",
-            "display_name":"Custom Field 6 - Decimal",
-            "ref":null
-         },
-         "627194cd-4169-4918-ad70-3d927dd126bb":{  
-            "value":null,
-            "type":"Collection",
-            "name":"Changesets",
-            "display_name":"Changesets",
-            "ref":"https://rally1.rallydev.com/slm/webservice/v2.x/PortfolioItem/Feature/69490535048/Changesets"
-         },
-         "e1aabad8-5315-4004-bf0f-68ee64cf335a":{  
-            "value":"2017-04-03T04:59:59z",
-            "type":"Date",
-            "name":"PlannedEndDate",
-            "display_name":"Planned End Date",
-            "ref":null
-         },
-         "17abf34f-eafa-4fb2-9287-2f91bc67f719":{  
-            "value":0.0,
-            "type":"Decimal",
-            "name":"AcceptedLeafStoryPlanEstimateTotal",
-            "display_name":"Accepted Leaf Story Plan Estimate Total",
-            "ref":null
-         },
-         "695e9e37-06eb-433a-b0c8-f9e196991a20":{  
-            "value":"from prod integration",
-            "type":"String",
-            "name":"c_CustomField8String",
-            "display_name":"Custom Field 8 - String",
-            "ref":null
-         },
-         "1e15344b-54f6-4576-b353-095190a50ad9":{  
-            "value":"one",
-            "type":"String",
-            "name":"c_CustomField5Dropdown",
-            "display_name":"Custom Field 5 - Dropdown",
-            "ref":null
-         },
-         "d2f27da7-c116-4d2f-bda3-ae8c53435bb4":{  
-            "value":0,
-            "type":"Integer",
-            "name":"DirectChildrenCount",
-            "display_name":"Direct Children Count",
-            "ref":null
-         },
-         "81fe3330-d4bd-4e27-9cea-f75c887f8c06":{  
-            "value":0,
-            "type":"Integer",
-            "name":"RefinedEstimate",
-            "display_name":"Refined Estimate",
-            "ref":null
-         },
-         "abb5af67-e70a-4a98-ad21-26f71bf4fe83":{  
-            "value":"",
-            "type":"Text",
-            "name":"Notes",
-            "display_name":"Notes",
-            "ref":null
-         },
-         "77f9ea84-780f-45fd-8864-b00c3e6f1260":{  
-            "value":0,
-            "type":"Integer",
-            "name":"UnEstimatedLeafStoryCount",
-            "display_name":"Un-Estimated Leaf Story Count",
-            "ref":null
-         },
-         "c2ee4dda-86ec-4ee4-b39d-1566ad30efd2":{  
-            "value":0,
-            "type":"Integer",
-            "name":"AcceptedLeafStoryCount",
-            "display_name":"Accepted Leaf Story Count",
-            "ref":null
-         }
-      },
-      "subscription_id":58510,
-      "message_id":"55e441e2-4f85-4a40-8353-9b1cd8795d04",
-      "project":{  
-         "uuid":"b6431455-7543-4383-84bd-7210b592896a",
-         "name":"First Project"
-      },
-      "id":"78e61a1d-edfd-4a85-b1a0-72442acb834f",
-      "detail_link":"https://rally1.rallydev.com/slm/#/detail/portfolioitem/feature/69490535048",
-      "message_version":2,
-      "changes":{  
-         "f5b1fb22-6c15-44b5-a592-19189fafe5f2":{  
-            "value":27,
-            "old_value":26,
-            "added":null,
-            "removed":null,
-            "type":"Integer",
-            "name":"VersionId",
-            "display_name":"VersionId",
-            "ref":null
-         },
-         "6776da91-9729-42c7-bab1-395b596013f2":{  
-            "value":null,
-            "old_value":null,
-            "added":[  
-               {  
-                  "name":"Big Joe",
-                  "ref":"https://rally1.rallydev.com/slm/webservice/v2.x/tag/2f9eedc3-c372-4c08-a703-b24da997dff8",
-                  "detail_link":null,
-                  "id":"2f9eedc3-c372-4c08-a703-b24da997dff8",
-                  "object_type":"Tag"
-               }
-            ],
-            "removed":null,
-            "type":"Collection",
-            "name":"Tags",
-            "display_name":"Tags",
-            "ref":"https://rally1.rallydev.com/slm/webservice/v2.x/PortfolioItem/Feature/69490535048/Tags"
-         }
-      },
-      "action":"Updated"
-   },
-   "rule":{  
-      "LastUpdateDate":"2016-10-17T19:40:42.215Z",
-      "Expressions":[  
-         {  
-            "AttributeID":"ae8ecc9f-b9a0-42a4-a6e3-c83d7f8a7070",
-            "AttributeName":null,
-            "Operator":"=",
-            "Value":"b6431455-7543-4383-84bd-7210b592896a"
-         }
-      ],
-      "SubscriptionID":58510,
-      "ObjectTypes":null,
-      "_type":"webhook",
-      "OwnerID":"9360ba90-7b7b-4a3e-8dea-d6f837b7bb1e",
-      "TargetUrl":"https://peterklipfel-trial.aha.io/api/v1/webhooks/f2656c98bc1edb6b55ecce82e2208a8518659dabd4d9b639a67de4723a704c77",
-      "CreatedBy":null,
-      "_objectVersion":2,
-      "Disabled":false,
-      "Name":"Aha! Rally Integration 6268668635835406919",
-      "AppName":"Aha!",
-      "ObjectUUID":"f598489c-ef7d-4c5d-820e-37a78ac6b4a6",
-      "CreationDate":"2016-08-01T17:42:20.897Z",
-      "AppUrl":"http://www.aha.io"
-   },
-   "format":"json",
-   "controller":"api/v1/webhooks",
-   "action":"callback",
-   "token":"f2656c98bc1edb6b55ecce82e2208a8518659dabd4d9b639a67de4723a704c77",
-   "webhook":{  
-      "message":{  
-         "object_id":"78e61a1d-edfd-4a85-b1a0-72442acb834f",
-         "ref":"https://rally1.rallydev.com/slm/webservice/v2.x/portfolioitem/feature/78e61a1d-edfd-4a85-b1a0-72442acb834f",
-         "object_type":"Feature",
-         "transaction":{  
-            "timestamp":1476806022420,
-            "message_lag":95991,
-            "trace_id":"af0874ed-f6bb-4558-88c2-7cfda67ae00b",
-            "user":{  
-               "uuid":"f05fbe96-a1eb-4115-bbe9-e24bfd4715e2",
-               "username":"alex@aha.io",
-               "email":"alex@aha.io"
-            }
-         },
-         "state":{  
-            "c3d4f057-0781-4660-8ce7-bc8514bf0945":{  
-               "value":"78e61a1d-edfd-4a85-b1a0-72442acb834f",
-               "type":"Raw",
-               "name":"ObjectUUID",
-               "display_name":"ObjectUUID",
-               "ref":null
-            },
-            "133bcf42-74fe-4729-b512-6e445eb713fa":{  
-               "value":null,
-               "type":"Integer",
-               "name":"PreliminaryEstimateValue",
-               "display_name":"Preliminary Estimate Value",
-               "ref":null
-            },
-            "b0778de0-a927-11e2-9e96-0800200c9a66":{  
-               "value":"#848689",
-               "type":"String",
-               "name":"DisplayColor",
-               "display_name":"Display Color",
-               "ref":null
-            },
-            "0990deaa-7065-4c4f-b8df-504751663066":{  
-               "value":0,
-               "type":"Integer",
-               "name":"ValueScore",
-               "display_name":"Value Score",
-               "ref":null
-            },
-            "500a0d67-9c48-4145-920c-821033e4a832":{  
-               "value":"rhodes synth",
-               "type":"String",
-               "name":"Name",
-               "display_name":"Name",
-               "ref":null
-            },
-            "2f85dd1f-8d50-4f18-b859-fd25653ae795":{  
-               "value":0,
-               "type":"Integer",
-               "name":"LeafStoryCount",
-               "display_name":"Leaf Story Count",
-               "ref":null
-            },
-            "b2ba04a5-92fb-4d18-95d7-bcd2339b9726":{  
-               "value":0.0,
-               "type":"Decimal",
-               "name":"PercentDoneByStoryCount",
-               "display_name":"Percent Done By Story Count",
-               "ref":null
-            },
-            "beacf3d0-cbac-4003-b8bc-9adefa3f19d1":{  
-               "value":1,
-               "type":"Integer",
-               "name":"RROEValue",
-               "display_name":"RR/OE Value",
-               "ref":null
-            },
-            "07e85fe6-cefc-47b8-a3f3-99eb416d2d25":{  
-               "value":0.0,
-               "type":"Decimal",
-               "name":"PercentDoneByStoryPlanEstimate",
-               "display_name":"Percent Done By Story Plan Estimate",
-               "ref":null
-            },
-            "55c5512a-1518-4944-8597-3eb91875e8d1":{  
-               "value":"F32",
-               "type":"String",
-               "name":"FormattedID",
-               "display_name":"Formatted ID",
-               "ref":null
-            },
-            "d010637f-f52b-44d2-b78e-bddd92ef45ae":{  
-               "value":"from prod integration",
-               "type":"Text",
-               "name":"c_CustomField1Text",
-               "display_name":"Custom Field 1 - Text",
-               "ref":null
-            },
-            "17f72ea6-04fd-449e-925c-89ac079c0668":{  
-               "value":{  
-                  "name":"Workspace 1",
-                  "ref":"https://rally1.rallydev.com/slm/webservice/v2.x/workspace/84185cff-aa46-4efc-b3fa-f9f0ead52130",
-                  "detail_link":"https://rally1.rallydev.com/slm/#/detail/workspace/22098603316",
-                  "id":"84185cff-aa46-4efc-b3fa-f9f0ead52130",
-                  "object_type":"Workspace"
-               },
-               "type":"Workspace",
-               "name":"Workspace",
-               "display_name":"Workspace",
-               "ref":null
-            },
-            "1160ddd6-86cf-4cce-883b-2465e993832a":{  
-               "value":"2016-10-18T15:53:42.349Z",
-               "type":"Date",
-               "name":"LastUpdateDate",
-               "display_name":"Last Update Date",
-               "ref":null
-            },
-            "b2d97c5f-f5f2-4fc4-8ce1-e0fe1386298c":{  
-               "value":null,
-               "type":"Collection",
-               "name":"UserStories",
-               "display_name":"UserStories",
-               "ref":"https://rally1.rallydev.com/slm/webservice/v2.x/PortfolioItem/Feature/69490535048/UserStories"
-            },
-            "009f93a4-e35f-4615-bc44-998716909e13":{  
-               "value":"2016-10-10T06:00:00.000Z",
-               "type":"Date",
-               "name":"c_CustomField4Date",
-               "display_name":"Custom Field 4 - Date",
-               "ref":null
-            },
-            "100bcf42-74fe-4729-b512-5e445eb713fa":{  
-               "value":null,
-               "type":"Preliminary Estimate",
-               "name":"PreliminaryEstimate",
-               "display_name":"Preliminary Estimate",
-               "ref":null
-            },
-            "be9efb75-abf4-412b-ba29-fb7b07926284":{  
-               "value":0.0,
-               "type":"Decimal",
-               "name":"LeafStoryPlanEstimateTotal",
-               "display_name":"Leaf Story Plan Estimate Total",
-               "ref":null
-            },
-            "a5245298-8a3f-0297-0a0c-79c2acf41406":{  
-               "value":false,
-               "type":"Boolean",
-               "name":"Recycled",
-               "display_name":"Recycled",
-               "ref":null
-            },
-            "3e539b10-c993-4879-b84e-3db1623274c9":{  
-               "value":false,
-               "type":"Boolean",
-               "name":"ChildStoryPredecessorScheduledInSameOrLaterIteration",
-               "display_name":"Child Story Predecessor Scheduled In Same Or Later Iteration",
-               "ref":null
-            },
-            "6776da91-9729-42c7-bab1-395b596013f2":{  
-               "value":[  
-                  {  
-                     "name":"simpletag",
-                     "ref":"https://rally1.rallydev.com/slm/webservice/v2.x/tag/bb4a7615-ddd6-4068-84d0-1a818c2b1e56",
-                     "detail_link":null,
-                     "id":"bb4a7615-ddd6-4068-84d0-1a818c2b1e56",
-                     "object_type":"Tag"
-                  },
-                  {  
-                     "name":"Big Joe",
-                     "ref":"https://rally1.rallydev.com/slm/webservice/v2.x/tag/2f9eedc3-c372-4c08-a703-b24da997dff8",
-                     "detail_link":null,
-                     "id":"2f9eedc3-c372-4c08-a703-b24da997dff8",
-                     "object_type":"Tag"
-                  }
-               ],
-               "type":"Collection",
-               "name":"Tags",
-               "display_name":"Tags",
-               "ref":"https://rally1.rallydev.com/slm/webservice/v2.x/PortfolioItem/Feature/69490535048/Tags"
-            },
-            "85d5d854-13b0-4bf3-88f3-a912038e728a":{  
-               "value":null,
-               "type":"Collection",
-               "name":"Milestones",
-               "display_name":"Milestones",
-               "ref":"https://rally1.rallydev.com/slm/webservice/v2.x/PortfolioItem/Feature/69490535048/Milestones"
-            },
-            "b1caf4cd-1dab-425e-bd2c-4ab3aa6e1d1a":{  
-               "value":7337,
-               "type":"Integer",
-               "name":"c_CustomField3Integer",
-               "display_name":"Custom Field 3 - Integer",
-               "ref":null
-            },
-            "31945129-9066-43e5-b8bb-629a4d6ee009":{  
-               "value":1,
-               "type":"Integer",
-               "name":"TimeCriticality",
-               "display_name":"Time Criticality",
-               "ref":null
-            },
-            "7342ea30-0929-4f9a-b432-70ff9f959cb2":{  
-               "value":false,
-               "type":"Boolean",
-               "name":"Archived",
-               "display_name":"Archived",
-               "ref":null
-            },
-            "49bc14e8-a399-4547-98d7-5f36d3bcf8c7":{  
-               "value":"P!!!R~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
-               "type":"String",
-               "name":"DragAndDropRank",
-               "display_name":"Drag And Drop Rank",
-               "ref":null
-            },
-            "f1f8bc62-30b4-4944-939b-e943370a98e3":{  
-               "value":{  
-                  "name":"higher scope - first project",
-                  "ref":"https://rally1.rallydev.com/slm/webservice/v2.x/release/57d37e77-6e39-491b-a9fa-c968f4c4b290",
-                  "detail_link":"https://rally1.rallydev.com/slm/#/detail/release/69490303368",
-                  "id":"57d37e77-6e39-491b-a9fa-c968f4c4b290",
-                  "object_type":"Release"
-               },
-               "type":"Release",
-               "name":"Release",
-               "display_name":"Release",
-               "ref":null
-            },
-            "ce10e5af-ef87-49ce-a09d-5d01acc73389":{  
-               "value":{  
-                  "name":"Feature",
-                  "ref":"https://rally1.rallydev.com/slm/webservice/v2.x/typedefinition/a0faf3b8-a0b6-4205-a38d-31155b3b2535",
-                  "detail_link":null,
-                  "id":"a0faf3b8-a0b6-4205-a38d-31155b3b2535",
-                  "object_type":"TypeDefinition"
-               },
-               "type":"Type Definition",
-               "name":"PortfolioItemType",
-               "display_name":"Portfolio Item Type",
-               "ref":null
-            },
-            "ad93a14a-0295-456e-a2ad-e9f06c43bd22":{  
-               "value":null,
-               "type":"Date",
-               "name":"ActualStartDate",
-               "display_name":"Actual Start Date",
-               "ref":null
-            },
-            "fb2fd9c9-acb2-489e-97fc-bf7f9e28e6b5":{  
-               "value":null,
-               "type":"State",
-               "name":"State",
-               "display_name":"State",
-               "ref":null
-            },
-            "3ddb7c96-72ba-4c37-a63b-106aa5423138":{  
-               "value":null,
-               "type":"Date",
-               "name":"PlannedStartDate",
-               "display_name":"Planned Start Date",
-               "ref":null
-            },
-            "f705ed17-9239-427e-8f34-10bbe088297e":{  
-               "value":{  
-                  "name":"Tech Partner - chris@aha.io",
-                  "ref":"https://rally1.rallydev.com/slm/webservice/v2.x/subscription/7d264871-cb52-4223-b5ea-bded4ad17d8f",
-                  "detail_link":"https://rally1.rallydev.com/slm/#/detail/subscription/22098603174",
-                  "id":"7d264871-cb52-4223-b5ea-bded4ad17d8f",
-                  "object_type":"Subscription"
-               },
-               "type":"Subscription",
-               "name":"Subscription",
-               "display_name":"Subscription",
-               "ref":null
-            },
-            "fd76667a-5974-4750-a1e1-7d704576f0b0":{  
-               "value":0,
-               "type":"Integer",
-               "name":"RiskScore",
-               "display_name":"Risk Score",
-               "ref":null
-            },
-            "95ac2b13-e4ee-413e-af83-42aaf4b53626":{  
-               "value":"2016-10-17T19:57:40.267Z",
-               "type":"Date",
-               "name":"CreationDate",
-               "display_name":"Creation Date",
-               "ref":null
-            },
-            "557393c4-131b-4df7-b01e-5319b11edd24":{  
-               "value":null,
-               "type":"User",
-               "name":"Owner",
-               "display_name":"Owner",
-               "ref":null
-            },
-            "a706408a-25c8-4767-b7cb-66873a529eb6":{  
-               "value":null,
-               "type":"Collection",
-               "name":"Successors",
-               "display_name":"Successors",
-               "ref":"https://rally1.rallydev.com/slm/webservice/v2.x/PortfolioItem/Feature/69490535048/Successors"
-            },
-            "4ee51483-d97b-4f9a-a067-78120226db06":{  
-               "value":0.0,
-               "type":"Decimal",
-               "name":"WSJFScore",
-               "display_name":"WSJF Score",
-               "ref":null
-            },
-            "f46996bb-f128-4865-a058-2624afb84df4":{  
-               "value":null,
-               "type":"Collection",
-               "name":"Discussion",
-               "display_name":"Discussion",
-               "ref":"https://rally1.rallydev.com/slm/webservice/v2.x/PortfolioItem/Feature/69490535048/Discussion"
-            },
-            "f5b1fb22-6c15-44b5-a592-19189fafe5f2":{  
-               "value":27,
-               "type":"Integer",
-               "name":"VersionId",
-               "display_name":"VersionId",
-               "ref":null
-            },
-            "fff26e0d-12f8-4fd0-b497-941fca3d682a":{  
-               "value":null,
-               "type":"Collection",
-               "name":"Collaborators",
-               "display_name":"Collaborators",
-               "ref":"https://rally1.rallydev.com/slm/webservice/v2.x/PortfolioItem/Feature/69490535048/Collaborators"
-            },
-            "00c3114f-75a6-4a9e-b92b-793b68c21326":{  
-               "value":false,
-               "type":"Boolean",
-               "name":"ChildStoryPredecessorNotScheduled",
-               "display_name":"Child Story Predecessor Not Scheduled",
-               "ref":null
-            },
-            "6a1045e7-3d05-41bb-a27e-5964515e3f6a":{  
-               "value":false,
-               "type":"Boolean",
-               "name":"Expedite",
-               "display_name":"Expedite",
-               "ref":null
-            },
-            "727a8977-f3a5-4713-9415-ac97471cc736":{  
-               "value":false,
-               "type":"Boolean",
-               "name":"Ready",
-               "display_name":"Ready",
-               "ref":null
-            },
-            "c9e91358-64a6-4732-a868-eb77c470eb19":{  
-               "value":1,
-               "type":"Integer",
-               "name":"JobSize",
-               "display_name":"Job Size",
-               "ref":null
-            },
-            "32e57d37-36f0-44a6-bc2f-34cf755ff91b":{  
-               "value":null,
-               "type":"Collection",
-               "name":"Attachments",
-               "display_name":"Attachments",
-               "ref":"https://rally1.rallydev.com/slm/webservice/v2.x/PortfolioItem/Feature/69490535048/Attachments"
-            },
-            "8fec8ffd-051c-4403-977b-9085f390b647":{  
-               "value":null,
-               "type":"Date",
-               "name":"ActualEndDate",
-               "display_name":"Actual End Date",
-               "ref":null
-            },
-            "5736cb0d-4ef8-4e83-a086-cb11e9a705e2":{  
-               "value":{  
-                  "value":"None",
-                  "ordinal_index":0
-               },
-               "type":"Rating",
-               "name":"InvestmentCategory",
-               "display_name":"Investment Category",
-               "ref":null
-            },
-            "81d11053-021a-4711-ad03-26c3c5f1cf22":{  
-               "value":null,
-               "type":"Collection",
-               "name":"Predecessors",
-               "display_name":"Predecessors",
-               "ref":"https://rally1.rallydev.com/slm/webservice/v2.x/PortfolioItem/Feature/69490535048/Predecessors"
-            },
-            "5441f34a-6308-4a09-869c-bcd01963302a":{  
-               "value":null,
-               "type":"Initiative",
-               "name":"Parent",
-               "display_name":"Parent",
-               "ref":null
-            },
-            "8cd45c27-07b9-41b0-a91b-8464306234ad":{  
-               "value":null,
-               "type":"Collection",
-               "name":"c_CustomField7DropDownList",
-               "display_name":"Custom Field 7 - Drop Down List",
-               "ref":"https://rally1.rallydev.com/slm/webservice/v2.x/PortfolioItem/Feature/69490535048/c_CustomField7DropDownList"
-            },
-            "ae8ecc9f-b9a0-42a4-a6e3-c83d7f8a7070":{  
-               "value":{  
-                  "name":"First Project",
-                  "ref":"https://rally1.rallydev.com/slm/webservice/v2.x/project/b6431455-7543-4383-84bd-7210b592896a",
-                  "detail_link":"https://rally1.rallydev.com/slm/#/detail/project/22098603406",
-                  "id":"b6431455-7543-4383-84bd-7210b592896a",
-                  "object_type":"Project"
-               },
-               "type":"Project",
-               "name":"Project",
-               "display_name":"Project",
-               "ref":null
-            },
-            "2dc135f2-a7db-4084-b258-42a24b05e3dd":{  
-               "value":"2016-10-17T19:57:40.267Z",
-               "type":"Date",
-               "name":"StateChangedDate",
-               "display_name":"State Changed Date",
-               "ref":null
-            },
-            "f6d58321-4699-417d-8ae1-c102666321e7":{  
-               "value":null,
-               "type":"Integer",
-               "name":"LatestDiscussionAgeInMinutes",
-               "display_name":"Latest Discussion Age In Minutes",
-               "ref":null
-            },
-            "09877ea1-2678-4e62-83e9-748d851913fc":{  
-               "value":{  
-                  "name":"RevisionHistory_69490535052",
-                  "ref":"https://rally1.rallydev.com/slm/webservice/v2.x/revisionhistory/2438aece-42b7-499f-b82b-382ff97de57e",
-                  "detail_link":null,
-                  "id":"2438aece-42b7-499f-b82b-382ff97de57e",
-                  "object_type":"RevisionHistory"
-               },
-               "type":"Revision History",
-               "name":"RevisionHistory",
-               "display_name":"Revision History",
-               "ref":null
-            },
-            "b5bae981-bfe6-4980-844a-b5ecf3e9a156":{  
-               "value":"\u003cp\u003ea piano...\u003c/p\u003e",
-               "type":"Text",
-               "name":"Description",
-               "display_name":"Description",
-               "ref":null
-            },
-            "fc133104-b85c-4f38-ac41-65ebefb39900":{  
-               "value":true,
-               "type":"Boolean",
-               "name":"c_CustomField2Boolean",
-               "display_name":"Custom Field 2 - Boolean",
-               "ref":null
-            },
-            "ec1e34aa-41a0-4c64-bfee-15600e3933ae":{  
-               "value":0,
-               "type":"Integer",
-               "name":"LateChildCount",
-               "display_name":"Late Child Count",
-               "ref":null
-            },
-            "5ffa6b55-449e-4753-a22e-4cb6e303af84":{  
-               "value":"Feature",
-               "type":"String",
-               "name":"PortfolioItemTypeName",
-               "display_name":"Portfolio Item Type Name",
-               "ref":null
-            },
-            "e43aaa85-96f9-4983-a8ad-1552e1ff5e71":{  
-               "value":1,
-               "type":"Integer",
-               "name":"UserBusinessValue",
-               "display_name":"User/Business Value",
-               "ref":null
-            },
-            "2910ca71-9779-4e7b-8fcf-d718c919aff8":{  
-               "value":69490535048,
-               "type":"Integer",
-               "name":"ObjectID",
-               "display_name":"Object ID",
-               "ref":null
-            },
-            "34fe855d-70fe-4f03-ac2b-6b465fede6fb":{  
-               "value":10.01,
-               "type":"Decimal",
-               "name":"c_CustomField6Decimal",
-               "display_name":"Custom Field 6 - Decimal",
-               "ref":null
-            },
-            "627194cd-4169-4918-ad70-3d927dd126bb":{  
-               "value":null,
-               "type":"Collection",
-               "name":"Changesets",
-               "display_name":"Changesets",
-               "ref":"https://rally1.rallydev.com/slm/webservice/v2.x/PortfolioItem/Feature/69490535048/Changesets"
-            },
-            "e1aabad8-5315-4004-bf0f-68ee64cf335a":{  
-               "value":"2017-04-03T04:59:59z",
-               "type":"Date",
-               "name":"PlannedEndDate",
-               "display_name":"Planned End Date",
-               "ref":null
-            },
-            "17abf34f-eafa-4fb2-9287-2f91bc67f719":{  
-               "value":0.0,
-               "type":"Decimal",
-               "name":"AcceptedLeafStoryPlanEstimateTotal",
-               "display_name":"Accepted Leaf Story Plan Estimate Total",
-               "ref":null
-            },
-            "695e9e37-06eb-433a-b0c8-f9e196991a20":{  
-               "value":"from prod integration",
-               "type":"String",
-               "name":"c_CustomField8String",
-               "display_name":"Custom Field 8 - String",
-               "ref":null
-            },
-            "1e15344b-54f6-4576-b353-095190a50ad9":{  
-               "value":"one",
-               "type":"String",
-               "name":"c_CustomField5Dropdown",
-               "display_name":"Custom Field 5 - Dropdown",
-               "ref":null
-            },
-            "d2f27da7-c116-4d2f-bda3-ae8c53435bb4":{  
-               "value":0,
-               "type":"Integer",
-               "name":"DirectChildrenCount",
-               "display_name":"Direct Children Count",
-               "ref":null
-            },
-            "81fe3330-d4bd-4e27-9cea-f75c887f8c06":{  
-               "value":0,
-               "type":"Integer",
-               "name":"RefinedEstimate",
-               "display_name":"Refined Estimate",
-               "ref":null
-            },
-            "abb5af67-e70a-4a98-ad21-26f71bf4fe83":{  
-               "value":"",
-               "type":"Text",
-               "name":"Notes",
-               "display_name":"Notes",
-               "ref":null
-            },
-            "77f9ea84-780f-45fd-8864-b00c3e6f1260":{  
-               "value":0,
-               "type":"Integer",
-               "name":"UnEstimatedLeafStoryCount",
-               "display_name":"Un-Estimated Leaf Story Count",
-               "ref":null
-            },
-            "c2ee4dda-86ec-4ee4-b39d-1566ad30efd2":{  
-               "value":0,
-               "type":"Integer",
-               "name":"AcceptedLeafStoryCount",
-               "display_name":"Accepted Leaf Story Count",
-               "ref":null
-            }
-         },
-         "subscription_id":58510,
-         "message_id":"55e441e2-4f85-4a40-8353-9b1cd8795d04",
-         "project":{  
-            "uuid":"b6431455-7543-4383-84bd-7210b592896a",
-            "name":"First Project"
-         },
-         "id":"78e61a1d-edfd-4a85-b1a0-72442acb834f",
-         "detail_link":"https://rally1.rallydev.com/slm/#/detail/portfolioitem/feature/69490535048",
-         "message_version":2,
-         "changes":{  
-            "f5b1fb22-6c15-44b5-a592-19189fafe5f2":{  
-               "value":27,
-               "old_value":26,
-               "added":null,
-               "removed":null,
-               "type":"Integer",
-               "name":"VersionId",
-               "display_name":"VersionId",
-               "ref":null
-            },
-            "6776da91-9729-42c7-bab1-395b596013f2":{  
-               "value":null,
-               "old_value":null,
-               "added":[  
-                  {  
-                     "name":"Big Joe",
-                     "ref":"https://rally1.rallydev.com/slm/webservice/v2.x/tag/2f9eedc3-c372-4c08-a703-b24da997dff8",
-                     "detail_link":null,
-                     "id":"2f9eedc3-c372-4c08-a703-b24da997dff8",
-                     "object_type":"Tag"
-                  }
-               ],
-               "removed":null,
-               "type":"Collection",
-               "name":"Tags",
-               "display_name":"Tags",
-               "ref":"https://rally1.rallydev.com/slm/webservice/v2.x/PortfolioItem/Feature/69490535048/Tags"
-            }
-         },
-         "action":"Updated"
-      },
-      "rule":{  
-         "LastUpdateDate":"2016-10-17T19:40:42.215Z",
-         "Expressions":[  
-            {  
-               "AttributeID":"ae8ecc9f-b9a0-42a4-a6e3-c83d7f8a7070",
-               "AttributeName":null,
-               "Operator":"=",
-               "Value":"b6431455-7543-4383-84bd-7210b592896a"
-            }
-         ],
-         "SubscriptionID":58510,
-         "ObjectTypes":null,
-         "_type":"webhook",
-         "OwnerID":"9360ba90-7b7b-4a3e-8dea-d6f837b7bb1e",
-         "TargetUrl":"https://peterklipfel-trial.aha.io/api/v1/webhooks/f2656c98bc1edb6b55ecce82e2208a8518659dabd4d9b639a67de4723a704c77",
-         "CreatedBy":null,
-         "_objectVersion":2,
-         "Disabled":false,
-         "Name":"Aha! Rally Integration 6268668635835406919",
-         "AppName":"Aha!",
-         "ObjectUUID":"f598489c-ef7d-4c5d-820e-37a78ac6b4a6",
-         "CreationDate":"2016-08-01T17:42:20.897Z",
-         "AppUrl":"http://www.aha.io"
+{
+  "token": "f2656c98bc1edb6b55ecce82e2208a8518659dabd4d9b639a67de4723a704c77",
+  "message": {
+    "object_id": "78e61a1d-edfd-4a85-b1a0-72442acb834f",
+    "ref": "https://rally1.rallydev.com/slm/webservice/v2.x/portfolioitem/feature/78e61a1d-edfd-4a85-b1a0-72442acb834f",
+    "object_type": "Feature",
+    "transaction": {
+      "timestamp": 1476806022420,
+      "message_lag": 95991,
+      "trace_id": "af0874ed-f6bb-4558-88c2-7cfda67ae00b",
+      "user": {
+        "uuid": "f05fbe96-a1eb-4115-bbe9-e24bfd4715e2",
+        "username": "alex@aha.io",
+        "email": "alex@aha.io"
       }
-   }
+    },
+    "state": {
+      "c3d4f057-0781-4660-8ce7-bc8514bf0945": {
+        "value": "78e61a1d-edfd-4a85-b1a0-72442acb834f",
+        "type": "Raw",
+        "name": "ObjectUUID",
+        "display_name": "ObjectUUID",
+        "ref": null
+      },
+      "133bcf42-74fe-4729-b512-6e445eb713fa": {
+        "value": null,
+        "type": "Integer",
+        "name": "PreliminaryEstimateValue",
+        "display_name": "Preliminary Estimate Value",
+        "ref": null
+      },
+      "b0778de0-a927-11e2-9e96-0800200c9a66": {
+        "value": "#848689",
+        "type": "String",
+        "name": "DisplayColor",
+        "display_name": "Display Color",
+        "ref": null
+      },
+      "0990deaa-7065-4c4f-b8df-504751663066": {
+        "value": 0,
+        "type": "Integer",
+        "name": "ValueScore",
+        "display_name": "Value Score",
+        "ref": null
+      },
+      "500a0d67-9c48-4145-920c-821033e4a832": {
+        "value": "rhodes synth",
+        "type": "String",
+        "name": "Name",
+        "display_name": "Name",
+        "ref": null
+      },
+      "2f85dd1f-8d50-4f18-b859-fd25653ae795": {
+        "value": 0,
+        "type": "Integer",
+        "name": "LeafStoryCount",
+        "display_name": "Leaf Story Count",
+        "ref": null
+      },
+      "b2ba04a5-92fb-4d18-95d7-bcd2339b9726": {
+        "value": 0,
+        "type": "Decimal",
+        "name": "PercentDoneByStoryCount",
+        "display_name": "Percent Done By Story Count",
+        "ref": null
+      },
+      "beacf3d0-cbac-4003-b8bc-9adefa3f19d1": {
+        "value": 1,
+        "type": "Integer",
+        "name": "RROEValue",
+        "display_name": "RR/OE Value",
+        "ref": null
+      },
+      "07e85fe6-cefc-47b8-a3f3-99eb416d2d25": {
+        "value": 0,
+        "type": "Decimal",
+        "name": "PercentDoneByStoryPlanEstimate",
+        "display_name": "Percent Done By Story Plan Estimate",
+        "ref": null
+      },
+      "55c5512a-1518-4944-8597-3eb91875e8d1": {
+        "value": "F32",
+        "type": "String",
+        "name": "FormattedID",
+        "display_name": "Formatted ID",
+        "ref": null
+      },
+      "d010637f-f52b-44d2-b78e-bddd92ef45ae": {
+        "value": "from prod integration",
+        "type": "Text",
+        "name": "c_CustomField1Text",
+        "display_name": "Custom Field 1 - Text",
+        "ref": null
+      },
+      "17f72ea6-04fd-449e-925c-89ac079c0668": {
+        "value": {
+          "name": "Workspace 1",
+          "ref": "https://rally1.rallydev.com/slm/webservice/v2.x/workspace/84185cff-aa46-4efc-b3fa-f9f0ead52130",
+          "detail_link": "https://rally1.rallydev.com/slm/#/detail/workspace/22098603316",
+          "id": "84185cff-aa46-4efc-b3fa-f9f0ead52130",
+          "object_type": "Workspace"
+        },
+        "type": "Workspace",
+        "name": "Workspace",
+        "display_name": "Workspace",
+        "ref": null
+      },
+      "1160ddd6-86cf-4cce-883b-2465e993832a": {
+        "value": "2016-10-18T15:53:42.349Z",
+        "type": "Date",
+        "name": "LastUpdateDate",
+        "display_name": "Last Update Date",
+        "ref": null
+      },
+      "b2d97c5f-f5f2-4fc4-8ce1-e0fe1386298c": {
+        "value": null,
+        "type": "Collection",
+        "name": "UserStories",
+        "display_name": "UserStories",
+        "ref": "https://rally1.rallydev.com/slm/webservice/v2.x/PortfolioItem/Feature/69490535048/UserStories"
+      },
+      "009f93a4-e35f-4615-bc44-998716909e13": {
+        "value": "2016-10-10T06:00:00.000Z",
+        "type": "Date",
+        "name": "c_CustomField4Date",
+        "display_name": "Custom Field 4 - Date",
+        "ref": null
+      },
+      "100bcf42-74fe-4729-b512-5e445eb713fa": {
+        "value": null,
+        "type": "Preliminary Estimate",
+        "name": "PreliminaryEstimate",
+        "display_name": "Preliminary Estimate",
+        "ref": null
+      },
+      "be9efb75-abf4-412b-ba29-fb7b07926284": {
+        "value": 0,
+        "type": "Decimal",
+        "name": "LeafStoryPlanEstimateTotal",
+        "display_name": "Leaf Story Plan Estimate Total",
+        "ref": null
+      },
+      "a5245298-8a3f-0297-0a0c-79c2acf41406": {
+        "value": false,
+        "type": "Boolean",
+        "name": "Recycled",
+        "display_name": "Recycled",
+        "ref": null
+      },
+      "3e539b10-c993-4879-b84e-3db1623274c9": {
+        "value": false,
+        "type": "Boolean",
+        "name": "ChildStoryPredecessorScheduledInSameOrLaterIteration",
+        "display_name": "Child Story Predecessor Scheduled In Same Or Later Iteration",
+        "ref": null
+      },
+      "6776da91-9729-42c7-bab1-395b596013f2": {
+        "value": [
+          {
+            "name": "simpletag",
+            "ref": "https://rally1.rallydev.com/slm/webservice/v2.x/tag/bb4a7615-ddd6-4068-84d0-1a818c2b1e56",
+            "detail_link": null,
+            "id": "bb4a7615-ddd6-4068-84d0-1a818c2b1e56",
+            "object_type": "Tag"
+          },
+          {
+            "name": "Big Joe",
+            "ref": "https://rally1.rallydev.com/slm/webservice/v2.x/tag/2f9eedc3-c372-4c08-a703-b24da997dff8",
+            "detail_link": null,
+            "id": "2f9eedc3-c372-4c08-a703-b24da997dff8",
+            "object_type": "Tag"
+          }
+        ],
+        "type": "Collection",
+        "name": "Tags",
+        "display_name": "Tags",
+        "ref": "https://rally1.rallydev.com/slm/webservice/v2.x/PortfolioItem/Feature/69490535048/Tags"
+      },
+      "85d5d854-13b0-4bf3-88f3-a912038e728a": {
+        "value": null,
+        "type": "Collection",
+        "name": "Milestones",
+        "display_name": "Milestones",
+        "ref": "https://rally1.rallydev.com/slm/webservice/v2.x/PortfolioItem/Feature/69490535048/Milestones"
+      },
+      "b1caf4cd-1dab-425e-bd2c-4ab3aa6e1d1a": {
+        "value": 7337,
+        "type": "Integer",
+        "name": "c_CustomField3Integer",
+        "display_name": "Custom Field 3 - Integer",
+        "ref": null
+      },
+      "31945129-9066-43e5-b8bb-629a4d6ee009": {
+        "value": 1,
+        "type": "Integer",
+        "name": "TimeCriticality",
+        "display_name": "Time Criticality",
+        "ref": null
+      },
+      "7342ea30-0929-4f9a-b432-70ff9f959cb2": {
+        "value": false,
+        "type": "Boolean",
+        "name": "Archived",
+        "display_name": "Archived",
+        "ref": null
+      },
+      "49bc14e8-a399-4547-98d7-5f36d3bcf8c7": {
+        "value": "P!!!R~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
+        "type": "String",
+        "name": "DragAndDropRank",
+        "display_name": "Drag And Drop Rank",
+        "ref": null
+      },
+      "f1f8bc62-30b4-4944-939b-e943370a98e3": {
+        "value": {
+          "name": "higher scope - first project",
+          "ref": "https://rally1.rallydev.com/slm/webservice/v2.x/release/57d37e77-6e39-491b-a9fa-c968f4c4b290",
+          "detail_link": "https://rally1.rallydev.com/slm/#/detail/release/69490303368",
+          "id": "57d37e77-6e39-491b-a9fa-c968f4c4b290",
+          "object_type": "Release"
+        },
+        "type": "Release",
+        "name": "Release",
+        "display_name": "Release",
+        "ref": null
+      },
+      "ce10e5af-ef87-49ce-a09d-5d01acc73389": {
+        "value": {
+          "name": "Feature",
+          "ref": "https://rally1.rallydev.com/slm/webservice/v2.x/typedefinition/a0faf3b8-a0b6-4205-a38d-31155b3b2535",
+          "detail_link": null,
+          "id": "a0faf3b8-a0b6-4205-a38d-31155b3b2535",
+          "object_type": "TypeDefinition"
+        },
+        "type": "Type Definition",
+        "name": "PortfolioItemType",
+        "display_name": "Portfolio Item Type",
+        "ref": null
+      },
+      "ad93a14a-0295-456e-a2ad-e9f06c43bd22": {
+        "value": null,
+        "type": "Date",
+        "name": "ActualStartDate",
+        "display_name": "Actual Start Date",
+        "ref": null
+      },
+      "fb2fd9c9-acb2-489e-97fc-bf7f9e28e6b5": {
+        "value": null,
+        "type": "State",
+        "name": "State",
+        "display_name": "State",
+        "ref": null
+      },
+      "3ddb7c96-72ba-4c37-a63b-106aa5423138": {
+        "value": null,
+        "type": "Date",
+        "name": "PlannedStartDate",
+        "display_name": "Planned Start Date",
+        "ref": null
+      },
+      "f705ed17-9239-427e-8f34-10bbe088297e": {
+        "value": {
+          "name": "Tech Partner - chris@aha.io",
+          "ref": "https://rally1.rallydev.com/slm/webservice/v2.x/subscription/7d264871-cb52-4223-b5ea-bded4ad17d8f",
+          "detail_link": "https://rally1.rallydev.com/slm/#/detail/subscription/22098603174",
+          "id": "7d264871-cb52-4223-b5ea-bded4ad17d8f",
+          "object_type": "Subscription"
+        },
+        "type": "Subscription",
+        "name": "Subscription",
+        "display_name": "Subscription",
+        "ref": null
+      },
+      "fd76667a-5974-4750-a1e1-7d704576f0b0": {
+        "value": 0,
+        "type": "Integer",
+        "name": "RiskScore",
+        "display_name": "Risk Score",
+        "ref": null
+      },
+      "95ac2b13-e4ee-413e-af83-42aaf4b53626": {
+        "value": "2016-10-17T19:57:40.267Z",
+        "type": "Date",
+        "name": "CreationDate",
+        "display_name": "Creation Date",
+        "ref": null
+      },
+      "557393c4-131b-4df7-b01e-5319b11edd24": {
+        "value": null,
+        "type": "User",
+        "name": "Owner",
+        "display_name": "Owner",
+        "ref": null
+      },
+      "a706408a-25c8-4767-b7cb-66873a529eb6": {
+        "value": null,
+        "type": "Collection",
+        "name": "Successors",
+        "display_name": "Successors",
+        "ref": "https://rally1.rallydev.com/slm/webservice/v2.x/PortfolioItem/Feature/69490535048/Successors"
+      },
+      "4ee51483-d97b-4f9a-a067-78120226db06": {
+        "value": 0,
+        "type": "Decimal",
+        "name": "WSJFScore",
+        "display_name": "WSJF Score",
+        "ref": null
+      },
+      "f46996bb-f128-4865-a058-2624afb84df4": {
+        "value": null,
+        "type": "Collection",
+        "name": "Discussion",
+        "display_name": "Discussion",
+        "ref": "https://rally1.rallydev.com/slm/webservice/v2.x/PortfolioItem/Feature/69490535048/Discussion"
+      },
+      "f5b1fb22-6c15-44b5-a592-19189fafe5f2": {
+        "value": 27,
+        "type": "Integer",
+        "name": "VersionId",
+        "display_name": "VersionId",
+        "ref": null
+      },
+      "fff26e0d-12f8-4fd0-b497-941fca3d682a": {
+        "value": null,
+        "type": "Collection",
+        "name": "Collaborators",
+        "display_name": "Collaborators",
+        "ref": "https://rally1.rallydev.com/slm/webservice/v2.x/PortfolioItem/Feature/69490535048/Collaborators"
+      },
+      "00c3114f-75a6-4a9e-b92b-793b68c21326": {
+        "value": false,
+        "type": "Boolean",
+        "name": "ChildStoryPredecessorNotScheduled",
+        "display_name": "Child Story Predecessor Not Scheduled",
+        "ref": null
+      },
+      "6a1045e7-3d05-41bb-a27e-5964515e3f6a": {
+        "value": false,
+        "type": "Boolean",
+        "name": "Expedite",
+        "display_name": "Expedite",
+        "ref": null
+      },
+      "727a8977-f3a5-4713-9415-ac97471cc736": {
+        "value": false,
+        "type": "Boolean",
+        "name": "Ready",
+        "display_name": "Ready",
+        "ref": null
+      },
+      "c9e91358-64a6-4732-a868-eb77c470eb19": {
+        "value": 1,
+        "type": "Integer",
+        "name": "JobSize",
+        "display_name": "Job Size",
+        "ref": null
+      },
+      "32e57d37-36f0-44a6-bc2f-34cf755ff91b": {
+        "value": null,
+        "type": "Collection",
+        "name": "Attachments",
+        "display_name": "Attachments",
+        "ref": "https://rally1.rallydev.com/slm/webservice/v2.x/PortfolioItem/Feature/69490535048/Attachments"
+      },
+      "8fec8ffd-051c-4403-977b-9085f390b647": {
+        "value": null,
+        "type": "Date",
+        "name": "ActualEndDate",
+        "display_name": "Actual End Date",
+        "ref": null
+      },
+      "5736cb0d-4ef8-4e83-a086-cb11e9a705e2": {
+        "value": {
+          "value": "None",
+          "ordinal_index": 0
+        },
+        "type": "Rating",
+        "name": "InvestmentCategory",
+        "display_name": "Investment Category",
+        "ref": null
+      },
+      "81d11053-021a-4711-ad03-26c3c5f1cf22": {
+        "value": null,
+        "type": "Collection",
+        "name": "Predecessors",
+        "display_name": "Predecessors",
+        "ref": "https://rally1.rallydev.com/slm/webservice/v2.x/PortfolioItem/Feature/69490535048/Predecessors"
+      },
+      "5441f34a-6308-4a09-869c-bcd01963302a": {
+        "value": null,
+        "type": "Initiative",
+        "name": "Parent",
+        "display_name": "Parent",
+        "ref": null
+      },
+      "8cd45c27-07b9-41b0-a91b-8464306234ad": {
+        "value": null,
+        "type": "Collection",
+        "name": "c_CustomField7DropDownList",
+        "display_name": "Custom Field 7 - Drop Down List",
+        "ref": "https://rally1.rallydev.com/slm/webservice/v2.x/PortfolioItem/Feature/69490535048/c_CustomField7DropDownList"
+      },
+      "ae8ecc9f-b9a0-42a4-a6e3-c83d7f8a7070": {
+        "value": {
+          "name": "First Project",
+          "ref": "https://rally1.rallydev.com/slm/webservice/v2.x/project/b6431455-7543-4383-84bd-7210b592896a",
+          "detail_link": "https://rally1.rallydev.com/slm/#/detail/project/22098603406",
+          "id": "b6431455-7543-4383-84bd-7210b592896a",
+          "object_type": "Project"
+        },
+        "type": "Project",
+        "name": "Project",
+        "display_name": "Project",
+        "ref": null
+      },
+      "2dc135f2-a7db-4084-b258-42a24b05e3dd": {
+        "value": "2016-10-17T19:57:40.267Z",
+        "type": "Date",
+        "name": "StateChangedDate",
+        "display_name": "State Changed Date",
+        "ref": null
+      },
+      "f6d58321-4699-417d-8ae1-c102666321e7": {
+        "value": null,
+        "type": "Integer",
+        "name": "LatestDiscussionAgeInMinutes",
+        "display_name": "Latest Discussion Age In Minutes",
+        "ref": null
+      },
+      "09877ea1-2678-4e62-83e9-748d851913fc": {
+        "value": {
+          "name": "RevisionHistory_69490535052",
+          "ref": "https://rally1.rallydev.com/slm/webservice/v2.x/revisionhistory/2438aece-42b7-499f-b82b-382ff97de57e",
+          "detail_link": null,
+          "id": "2438aece-42b7-499f-b82b-382ff97de57e",
+          "object_type": "RevisionHistory"
+        },
+        "type": "Revision History",
+        "name": "RevisionHistory",
+        "display_name": "Revision History",
+        "ref": null
+      },
+      "b5bae981-bfe6-4980-844a-b5ecf3e9a156": {
+        "value": "<p>a piano...</p>",
+        "type": "Text",
+        "name": "Description",
+        "display_name": "Description",
+        "ref": null
+      },
+      "fc133104-b85c-4f38-ac41-65ebefb39900": {
+        "value": true,
+        "type": "Boolean",
+        "name": "c_CustomField2Boolean",
+        "display_name": "Custom Field 2 - Boolean",
+        "ref": null
+      },
+      "ec1e34aa-41a0-4c64-bfee-15600e3933ae": {
+        "value": 0,
+        "type": "Integer",
+        "name": "LateChildCount",
+        "display_name": "Late Child Count",
+        "ref": null
+      },
+      "5ffa6b55-449e-4753-a22e-4cb6e303af84": {
+        "value": "Feature",
+        "type": "String",
+        "name": "PortfolioItemTypeName",
+        "display_name": "Portfolio Item Type Name",
+        "ref": null
+      },
+      "e43aaa85-96f9-4983-a8ad-1552e1ff5e71": {
+        "value": 1,
+        "type": "Integer",
+        "name": "UserBusinessValue",
+        "display_name": "User/Business Value",
+        "ref": null
+      },
+      "2910ca71-9779-4e7b-8fcf-d718c919aff8": {
+        "value": 69490535048,
+        "type": "Integer",
+        "name": "ObjectID",
+        "display_name": "Object ID",
+        "ref": null
+      },
+      "34fe855d-70fe-4f03-ac2b-6b465fede6fb": {
+        "value": 10.01,
+        "type": "Decimal",
+        "name": "c_CustomField6Decimal",
+        "display_name": "Custom Field 6 - Decimal",
+        "ref": null
+      },
+      "627194cd-4169-4918-ad70-3d927dd126bb": {
+        "value": null,
+        "type": "Collection",
+        "name": "Changesets",
+        "display_name": "Changesets",
+        "ref": "https://rally1.rallydev.com/slm/webservice/v2.x/PortfolioItem/Feature/69490535048/Changesets"
+      },
+      "e1aabad8-5315-4004-bf0f-68ee64cf335a": {
+        "value": "2017-04-03T04:59:59z",
+        "type": "Date",
+        "name": "PlannedEndDate",
+        "display_name": "Planned End Date",
+        "ref": null
+      },
+      "17abf34f-eafa-4fb2-9287-2f91bc67f719": {
+        "value": 0,
+        "type": "Decimal",
+        "name": "AcceptedLeafStoryPlanEstimateTotal",
+        "display_name": "Accepted Leaf Story Plan Estimate Total",
+        "ref": null
+      },
+      "695e9e37-06eb-433a-b0c8-f9e196991a20": {
+        "value": "from prod integration",
+        "type": "String",
+        "name": "c_CustomField8String",
+        "display_name": "Custom Field 8 - String",
+        "ref": null
+      },
+      "1e15344b-54f6-4576-b353-095190a50ad9": {
+        "value": "one",
+        "type": "String",
+        "name": "c_CustomField5Dropdown",
+        "display_name": "Custom Field 5 - Dropdown",
+        "ref": null
+      },
+      "d2f27da7-c116-4d2f-bda3-ae8c53435bb4": {
+        "value": 0,
+        "type": "Integer",
+        "name": "DirectChildrenCount",
+        "display_name": "Direct Children Count",
+        "ref": null
+      },
+      "81fe3330-d4bd-4e27-9cea-f75c887f8c06": {
+        "value": 0,
+        "type": "Integer",
+        "name": "RefinedEstimate",
+        "display_name": "Refined Estimate",
+        "ref": null
+      },
+      "abb5af67-e70a-4a98-ad21-26f71bf4fe83": {
+        "value": "",
+        "type": "Text",
+        "name": "Notes",
+        "display_name": "Notes",
+        "ref": null
+      },
+      "77f9ea84-780f-45fd-8864-b00c3e6f1260": {
+        "value": 0,
+        "type": "Integer",
+        "name": "UnEstimatedLeafStoryCount",
+        "display_name": "Un-Estimated Leaf Story Count",
+        "ref": null
+      },
+      "c2ee4dda-86ec-4ee4-b39d-1566ad30efd2": {
+        "value": 0,
+        "type": "Integer",
+        "name": "AcceptedLeafStoryCount",
+        "display_name": "Accepted Leaf Story Count",
+        "ref": null
+      }
+    },
+    "subscription_id": 58510,
+    "message_id": "55e441e2-4f85-4a40-8353-9b1cd8795d04",
+    "project": {
+      "uuid": "b6431455-7543-4383-84bd-7210b592896a",
+      "name": "First Project"
+    },
+    "id": "78e61a1d-edfd-4a85-b1a0-72442acb834f",
+    "detail_link": "https://rally1.rallydev.com/slm/#/detail/portfolioitem/feature/69490535048",
+    "message_version": 2,
+    "changes": {
+      "f5b1fb22-6c15-44b5-a592-19189fafe5f2": {
+        "value": 27,
+        "old_value": 26,
+        "added": null,
+        "removed": null,
+        "type": "Integer",
+        "name": "VersionId",
+        "display_name": "VersionId",
+        "ref": null
+      },
+      "6776da91-9729-42c7-bab1-395b596013f2": {
+        "value": null,
+        "old_value": null,
+        "added": [
+          {
+            "name": "Big Joe",
+            "ref": "https://rally1.rallydev.com/slm/webservice/v2.x/tag/2f9eedc3-c372-4c08-a703-b24da997dff8",
+            "detail_link": null,
+            "id": "2f9eedc3-c372-4c08-a703-b24da997dff8",
+            "object_type": "Tag"
+          }
+        ],
+        "removed": null,
+        "type": "Collection",
+        "name": "Tags",
+        "display_name": "Tags",
+        "ref": "https://rally1.rallydev.com/slm/webservice/v2.x/PortfolioItem/Feature/69490535048/Tags"
+      }
+    },
+    "action": "Updated"
+  },
+  "rule": {
+    "LastUpdateDate": "2016-10-17T19:40:42.215Z",
+    "Expressions": [
+      {
+        "AttributeID": "ae8ecc9f-b9a0-42a4-a6e3-c83d7f8a7070",
+        "AttributeName": null,
+        "Operator": "=",
+        "Value": "b6431455-7543-4383-84bd-7210b592896a"
+      }
+    ],
+    "SubscriptionID": 58510,
+    "ObjectTypes": null,
+    "_type": "webhook",
+    "OwnerID": "9360ba90-7b7b-4a3e-8dea-d6f837b7bb1e",
+    "TargetUrl": "https://peterklipfel-trial.aha.io/api/v1/webhooks/f2656c98bc1edb6b55ecce82e2208a8518659dabd4d9b639a67de4723a704c77",
+    "CreatedBy": null,
+    "_objectVersion": 2,
+    "Disabled": false,
+    "Name": "Aha! Rally Integration 6268668635835406919",
+    "AppName": "Aha!",
+    "ObjectUUID": "f598489c-ef7d-4c5d-820e-37a78ac6b4a6",
+    "CreationDate": "2016-08-01T17:42:20.897Z",
+    "AppUrl": "http://www.aha.io"
+  }
 }

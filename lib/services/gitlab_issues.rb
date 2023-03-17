@@ -96,7 +96,7 @@ class AhaServices::GitlabIssues < AhaService
   end
 
   def receive_webhook
-    objattr = payload.webhook.object_attributes
+    objattr = payload.object_attributes
     action = objattr.action if objattr
     return unless objattr and objattr.id and action
 

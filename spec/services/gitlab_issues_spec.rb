@@ -530,7 +530,7 @@ describe AhaServices::GitlabIssues do
       service.receive_webhook
     end
     it "does nothing if more then one integration_field is returned" do
-        service.stub(:payload).and_return(Hashie::Mash.new({webhook: { object_attributes: mock_issue }}))
+        service.stub(:payload).and_return(Hashie::Mash.new(object_attributes: mock_issue))
         mock_api_client.stub(:search_integration_fields).and_return(Hashie::Mash.new({records:[
           {feature:{ resource: 'resource-1', name: 'name-1'}},
           {feature:{ resource: 'resource-2', name: 'name-2'}}
@@ -539,12 +539,12 @@ describe AhaServices::GitlabIssues do
     end
 
     it "does nothing if the webhook issue is nil" do
-      service.stub(:payload).and_return(Hashie::Mash.new({webhook: { object_attributes: {action: 'update'}}}))
+      service.stub(:payload).and_return(Hashie::Mash.new(object_attributes: { action: 'update' }))
       mock_api_client.should_not_receive(:search_integration_fields)
     end
 
     it "does nothing if the webhook action is nil" do
-      service.stub(:payload).and_return(Hashie::Mash.new({webhook: { object_attributes: { id: 42, title: "The issue" }}}))
+      service.stub(:payload).and_return(Hashie::Mash.new(object_attributes: { id: 42, title: "The issue" }))
       mock_api_client.should_not_receive(:search_integration_fields)
     end
     context "with valid results returned from search_integration_fields" do
