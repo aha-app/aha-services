@@ -74,8 +74,8 @@ module TfsCommon
 
   def receive_webhook
     begin
-      return unless payload.webhook && payload.webhook.resource && payload.webhook.resource._links && payload.webhook.resource._links.parent
-      url = payload.webhook.resource._links.parent.href
+      return unless payload && payload.resource && payload.resource._links && payload.resource._links.parent
+      url = payload.resource._links.parent.href
       if test_webhook(url)
         logger.info("Received test webhook")
         return

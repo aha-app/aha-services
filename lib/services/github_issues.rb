@@ -68,8 +68,8 @@ class AhaServices::GithubIssues < AhaService
   end
 
   def receive_webhook
-    return unless payload.webhook
-    action, issue, repo = payload.webhook.action, payload.webhook.issue, payload.webhook.repository
+    return unless payload
+    action, issue, repo = payload.action, payload.issue, payload.repository
     return unless issue and action and repo
     return unless repo.full_name == data.repository
     

@@ -547,7 +547,7 @@ describe AhaServices::GithubIssues do
       service.receive_webhook
     end
     it "does nothing if more then one integration_field for features is returned" do
-        service.stub(:payload).and_return(Hashie::Mash.new({webhook: {action: 'labeled', issue: mock_issue, repository: mock_repository}}))
+        service.stub(:payload).and_return(Hashie::Mash.new(action: 'labeled', issue: mock_issue, repository: mock_repository))
         mock_api_client.stub(:search_integration_fields).and_return(Hashie::Mash.new({records:[
           {feature:{ resource: 'resource-1', name: 'name-1'}},
           {feature:{ resource: 'resource-2', name: 'name-2'}}
@@ -556,7 +556,7 @@ describe AhaServices::GithubIssues do
     end
 
     it "Updates feature if more than one integration field (feature and release) is returned" do
-      service.stub(:payload).and_return(Hashie::Mash.new({webhook: {action: 'labeled', issue: mock_issue, repository: mock_repository}}))
+      service.stub(:payload).and_return(Hashie::Mash.new(action: 'labeled', issue: mock_issue, repository: mock_repository))
       mock_api_client.stub(:search_integration_fields).and_return(Hashie::Mash.new({records:[
         {feature:{ resource: 'resource-1', name: 'name-1'}},
         {release:{ resource: 'release-2', name: 'name-2'}}
@@ -565,35 +565,35 @@ describe AhaServices::GithubIssues do
     end
 
     it "does nothing if the webhook issue is nil" do
-      service.stub(:payload).and_return(Hashie::Mash.new({webhook: {
+      service.stub(:payload).and_return(Hashie::Mash.new(
         action: 'labeled', 
         repository: mock_repository,
-      }}))
+      ))
       mock_api_client.should_not_receive(:search_integration_fields)
     end
 
     it "does nothing if the webhook action is nil" do
-      service.stub(:payload).and_return(Hashie::Mash.new({webhook: {
+      service.stub(:payload).and_return(Hashie::Mash.new(
         issue: mock_issue, 
         repository: mock_repository,
-      }}))
+      ))
       mock_api_client.should_not_receive(:search_integration_fields)
     end
 
     it "does nothing if the webhook repository is nil" do
-      service.stub(:payload).and_return(Hashie::Mash.new({webhook: { 
+      service.stub(:payload).and_return(Hashie::Mash.new(
         action: 'labeled', 
         issue: mock_issue,
-      }}))
+      ))
       mock_api_client.should_not_receive(:search_integration_fields)
     end
     
     it "does nothing if the webhook is configured for a different repository" do
-      service.stub(:payload).and_return(Hashie::Mash.new({webhook: { 
+      service.stub(:payload).and_return(Hashie::Mash.new(
         action: 'labeled', 
         issue: mock_issue,
         repository: { full_name: "user/not-our-repo"},
-      }}))
+      ))
       mock_api_client.should_not_receive(:search_integration_fields)
     end
     
@@ -621,13 +621,13 @@ describe AhaServices::GithubIssues do
 
         context "and labeled action" do
           it "should update the workflow_status" do
-            service.stub(:payload).and_return(Hashie::Mash.new({webhook: {action: 'labeled', issue: mock_issue, repository: mock_repository}}))
+            service.stub(:payload).and_return(Hashie::Mash.new(action: 'labeled', issue: mock_issue, repository: mock_repository))
             expected_diff = {name: "The issue", workflow_status: "Shipped", tags: ["First", "Second", "Third"]}
             mock_api_client.should_receive(:put).with('some-resource', {feature: expected_diff})
           end
           it "should update the issue to only have one aha-label if more then one aha-label is added" do
             mock_issue[:labels].push({name: 'Aha!:In Development'})
-            service.stub(:payload).and_return(Hashie::Mash.new({webhook: {action: 'labeled', issue: mock_issue, repository: mock_repository}}))
+            service.stub(:payload).and_return(Hashie::Mash.new(action: 'labeled', issue: mock_issue, repository: mock_repository))
             label_resource.should_receive(:update).with(mock_issue[:number], ["First", "Second", "Third", "Aha!:In Development"])
             mock_api_client.stub(:put)
           end
@@ -635,13 +635,13 @@ describe AhaServices::GithubIssues do
         context "and unlabeled action" do
           it "should add the label back to the issue when there is no Aha! labels" do
             mock_issue[:labels].pop # remove the Aha!:In Development label
-            service.stub(:payload).and_return(Hashie::Mash.new({label: {name: 'Aha!:Shipped'}, webhook: { action: 'unlabeled', issue: mock_issue, repository: mock_repository }}))
+            service.stub(:payload).and_return(Hashie::Mash.new({label: {name: 'Aha!:Shipped'}, action: 'unlabeled', issue: mock_issue, repository: mock_repository}))
             label_resource.should_receive(:update).with(mock_issue[:number], ["First", "Second", "Third", "Aha!:Shipped"])
             service.stub(:label_resource).and_return(label_resource)
             mock_api_client.stub(:put)
           end
           it "should add the label back to the issue" do
-            service.stub(:payload).and_return(Hashie::Mash.new({label: {name: 'Aha!:Shipped'}, webhook: { action: 'unlabeled', issue: mock_issue, repository: mock_repository }}))
+            service.stub(:payload).and_return(Hashie::Mash.new({label: {name: 'Aha!:Shipped'}, action: 'unlabeled', issue: mock_issue, repository: mock_repository }))
             label_resource.should_not_receive(:update)
             service.stub(:label_resource).and_return(label_resource)
             mock_api_client.stub(:put)
@@ -654,14 +654,14 @@ describe AhaServices::GithubIssues do
 
 
           it "should not propagate open labels" do
-            service.stub(:payload).and_return(Hashie::Mash.new({label: {name: 'Aha!:Shipped'}, webhook: { action: 'opened', issue: opened_mock_issue, repository: mock_repository }}))
+            service.stub(:payload).and_return(Hashie::Mash.new({label: {name: 'Aha!:Shipped'}, action: 'opened', issue: opened_mock_issue, repository: mock_repository }))
             label_resource.should_not_receive(:update)
             service.stub(:label_resource).and_return(label_resource)
             mock_api_client.stub(:put).and_return(Hashie::Mash.new({feature: {workflow_status: {name: "In development"}}}))
           end
 
           it "should propagate the open status back to GitHub" do
-            service.stub(:payload).and_return(Hashie::Mash.new({label: {name: 'Aha!:Shipped'}, webhook: { action: 'opened', issue: closed_mock_issue, repository: mock_repository }}))
+            service.stub(:payload).and_return(Hashie::Mash.new({label: {name: 'Aha!:Shipped'}, action: 'opened', issue: closed_mock_issue, repository: mock_repository }))
             label_resource.should_receive(:update).with(closed_mock_issue[:number], ["First", "Second", "Third", "Aha!:In development"])
             service.stub(:label_resource).and_return(label_resource)
             mock_api_client.stub(:put).and_return(Hashie::Mash.new({feature: {workflow_status: {name: "In development"}}}))
@@ -672,7 +672,7 @@ describe AhaServices::GithubIssues do
           let(:mock_issue) { { number: 42, title: "The issue", state: "closed", labels: [{name:"First"}, {name:"Second"}, {name: "Third"}, {name: "Aha!:Shipped"}] } }
 
           it "should propagate the closed status back to GitHub" do
-            service.stub(:payload).and_return(Hashie::Mash.new({label: {name: 'Aha!:Shipped'}, webhook: { action: 'closed', issue: mock_issue, repository: mock_repository }}))
+            service.stub(:payload).and_return(Hashie::Mash.new({label: {name: 'Aha!:Shipped'}, action: 'closed', issue: mock_issue, repository: mock_repository }))
             label_resource.should_receive(:update).with(mock_issue[:number], ["First", "Second", "Third", "Aha!:Shipped"])
             service.stub(:label_resource).and_return(label_resource)
             mock_api_client.stub(:put).and_return(Hashie::Mash.new({feature: {workflow_status: {name: "Shipped"}}}))
@@ -691,7 +691,7 @@ describe AhaServices::GithubIssues do
 
         context "and labeled action" do
           before(:each) do
-            service.stub(:payload).and_return(Hashie::Mash.new({webhook: {action: 'labeled', issue: mock_issue, repository: mock_repository}}))
+            service.stub(:payload).and_return(Hashie::Mash.new(action: 'labeled', issue: mock_issue, repository: mock_repository))
           end
           it "does not change the workflow status" do
             expected_diff = {:name=> "The issue", :tags=>["First", "Second", "Third", "Aha!:Shipped"]}
@@ -700,7 +700,7 @@ describe AhaServices::GithubIssues do
         end
         context "and unlabeled action" do
           before(:each) do
-            service.stub(:payload).and_return(Hashie::Mash.new({label: {name: 'Shipped'}, webhook: { action: 'unlabeled', issue: mock_issue, repository: mock_repository }}))
+            service.stub(:payload).and_return(Hashie::Mash.new({label: {name: 'Shipped'}, action: 'unlabeled', issue: mock_issue, repository: mock_repository }))
           end
           it "does not add the label back to the issue" do
             label_resource.should_not_receive(:update)
@@ -783,7 +783,7 @@ describe AhaServices::GithubIssues do
       )
     end
     before do
-      service.stub(:payload).and_return(Hashie::Mash.new(webhook: github_webhook))
+      service.stub(:payload).and_return(Hashie::Mash.new(github_webhook))
     end
     
     context "with mapped workflow statuses" do
