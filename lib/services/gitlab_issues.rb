@@ -355,12 +355,12 @@ class AhaServices::GitlabIssues < AhaService
 
   def integrate_release_with_gitlab_milestone(release, milestone)
     api.create_integration_fields("releases", release.reference_num, data.integration_id,
-      {milestone_id: milestone['id'], number: milestone['iid'], url: "#{get_project_url}/milestones/#{milestone['iid']}"})
+      {milestone_id: milestone['id'], number: milestone['iid'], url: milestone['web_url']})
   end
 
   def integrate_resource_with_gitlab_issue(resource, issue)
     api.create_integration_fields(reference_num_to_resource_type(resource.reference_num), resource.reference_num, data.integration_id,
-      {id: issue['id'], number: issue['iid'], url: "#{get_project_url}/issues/#{issue['iid']}"})
+      {id: issue['id'], number: issue['iid'], url: issue['web_url']})
   end
 
   def requirements_to_checklist?
@@ -382,6 +382,6 @@ class AhaServices::GitlabIssues < AhaService
   end
 
   def html_to_markdown(html)
-    GithubMarkdownConverter.new.convert_html_from_aha(html) 
+    GithubMarkdownConverter.new.convert_html_from_aha(html)
   end
 end
