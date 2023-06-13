@@ -6,7 +6,7 @@ class TFSResource < GenericResource
     if @service.class.service_name == "tfs_on_premise"
       b.request(:tfs_ntlm, self, @service.data.user_name, @service.data.user_password)
     else
-      b.request(:basic_auth, @service.data.user_name, @service.data.user_password)
+      b.request(:authorization, :basic, @service.data.user_name, @service.data.user_password)
     end
   end
 
@@ -38,7 +38,7 @@ class TFSResource < GenericResource
       raise AhaService::RemoteError, "Unhandled error: STATUS=#{response.status} BODY=#{response.body}"
     end
   end
-  
+
   def create_attachments(workitem, aha_attachments)
     existing_files = workitem.relations.select{|relation| relation.rel == "AttachedFile"}.map{|relation| relation.attributes.name} rescue []
     aha_attachments.each do |aha_attachment|
@@ -60,7 +60,7 @@ protected
       "<p></p>"
     end
   end
- 
+
   def mstfs_url path
     joiner = (path =~ /\?/) ? "&" : "?"
     "#{url_prefix}/_apis/#{path}#{joiner}api-version="+self.class::API_VERSION
@@ -70,7 +70,7 @@ protected
     joiner = (path =~ /\?/) ? "&" : "?"
     "#{url_prefix}/#{project}/_apis/#{path}#{joiner}api-version="+self.class::API_VERSION
   end
-  
+
   def url_prefix
     if @service.class.service_name == "tfs_on_premise"
       @service.data.server_url
@@ -78,7 +78,7 @@ protected
       "https://#{@service.data.account_name}.visualstudio.com/defaultcollection"
     end
   end
-  
+
 end
 
 
@@ -98,27 +98,27 @@ class TfsNtlm < Faraday::Middleware
     env[:request_headers]['Authorization'] = header(response)
     @app.call(env)
   end
-    
+
   def handshake(env)
     env_without_body = env.dup
     env_without_body[:request_headers] = env[:request_headers].dup
     env_without_body.clear_body
-      
+
     ntlm_message_type1 = Net::NTLM::Message::Type1.new
     %w(workstation domain).each do |a|
       ntlm_message_type1.send("#{a}=",'')
       ntlm_message_type1.enable(a.to_sym)
     end
-    
+
     env_without_body[:request_headers]['Authorization'] = 'NTLM ' + ntlm_message_type1.encode64
     @app.call(env_without_body)
   end
-  
+
   def header(response)
     challenge = response.headers['www-authenticate'][/NTLM (.+)/, 1]
-    
+
     ntlm_message = Net::NTLM::Message.decode64(challenge)
-    
+
     'NTLM ' + ntlm_message.response({user: @username, password: @password, domain: ''}, {:ntlmv2 => true}).encode64
   end
 end
