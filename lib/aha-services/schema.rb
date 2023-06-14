@@ -51,10 +51,6 @@ module Schema
     def webhooks_slack_button(options = {})
       add_to_schema :webhooks_slack_button, "webhooks_slack_button", options
     end
-
-    def ideas_portals(options = {})
-      add_to_schema :ideas_portals, "ideas_portals", options
-    end
     
     def internal(name, options = {})
       add_to_schema :internal, name, options
