@@ -12,7 +12,6 @@ require 'pp'
 
 require 'faraday'
 require 'clothred'
-require 'faraday_middleware'
 require 'ipaddr'
 require 'socket'
 require 'hashie'
@@ -21,7 +20,7 @@ require 'jwt'
 
 require_relative 'net_http_persistent_override'
 
-# This is brutal, but we need it to the backwards compatible behavior of 
+# This is brutal, but we need it to the backwards compatible behavior of
 # not logging warnings without rewriting all our code to use a new subclass.
 Hashie::Mash.instance_variable_set(:@disable_warnings, true)
 
