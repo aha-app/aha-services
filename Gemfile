@@ -2,7 +2,7 @@ source "https://rubygems.org"
 
 gemspec
 
-gem "aha-api", git: "https://github.com/aha-app/aha-api", branch: 'DEVOPS-1952-update-faraday'
+gem "aha-api", git: "https://github.com/aha-app/aha-api"
 gem "ClothRed", git: "https://github.com/aha-app/ClothRed", require: "clothred"
 gem "crack"
 gem "html2confluence", git: "https://github.com/aha-app/html2confluence.git"
