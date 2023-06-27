@@ -21,6 +21,7 @@ Gem::Specification.new do |s|
   s.add_dependency "activesupport"
   s.add_dependency "faraday"
   s.add_dependency "faraday-cookie_jar"
+  s.add_dependency "faraday-gzip"
   s.add_dependency "faraday-multipart"
   s.add_dependency "faraday-net_http_persistent", "~> 2.0"
   s.add_dependency "hashie", "~> 3.6"
