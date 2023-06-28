@@ -44,7 +44,7 @@ class JiraResource < GenericResource
           consumer_secret: @service.data.consumer_secret, signature_method: "RSA-SHA1"
       end
     else
-      builder.request(:basic_auth, @service.data.username, @service.data.password)
+      builder.request(:authorization, :basic, @service.data.username, @service.data.password)
     end
   end
 

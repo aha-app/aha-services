@@ -2,7 +2,7 @@ class GithubResource < GenericResource
   API_URL = "https://api.github.com"
 
   def faraday_builder(builder)
-    builder.request(:basic_auth, @service.data.username, @service.data.password)
+    builder.request(:authorization, :basic, @service.data.username, @service.data.password)
   end
 
   def github_http_get_paginated(url, page = 1, previous_response = [], &block)
