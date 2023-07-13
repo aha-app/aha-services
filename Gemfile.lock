@@ -6,7 +6,7 @@ GIT
 
 GIT
   remote: https://github.com/aha-app/aha-api
-  revision: 63afceee817887b97ee6bdee77bea0b96ba020b9
+  revision: 781cb7dcbbd61ddb973f16f50d3c5861e0f1e704
   specs:
     aha-api (1.0.42)
       activesupport
