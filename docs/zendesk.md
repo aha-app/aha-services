@@ -10,7 +10,7 @@ The app will use one user account within Aha! for all Zendesk agents - so there 
 Select an ideas portal for the integration:
 
 * The portal should include all the workspaces you want to be available for capturing ideas in Zendesk
-* This portal is used for subscribing customers to ideas and creating ideas portal users, if you have enabled these options in this Zendesk app.
+* This portal is used for linking customers or agents to ideas and creating ideas portal users
 
 The Zendesk app is configured within Zendesk:
 
