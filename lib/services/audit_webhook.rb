@@ -6,6 +6,11 @@ class AhaServices::AuditWebhook < AhaService
   string :hook_url
   
   audit_filter
+
+  boolean :validate_cert,
+    description: "Validate your server's HTTPS/TLS certificate",
+    label_name: "Validate certificate",
+    default: "1"
   
   def receive_audit
     http.headers['Content-Type'] = 'application/json'
@@ -16,4 +21,8 @@ class AhaServices::AuditWebhook < AhaService
     end
   end
   
+  def validate_cert?
+    data&.validate_cert == "1"
+  end
+
 end

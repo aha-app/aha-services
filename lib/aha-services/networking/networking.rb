@@ -22,6 +22,7 @@ module Networking
 
       Faraday.new(options) do |b|
         b.request (encoding || :url_encoded)
+        configure_ssl(b)
         faraday_builder(b)
         b.adapter (adapter)
         b.use(HttpReporter, self)
@@ -32,6 +33,16 @@ module Networking
 
   # Override this to install additional middleware.
   def faraday_builder(builder)
+  end
+
+  # Services wanting to enable SSL certificate verification should implement a validate_cert? method
+  def configure_ssl(builder)
+    builder.ssl.verify = @service.validate_cert? if validate_certs?
+    @logger.debug("#{self.class.name} ssl.verify is #{builder.ssl.verify}")
+  end
+
+  def validate_certs?
+    @service.respond_to?(:validate_cert?)
   end
 
   # Reset the HTTP connection so it can be recreated with new options.
