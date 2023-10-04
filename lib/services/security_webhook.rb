@@ -4,7 +4,11 @@ class AhaServices::SecurityWebhook < AhaService
   category "API"
 
   string :hook_url
-  
+
+  boolean :validate_cert,
+    description: "Validate your server's HTTPS/TLS certificate",
+    label_name: "Validate certificate"
+
   def receive_security
     http.headers['Content-Type'] = 'application/json'
     
@@ -12,6 +16,10 @@ class AhaServices::SecurityWebhook < AhaService
     Timeout.timeout(5, Timeout::Error) do
       http_post data.hook_url, payload.to_json
     end
+  end
+
+  def validate_cert?
+    data&.validate_cert == "1"
   end
   
 end
