@@ -6,9 +6,8 @@ class AhaServices::Webhooks < AhaService
   string :hook_url
   boolean :validate_cert,
     description: "Validate your server's HTTPS/TLS certificate",
-    label_name: "Validate certificate",
-    default: "1"
-  
+    label_name: "Validate certificate"
+
   def receive_create_feature
     http.headers['Content-Type'] = 'application/json'
     
