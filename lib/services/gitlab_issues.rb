@@ -324,6 +324,8 @@ class AhaServices::GitlabIssues < AhaService
   def get_project
     meta_data.repos.find do |repo|
       repo.slice("path_with_namespace", "full_name").values.any? { |value| value.to_s == data.project }
+    end || meta_data.repos.find do |repo|
+      repo["path_with_namespace"].ends_with?(data.project)
     end
   end
 
