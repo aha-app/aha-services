@@ -3,7 +3,7 @@ jobs:
   test:
     working_directory: ~/aha-services
     docker:
-      - image: cimg/ruby:3.2.2
+      - image: cimg/ruby:3.3.4
         environment:
           GEM_HOME: ~/aha-services/vendor/bundle
     steps:
