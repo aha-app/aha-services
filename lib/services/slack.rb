@@ -1,5 +1,5 @@
 class AhaServices::Slack < AhaService
-  title "Slack [from Aha!]"
+  title "Aha! (to Slack)"
   caption "Send workspace notifications from Aha! to Slack"
   category "Communication"
 
