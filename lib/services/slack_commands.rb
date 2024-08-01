@@ -1,5 +1,5 @@
 class AhaServices::SlackCommands < AhaService
-  title "Slack [to Aha!]"
+  title "Aha! (from Slack)"
   caption "Send new ideas and work updates to Aha! from Slack"
   category "Communication"
 
