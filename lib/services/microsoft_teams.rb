@@ -37,30 +37,8 @@ class AhaServices::MicrosoftTeams < AhaService
       end
     end
 
-    message = {
-      "@type": "MessageCard",
-      "@context": "http://schema.org/extensions",
-      "themeColor": "0073CF",
-      "Summary": title,
-      "sections": [{
-          "activityTitle": title,
-          "activitySubtitle": payload.audit.created_at.to_time.strftime('%Y-%m-%d %l:%M %P'),
-          "facts": facts,
-          "markdown": true
-      }],
-      "potentialAction": [
-        {
-          "@type": "OpenUri",
-          "name": "View in Aha!",
-          "targets": [
-            {
-              "os": "default",
-              "uri": payload.audit.auditable_url
-            }
-          ]
-        }
-      ]
-    }
+    message = workflow_webhook? ? workflow_message : connector_message
+
     send_message(message)
   end
 
@@ -91,6 +69,94 @@ class AhaServices::MicrosoftTeams < AhaService
   end
 
   protected
+
+  def workflow_webhook?
+    false
+  end
+
+  def connector_message
+    message = {
+      "@type": "MessageCard",
+      "@context": "http://schema.org/extensions",
+      "themeColor": "0073CF",
+      "Summary": title,
+      "sections": [{
+          "activityTitle": title,
+          "activitySubtitle": payload.audit.created_at.to_time.strftime('%Y-%m-%d %l:%M %P'),
+          "facts": facts,
+          "markdown": true
+      }],
+      "potentialAction": [
+        {
+          "@type": "OpenUri",
+          "name": "View in Aha!",
+          "targets": [
+            {
+              "os": "default",
+              "uri": payload.audit.auditable_url
+            }
+          ]
+        }
+      ]
+    }
+  end
+
+  def workflow_message
+    {
+      "type": "message",
+      "body": {
+        "attachments": [
+          {
+            "contentType": "application/vnd.microsoft.card.adaptive",
+            "contentUrl": null,
+            "content": {
+              "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+              "type": "AdaptiveCard",
+              "version": "1.2",
+              "body": [
+                {
+                  "type": "TextBlock",
+                  "text": "John Bohn updated feature A-1732 Partner leaderboards",
+                  "weight": "bolder",
+                  "size": "medium",
+                  "wrap": true,
+                  "style": "heading"
+                },
+                {
+                  "type": "TextBlock",
+                  "text": "2024-01-01 9:03pm",
+                  "weight": "lighter",
+                  "size": "small",
+                  "wrap": true
+                },
+                {
+                  "type": "FactSet",
+                  "facts": [
+                    {
+                      "title": "Workflow status",
+                      "value": "Design → Development"
+                    },
+                    {
+                      "title": "Assigned to",
+                      "value": "Not assigned → John Bohn"
+                    }
+                  ]
+                }
+              ],
+              "actions": [
+                {
+                  "type": "Action.OpenUrl",
+                  "title": "View in Aha!",
+                  "url": "https://www.aha.io/features"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  end
+
 
   def title
     user = payload.audit.user&.name || "Aha!"
