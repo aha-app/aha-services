@@ -4,12 +4,13 @@ class AhaServices::MicrosoftTeams < AhaService
 
   string :webhook_url,
     description: "The URL that you copied when creating the webhook in Microsoft Teams"
-  install_button
 
   select :integration_method, collection: [
       ["Use connector", "connector"],
       ["Use workflow", "workflow"]
   ], description: "Select your integration method. Microsoft is retiring Office 365 connectors in Microsoft Teams. While existing connectors will work until December 2025 with some required updates, no new connectors can be created after August 15, 2024. For long-term support and enhanced functionality, we recommend using workflows."
+
+  install_button
 
   audit_filter
 
