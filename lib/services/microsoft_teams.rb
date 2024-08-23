@@ -15,7 +15,6 @@ class AhaServices::MicrosoftTeams < AhaService
   def receive_audit
     return unless payload.audit.interesting
 
-
     message = workflow_webhook? ? workflow_message : connector_message
 
     send_message(message)
@@ -61,7 +60,7 @@ class AhaServices::MicrosoftTeams < AhaService
       "Summary": title,
       "sections": [{
           "activityTitle": title,
-          "activitySubtitle": payload.audit.created_at.to_time.strftime('%Y-%m-%d %l:%M %P'),
+          "activitySubtitle": audit_time,
           "facts": facts,
           "markdown": true
       }],
@@ -87,7 +86,7 @@ class AhaServices::MicrosoftTeams < AhaService
         "attachments": [
           {
             "contentType": "application/vnd.microsoft.card.adaptive",
-            "contentUrl": null,
+            "contentUrl": nil,
             "content": {
               "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
               "type": "AdaptiveCard",
@@ -95,7 +94,7 @@ class AhaServices::MicrosoftTeams < AhaService
               "body": [
                 {
                   "type": "TextBlock",
-                  "text": "John Bohn updated feature A-1732 Partner leaderboards",
+                  "text": title,
                   "weight": "bolder",
                   "size": "medium",
                   "wrap": true,
@@ -103,7 +102,7 @@ class AhaServices::MicrosoftTeams < AhaService
                 },
                 {
                   "type": "TextBlock",
-                  "text": "2024-01-01 9:03pm",
+                  "text": audit_time,
                   "weight": "lighter",
                   "size": "small",
                   "wrap": true
@@ -117,7 +116,7 @@ class AhaServices::MicrosoftTeams < AhaService
                 {
                   "type": "Action.OpenUrl",
                   "title": "View in Aha!",
-                  "url": "https://www.aha.io/features"
+                  "url": auditable_url
                 }
               ]
             }
@@ -127,6 +126,13 @@ class AhaServices::MicrosoftTeams < AhaService
     }
   end
 
+  def audit_time
+    payload.audit.created_at.to_time.strftime('%Y-%m-%d %l:%M %P')
+  end
+
+  def auditable_url
+    payload.audit.auditable_url
+  end
 
   def title
     user = payload.audit.user&.name || "Aha!"
