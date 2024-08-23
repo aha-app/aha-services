@@ -15,27 +15,6 @@ class AhaServices::MicrosoftTeams < AhaService
   def receive_audit
     return unless payload.audit.interesting
 
-    # array of elements with {"name": "asdf", "value": "the change"}
-    facts = payload.audit.changes.each do |obj|
-      obj["name"] = obj.delete("field_name")
-      # convert textual fields to markdown that Microsoft can display
-      if obj["value"].to_s.include?("</span>")
-        old_val = obj["value"]
-        parsed = Nokogiri::HTML::fragment(obj["value"])
-
-        # remove existing styles to make modification styles more clear
-        parsed.css('b,strong').each do |node|
-          node.replace Nokogiri::XML::Text.new(node.text, node.document)
-        end
-        parsed.css('strike').each do |node|
-          node.replace Nokogiri::XML::Text.new(node.text, node.document)
-        end
-
-        parsed.css('span.deleted').each { |node| node.name = 'strike' }
-        parsed.css('span.inserted').each { |node| node.name = 'strong' }
-        obj["value"] = parsed.to_s
-      end
-    end
 
     message = workflow_webhook? ? workflow_message : connector_message
 
@@ -131,17 +110,8 @@ class AhaServices::MicrosoftTeams < AhaService
                 },
                 {
                   "type": "FactSet",
-                  "facts": [
-                    {
-                      "title": "Workflow status",
-                      "value": "Design → Development"
-                    },
-                    {
-                      "title": "Assigned to",
-                      "value": "Not assigned → John Bohn"
-                    }
-                  ]
-                }
+                  "facts": facts
+              }
               ],
               "actions": [
                 {
@@ -168,4 +138,29 @@ class AhaServices::MicrosoftTeams < AhaService
     data.webhook_url
   end
 
+  # Array of elements with {"name|title": "asdf", "value": "the change"}
+  def facts
+    title_key = workflow_webhook? ? "title" : "name"
+
+    payload.audit.changes.each do |obj|
+      obj[title_key] = obj.delete("field_name")
+      # convert textual fields to markdown that Microsoft can display
+      if obj["value"].to_s.include?("</span>")
+        old_val = obj["value"]
+        parsed = Nokogiri::HTML::fragment(obj["value"])
+
+        # remove existing styles to make modification styles more clear
+        parsed.css('b,strong').each do |node|
+          node.replace Nokogiri::XML::Text.new(node.text, node.document)
+        end
+        parsed.css('strike').each do |node|
+          node.replace Nokogiri::XML::Text.new(node.text, node.document)
+        end
+
+        parsed.css('span.deleted').each { |node| node.name = 'strike' }
+        parsed.css('span.inserted').each { |node| node.name = 'strong' }
+        obj["value"] = parsed.to_s
+      end
+    end
+  end
 end
