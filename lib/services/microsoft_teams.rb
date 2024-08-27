@@ -87,49 +87,47 @@ class AhaServices::MicrosoftTeams < AhaService
 
   def workflow_message
     {
-      "type": "message",
-      "body": {
-        "attachments": [
-          {
-            "contentType": "application/vnd.microsoft.card.adaptive",
-            "contentUrl": nil,
-            "content": {
-              "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-              "type": "AdaptiveCard",
-              "version": "1.2",
-              "body": [
-                {
-                  "type": "TextBlock",
-                  "text": title,
-                  "weight": "bolder",
-                  "size": "medium",
-                  "wrap": true,
-                  "style": "heading"
-                },
-                {
-                  "type": "TextBlock",
-                  "text": audit_time,
-                  "weight": "lighter",
-                  "size": "small",
-                  "wrap": true
-                },
-                {
-                  "type": "FactSet",
-                  "facts": facts
-              }
-              ],
-              "actions": [
-                {
-                  "type": "Action.OpenUrl",
-                  "title": "View in Aha!",
-                  "url": auditable_url
-                }
-              ]
+      "attachments": [
+        {
+          "contentType": "application/vnd.microsoft.card.adaptive",
+          "contentUrl": nil,
+          "content": {
+            "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+            "type": "AdaptiveCard",
+            "version": "1.2",
+            "body": [
+              {
+                "type": "TextBlock",
+                "text": title,
+                "weight": "bolder",
+                "size": "medium",
+                "wrap": true,
+                "style": "heading"
+              },
+              {
+                "type": "TextBlock",
+                "text": audit_time,
+                "weight": "lighter",
+                "size": "small",
+                "wrap": true
+              },
+              {
+                "type": "FactSet",
+                "facts": facts
             }
+            ],
+            "actions": [
+              {
+                "type": "Action.OpenUrl",
+                "title": "View in Aha!",
+                "url": auditable_url
+              }
+            ]
           }
-        ]
-      }
+        }
+      ]
     }
+
   end
 
   def audit_time

@@ -133,8 +133,7 @@ describe AhaServices::MicrosoftTeams do
       allow(subject).to receive(:audit_time).and_return("2024-08-23 3:45 PM")
 
       expected_message = {
-        "type": "message",
-        "body": {
+        {
           "attachments": [
             {
               "contentType": "application/vnd.microsoft.card.adaptive",
