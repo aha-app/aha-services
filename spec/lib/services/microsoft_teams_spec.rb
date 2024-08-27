@@ -133,47 +133,45 @@ describe AhaServices::MicrosoftTeams do
       allow(subject).to receive(:audit_time).and_return("2024-08-23 3:45 PM")
 
       expected_message = {
-        {
-          "attachments": [
-            {
-              "contentType": "application/vnd.microsoft.card.adaptive",
-              "contentUrl": nil,
-              "content": {
-                "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-                "type": "AdaptiveCard",
-                "version": "1.2",
-                "body": [
-                  {
-                    "type": "TextBlock",
-                    "text": "Aha! did something",
-                    "weight": "bolder",
-                    "size": "medium",
-                    "wrap": true,
-                    "style": "heading"
-                  },
-                  {
-                    "type": "TextBlock",
-                    "text": "2024-08-23 3:45 PM",
-                    "weight": "lighter",
-                    "size": "small",
-                    "wrap": true
-                  },
-                  {
-                    "type": "FactSet",
-                    "facts": []
-                  }
-                ],
-                "actions": [
-                  {
-                    "type": "Action.OpenUrl",
-                    "title": "View in Aha!",
-                    "url": "http://example.com"
-                  }
-                ]
-              }
+        "attachments": [
+          {
+            "contentType": "application/vnd.microsoft.card.adaptive",
+            "contentUrl": nil,
+            "content": {
+              "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+              "type": "AdaptiveCard",
+              "version": "1.2",
+              "body": [
+                {
+                  "type": "TextBlock",
+                  "text": "Aha! did something",
+                  "weight": "bolder",
+                  "size": "medium",
+                  "wrap": true,
+                  "style": "heading"
+                },
+                {
+                  "type": "TextBlock",
+                  "text": "2024-08-23 3:45 PM",
+                  "weight": "lighter",
+                  "size": "small",
+                  "wrap": true
+                },
+                {
+                  "type": "FactSet",
+                  "facts": []
+                }
+              ],
+              "actions": [
+                {
+                  "type": "Action.OpenUrl",
+                  "title": "View in Aha!",
+                  "url": "http://example.com"
+                }
+              ]
             }
-          ]
-        }
+          }
+        ]
       }
 
       expect(subject.send(:workflow_message)).to eq(expected_message)
