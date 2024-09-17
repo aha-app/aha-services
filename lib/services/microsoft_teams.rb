@@ -15,7 +15,43 @@ class AhaServices::MicrosoftTeams < AhaService
   audit_filter
 
   def receive_installed
-    send_message(text: "Aha! integration installed successfully. Make sure you enable the integration!")
+    success_text = "Aha! integration installed successfully. Make sure you enable the integration!"
+
+    message = if workflow_webhook?
+      {
+        "attachments": [
+          {
+            "contentType": "application/vnd.microsoft.card.adaptive",
+            "contentUrl": nil,
+            "content": {
+              "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+              "type": "AdaptiveCard",
+              "version": "1.2",
+              "body": [
+                {
+                  "type": "TextBlock",
+                  "text": "Aha! integration installed",
+                  "weight": "bolder",
+                  "size": "medium",
+                  "wrap": true,
+                  "style": "heading"
+                }, {
+                  "type": "TextBlock",
+                  "text": success_text,
+                  "weight": "lighter",
+                  "size": "small",
+                  "wrap": true
+                },
+              ],
+            },
+          },
+        ],
+      }
+    else
+      { text: success_text}
+    end
+
+    send_message(message)
   end
 
   def receive_audit
@@ -127,7 +163,6 @@ class AhaServices::MicrosoftTeams < AhaService
         }
       ]
     }
-
   end
 
   def audit_time
