@@ -77,7 +77,7 @@ class AhaServices::MicrosoftTeams < AhaService
           "targets": [
             {
               "os": "default",
-              "uri": payload.audit.auditable_url
+              "uri": auditable_url
             }
           ]
         }
