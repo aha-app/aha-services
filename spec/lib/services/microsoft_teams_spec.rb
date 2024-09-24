@@ -176,5 +176,19 @@ describe AhaServices::MicrosoftTeams do
 
       expect(subject.send(:workflow_message)).to eq(expected_message)
     end
+
+    it "converts html to markdown" do
+      audited_changes = [
+        { "title" => "Description", "value" => "<div>Some description</div>" },
+      ]
+      payload = double(audit: double(created_at: Time.now, auditable_url: "http://example.com", user: nil, description: "did something", changes: audited_changes))
+      allow(subject).to receive(:payload).and_return(payload)
+      allow(subject).to receive(:title).and_return("Aha! did something")
+      allow(subject).to receive(:audit_time).and_return("2024-08-23 3:45 PM")
+
+      fact =  subject.send(:workflow_message)[:attachments][0][:content][:body].last[:facts][0]
+      expect(fact["title"]).to eq("Description")
+      expect(fact["value"]).to eq("Some description\n")
+    end
   end
 end

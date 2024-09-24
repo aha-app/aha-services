@@ -191,8 +191,7 @@ class AhaServices::MicrosoftTeams < AhaService
       obj[title_key] = obj.delete("field_name")
 
       # convert textual fields to markdown that Microsoft can display
-      if obj["value"].to_s.match(/<\/?(span|div)>/)
-        old_val = obj["value"]
+      if html?(obj["value"])
         parsed = Nokogiri::HTML::fragment(obj["value"])
 
         # remove existing styles to make modification styles more clear
@@ -205,8 +204,13 @@ class AhaServices::MicrosoftTeams < AhaService
 
         parsed.css('span.deleted').each { |node| node.name = 'strike' }
         parsed.css('span.inserted').each { |node| node.name = 'strong' }
-        obj["value"] = parsed.to_s
+
+        obj["value"] = html_to_markdown(parsed.to_s)
       end
     end
+  end
+
+  def html?(string)
+    !!(string =~ /<[^>]*>/)
   end
 end
