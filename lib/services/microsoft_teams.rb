@@ -210,7 +210,12 @@ class AhaServices::MicrosoftTeams < AhaService
     end
   end
 
+  # The regex /<[^>]*>/ matches any string that contains an HTML-like tag.
+  #   - <[^>]*> looks for:
+  #     - < followed by any characters that are not > (denoted by [^>])
+  #     - The * means "zero or more" of these characters,
+  #     - Finally, it checks for a closing >.
   def html?(string)
-    !!(string =~ /<[^>]*>/)
+    string =~ /<[^>]*>/ ? true : false
   end
 end
