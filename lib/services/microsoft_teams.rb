@@ -216,6 +216,6 @@ class AhaServices::MicrosoftTeams < AhaService
   #     - The * means "zero or more" of these characters,
   #     - Finally, it checks for a closing >.
   def html?(string)
-    string =~ /<[^>]*>/ ? true : false
+    string.to_s =~ /<[^>]*>/ ? true : false
   end
 end
